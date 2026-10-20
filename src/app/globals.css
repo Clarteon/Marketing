@@ -1,0 +1,75 @@
+:root {
+  --ink: #0a0a0a;
+  --paper: #ffffff;
+  --stone: #f4f4f2;
+  --graphite: #5c5c58;
+  --lime: #c6f432;
+  --line: #e4e4e0;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  min-height: 100%;
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    sans-serif;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.5rem;
+  width: min(100% - 3rem, 68rem);
+  min-height: 100svh;
+  margin-inline: auto;
+  padding-block: 4rem;
+}
+
+.wordmark {
+  color: var(--graphite);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  max-width: 18ch;
+  font-size: clamp(2.75rem, 8vw, 5.5rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+.subhead {
+  max-width: 62ch;
+  color: var(--graphite);
+  font-size: clamp(1.125rem, 2vw, 1.375rem);
+  text-wrap: pretty;
+}
