@@ -16,7 +16,7 @@ This file is the agent-neutral equivalent of `CLAUDE.md`. The always-on rules li
 - Booking: Google Calendar API with Google Meet links
 - Email: Resend free plan, sent from a verified Clarteon domain
 - Lead log: optional small database, with backups if used
-- Hosting: not decided yet. Pick one that supports streaming responses and confirm its free-tier limits.
+- Hosting: Vercel (decided October 20, 2026), native Next.js with streaming and preview deployments. Confirm the current Hobby plan limits before launch.
 
 ## Commands
 
