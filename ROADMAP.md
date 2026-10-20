@@ -25,10 +25,11 @@ Reason for this order: forms, booking and knowledge are plain server functions t
 - Skill: `clarteon-foundation`
 - Deliverables: Next.js TypeScript app, lint, format, type check and test tooling, environment variable scheme with `.env.example`, CI (lint, type check, tests, dependency audit), preview deployments, security header baseline, commands filled into `CLAUDE.md`.
 - Exit criteria:
-  - [ ] App deploys to a preview URL
+  - [x] App deploys to a preview URL
   - [ ] CI is green and blocks failing changes
-  - [ ] No secrets in the repo or client bundle
-  - [ ] `CLAUDE.md` commands are filled in
+  - [x] No secrets in the repo or client bundle
+  - [x] `CLAUDE.md` commands are filled in
+- Note: CI is green on every push and pull request. Branch protection is not available on a private repository on the GitHub Free plan, so failing checks do not yet block a direct push. Enable protection after making the repo public or upgrading, or enforce a pull-request-only workflow by convention.
 
 ## P1 Site shell and brand (size M)
 

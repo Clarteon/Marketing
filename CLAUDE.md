@@ -14,11 +14,29 @@ Source of truth for decisions: the plan document (https://claude.ai/artifact/REh
 - Booking: Google Calendar API with Google Meet links
 - Email: Resend free plan, sent from a verified Clarteon domain
 - Lead log: optional small database, with backups if used
-- Hosting: not decided yet. Pick one that supports streaming responses and confirm its free-tier limits.
+- Hosting: Vercel (decided October 20, 2026), native Next.js with streaming and preview deployments. Confirm the current Hobby plan limits before launch.
 
 ## Commands
 
-Fill these in during phase 0 (`clarteon-foundation` skill): install, dev, build, lint, type check, test, knowledge build.
+Run these from the repo root with Node 24 and npm.
+
+```bash
+npm install            # install dependencies
+cp .env.example .env.local   # create local env (names only; fill values locally)
+npm run dev            # start the dev server at http://localhost:3000
+npm run build          # placeholder check, then production build
+npm run start          # serve the production build
+npm run lint           # ESLint
+npm run lint:fix       # ESLint with autofix
+npm run format         # Prettier write
+npm run format:check   # Prettier check
+npm run typecheck      # next typegen, then tsc --noEmit
+npm test               # Vitest run
+npm run test:watch     # Vitest watch mode
+npm run check:placeholders  # fail if [ALL CAPS] placeholders reach published output
+```
+
+CI lives in `.github/workflows/ci.yml` and runs lint, formatting, type check, tests, the placeholder check, a production dependency audit and the build. The knowledge build command is added in P4.
 
 ## Working agreements
 
