@@ -1,37 +1,55 @@
 import { z } from "zod";
 
-const optionalSecret = z.string().trim().min(1).optional();
+const emptyToUndefined = (value: unknown) =>
+  typeof value === "string" && value.trim() === "" ? undefined : value;
+
+const optionalString = z.preprocess(emptyToUndefined, z.string().trim().min(1).optional());
+const optionalEmail = z.preprocess(emptyToUndefined, z.email().optional());
+const optionalUrl = z.preprocess(emptyToUndefined, z.url().optional());
+const optionalBooleanString = z.preprocess(emptyToUndefined, z.enum(["true", "false"]).optional());
+const optionalLongSecret = z.preprocess(emptyToUndefined, z.string().min(32).optional());
+const stringWithDefault = (defaultValue: string) =>
+  z.preprocess(emptyToUndefined, z.string().trim().min(1).default(defaultValue));
+const positiveInteger = (defaultValue: number) =>
+  z.preprocess(emptyToUndefined, z.coerce.number().int().positive().default(defaultValue));
 
 export const envSchema = z.object({
-  NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+  NODE_ENV: z.preprocess(
+    emptyToUndefined,
+    z.enum(["development", "test", "production"]).default("development"),
+  ),
+
+  // Public site settings
+  NEXT_PUBLIC_SITE_URL: optionalUrl,
+  NEXT_PUBLIC_ALLOW_INDEXING: optionalBooleanString,
 
   // Chat model
-  GROQ_API_KEY: optionalSecret,
-  LLM_MODEL_PRIMARY: z.string().trim().min(1).default("openai/gpt-oss-120b"),
-  LLM_MODEL_FALLBACKS: z.string().trim().min(1).default("openai/gpt-oss-20b,qwen/qwen3.8-27b"),
-  LLM_PROMPT_GUARD_MODEL: z.string().trim().min(1).optional(),
+  GROQ_API_KEY: optionalString,
+  LLM_MODEL_PRIMARY: stringWithDefault("openai/gpt-oss-120b"),
+  LLM_MODEL_FALLBACKS: stringWithDefault("openai/gpt-oss-20b,qwen/qwen3.8-27b"),
+  LLM_PROMPT_GUARD_MODEL: optionalString,
 
   // Google Calendar
-  GOOGLE_CALENDAR_ID: z.string().trim().min(1).optional(),
-  GOOGLE_CLIENT_ID: z.string().trim().min(1).optional(),
-  GOOGLE_CLIENT_SECRET: optionalSecret,
-  GOOGLE_SERVICE_ACCOUNT_EMAIL: z.email().optional(),
-  GOOGLE_PRIVATE_KEY: z.string().trim().min(1).optional(),
+  GOOGLE_CALENDAR_ID: optionalString,
+  GOOGLE_CLIENT_ID: optionalString,
+  GOOGLE_CLIENT_SECRET: optionalString,
+  GOOGLE_SERVICE_ACCOUNT_EMAIL: optionalEmail,
+  GOOGLE_PRIVATE_KEY: optionalString,
 
   // Email
-  RESEND_API_KEY: optionalSecret,
-  EMAIL_FROM: z.string().trim().min(3).optional(),
-  EMAIL_REPLY_TO: z.email().optional(),
-  TEAM_ALERT_EMAIL: z.email().optional(),
+  RESEND_API_KEY: optionalString,
+  EMAIL_FROM: optionalString,
+  EMAIL_REPLY_TO: optionalEmail,
+  TEAM_ALERT_EMAIL: optionalEmail,
 
   // Sync and admin
-  SYNC_SECRET: z.string().min(32).optional(),
-  ADMIN_AUTH_SECRET: z.string().min(32).optional(),
+  SYNC_SECRET: optionalLongSecret,
+  ADMIN_AUTH_SECRET: optionalLongSecret,
 
   // Limits
-  RATE_LIMIT_WINDOW_SECONDS: z.coerce.number().int().positive().default(60),
-  RATE_LIMIT_MAX_REQUESTS: z.coerce.number().int().positive().default(20),
-  CHAT_MAX_MESSAGES: z.coerce.number().int().positive().default(20),
+  RATE_LIMIT_WINDOW_SECONDS: positiveInteger(60),
+  RATE_LIMIT_MAX_REQUESTS: positiveInteger(20),
+  CHAT_MAX_MESSAGES: positiveInteger(20),
 });
 
 export type Env = z.infer<typeof envSchema>;

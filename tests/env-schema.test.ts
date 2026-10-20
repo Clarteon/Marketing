@@ -32,4 +32,25 @@ describe("parseEnv", () => {
   it("rejects a short sync secret", () => {
     expect(() => parseEnv({ NODE_ENV: "test", SYNC_SECRET: "too-short" })).toThrow(/SYNC_SECRET/);
   });
+
+  it("treats empty values from .env.example as unset", () => {
+    const env = parseEnv({
+      NODE_ENV: "test",
+      GROQ_API_KEY: "",
+      RATE_LIMIT_MAX_REQUESTS: "",
+      NEXT_PUBLIC_ALLOW_INDEXING: "",
+      NEXT_PUBLIC_SITE_URL: "",
+    });
+
+    expect(env.GROQ_API_KEY).toBeUndefined();
+    expect(env.RATE_LIMIT_MAX_REQUESTS).toBe(20);
+    expect(env.NEXT_PUBLIC_ALLOW_INDEXING).toBeUndefined();
+    expect(env.NEXT_PUBLIC_SITE_URL).toBeUndefined();
+  });
+
+  it("rejects an invalid public site URL", () => {
+    expect(() => parseEnv({ NODE_ENV: "test", NEXT_PUBLIC_SITE_URL: "not-a-url" })).toThrow(
+      /NEXT_PUBLIC_SITE_URL/,
+    );
+  });
 });

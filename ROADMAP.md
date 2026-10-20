@@ -36,10 +36,11 @@ Reason for this order: forms, booking and knowledge are plain server functions t
 - Skills: `clarteon-design-system`, `clarteon-build-page`
 - Deliverables: design tokens and shared components, Home, Solutions, How we work, About, Contact (form UI and booking section placeholder), Privacy, shells for Our work and Insights, metadata and SEO basics, accessibility pass, placeholder check script.
 - Exit criteria:
-  - [ ] Every page in the sitemap renders responsively
-  - [ ] Booking section and Clara's widget slot appear on every page
-  - [ ] Automated accessibility checks pass
-  - [ ] The production build fails if any bracket placeholder remains
+  - [x] Every page in the sitemap renders responsively
+  - [x] Booking section and Clara's widget slot appear on every page
+  - [x] Automated accessibility checks pass
+  - [x] The production build fails if any bracket placeholder remains
+- Note: checked at 390, 768 and 1280 px for all eight sitemap pages, with no horizontal overflow. Axe checks pass in tests, and Lighthouse scored 100 for accessibility, best practices and SEO on Home and Contact. Founder bios, certifications and the final privacy review still need human input.
 
 ## P2 Lead capture and email (size S to M)
 
