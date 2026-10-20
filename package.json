@@ -16,9 +16,12 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "check:placeholders": "node scripts/check-placeholders.mjs"
+    "check:placeholders": "node scripts/check-placeholders.mjs",
+    "db:init": "node --env-file-if-exists=.env.local scripts/init-db.mjs",
+    "db:prune": "node --env-file-if-exists=.env.local scripts/prune-leads.mjs"
   },
   "dependencies": {
+    "@neondatabase/serverless": "1.2.0",
     "next": "16.4.2",
     "react": "19.3.1",
     "react-dom": "19.3.1",

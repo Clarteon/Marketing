@@ -53,4 +53,21 @@ describe("parseEnv", () => {
       /NEXT_PUBLIC_SITE_URL/,
     );
   });
+
+  it("accepts the lead database and bot-check settings", () => {
+    const env = parseEnv({
+      NODE_ENV: "test",
+      DATABASE_URL: "postgresql://user:pass@example.com/db",
+      NEXT_PUBLIC_TURNSTILE_SITE_KEY: "0x4AAAAAAA",
+      TURNSTILE_SECRET_KEY: "0x4BBBBBBB",
+    });
+
+    expect(env.DATABASE_URL).toBe("postgresql://user:pass@example.com/db");
+    expect(env.NEXT_PUBLIC_TURNSTILE_SITE_KEY).toBe("0x4AAAAAAA");
+    expect(env.TURNSTILE_SECRET_KEY).toBe("0x4BBBBBBB");
+  });
+
+  it("rejects an invalid lead database URL", () => {
+    expect(() => parseEnv({ NODE_ENV: "test", DATABASE_URL: "not-a-url" })).toThrow(/DATABASE_URL/);
+  });
 });

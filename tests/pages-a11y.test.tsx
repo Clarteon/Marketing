@@ -184,23 +184,16 @@ describe("navigation and forms", () => {
     expect(menu).toHaveAttribute("hidden");
   });
 
-  it("explains that the preview form does not send", async () => {
+  it("shows the project brief fields and stays closed without a bot-check key", async () => {
     const page = await loadPage("contact");
     const data = parsePageData(contactSchema, page);
-    render(<ContactPage data={data} />);
+    render(<ContactPage data={data} turnstileSiteKey="" />);
 
-    fireEvent.change(screen.getByLabelText("Name"), {
-      target: { value: "Ada Lovelace" },
-    });
-    fireEvent.change(screen.getByLabelText("Email"), {
-      target: { value: "ada@example.com" },
-    });
-    fireEvent.change(screen.getByLabelText(/What is slowing you down/), {
-      target: { value: "Manual reporting" },
-    });
-    fireEvent.click(screen.getByLabelText(/I agree/));
-    fireEvent.click(screen.getByRole("button", { name: "Send project brief" }));
-
-    expect(screen.getByRole("status")).toHaveTextContent("Nothing was sent.");
+    expect(screen.getByLabelText("Name")).toBeInTheDocument();
+    expect(screen.getByLabelText("Email")).toBeInTheDocument();
+    expect(screen.getByLabelText(/What is slowing you down/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/I agree/)).toBeInTheDocument();
+    expect(screen.getByText(/not configured in this environment/)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Send project brief" })).toBeDisabled();
   });
 });

@@ -8,7 +8,13 @@ import { ProjectBriefForm } from "@/components/ui/ProjectBriefForm";
 import { Section } from "@/components/ui/Section";
 import styles from "./pages.module.css";
 
-export function ContactPage({ data }: { data: ContactData }) {
+export function ContactPage({
+  data,
+  turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
+}: {
+  data: ContactData;
+  turnstileSiteKey?: string;
+}) {
   return (
     <Page>
       <PageHero
@@ -45,7 +51,7 @@ export function ContactPage({ data }: { data: ContactData }) {
           </div>
 
           <Card className={styles.formCard}>
-            <ProjectBriefForm />
+            <ProjectBriefForm turnstileSiteKey={turnstileSiteKey} />
           </Card>
         </div>
       </Section>

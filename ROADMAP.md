@@ -51,6 +51,7 @@ Reason for this order: forms, booking and knowledge are plain server functions t
   - [ ] Failures are retried and never lose a lead
   - [ ] SPF, DKIM and DMARC are verified
   - [ ] Abuse tests (many submissions, many recipients) are blocked
+- Note: the route, form, Turnstile check, Neon lead store, Resend sender, email-only fallback and tests are in place. Live verification is pending a verified sender domain, a Neon database and Turnstile keys, so the criteria stay open until then.
 
 ## P3 Booking (size M)
 

@@ -36,6 +36,8 @@ npm run typecheck      # next typegen, then tsc --noEmit
 npm test               # Vitest run
 npm run test:watch     # Vitest watch mode
 npm run check:placeholders  # fail if [ALL CAPS] placeholders reach published output
+npm run db:init        # apply the lead table to the configured Neon database
+npm run db:prune -- --dry-run  # count leads past the 12-month retention period
 ```
 
 CI lives in `.github/workflows/ci.yml` and runs lint, formatting, type check, tests, the placeholder check, a production dependency audit and the build. The knowledge build command is added in P4.

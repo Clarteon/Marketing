@@ -418,7 +418,8 @@
 }
 
 .input,
-.textarea {
+.textarea,
+.select {
   width: 100%;
   min-height: 48px;
   padding: 0.75rem 0.9rem;
@@ -428,16 +429,33 @@
   color: var(--ink);
 }
 
+.select {
+  cursor: pointer;
+}
+
 .textarea {
   min-height: 8rem;
   resize: vertical;
 }
 
 .input:focus,
-.textarea:focus {
+.textarea:focus,
+.select:focus {
   border-color: var(--ink);
   outline: 3px solid var(--ink);
   outline-offset: 2px;
+}
+
+.honeypot {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.turnstile {
+  min-height: 65px;
 }
 
 .hint {
@@ -476,6 +494,14 @@
   border-radius: var(--radius-sm);
   background: var(--stone);
   color: var(--ink);
+}
+
+.formError {
+  padding: 0.9rem 1rem;
+  border: 1px solid #b42318;
+  border-radius: var(--radius-sm);
+  background: #fff5f4;
+  color: #7a1a12;
 }
 
 .formNote {

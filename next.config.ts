@@ -1,16 +1,18 @@
 import type { NextConfig } from "next";
 
 const isDev = process.env.NODE_ENV === "development";
+const turnstileOrigin = "https://challenges.cloudflare.com";
 
 // The CSP allows inline scripts because Next.js injects its hydration bootstrap
 // inline. Tighten this with per-request nonces during the P6 hardening pass.
 const contentSecurityPolicy = [
   "default-src 'self'",
-  isDev ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'" : "script-src 'self' 'unsafe-inline'",
+  `script-src 'self' 'unsafe-inline' ${isDev ? "'unsafe-eval' " : ""}${turnstileOrigin}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "font-src 'self' data:",
-  isDev ? "connect-src 'self' ws: wss:" : "connect-src 'self'",
+  `connect-src 'self' ${turnstileOrigin}${isDev ? " ws: wss:" : ""}`,
+  `frame-src ${turnstileOrigin}`,
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
@@ -29,6 +31,7 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  agentRules: false,
   poweredByHeader: false,
   reactStrictMode: true,
   async headers() {

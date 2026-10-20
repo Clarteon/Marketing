@@ -36,6 +36,13 @@ export const envSchema = z.object({
   GOOGLE_SERVICE_ACCOUNT_EMAIL: optionalEmail,
   GOOGLE_PRIVATE_KEY: optionalString,
 
+  // Lead database
+  DATABASE_URL: optionalUrl,
+
+  // Form bot protection
+  NEXT_PUBLIC_TURNSTILE_SITE_KEY: optionalString,
+  TURNSTILE_SECRET_KEY: optionalString,
+
   // Email
   RESEND_API_KEY: optionalString,
   EMAIL_FROM: optionalString,
