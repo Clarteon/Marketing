@@ -109,6 +109,7 @@ export const contactSchema = z.object({
   message: z.object({
     title: z.string().trim().min(1),
     body: z.string().trim().min(1),
+    email: z.email(),
   }),
 });
 

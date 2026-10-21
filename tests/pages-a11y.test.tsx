@@ -152,6 +152,10 @@ describe("page accessibility", () => {
     );
 
     expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
+    expect(screen.getByRole("link", { name: /info@clarteon\.tech/i })).toHaveAttribute(
+      "href",
+      "mailto:info@clarteon.tech",
+    );
     await expectNoA11yViolations(container);
   });
 

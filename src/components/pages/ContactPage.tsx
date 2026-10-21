@@ -63,6 +63,11 @@ export function ContactPage({
             {data.message.title}
           </h2>
           <p className={styles.sectionIntro}>{data.message.body}</p>
+          <div className={styles.messageAction}>
+            <Button href={`mailto:${data.message.email}`} variant="text">
+              Email {data.message.email}
+            </Button>
+          </div>
         </div>
       </Section>
     </Page>

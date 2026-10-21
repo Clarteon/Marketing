@@ -232,6 +232,10 @@
   gap: 1rem;
 }
 
+.messageAction {
+  margin-top: 0.5rem;
+}
+
 .emptyActions {
   display: flex;
   flex-wrap: wrap;

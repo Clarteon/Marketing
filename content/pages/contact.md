@@ -28,5 +28,6 @@ brief:
   intro: "Tell us what is slow, what you have tried, and what a good outcome looks like. We will reply by email."
 message:
   title: "Or message us"
-  body: "A direct email address will be published here soon. Until then, the project brief form is the best way to reach us."
+  body: "Prefer email? Write to us directly and we will reply."
+  email: "info@clarteon.tech"
 ---
