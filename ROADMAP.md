@@ -47,11 +47,11 @@ Reason for this order: forms, booking and knowledge are plain server functions t
 - Skill: `clarteon-lead-and-email`
 - Deliverables: `/api/lead`, schema validation, bot challenge, rate limits, save-before-send, Resend sender with a verified domain, team alert and visitor receipt emails, optional lead log.
 - Exit criteria:
-  - [ ] Form submission saves the lead, then sends both emails
-  - [ ] Failures are retried and never lose a lead
-  - [ ] SPF, DKIM and DMARC are verified
-  - [ ] Abuse tests (many submissions, many recipients) are blocked
-- Note: the route, form, Turnstile check, Neon lead store, Resend sender, email-only fallback and tests are in place. Live verification is pending a verified sender domain, a Neon database and Turnstile keys, so the criteria stay open until then.
+  - [x] Form submission saves the lead, then sends both emails
+  - [x] Failures are retried and never lose a lead
+  - [x] SPF, DKIM and DMARC are verified
+  - [x] Abuse tests (many submissions, many recipients) are blocked
+- Note: live-verified on October 21, 2026. A test brief saved in Neon, both Resend sends were accepted without delivery errors, and the SPF, DKIM and DMARC records resolve. Turnstile, origin, honeypot and too-fast checks were blocked. Rate limiting is in-memory for now; replace it with a shared store in P6. Resend receiving is enabled for `info@clarteon.tech`, and the contact page publishes that address.
 
 ## P3 Booking (size M)
 
