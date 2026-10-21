@@ -94,6 +94,28 @@ describe("booking form", () => {
     expect(screen.getByText("Your discovery call is confirmed.")).toBeInTheDocument();
   });
 
+  it("keeps the slots when the current timezone is chosen again", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => jsonResponse({ ok: true, timezone: "Asia/Manila", slots: [slot] })),
+    );
+
+    render(<BookingForm turnstileSiteKey="site-key" />);
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0);
+    });
+
+    const select = screen.getByLabelText<HTMLSelectElement>("Times shown in");
+    fireEvent.change(select, { target: { value: select.value } });
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0);
+    });
+
+    expect(screen.getByRole("button", { name: /at/ })).toBeInTheDocument();
+  });
+
   it("offers the project brief when availability is unavailable", async () => {
     const fetchMock = vi.fn(async () =>
       jsonResponse({ ok: false, error: "booking_unavailable" }, 503),

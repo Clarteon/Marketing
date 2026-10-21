@@ -197,6 +197,8 @@ export function BookingForm({ turnstileSiteKey }: BookingFormProps) {
   }
 
   function changeTimezone(value: string) {
+    // Same zone means no refetch, so clearing the slots here would leave the picker loading forever.
+    if (value === timezone) return;
     setSelectedTimezone(value);
     setSelectedSlotId(null);
     setSlots([]);
