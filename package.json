@@ -23,7 +23,8 @@
     "db:prune": "node --env-file-if-exists=.env.local scripts/prune-leads.mjs",
     "db:backup": "node --env-file-if-exists=.env.local scripts/backup-db.mjs",
     "db:restore": "node --env-file-if-exists=.env.local scripts/restore-db.mjs",
-    "google:oauth": "node --env-file-if-exists=.env.local scripts/google-oauth.mjs"
+    "google:oauth": "node --env-file-if-exists=.env.local scripts/google-oauth.mjs",
+    "alert:test": "node --env-file-if-exists=.env.local scripts/send-test-alert.mjs"
   },
   "dependencies": {
     "@neondatabase/serverless": "1.2.0",

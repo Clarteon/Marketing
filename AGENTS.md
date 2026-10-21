@@ -41,6 +41,7 @@ npm run check:placeholders  # fail if [ALL CAPS] placeholders reach published ou
 npm run db:init        # apply the lead table to the configured Neon database
 npm run db:prune -- --dry-run  # count leads past the 12-month retention period
 npm run google:oauth   # one-time Google Calendar OAuth helper
+npm run alert:test     # send one test alert to TEAM_ALERT_EMAIL (needs the Resend env vars)
 npm run db:backup -- --out <file outside repo>  # encrypted lead and booking backup
 npm run db:restore -- --in <file> [--confirm]   # dry run by default; inserts missing rows only
 ```

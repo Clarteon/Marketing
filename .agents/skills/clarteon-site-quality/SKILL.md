@@ -40,6 +40,7 @@ Follow `.agents/rules/code-conventions.md`, `.agents/rules/security.md` and `.ag
 - `alertTeam(kind, fields)` emails `TEAM_ALERT_EMAIL` through Resend. It never throws, sends at most one email per kind per 30 minutes (bucketed idempotency key), and drops any field value that is not an id, code or count.
 - Wired today: lead save failed, lead store unavailable, booking failed, and daily email usage past `EMAIL_DAILY_ALERT_THRESHOLD` (default 80 of Resend's 100 a day). Clara's token usage uses `recordUsage` in P5.
 - Never pass names, emails, messages or notes. Add new kinds to the `AlertKind` union with a one-line summary.
+- `npm run alert:test` sends one test email in the alert format to `TEAM_ALERT_EMAIL` (needs `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_REPLY_TO`). Use it to prove a live alert reaches the real inbox.
 - `recordUsage` counts per server instance. The shared store planned for rate limits in P6 replaces it.
 
 ## Analytics
