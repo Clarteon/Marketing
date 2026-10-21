@@ -7,6 +7,7 @@ This directory holds the agent-neutral conversion of the Claude-native kit that 
 - `../AGENTS.md` (repo root): project overview, stack, commands, working agreements, a rules index and the skill index. OpenCode, Codex and other agents that follow the `AGENTS.md` convention read it automatically.
 - `.agents/rules/*.md`: the always-on rules. OpenCode loads them automatically through the `instructions` entry in `../opencode.json`. Other agents must read every file in this directory before starting work; `AGENTS.md` says so.
 - `.agents/skills/<skill-id>/SKILL.md`: the converted playbooks. Each one keeps its `references/` files beside it, and paths inside a skill are relative to its own directory. OpenCode discovers this directory as a project skill source; other agents can read the files directly or be pointed at this folder.
+- `.agents/skills/design-taste-frontend/`: the installed third-party tasteskill v2 design-review skill. Use it to critique layout, typography and motion with a real browser; it does not override the Clarteon brand rules, content honesty rules or security rules.
 
 ## Mapping
 
