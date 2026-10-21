@@ -19,8 +19,9 @@ synonyms:
 seoTitle: "Technology that starts with your problem."
 seoDescription: "Clarteon is a business-focused technology partner. We find the repetitive work slowing your business down, then automate it or build what you need."
 hero:
-  eyebrow: "Clarteon"
+  eyebrow: "Your business-focused technology partner"
   title: "Technology that starts with your problem."
+  highlight: "problem."
   intro: "Clarteon is the technology partner that believes the right solution starts with the right question. We find the repetitive work slowing your business down, then automate it or build what you need, so you can grow."
   actions:
     - label: "Book a free discovery call"

@@ -3,7 +3,7 @@ import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from "reac
 import { cx } from "@/lib/cx";
 import styles from "./ui.module.css";
 
-type Variant = "primary" | "secondary" | "text";
+type Variant = "primary" | "secondary" | "text" | "dark";
 type Size = "default" | "large";
 
 interface CommonProps {
@@ -29,6 +29,7 @@ const variantClass: Record<Variant, string> = {
   primary: styles.primary,
   secondary: styles.secondary,
   text: styles.text,
+  dark: styles.dark,
 };
 
 export function Button({

@@ -15,6 +15,7 @@ export function HomePage({ data }: { data: HomeData }) {
         variant="home"
         eyebrow={data.hero.eyebrow}
         title={data.hero.title}
+        highlight={data.hero.highlight}
         intro={data.hero.intro}
         actions={data.hero.actions.map((action) => (
           <Button
@@ -30,14 +31,10 @@ export function HomePage({ data }: { data: HomeData }) {
 
       <Section tone="stone" aria-labelledby="problems-title">
         <div className={styles.sectionHeader}>
-          <p className={styles.eyebrow}>Problems</p>
+          <p className={styles.eyebrow}>What we hear most</p>
           <h2 id="problems-title" className={styles.sectionTitle}>
             Tell us what is slowing you down.
           </h2>
-          <p className={styles.sectionIntro}>
-            Start with the work that repeats or the handoff that breaks. The right solution usually
-            becomes clearer from there.
-          </p>
         </div>
 
         <div className={styles.problemGrid}>
@@ -58,22 +55,18 @@ export function HomePage({ data }: { data: HomeData }) {
         </div>
       </Section>
 
-      <Section aria-labelledby="process-title">
+      <Section tone="ink" className={styles.processSection} aria-labelledby="process-title">
         <div className={styles.sectionHeader}>
-          <p className={styles.eyebrow}>Process</p>
+          <p className={styles.eyebrow}>How we work</p>
           <h2 id="process-title" className={styles.sectionTitle}>
             Four steps. No jargon.
           </h2>
-          <p className={styles.sectionIntro}>
-            The same four steps for a small automation or a larger build. You always know where you
-            are.
-          </p>
         </div>
 
         <ol className={styles.steps}>
           {data.steps.map((step, index) => (
             <li className={styles.step} key={step.title}>
-              <span className={styles.stepNumber}>{String(index + 1).padStart(2, "0")}</span>
+              <span className={styles.stepNumber}>{index + 1}</span>
               <h3 className={styles.stepTitle}>{step.title}</h3>
               <p className={styles.stepBody}>{step.body}</p>
             </li>
@@ -81,10 +74,9 @@ export function HomePage({ data }: { data: HomeData }) {
         </ol>
       </Section>
 
-      <Section tone="stone" aria-labelledby="proof-title">
+      <Section aria-labelledby="proof-title">
         <div className={styles.proof}>
           <div className={styles.sectionHeader}>
-            <p className={styles.eyebrow}>Proof</p>
             <h2 id="proof-title" className={styles.sectionTitle}>
               {data.proof.title}
             </h2>
@@ -98,7 +90,7 @@ export function HomePage({ data }: { data: HomeData }) {
         </div>
       </Section>
 
-      <BookingSection />
+      <BookingSection tone="lime" />
     </Page>
   );
 }

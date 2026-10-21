@@ -12,6 +12,7 @@ export type PageAction = z.infer<typeof actionSchema>;
 export const heroSchema = z.object({
   eyebrow: z.string().trim().min(1).optional(),
   title: z.string().trim().min(1),
+  highlight: z.string().trim().min(1).optional(),
   intro: z.string().trim().min(1),
   actions: z.array(actionSchema).default([]),
 });

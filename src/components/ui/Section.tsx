@@ -2,7 +2,7 @@ import type { HTMLAttributes, ReactNode } from "react";
 import { cx } from "@/lib/cx";
 import styles from "./ui.module.css";
 
-type Tone = "paper" | "stone" | "ink";
+type Tone = "paper" | "stone" | "ink" | "lime";
 type Width = "default" | "narrow";
 
 interface SectionProps extends Omit<HTMLAttributes<HTMLElement>, "children"> {
@@ -15,6 +15,7 @@ const toneClass: Record<Tone, string> = {
   paper: styles.tonePaper,
   stone: styles.toneStone,
   ink: styles.toneInk,
+  lime: styles.toneLime,
 };
 
 export function Section({

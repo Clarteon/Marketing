@@ -1,3 +1,46 @@
+@keyframes clarteon-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes clarteon-highlight-sweep {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes clarteon-dot-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.18);
+  }
+}
+
+@keyframes clarteon-slide {
+  from {
+    transform: translateY(18px);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
 .header {
   position: sticky;
   top: 0;
@@ -11,7 +54,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
-  width: min(100% - 2.5rem, var(--max-width));
+  width: min(100% - 4rem, var(--max-width));
   min-height: 76px;
   margin-inline: auto;
 }
@@ -29,6 +72,7 @@
 }
 
 .navLink {
+  position: relative;
   display: inline-flex;
   align-items: center;
   min-height: 44px;
@@ -38,10 +82,22 @@
   text-decoration: none;
 }
 
-.navLink:hover {
-  text-decoration: underline;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 0.3em;
+.navLink::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0.55rem;
+  left: 0;
+  height: 2px;
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.navLink:hover::after,
+.navLink:focus-visible::after {
+  transform: scaleX(1);
 }
 
 .headerActions {
@@ -107,6 +163,11 @@
   width: 32px;
   height: 32px;
   flex: none;
+  transition: transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.headerLogo:hover .symbol {
+  transform: rotate(-8deg) scale(1.04);
 }
 
 .wordmark {
@@ -118,7 +179,7 @@
 }
 
 .footerLogo .wordmark {
-  color: var(--paper);
+  color: var(--ink);
 }
 
 .button {
@@ -138,9 +199,18 @@
   text-decoration: none;
   cursor: pointer;
   transition:
-    background-color 150ms ease,
-    color 150ms ease,
-    border-color 150ms ease;
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.button:hover {
+  transform: translateY(-2px);
+}
+
+.button:active {
+  transform: translateY(0);
 }
 
 .primary {
@@ -150,7 +220,8 @@
 }
 
 .primary:hover {
-  filter: brightness(0.95);
+  background: var(--lime-dark);
+  border-color: var(--lime-dark);
 }
 
 .secondary {
@@ -162,6 +233,17 @@
 .secondary:hover {
   background: var(--fg);
   color: var(--bg);
+}
+
+.dark {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.dark:hover {
+  border-color: var(--graphite);
+  background: var(--graphite);
 }
 
 .text {
@@ -176,6 +258,7 @@
 
 .text:hover {
   text-decoration-thickness: 2px;
+  transform: translateX(2px);
 }
 
 .large {
@@ -190,7 +273,7 @@
 }
 
 .section {
-  padding-block: clamp(3.5rem, 7vw, 6rem);
+  padding-block: clamp(4rem, 8vw, 6rem);
   background: var(--bg);
   color: var(--fg);
 }
@@ -212,17 +295,24 @@
 .toneInk {
   --fg: var(--paper);
   --bg: var(--ink);
-  --muted: #c9c9c4;
+  --muted: #b4b4ae;
   --border: #33332f;
 }
 
+.toneLime {
+  --fg: var(--ink);
+  --bg: var(--lime);
+  --muted: #3d4412;
+  --border: #a8d21f;
+}
+
 .sectionInner {
-  width: min(100% - 2.5rem, var(--max-width));
+  width: min(100% - 4rem, var(--max-width));
   margin-inline: auto;
 }
 
 .widthNarrow {
-  width: min(100% - 2.5rem, var(--max-width-narrow));
+  width: min(100% - 4rem, var(--max-width-narrow));
 }
 
 .card {
@@ -249,39 +339,70 @@
 }
 
 .heroHome {
-  padding-block: clamp(5rem, 13vw, 10rem);
+  padding-block: clamp(4.5rem, 8vw, 6rem);
 }
 
 .heroInner {
-  max-width: 64rem;
+  max-width: var(--max-width);
 }
 
 .eyebrow {
   color: var(--muted);
-  font-size: 0.78rem;
+  font-size: 0.8125rem;
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
+.heroBadge {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 0.625rem;
+  max-width: 100%;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-pill);
+  background: var(--stone);
+  color: var(--ink);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.3;
+  animation: clarteon-rise 600ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.heroBadgeDot {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--lime);
+  box-shadow: 0 0 0 2px var(--ink);
+  animation: clarteon-dot-pulse 2.4s ease-in-out 0.8s 3;
+}
+
 .heroTitle {
-  margin-top: 1rem;
-  font-size: clamp(2.6rem, 7.5vw, 6rem);
-  letter-spacing: -0.04em;
-  line-height: 0.98;
+  max-width: 980px;
+  margin-top: 1.75rem;
+  font-size: clamp(2.75rem, 7.4vw, 6.5rem);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
   text-wrap: balance;
+  animation: clarteon-rise 700ms cubic-bezier(0.2, 0.8, 0.2, 1) 80ms both;
 }
 
 .heroHome .heroTitle {
-  max-width: 15ch;
+  max-width: 980px;
+  isolation: isolate;
 }
 
 .heroIntro {
   max-width: 58ch;
   margin-top: 1.5rem;
   color: var(--muted);
-  font-size: clamp(1.125rem, 1.8vw, 1.375rem);
+  font-size: clamp(1.125rem, 1.5vw, 1.25rem);
   text-wrap: pretty;
+  animation: clarteon-rise 700ms cubic-bezier(0.2, 0.8, 0.2, 1) 160ms both;
 }
 
 .heroActions {
@@ -290,13 +411,35 @@
   align-items: center;
   gap: 0.75rem 1.25rem;
   margin-top: 2rem;
+  animation: clarteon-rise 700ms cubic-bezier(0.2, 0.8, 0.2, 1) 240ms both;
+}
+
+.highlight {
+  position: relative;
+  display: inline;
+  padding: 0 0.14em;
+  border-radius: 0.14em;
+  white-space: nowrap;
+  z-index: 0;
+}
+
+.highlight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--lime);
+  transform: scaleX(1);
+  transform-origin: left center;
+  animation: clarteon-highlight-sweep 700ms cubic-bezier(0.2, 0.8, 0.2, 1) 300ms both;
 }
 
 .booking {
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
-  gap: clamp(2rem, 5vw, 4rem);
-  align-items: center;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1.75rem, 4vw, 2.5rem);
+  align-items: start;
 }
 
 .bookingContent {
@@ -305,20 +448,24 @@
 }
 
 .bookingTitle {
-  max-width: 18ch;
-  font-size: clamp(2rem, 4.5vw, 3.5rem);
+  max-width: 1000px;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1.04;
 }
 
 .bookingIntro {
   max-width: 55ch;
   color: var(--muted);
+  font-size: 1.125rem;
 }
 
 .bookingActions {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
 }
 
 .bookingPlaceholder {
@@ -335,8 +482,8 @@
 
 .footer {
   padding-block: clamp(3rem, 6vw, 4.5rem) 2rem;
-  background: var(--ink);
-  color: var(--paper);
+  background: var(--stone);
+  color: var(--ink);
 }
 
 .footerInner {
@@ -360,7 +507,7 @@
 }
 
 .footerTagline {
-  color: #c9c9c4;
+  color: var(--graphite);
 }
 
 .footerLinks {
@@ -374,7 +521,7 @@
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  color: var(--paper);
+  color: var(--ink);
   font-size: 0.95rem;
   text-decoration: none;
 }
@@ -390,9 +537,8 @@
   flex-wrap: wrap;
   justify-content: space-between;
   gap: 1rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid #33332f;
-  color: #a9a9a4;
+  padding-top: 2rem;
+  color: var(--graphite);
   font-size: 0.875rem;
 }
 
@@ -554,6 +700,13 @@
 }
 
 @media (max-width: 640px) {
+  .headerInner,
+  .sectionInner,
+  .widthNarrow,
+  .footerInner {
+    width: min(100% - 2rem, var(--max-width));
+  }
+
   .formGrid {
     grid-template-columns: 1fr;
   }
@@ -561,14 +714,55 @@
   .footerTop {
     flex-direction: column;
   }
+
+  .heroBadge {
+    padding: 0.45rem 0.85rem;
+    font-size: 0.8125rem;
+  }
 }
 
 @media (max-width: 520px) {
-  .heroActions {
+  .heroActions,
+  .bookingActions {
     align-items: stretch;
   }
 
-  .heroActions > * {
+  .heroActions > *,
+  .bookingActions > * {
     width: 100%;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .booking {
+      animation: clarteon-slide linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 30%;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heroBadge,
+  .heroTitle,
+  .heroIntro,
+  .heroActions {
+    animation: none;
+  }
+
+  .heroBadgeDot {
+    animation: none;
+  }
+
+  .highlight::before {
+    animation: none;
+    transform: scaleX(1);
+  }
+
+  .button:hover,
+  .text:hover,
+  .headerLogo:hover .symbol {
+    transform: none;
   }
 }

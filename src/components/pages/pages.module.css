@@ -1,13 +1,25 @@
+@keyframes section-slide {
+  from {
+    transform: translateY(18px);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
 .sectionHeader {
   display: grid;
   max-width: 54rem;
   gap: 1rem;
-  margin-bottom: clamp(2rem, 4vw, 3rem);
+  margin-bottom: clamp(2rem, 3vw, 2.5rem);
 }
 
 .sectionTitle {
-  font-size: clamp(2rem, 4.5vw, 3.5rem);
-  line-height: 1;
+  font-size: clamp(2.25rem, 4.5vw, 3.5rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.08;
 }
 
 .sectionIntro {
@@ -17,30 +29,48 @@
 
 .eyebrow {
   color: var(--muted);
-  font-size: 0.78rem;
+  font-size: 0.8125rem;
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
 .problemGrid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.25rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
 }
 
 .problemCard {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  padding: clamp(1.4rem, 2vw, 1.75rem);
+  border-color: transparent;
+  transition:
+    border-color 220ms ease,
+    transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.problemCard:hover {
+  border-color: var(--ink);
+  transform: translateY(-4px);
 }
 
 .problemTitle {
-  font-size: 1.4rem;
+  font-size: 1.5rem;
+  font-weight: 500;
+  line-height: 1.15;
+}
+
+.problemGrid .problemTitle {
+  min-height: 2.3em;
 }
 
 .problemBody {
   color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.55;
 }
 
 .solution {
@@ -50,7 +80,7 @@
   margin-top: auto;
   padding-top: 1rem;
   color: var(--muted);
-  font-size: 0.95rem;
+  font-size: 0.875rem;
 }
 
 .solution a {
@@ -63,31 +93,42 @@
 .steps {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1.5rem;
+  gap: 2rem;
   list-style: none;
 }
 
 .step {
-  padding-top: 1rem;
-  border-top: 2px solid var(--border);
+  padding-top: 0;
 }
 
 .stepNumber {
   display: block;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1.5rem;
   color: var(--graphite);
-  font-family: var(--font-fraunces), Georgia, serif;
-  font-size: 2rem;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
   line-height: 1;
 }
 
+.processSection .stepNumber {
+  color: var(--lime);
+}
+
 .stepTitle {
-  font-size: 1.4rem;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: 1.375rem;
+  font-weight: 600;
+  line-height: 1.25;
 }
 
 .stepBody {
-  margin-top: 0.6rem;
+  max-width: 30ch;
+  margin-top: 0.75rem;
   color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.55;
 }
 
 .proof {
@@ -195,6 +236,12 @@
   margin-top: 0.5rem;
 }
 
+@media (max-width: 1080px) {
+  .problemGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 980px) {
   .steps {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -206,7 +253,7 @@
   }
 }
 
-@media (max-width: 760px) {
+@media (max-width: 680px) {
   .problemGrid {
     grid-template-columns: 1fr;
   }
@@ -215,5 +262,24 @@
 @media (max-width: 560px) {
   .steps {
     grid-template-columns: 1fr;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .sectionHeader,
+    .problemGrid,
+    .steps,
+    .proof {
+      animation: section-slide linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 30%;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .problemCard:hover {
+    transform: none;
   }
 }

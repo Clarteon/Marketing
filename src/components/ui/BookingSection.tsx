@@ -5,6 +5,7 @@ import styles from "./ui.module.css";
 interface BookingSectionProps {
   id?: string;
   mode?: "link" | "placeholder";
+  tone?: "ink" | "lime";
   title?: string;
   body?: string;
 }
@@ -16,16 +17,18 @@ const defaultBody =
 export function BookingSection({
   id = "book",
   mode = "link",
+  tone = "ink",
   title = defaultTitle,
   body = defaultBody,
 }: BookingSectionProps) {
   const titleId = `${id}-title`;
+  const onLime = tone === "lime";
 
   return (
-    <Section tone="ink" id={id} aria-labelledby={titleId}>
+    <Section tone={tone} id={id} aria-labelledby={titleId}>
       <div className={styles.booking}>
         <div className={styles.bookingContent}>
-          <p className={styles.eyebrow}>Next step</p>
+          {onLime ? null : <p className={styles.eyebrow}>Next step</p>}
           <h2 id={titleId} className={styles.bookingTitle}>
             {title}
           </h2>
@@ -35,7 +38,7 @@ export function BookingSection({
         <div className={styles.bookingActions}>
           {mode === "link" ? (
             <>
-              <Button href="/contact#book" size="large">
+              <Button href="/contact#book" variant={onLime ? "dark" : "primary"} size="large">
                 Book a free discovery call
               </Button>
               <Button href="/contact#brief" variant="secondary" size="large">

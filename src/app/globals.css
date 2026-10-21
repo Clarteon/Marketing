@@ -4,6 +4,7 @@
   --stone: #f4f4f2;
   --graphite: #5c5c58;
   --lime: #c6f432;
+  --lime-dark: #b8e52c;
   --line: #e4e4e0;
 
   --radius-sm: 8px;
@@ -17,7 +18,7 @@
   --space-6: 3rem;
   --space-8: 4rem;
 
-  --max-width: 76rem;
+  --max-width: 75rem;
   --max-width-narrow: 48rem;
 }
 
@@ -53,9 +54,9 @@ h3,
 h4 {
   margin: 0;
   font-family: var(--font-fraunces, Georgia), Georgia, "Times New Roman", serif;
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.05;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.03em;
 }
 
 p {
@@ -210,8 +211,10 @@ section[id] {
   *,
   *::before,
   *::after {
+    animation-delay: 0ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+    transition-delay: 0ms !important;
     transition-duration: 0.01ms !important;
   }
 }

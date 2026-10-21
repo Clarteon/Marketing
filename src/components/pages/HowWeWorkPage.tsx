@@ -35,7 +35,7 @@ export function HowWeWorkPage({ data }: { data: HowWeWorkData }) {
         <ol className={styles.steps}>
           {data.steps.map((step, index) => (
             <li className={styles.step} key={step.title}>
-              <span className={styles.stepNumber}>{String(index + 1).padStart(2, "0")}</span>
+              <span className={styles.stepNumber}>{index + 1}</span>
               <h3 className={styles.stepTitle}>{step.title}</h3>
               <p className={styles.stepBody}>{step.body}</p>
             </li>

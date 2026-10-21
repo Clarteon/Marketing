@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { BookingSection } from "@/components/ui/BookingSection";
 import { Button } from "@/components/ui/Button";
 import { Logo } from "@/components/ui/Logo";
+import { PageHero } from "@/components/ui/PageHero";
 
 describe("design system", () => {
   it("renders a link button for navigation", () => {
@@ -35,6 +36,22 @@ describe("design system", () => {
     expect(screen.getByRole("link", { name: "Book a free discovery call" })).toHaveAttribute(
       "href",
       "/contact#book",
+    );
+  });
+
+  it("renders the home badge and highlighted phrase", () => {
+    render(
+      <PageHero
+        variant="home"
+        eyebrow="Your business-focused technology partner"
+        title="Technology that starts with your problem."
+        highlight="problem."
+      />,
+    );
+
+    expect(screen.getByText("Your business-focused technology partner")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1 }).querySelector("span")).toHaveTextContent(
+      "problem.",
     );
   });
 
