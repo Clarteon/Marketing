@@ -1,5 +1,6 @@
 import "server-only";
 import { getConfig } from "@/lib/config";
+import { logServerEvent } from "@/lib/log";
 import type { EmailKind, Lead, LeadStore } from "@/lib/leads/store";
 import { EmailNotConfiguredError, EmailSendError } from "./errors";
 import { sendEmail } from "./resend";
@@ -77,6 +78,11 @@ export async function sendLeadEmails(lead: Lead, store?: LeadStore): Promise<Lea
   }
 
   if (failures.length > 0) {
+    logServerEvent("lead_email_delivery_failed", {
+      leadId: lead.id,
+      failures: failures.join(","),
+    });
+
     const failureMessage = buildFailureAlert(lead.id, failures);
     try {
       await sendEmail({

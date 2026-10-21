@@ -27,6 +27,16 @@ function json(
   });
 }
 
+function safeErrorCode(error: unknown): string {
+  if (error && typeof error === "object") {
+    const code = (error as { code?: unknown }).code;
+    if (typeof code === "string" && /^[A-Za-z0-9_]{1,40}$/.test(code)) return code;
+    const name = (error as { name?: unknown }).name;
+    if (typeof name === "string" && /^[A-Za-z0-9_]{1,40}$/.test(name)) return name;
+  }
+  return "unknown";
+}
+
 function emailFallbackLead(input: LeadInput): Lead {
   return {
     id: input.requestId,
@@ -52,8 +62,11 @@ async function saveByEmailOnly(input: LeadInput): Promise<boolean> {
       receipt: result.receipt,
     });
     return result.team;
-  } catch {
-    logServerEvent("lead_fallback_email_failed", { leadId: lead.id });
+  } catch (error) {
+    logServerEvent("lead_fallback_email_failed", {
+      leadId: lead.id,
+      code: safeErrorCode(error),
+    });
     return false;
   }
 }
@@ -140,8 +153,11 @@ export async function POST(request: Request): Promise<Response> {
       teamSize: input.teamSize,
       source: "website-form",
     });
-  } catch {
-    logServerEvent("lead_save_failed", { requestId: input.requestId });
+  } catch (error) {
+    logServerEvent("lead_save_failed", {
+      requestId: input.requestId,
+      code: safeErrorCode(error),
+    });
     if (await saveByEmailOnly(input)) return json({ ok: true });
     return json({ ok: false, error: "service_unavailable" }, 503);
   }
