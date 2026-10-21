@@ -12,6 +12,10 @@ const mocks = vi.hoisted(() => ({
   verifyTurnstile: vi.fn(),
 }));
 
+const alertTeamMock = vi.hoisted(() => vi.fn().mockResolvedValue(true));
+
+vi.mock("@/lib/alerts", () => ({ alertTeam: alertTeamMock }));
+
 vi.mock("@/lib/leads/store", () => ({
   getLeadStore: mocks.getLeadStore,
 }));
@@ -82,6 +86,7 @@ describe("POST /api/lead", () => {
     mocks.sendLeadEmails.mockReset();
     mocks.verifyTurnstile.mockReset();
     mocks.getLeadStore.mockReset();
+    alertTeamMock.mockClear();
 
     mocks.getLeadStore.mockReturnValue({
       save: mocks.save,
@@ -240,6 +245,10 @@ describe("POST /api/lead", () => {
     expect(fallbackLead.id).toBe(body.requestId);
     expect(fallbackLead.email).toBe(body.email);
     expect(mocks.sendLeadEmails.mock.calls[0][1]).toBeUndefined();
+    expect(alertTeamMock).toHaveBeenCalledWith("lead_save_failed", {
+      requestId: body.requestId,
+      code: "Error",
+    });
   });
 
   it("falls back to email when lead storage is not configured", async () => {
@@ -252,6 +261,7 @@ describe("POST /api/lead", () => {
     expect(response.status).toBe(200);
     expect(mocks.save).not.toHaveBeenCalled();
     expect(mocks.sendLeadEmails).toHaveBeenCalledOnce();
+    expect(alertTeamMock).toHaveBeenCalledWith("lead_store_unavailable", expect.any(Object));
   });
 
   it("returns 503 when both storage and the fallback email fail", async () => {

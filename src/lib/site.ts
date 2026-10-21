@@ -10,6 +10,7 @@ export const navItems = [
 export const site = {
   name: "Clarteon",
   tagline: "Technology that starts with your problem.",
+  email: "info@clarteon.tech",
   cta: { href: "/contact#book", label: "Book a call" },
 } as const;
 

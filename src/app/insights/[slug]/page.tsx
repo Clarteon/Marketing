@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArticlePage } from "@/components/pages/ArticlePage";
 import { getPage, getPublished } from "@/lib/content";
+import { JsonLd } from "@/components/ui/JsonLd";
 import { metadataForPage } from "@/lib/metadata";
+import { getSiteUrl } from "@/lib/site";
+import { articleJsonLd } from "@/lib/structured-data";
 
 export const dynamicParams = false;
 
@@ -27,5 +30,10 @@ export default async function InsightPage({ params }: { params: Promise<{ slug: 
 
   if (!page) notFound();
 
-  return <ArticlePage page={page} eyebrow="Insight" />;
+  return (
+    <>
+      <JsonLd data={articleJsonLd(page, getSiteUrl())} />
+      <ArticlePage page={page} eyebrow="Insight" />
+    </>
+  );
 }

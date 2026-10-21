@@ -13,7 +13,7 @@ Source of truth for decisions: the plan document (https://claude.ai/artifact/REh
 - Knowledge: site content synced on publish into a keyword search index (RAG), embeddings documented as a future upgrade
 - Booking: Google Calendar API with Google Meet links
 - Email: Resend free plan, sent from a verified Clarteon domain
-- Lead log: optional small database, with backups if used
+- Lead log: Neon Postgres (see `db/README.md`), with your own scheduled backups
 - Hosting: Vercel (decided October 20, 2026), native Next.js with streaming and preview deployments. Confirm the current Hobby plan limits before launch.
 
 ## Commands
@@ -33,10 +33,17 @@ npm run format:check   # Prettier check
 npm run typecheck      # next typegen, then tsc --noEmit
 npm test               # Vitest run
 npm run test:watch     # Vitest watch mode
+npm run test:e2e       # Playwright: builds, serves on :3100, runs e2e/ (run `npx playwright install chromium` once)
+npm run lhci           # Lighthouse budget against the last build
 npm run check:placeholders  # fail if [ALL CAPS] placeholders reach published output
+npm run db:init        # apply the lead table to the configured Neon database
+npm run db:prune -- --dry-run  # count leads past the 12-month retention period
+npm run google:oauth   # one-time Google Calendar OAuth helper
+npm run db:backup -- --out <file outside repo>  # encrypted lead and booking backup
+npm run db:restore -- --in <file> [--confirm]   # dry run by default; inserts missing rows only
 ```
 
-CI and releases call the organization-wide reusable workflows in `Clarteon/.github` (`@v1`). The caller in `.github/workflows/ci.yml` runs lint, formatting, type check, tests, the placeholder check, a production dependency audit and the build; `.github/workflows/release.yml` runs the same checks on a `v*` tag, then publishes a GitHub release. Vercel deploys previews and production. The knowledge build command is added in P4.
+CI and releases call the organization-wide reusable workflows in `Clarteon/.github` (`@v1`). The caller in `.github/workflows/ci.yml` runs lint, formatting, type check, tests, the placeholder check, a production dependency audit and the build, plus a local `browser` job with the e2e suite and the Lighthouse budget; `.github/workflows/release.yml` runs the same checks on a `v*` tag, then publishes a GitHub release. Vercel deploys previews and production. The knowledge build command is added in P4.
 
 ## Working agreements
 
@@ -57,6 +64,7 @@ CI and releases call the organization-wide reusable workflows in `Clarteon/.gith
 @.claude/rules/clara-behavior.md
 @.claude/rules/free-tier-and-limits.md
 @.claude/rules/code-conventions.md
+@.claude/rules/seo.md
 
 ## Skills (load when the task matches)
 
@@ -70,6 +78,8 @@ CI and releases call the organization-wide reusable workflows in `Clarteon/.gith
 - `clarteon-clara-tests`: the Clara test script and regression runs
 - `clarteon-security-review`: pre-launch security audit
 - `clarteon-case-study-writer`: turn a project into an approved case study
+- `clarteon-seo`: search metadata, structured data, Search Console launch, Insights articles
+- `clarteon-site-quality`: e2e and Lighthouse tests, alerts, analytics, backups and restore
 - `clarteon-launch`: go-live checklist and post-launch review loop
 
 ## Definition of done

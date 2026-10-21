@@ -71,14 +71,21 @@ export function buildVisitorReceipt(lead: Lead): EmailContent {
     "",
     "If you want to add anything, reply to this message.",
     "",
+    "You received this because you sent a project brief at clarteon.tech.",
+    "",
     "Clarteon",
+    "info@clarteon.tech",
+    "https://clarteon.tech",
   ].join("\n");
 
   const html = [
     `<p>Hi ${escapeHtml(lead.name)},</p>`,
     "<p>Thanks for telling us what is slowing you down. A person on the Clarteon team will read your project brief and reply to this email.</p>",
     "<p>If you want to add anything, reply to this message.</p>",
-    "<p>Clarteon</p>",
+    "<p>You received this because you sent a project brief at clarteon.tech.</p>",
+    "<p>Clarteon<br />",
+    "info@clarteon.tech<br />",
+    '<a href="https://clarteon.tech">https://clarteon.tech</a></p>',
   ].join("\n");
 
   return { subject, text, html };

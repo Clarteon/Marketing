@@ -22,7 +22,7 @@ hero:
   intro: "Three ways in: book a discovery call, send a project brief, or message us directly."
 booking:
   title: "Book a free discovery call"
-  body: "Scheduling is being connected. The project brief form below is open."
+  body: "Choose a time that works for you. The call is 30 minutes, and you will get a Google Meet link by email."
 brief:
   title: "Send a project brief"
   intro: "Tell us what is slow, what you have tried, and what a good outcome looks like. We will reply by email."

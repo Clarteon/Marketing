@@ -26,15 +26,17 @@ Product
 - [ ] Degraded mode tested: chat down still leaves the form and booking working
 
 Quality
-- [ ] SEO basics: unique titles and descriptions, sitemap file, robots rules, canonical URLs, social share image
+- [ ] SEO: every step in the `clarteon-seo` launch section is done (canonical host `clarteon.tech`, production indexing on, sitemap submitted in Search Console, structured data validated, previews still `noindex`)
 - [ ] Accessibility checks pass and keyboard use is verified
-- [ ] Performance is reasonable on a mid-range phone and a slow connection
-- [ ] Analytics decision made. If used, prefer a privacy-friendly approach, disclose it on the Privacy page, and add a consent banner only if the approach requires one
+- [ ] The `browser` CI job passes: e2e tests on desktop and mobile, and the Lighthouse budget (see `clarteon-site-quality`)
+- [ ] Cloudflare Web Analytics: site added in the Cloudflare dashboard, `NEXT_PUBLIC_CF_ANALYTICS_TOKEN` set for Production only, beacon seen loading on production, Privacy page names it
 
 Operations
 - [ ] Production and development keys are separate, and keys are rotated if ever exposed
 - [ ] Error and usage alerts reach a person who will act on them
-- [ ] A rollback path is known and tested (previous deployment can be restored)
+- [ ] A rollback path is known and tested (previous deployment can be restored with Vercel's Instant Rollback)
+- [ ] A first encrypted backup is taken and a test restore to a Neon branch has worked. Backups are scheduled and someone owns them
+- [ ] Terms of use: published after lawyer approval with a footer link, or explicitly deferred by a human
 - [ ] Domain, DNS and certificates are in order
 
 ## After launch: weekly review loop (P8)
@@ -45,7 +47,8 @@ Every week, review and record:
 2. A sample of chats against the test script: any new failures become new scenarios
 3. Usage against the daily allowance, and failed bookings or emails
 4. Upgrade triggers: embeddings when keyword search misses questions the site answers, and a paid model tier when daily chats regularly hit the cap
-5. One new Insights article tied to a common problem, ending in a booking section
+5. One new Insights article tied to a common problem, ending in a booking section (see `clarteon-seo`)
+6. Monthly: the Search Console review in `clarteon-seo`
 
 ## Done when
 

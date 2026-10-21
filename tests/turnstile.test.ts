@@ -31,6 +31,17 @@ describe("Turnstile verification", () => {
     await expect(verifyTurnstile("token", "unknown", "secret")).resolves.toBe(false);
   });
 
+  it("accepts the booking action for the booking route", async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+
+    fetchMock.mockResolvedValueOnce(response({ success: true, action: "book-call" }));
+    await expect(verifyTurnstile("token", "unknown", "secret", "book-call")).resolves.toBe(true);
+
+    fetchMock.mockResolvedValueOnce(response({ success: true, action: "lead-form" }));
+    await expect(verifyTurnstile("token", "unknown", "secret", "book-call")).resolves.toBe(false);
+  });
+
   it("rejects an unsuccessful token", async () => {
     vi.stubGlobal(
       "fetch",

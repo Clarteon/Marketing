@@ -15,7 +15,7 @@ This file is the agent-neutral equivalent of `CLAUDE.md`. The always-on rules li
 - Knowledge: site content synced on publish into a keyword search index (RAG), embeddings documented as a future upgrade
 - Booking: Google Calendar API with Google Meet links
 - Email: Resend free plan, sent from a verified Clarteon domain
-- Lead log: optional small database, with backups if used
+- Lead log: Neon Postgres (see `db/README.md`), with your own scheduled backups
 - Hosting: Vercel (decided October 20, 2026), native Next.js with streaming and preview deployments. Confirm the current Hobby plan limits before launch.
 
 ## Commands
@@ -35,12 +35,17 @@ npm run format:check   # Prettier check
 npm run typecheck      # next typegen, then tsc --noEmit
 npm test               # Vitest run
 npm run test:watch     # Vitest watch mode
+npm run test:e2e       # Playwright: builds, serves on :3100, runs e2e/ (run `npx playwright install chromium` once)
+npm run lhci           # Lighthouse budget against the last build
 npm run check:placeholders  # fail if [ALL CAPS] placeholders reach published output
 npm run db:init        # apply the lead table to the configured Neon database
 npm run db:prune -- --dry-run  # count leads past the 12-month retention period
+npm run google:oauth   # one-time Google Calendar OAuth helper
+npm run db:backup -- --out <file outside repo>  # encrypted lead and booking backup
+npm run db:restore -- --in <file> [--confirm]   # dry run by default; inserts missing rows only
 ```
 
-CI and releases call the organization-wide reusable workflows in `Clarteon/.github` (`@v1`). The caller in `.github/workflows/ci.yml` runs lint, formatting, type check, tests, the placeholder check, a production dependency audit and the build; `.github/workflows/release.yml` runs the same checks on a `v*` tag, then publishes a GitHub release. Vercel deploys previews and production. The knowledge build command is added in P4.
+CI and releases call the organization-wide reusable workflows in `Clarteon/.github` (`@v1`). The caller in `.github/workflows/ci.yml` runs lint, formatting, type check, tests, the placeholder check, a production dependency audit and the build, plus a local `browser` job with the e2e suite and the Lighthouse budget; `.github/workflows/release.yml` runs the same checks on a `v*` tag, then publishes a GitHub release. Vercel deploys previews and production. The knowledge build command is added in P4.
 
 ## Working agreements
 
@@ -63,8 +68,9 @@ Read every file in `.agents/rules/` before starting work. They are mandatory, an
 | `.agents/rules/security.md` | secrets, endpoints, prompt injection, web app, email and calendar, failure handling |
 | `.agents/rules/privacy-and-data.md` | minimum collection, privacy notice, retention, minors, legal review |
 | `.agents/rules/clara-behavior.md` | identity, voice, flow, hard rules, tools, quality bar |
-| `.agents/rules/free-tier-and-limits.md` | Groq limits, Resend, Calendar quotas, Supabase, fallback behavior |
+| `.agents/rules/free-tier-and-limits.md` | Groq limits, Resend, Calendar quotas, Neon lead log, fallback behavior |
 | `.agents/rules/code-conventions.md` | stack, folder layout, validation, timeouts, tests, commits |
+| `.agents/rules/seo.md` | canonical host, indexing switch, titles and descriptions, structured data, dates, search content |
 
 Non-negotiables if you read nothing else:
 
@@ -88,6 +94,8 @@ Skills are playbooks in `.agents/skills/`, one `SKILL.md` per skill directory. L
 - `clarteon-clara-tests` (P6): the Clara test script and regression runs
 - `clarteon-security-review` (P6): pre-launch security audit
 - `clarteon-case-study-writer` (P7): turn a project into an approved case study
+- `clarteon-seo` (P1, P7, P8): search metadata, structured data, Search Console launch, Insights articles
+- `clarteon-site-quality` (P6 to P8): e2e and Lighthouse tests, alerts, analytics, backups and restore
 - `clarteon-launch` (P7 and P8): go-live checklist and post-launch review loop
 
 ## Definition of done
@@ -97,13 +105,3 @@ A change is done when it builds, type checks, lints and passes tests, follows th
 ## Provenance
 
 Converted from `CLAUDE.md` and `.claude/rules/*.md` on October 20, 2026. Rule copies live in `.agents/rules/`, skill copies in `.agents/skills/`, and `opencode.json` loads the rules as always-on instructions. The Claude-native originals are unchanged. If a rule changes, update this file's index, the matching file in `.agents/rules/` and the matching file in `.claude/rules/` together so the two agent families stay aligned.
-
-<!-- BEGIN:nextjs-agent-rules -->
-
-## This is NOT the Next.js you know
-
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
-
-This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
-
-<!-- END:nextjs-agent-rules -->

@@ -1,7 +1,15 @@
 import type { Metadata } from "next";
 import type { ContentPage } from "./content";
 
-function pathForPage(page: ContentPage): string {
+// Page-level openGraph replaces the root one, so the default share image is repeated here.
+const shareImage = {
+  url: "/opengraph-image",
+  width: 1200,
+  height: 630,
+  alt: "Clarteon: Technology that starts with your problem.",
+};
+
+export function pathForPage(page: ContentPage): string {
   const { slug, type } = page.frontMatter;
 
   if (type === "insight") return `/insights/${slug}`;
@@ -30,10 +38,18 @@ export function metadataForPage(page: ContentPage): Metadata {
       url: path,
       siteName: "Clarteon",
       locale: "en",
-      type: isArticle ? "article" : "website",
+      images: [shareImage],
+      ...(isArticle
+        ? {
+            type: "article",
+            publishedTime: frontMatter.publishedAt,
+            modifiedTime: frontMatter.updatedAt ?? frontMatter.publishedAt,
+          }
+        : { type: "website" }),
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
+      images: [shareImage],
       title: socialTitle,
       description,
     },

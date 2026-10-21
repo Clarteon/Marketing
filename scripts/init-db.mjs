@@ -19,9 +19,9 @@ try {
   for (const statement of statements) {
     await sql.query(statement);
   }
-  console.log("Lead database schema is ready.");
+  console.log("Lead and booking database schema is ready.");
 } catch (error) {
-  console.error("Could not apply the lead database schema.");
+  console.error("Could not apply the lead and booking database schema.");
   console.error(error instanceof Error ? error.name : "Unknown error");
   process.exitCode = 1;
 }

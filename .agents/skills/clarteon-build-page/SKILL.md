@@ -16,8 +16,8 @@ Follow `.agents/rules/sitemap-and-content.md` and `.agents/rules/brand-and-copy.
 3. Use only components from the design system. If a needed component is missing, add it to the design system first.
 4. Write copy in Clarteon's voice: name the problem before the product, plain words, short sentences, say "discovery call". Use the approved homepage headline and subhead exactly.
 5. Include on every page: the header with Book a call, the booking section near the end, the chat widget slot, and the footer with the Privacy link.
-6. Add SEO basics: unique title and meta description, one `h1`, logical headings, canonical URL, and Open Graph tags.
-7. For Insights articles: tie the article to one common problem, end with a booking section, and link the most relevant published case study if one exists.
+6. Follow `.agents/rules/seo.md` and the page checklist in the `clarteon-seo` skill: metadata through `metadataForPage`, unique title and description within the tested lengths, one `h1`, logical headings, and JSON-LD on articles.
+7. For Insights articles: use the article playbook in `clarteon-seo`. Tie the article to one common problem, end with a booking section, and link the most relevant published case study if one exists.
 8. For Our work and case studies: only published content with recorded client permission. Use `clarteon-case-study-writer` to create case studies.
 9. Replace nothing with invented facts. Unknown facts stay as `[BRACKET PLACEHOLDERS]` in draft content, and `status: draft` keeps them off production.
 

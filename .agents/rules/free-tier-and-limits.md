@@ -31,7 +31,13 @@ Standard use is free. Default quotas: 10,000 requests/min per project and 600 pe
 
 ## Database (optional lead log)
 
-Supabase free plan: 500 MB, paused after a week of inactivity, no automatic backups. If a lead log is used on a free plan, schedule your own backups and make sure a pause cannot silently break lead capture.
+The lead log uses Neon Postgres (decided in P2, see `db/README.md`). The free plan does not guarantee automatic backups, so schedule your own encrypted exports. Re-verify Neon's current free-plan storage, compute and idle-suspend limits on its pricing page before launch, and make sure a suspended or unavailable database cannot silently break lead capture.
+
+Team alerts also use Resend. They are capped at one email per kind per 30 minutes, and a usage alert fires once a day when sends pass `EMAIL_DAILY_ALERT_THRESHOLD` (default 80).
+
+## Analytics: Cloudflare Web Analytics
+
+Free and cookieless. Re-verify its current limits and data terms on Cloudflare's docs before launch.
 
 ## Behavior when limits are hit
 

@@ -48,6 +48,21 @@ describe("metadataForPage", () => {
     expect(metadata.openGraph).toMatchObject({ type: "article" });
   });
 
+  it("adds article dates and a large share card", () => {
+    const metadata = metadataForPage(
+      makePage({ type: "insight", publishedAt: "2026-10-01", updatedAt: "2026-10-15" }),
+    );
+
+    expect(metadata.openGraph).toMatchObject({
+      publishedTime: "2026-10-01",
+      modifiedTime: "2026-10-15",
+    });
+    expect(metadata.twitter).toMatchObject({ card: "summary_large_image" });
+    expect(metadata.openGraph?.images).toEqual([
+      expect.objectContaining({ url: "/opengraph-image" }),
+    ]);
+  });
+
   it("puts case study canonicals under /our-work", () => {
     const metadata = metadataForPage(
       makePage({ title: "A client story", slug: "client-story", type: "case-study" }),

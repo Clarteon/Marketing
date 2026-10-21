@@ -13,7 +13,8 @@ Seven pages plus a privacy page. Our work and Insights have individual pages ben
 | Insights | Show expertise and keep fresh content flowing | Short articles tied to common problems, each ending in a booking section |
 | About | Tell the story behind the name and the team | Meaning of Clarteon, the team, how Clarteon works with clients |
 | Contact | Offer every way in | Discovery call booking, project brief form, direct message |
-| Privacy | Explain how chats and forms are handled | What Clara and the forms collect, third-party AI processing, how to request removal |
+| Privacy | Explain how chats and forms are handled | What Clara and the forms collect, third-party AI processing, analytics, how to request removal |
+| Terms of use (draft) | Website terms, kept in draft until a lawyer approves | Drafted in `content/pages/terms.md`. On publish, add a footer link next to Privacy |
 
 ## On every page
 

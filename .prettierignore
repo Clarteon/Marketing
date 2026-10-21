@@ -7,3 +7,6 @@ next-env.d.ts
 .agents
 .claude
 public
+test-results
+playwright-report
+.lighthouseci

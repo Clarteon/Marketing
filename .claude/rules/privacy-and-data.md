@@ -9,4 +9,6 @@ Clara and the forms collect names, emails and business details. Handle them care
 - Keep personal data out of application logs and error reports.
 - If a visitor says or implies they are under 18 or a student, collect no personal details and offer no booking.
 - Check which privacy laws apply to Clarteon and its clients with a qualified lawyer before launch. Do not present legal conclusions as fact.
+- Analytics: Cloudflare Web Analytics only (cookieless, decided October 21, 2026), loaded only when its Production token is set and named on the Privacy page. No other analytics, tracking pixels or session recording without a human decision.
+- Backups hold personal data: encrypt them, keep them out of the repo and out of shared drives, and delete them on the same retention schedule as the data.
 - Read the free-tier data terms of every provider that receives visitor text (the chat model provider, and the embeddings provider if embeddings are added) before sending real visitor data.

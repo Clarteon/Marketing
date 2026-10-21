@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter } from "next/font/google";
 import type { ReactNode } from "react";
+import { Analytics } from "@/components/ui/Analytics";
 import { ChatWidgetSlot } from "@/components/ui/ChatWidgetSlot";
 import { Footer } from "@/components/ui/Footer";
 import { Header } from "@/components/ui/Header";
@@ -39,7 +40,7 @@ export const metadata: Metadata = {
       "Clarteon is the technology partner that believes the right solution starts with the right question.",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Clarteon",
     description:
       "Clarteon is the technology partner that believes the right solution starts with the right question.",
@@ -60,6 +61,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {children}
         <Footer />
         <ChatWidgetSlot />
+        <Analytics />
       </body>
     </html>
   );

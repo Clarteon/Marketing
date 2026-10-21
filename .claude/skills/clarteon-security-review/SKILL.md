@@ -26,7 +26,9 @@ Go through each area, test it for real where possible, and record the evidence. 
 | Web app | Confirm chat output is rendered safely, security headers are present, HTTPS only, and the dependency audit is clean |
 | Outages | Disable each provider in turn (model, calendar, email, database) and confirm the degraded behavior and that no lead is lost |
 | Lost leads | Break email sending after a lead is saved and confirm the lead survives and the retry works. Confirm lead-log backups if a database is used |
-| Monitoring | Trigger a failed booking, a failed email and a usage threshold, and confirm alerts arrive without personal data |
+| Monitoring | Trigger a failed booking, a failed email and a usage threshold, and confirm alerts arrive without personal data. Unit tests in `tests/alerts.test.ts` cover the logic; also send one live alert to the real team inbox |
+| Backups | Run `npm run db:backup`, then `npm run db:restore` against a Neon branch, and confirm row counts match and the file is unreadable without the passphrase |
+| Browser | `npm run test:e2e` and `npm run lhci` pass, and the e2e suite shows no console errors (CSP breaks surface there) |
 
 ## Report format
 

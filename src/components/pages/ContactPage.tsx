@@ -35,9 +35,10 @@ export function ContactPage({
 
       <BookingSection
         id="book"
-        mode="placeholder"
+        mode="form"
         title={data.booking.title}
         body={data.booking.body}
+        turnstileSiteKey={turnstileSiteKey}
       />
 
       <Section tone="stone" id="brief" aria-labelledby="brief-title">

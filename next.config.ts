@@ -2,16 +2,20 @@ import type { NextConfig } from "next";
 
 const isDev = process.env.NODE_ENV === "development";
 const turnstileOrigin = "https://challenges.cloudflare.com";
+// Cloudflare Web Analytics origins are allowed only when the site token is set.
+const analyticsEnabled = Boolean(process.env.NEXT_PUBLIC_CF_ANALYTICS_TOKEN);
+const analyticsScript = analyticsEnabled ? " https://static.cloudflareinsights.com" : "";
+const analyticsConnect = analyticsEnabled ? " https://cloudflareinsights.com" : "";
 
 // The CSP allows inline scripts because Next.js injects its hydration bootstrap
 // inline. Tighten this with per-request nonces during the P6 hardening pass.
 const contentSecurityPolicy = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline' ${isDev ? "'unsafe-eval' " : ""}${turnstileOrigin}`,
+  `script-src 'self' 'unsafe-inline' ${isDev ? "'unsafe-eval' " : ""}${turnstileOrigin}${analyticsScript}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "font-src 'self' data:",
-  `connect-src 'self' ${turnstileOrigin}${isDev ? " ws: wss:" : ""}`,
+  `connect-src 'self' ${turnstileOrigin}${analyticsConnect}${isDev ? " ws: wss:" : ""}`,
   `frame-src ${turnstileOrigin}`,
   "object-src 'none'",
   "base-uri 'self'",

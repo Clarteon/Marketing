@@ -3,9 +3,10 @@
 ```
 ---
 title: [Short title naming the problem]
-slug: our-work/[slug]
+slug: [slug]
 type: case-study
 status: draft
+publishedAt: [YYYY-MM-DD, set on publish]
 summary: [One or two plain sentences]
 tags: [..]
 synonyms: [..]

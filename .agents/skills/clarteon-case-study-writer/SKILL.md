@@ -37,7 +37,7 @@ Ask a human for the facts. Do not invent any of them:
 
 ## Publishing
 
-Create a content file in `content/case-studies/` with `type: case-study`, `status: draft` until the checklist is complete, then `published`. Publishing triggers the knowledge sync, after which Clara may mention it. Link the most relevant case study from related Insights articles.
+Create a content file in `content/case-studies/` with `type: case-study`, `status: draft` until the checklist is complete, then `published` with `publishedAt` set to the publish date (the build fails without it). Follow `.agents/rules/seo.md` for the title and description. Publishing triggers the knowledge sync, after which Clara may mention it. Link the most relevant case study from related Insights articles.
 
 ## Done when
 

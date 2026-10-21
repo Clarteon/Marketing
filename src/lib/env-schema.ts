@@ -33,6 +33,7 @@ export const envSchema = z.object({
   GOOGLE_CALENDAR_ID: optionalString,
   GOOGLE_CLIENT_ID: optionalString,
   GOOGLE_CLIENT_SECRET: optionalString,
+  GOOGLE_REFRESH_TOKEN: optionalString,
   GOOGLE_SERVICE_ACCOUNT_EMAIL: optionalEmail,
   GOOGLE_PRIVATE_KEY: optionalString,
 
@@ -57,6 +58,12 @@ export const envSchema = z.object({
   RATE_LIMIT_WINDOW_SECONDS: positiveInteger(60),
   RATE_LIMIT_MAX_REQUESTS: positiveInteger(20),
   CHAT_MAX_MESSAGES: positiveInteger(20),
+
+  // Alerts (Resend free plan sends 100 emails a day)
+  EMAIL_DAILY_ALERT_THRESHOLD: positiveInteger(80),
+
+  // Analytics (Cloudflare Web Analytics, set in Production only)
+  NEXT_PUBLIC_CF_ANALYTICS_TOKEN: optionalString,
 });
 
 export type Env = z.infer<typeof envSchema>;

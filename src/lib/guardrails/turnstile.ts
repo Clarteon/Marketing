@@ -20,6 +20,7 @@ export async function verifyTurnstile(
   token: string,
   remoteIp: string,
   secret: string,
+  expectedAction = TURNSTILE_ACTION,
 ): Promise<boolean> {
   if (!secret) throw new TurnstileUnavailableError("Turnstile is not configured.");
 
@@ -47,6 +48,6 @@ export async function verifyTurnstile(
   }
 
   return (
-    result.success === true && (result.action === undefined || result.action === TURNSTILE_ACTION)
+    result.success === true && (result.action === undefined || result.action === expectedAction)
   );
 }

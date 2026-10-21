@@ -480,6 +480,132 @@
   color: var(--muted);
 }
 
+.bookingFormLayout {
+  grid-template-columns: minmax(0, 1fr) minmax(22rem, 34rem);
+}
+
+.bookingFormLayout .bookingActions {
+  display: block;
+}
+
+.bookingFormPanel {
+  --fg: var(--ink);
+  --muted: var(--graphite);
+  --border: var(--line);
+  display: grid;
+  gap: 1.25rem;
+  width: 100%;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.bookingFormHeader {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.bookingFormTitle {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.bookingTimezone {
+  display: grid;
+  gap: 0.5rem;
+  max-width: 24rem;
+}
+
+.bookingSlotGroups {
+  display: grid;
+  gap: 1.25rem;
+  max-height: 26rem;
+  overflow-y: auto;
+  padding-right: 0.35rem;
+}
+
+.bookingSlotDay {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.bookingSlotDayLabel {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.bookingSlotGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.bookingSlot {
+  min-height: 44px;
+  padding: 0.5rem 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}
+
+.bookingSlot:hover {
+  border-color: var(--ink);
+}
+
+.bookingSlot[aria-pressed="true"] {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.bookingSlot:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.bookingSelected {
+  display: grid;
+  gap: 0.5rem;
+  padding: 1rem;
+  border-radius: var(--radius-sm);
+  background: var(--stone);
+}
+
+.bookingSelected p {
+  font-size: 0.95rem;
+}
+
+.bookingConfirmation {
+  display: grid;
+  gap: 1rem;
+}
+
+.bookingConfirmationTime {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: clamp(1.25rem, 2.5vw, 1.7rem);
+  line-height: 1.2;
+}
+
+.bookingFallback {
+  display: grid;
+  gap: 1rem;
+  padding: 1.25rem;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.bookingFallback p {
+  color: var(--graphite);
+}
+
 .footer {
   padding-block: clamp(3rem, 6vw, 4.5rem) 2rem;
   background: var(--stone);
@@ -683,6 +809,10 @@
   .desktopNav,
   .headerCta {
     display: none;
+  }
+
+  .bookingFormLayout {
+    grid-template-columns: 1fr;
   }
 }
 

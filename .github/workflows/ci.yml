@@ -16,3 +16,44 @@ concurrency:
 jobs:
   ci:
     uses: Clarteon/.github/.github/workflows/ci.yml@v1
+
+  browser:
+    name: Browser tests and Lighthouse
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      CI: "true"
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+          cache: npm
+
+      - run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      # Builds the site like a preview deploy (indexing off, fake Turnstile key), then runs e2e.
+      - name: End-to-end tests
+        run: npm run test:e2e
+
+      # Reuses the build from the e2e step.
+      # shortcut: non-blocking because Lighthouse 12.6 (bundled in @lhci/cli 0.15.1) intermittently
+      # fails with NO_NAVSTART on current Chrome; make it blocking after two clean CI runs.
+      - name: Lighthouse budget
+        continue-on-error: true
+        run: npm run lhci
+
+      - name: Upload reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-reports
+          path: |
+            playwright-report/
+            .lighthouseci/
+          retention-days: 7

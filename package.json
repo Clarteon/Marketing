@@ -16,9 +16,14 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "lhci": "lhci autorun",
     "check:placeholders": "node scripts/check-placeholders.mjs",
     "db:init": "node --env-file-if-exists=.env.local scripts/init-db.mjs",
-    "db:prune": "node --env-file-if-exists=.env.local scripts/prune-leads.mjs"
+    "db:prune": "node --env-file-if-exists=.env.local scripts/prune-leads.mjs",
+    "db:backup": "node --env-file-if-exists=.env.local scripts/backup-db.mjs",
+    "db:restore": "node --env-file-if-exists=.env.local scripts/restore-db.mjs",
+    "google:oauth": "node --env-file-if-exists=.env.local scripts/google-oauth.mjs"
   },
   "dependencies": {
     "@neondatabase/serverless": "1.2.0",
@@ -31,6 +36,8 @@
     "zod": "4.6.7"
   },
   "devDependencies": {
+    "@lhci/cli": "0.15.1",
+    "@playwright/test": "1.64.0",
     "@testing-library/dom": "10.4.2",
     "@testing-library/jest-dom": "7.0.1",
     "@testing-library/react": "16.3.3",

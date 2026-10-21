@@ -1,3 +1,4 @@
+import { alertTeam } from "@/lib/alerts";
 import { getConfig } from "@/lib/config";
 import { sendLeadEmails } from "@/lib/email/send-lead-emails";
 import { isAllowedOrigin } from "@/lib/guardrails/origin";
@@ -138,6 +139,7 @@ export async function POST(request: Request): Promise<Response> {
     store = getLeadStore();
   } catch {
     logServerEvent("lead_store_not_configured");
+    await alertTeam("lead_store_unavailable", { requestId: input.requestId });
     if (await saveByEmailOnly(input)) return json({ ok: true });
     return json({ ok: false, error: "service_unavailable" }, 503);
   }
@@ -155,6 +157,10 @@ export async function POST(request: Request): Promise<Response> {
     });
   } catch (error) {
     logServerEvent("lead_save_failed", {
+      requestId: input.requestId,
+      code: safeErrorCode(error),
+    });
+    await alertTeam("lead_save_failed", {
       requestId: input.requestId,
       code: safeErrorCode(error),
     });

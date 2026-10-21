@@ -38,8 +38,20 @@ export const frontMatterSchema = z
     synonyms: z.array(z.string().trim().min(1)).default([]),
     seoTitle: z.string().trim().min(1).optional(),
     seoDescription: z.string().trim().min(1).optional(),
+    publishedAt: z.iso.date().optional(),
+    updatedAt: z.iso.date().optional(),
   })
-  .passthrough();
+  .passthrough()
+  .superRefine((data, ctx) => {
+    const isArticle = data.type === "insight" || data.type === "case-study";
+    if (isArticle && data.status === "published" && !data.publishedAt) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["publishedAt"],
+        message: "Published insights and case studies need a publishedAt date (YYYY-MM-DD).",
+      });
+    }
+  });
 
 export type FrontMatter = z.infer<typeof frontMatterSchema>;
 

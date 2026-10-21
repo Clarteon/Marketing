@@ -1,5 +1,6 @@
 import "server-only";
 import { z } from "zod";
+import { recordUsage } from "@/lib/alerts";
 import { getConfig } from "@/lib/config";
 import { EmailNotConfiguredError, EmailSendError } from "./errors";
 
@@ -77,7 +78,10 @@ export async function sendEmail(
       continue;
     }
 
-    if (response.ok) return;
+    if (response.ok) {
+      recordUsage("email", config.EMAIL_DAILY_ALERT_THRESHOLD);
+      return;
+    }
 
     const retryable = response.status === 429 || response.status >= 500;
     if (retryable && attempt < maxAttempts) {

@@ -38,4 +38,5 @@ The biggest risk on a free budget is abuse that drains Clara's daily model allow
 - Save the lead before sending any email. Retry failed sends. Back up the lead log if one exists.
 - Never tell a visitor something was booked or sent unless the tool result confirms it.
 - Provide a degraded mode (form and booking link) when chat is unavailable.
-- Log errors without personal data. Alert on failed bookings, failed emails and usage thresholds.
+- Log errors without personal data. Alert on failed bookings, failed emails and usage thresholds through `alertTeam` in `src/lib/alerts.ts`, which sends ids, codes and counts only.
+- Back up the lead and booking tables with `npm run db:backup` (encrypted, written outside the repo). A restore never overwrites rows, and deletion requests are re-applied afterward.

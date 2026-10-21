@@ -15,7 +15,7 @@ Reason for this order: forms, booking and knowledge are plain server functions t
 | P0 | Domain and trademark check for "Clarteon", hosting provider, accounts (Groq, Google Cloud, Resend) |
 | P1 | Primary call to action (default: discovery call), founder bios and certifications, final copy for sections beyond the hero |
 | P2 | Email sending address, whether to keep a lead log, retention period |
-| P3 | Google authorization setup (OAuth for the team account, or a service account with domain-wide delegation on Workspace), booking rules (working hours, call length, buffer, minimum notice, whose calendar) |
+| P3 | Booking rules (working hours, call length, buffer, minimum notice, whose calendar). Google authorization is settled: OAuth for a free Google Account on `admin@clarteon.tech`, no Workspace (see the P3 note) |
 | P4 | Where content lives (default: files in the repo), who reviews the unanswered-question queue and how often |
 | P5 | Confirm exact Groq limits on the console limits page, read Groq's data terms |
 | P7 | First two or three case studies with client permission, analytics approach |
@@ -33,14 +33,14 @@ Reason for this order: forms, booking and knowledge are plain server functions t
 
 ## P1 Site shell and brand (size M)
 
-- Skills: `clarteon-design-system`, `clarteon-build-page`
+- Skills: `clarteon-design-system`, `clarteon-build-page`, `clarteon-seo`
 - Deliverables: design tokens and shared components, Home, Solutions, How we work, About, Contact (form UI and booking section placeholder), Privacy, shells for Our work and Insights, metadata and SEO basics, accessibility pass, placeholder check script.
 - Exit criteria:
   - [x] Every page in the sitemap renders responsively
   - [x] Booking section and Clara's widget slot appear on every page
   - [x] Automated accessibility checks pass
   - [x] The production build fails if any bracket placeholder remains
-- Note: checked at 390, 768 and 1280 px for all eight sitemap pages, with no horizontal overflow. Axe checks pass in tests, and Lighthouse scored 100 for accessibility, best practices and SEO on Home and Contact. Founder bios, certifications and the final privacy review still need human input.
+- Note: checked at 390, 768 and 1280 px for all eight sitemap pages, with no horizontal overflow. Axe checks pass in tests, and Lighthouse scored 100 for accessibility, best practices and SEO on Home and Contact. Founder bios, certifications and the final privacy review still need human input. SEO follow-up (October 21, 2026): default share image, Organization, WebSite and Article structured data, article dates in the sitemap, and tested title and description limits, with the `clarteon-seo` rule and skill.
 
 ## P2 Lead capture and email (size S to M)
 
@@ -61,6 +61,7 @@ Reason for this order: forms, booking and knowledge are plain server functions t
   - [ ] A visitor can book from the page and receives a Meet link by email
   - [ ] Double bookings and duplicate retries are prevented
   - [ ] Booking failures show a clear message and an email fallback
+- Note: Google authorization decided October 21, 2026. Roles are split. `info@clarteon.tech` is the public mailbox: it sends and receives through Resend and is the sender and Reply-To on every site and booking email. `admin@clarteon.tech` is the setup, planning and meeting account: it holds the Google account, Drive, Calendar and Meet. It is not a public mailbox, and signing up creates no Gmail inbox for it, but Resend must still accept mail for it, because Google sends the signup verification code, security alerts and organizer notices there. Booking uses OAuth for that free Google Account ("For my personal use", then "Use your existing email"), not Google Workspace, so there is no Workspace mailbox, no DNS change and no domain-wide delegation. The free account supplies Drive (15 GB), Calendar, Meet and the Cloud console. Events are created on `admin@`'s calendar with `sendUpdates: all`, so the visitor gets Google's invite from `admin@` plus the branded confirmation from `info@` carrying the Meet link; keeping both was decided October 21, 2026, and the confirmation names `admin@` so the second email does not read as a duplicate. Before signing up, enable receiving for `admin@` at Resend and confirm a test message reaches a mailbox a person can open, since the verification code is sent there. Booking rules set October 21, 2026: `Asia/Manila`, Monday to Friday, 09:00-17:00, 30-minute calls, 10-minute buffer, 24-hour notice and a 30-day horizon, with the shared team calendar as the target. Set `GOOGLE_CALENDAR_ID` to `admin@clarteon.tech` rather than `primary`, so the calendar is pinned to the account the decision names. The booking modules, API routes, tests and Contact-page form are implemented; live verification is pending until `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REFRESH_TOKEN` and `GOOGLE_CALENDAR_ID` are set and `npm run db:init` is run. P3 stays unchecked until a real booking creates a calendar event with a Meet link and the confirmation email arrives.
 
 ## P4 Knowledge layer (size M)
 
@@ -90,11 +91,12 @@ Reason for this order: forms, booking and knowledge are plain server functions t
   - [ ] All 26 Clara scenarios pass
   - [ ] No open high-severity findings in the security review
   - [ ] Alerts fire in a test for usage threshold, failed booking and failed email
+- Note (October 21, 2026): alert logic, e2e tests (Playwright, desktop and mobile) and the Lighthouse budget are in place and run in the CI `browser` job, with encrypted backups (`db:backup`, `db:restore`). Alert tests cover all three triggers; a live alert to the team inbox is still to be checked before ticking the box. Cloudflare Web Analytics is wired and needs its Production token.
 
 ## P7 Content and launch (size M)
 
-- Skills: `clarteon-case-study-writer`, `clarteon-launch`
-- Deliverables: two or three published case studies with client permission, founder bios and certifications, Privacy page reviewed, analytics and SEO decisions applied, go-live checklist completed.
+- Skills: `clarteon-case-study-writer`, `clarteon-launch`, `clarteon-seo`
+- Deliverables: two or three published case studies with client permission, founder bios and certifications, Privacy page reviewed, analytics decision applied, SEO launch steps done (canonical host `clarteon.tech`, production indexing, Search Console with the sitemap submitted), go-live checklist completed.
 - Exit criteria:
   - [ ] No bracket placeholders in production
   - [ ] Every published case study has recorded client permission
@@ -104,4 +106,5 @@ Reason for this order: forms, booking and knowledge are plain server functions t
 
 - Weekly: review the unanswered-question queue, sample chats, usage against limits, and failed bookings or emails.
 - Upgrade triggers: move to embeddings when the review queue regularly shows questions the site answers but keyword search missed. Move to a paid model tier when daily chats regularly hit the token cap.
-- Keep adding Insights articles, each tied to a common problem and ending in a booking section.
+- Keep adding Insights articles, each tied to a common problem and ending in a booking section (`clarteon-seo`).
+- Monthly: review Search Console for the "Clarteon" brand query, unindexed pages and low-click queries.
