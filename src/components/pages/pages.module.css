@@ -46,10 +46,13 @@
   flex-direction: column;
   gap: 0.75rem;
   padding: clamp(1.4rem, 2vw, 1.75rem);
-  border-color: transparent;
   transition:
     border-color 220ms ease,
     transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.problemGrid .problemCard {
+  border-color: transparent;
 }
 
 .problemCard:hover {
