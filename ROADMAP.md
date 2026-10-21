@@ -29,7 +29,7 @@ Reason for this order: forms, booking and knowledge are plain server functions t
   - [ ] CI is green and blocks failing changes
   - [x] No secrets in the repo or client bundle
   - [x] `CLAUDE.md` commands are filled in
-- Note: CI is green on every push and pull request. Branch protection is not available on a private repository on the GitHub Free plan, so failing checks do not yet block a direct push. Enable protection after making the repo public or upgrading, or enforce a pull-request-only workflow by convention.
+- Note: CI is green on every push and pull request and runs from the shared workflow in `Clarteon/.github` (`@v1`); tagged releases run CI before publishing a GitHub release. Branch protection is not available on a private repository on the GitHub Free plan, so failing checks do not yet block a direct push. Enable protection after making the repo public or upgrading, or enforce a pull-request-only workflow by convention.
 
 ## P1 Site shell and brand (size M)
 

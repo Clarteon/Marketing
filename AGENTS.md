@@ -40,7 +40,7 @@ npm run db:init        # apply the lead table to the configured Neon database
 npm run db:prune -- --dry-run  # count leads past the 12-month retention period
 ```
 
-CI lives in `.github/workflows/ci.yml` and runs lint, formatting, type check, tests, the placeholder check, a production dependency audit and the build. The knowledge build command is added in P4.
+CI and releases call the organization-wide reusable workflows in `Clarteon/.github` (`@v1`). The caller in `.github/workflows/ci.yml` runs lint, formatting, type check, tests, the placeholder check, a production dependency audit and the build; `.github/workflows/release.yml` runs the same checks on a `v*` tag, then publishes a GitHub release. Vercel deploys previews and production. The knowledge build command is added in P4.
 
 ## Working agreements
 
