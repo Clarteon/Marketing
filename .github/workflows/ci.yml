@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -13,46 +14,5 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  verify:
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Check out
-        uses: actions/checkout@v5
-
-      - name: Set up Node
-        uses: actions/setup-node@v5
-        with:
-          node-version: 24
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Check formatting
-        run: npm run format:check
-
-      - name: Type check
-        run: npm run typecheck
-
-      - name: Test
-        run: npm test
-
-      - name: Check placeholders
-        run: npm run check:placeholders
-
-      - name: Audit production dependencies
-        run: |
-          for attempt in 1 2 3; do
-            if npm audit --omit=dev --audit-level=high; then
-              exit 0
-            fi
-            echo "Audit attempt ${attempt} failed; retrying in 10 seconds."
-            sleep 10
-          done
-          exit 1
-
-      - name: Build
-        run: npm run build
+  ci:
+    uses: Clarteon/.github/.github/workflows/ci.yml@v1

@@ -36,7 +36,7 @@ npm run test:watch     # Vitest watch mode
 npm run check:placeholders  # fail if [ALL CAPS] placeholders reach published output
 ```
 
-CI lives in `.github/workflows/ci.yml` and runs lint, formatting, type check, tests, the placeholder check, a production dependency audit and the build. The knowledge build command is added in P4.
+CI and releases call the organization-wide reusable workflows in `Clarteon/.github` (`@v1`). The caller in `.github/workflows/ci.yml` runs lint, formatting, type check, tests, the placeholder check, a production dependency audit and the build; `.github/workflows/release.yml` runs the same checks on a `v*` tag, then publishes a GitHub release. Vercel deploys previews and production. The knowledge build command is added in P4.
 
 ## Working agreements
 
