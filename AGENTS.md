@@ -16,7 +16,7 @@ This file is the agent-neutral equivalent of `CLAUDE.md`. The always-on rules li
 - Booking: Google Calendar API with Google Meet links
 - Email: Resend free plan, sent from a verified Clarteon domain
 - Lead log: Neon Postgres (see `db/README.md`), with your own scheduled backups
-- Hosting: Vercel (decided October 20, 2026), native Next.js with streaming and preview deployments. Confirm the current Hobby plan limits before launch.
+- Hosting: Vercel (decided October 20, 2026), native Next.js with streaming and preview deployments, deployed from GitHub Actions because Hobby cannot connect private org repos. Hobby is non-commercial only: Pro is a pending human decision. Confirm the current Hobby plan limits before launch.
 
 ## Commands
 
@@ -45,7 +45,7 @@ npm run db:backup -- --out <file outside repo>  # encrypted lead and booking bac
 npm run db:restore -- --in <file> [--confirm]   # dry run by default; inserts missing rows only
 ```
 
-CI and releases call the organization-wide reusable workflows in `Clarteon/.github` (`@v1`). The caller in `.github/workflows/ci.yml` runs lint, formatting, type check, tests, the placeholder check, a production dependency audit and the build, plus a local `browser` job with the e2e suite and the Lighthouse budget; `.github/workflows/release.yml` runs the same checks on a `v*` tag, then publishes a GitHub release. Vercel deploys previews and production. The knowledge build command is added in P4.
+CI and releases call the organization-wide reusable workflows in `Clarteon/.github` (`@v1`). The caller in `.github/workflows/ci.yml` runs lint, formatting, type check, tests, the placeholder check, a production dependency audit and the build, plus a local `browser` job with the e2e suite and the Lighthouse budget; `.github/workflows/release.yml` runs the same checks on a `v*` tag, then publishes a GitHub release. A `deploy` job then ships to Vercel through the shared `vercel-deploy.yml` (`@v1.1.0`): production for pushes to `main`, a preview with a PR comment for pull requests (see the `clarteon-deploy` skill). The knowledge build command is added in P4.
 
 ## Working agreements
 
@@ -96,6 +96,7 @@ Skills are playbooks in `.agents/skills/`, one `SKILL.md` per skill directory. L
 - `clarteon-case-study-writer` (P7): turn a project into an approved case study
 - `clarteon-seo` (P1, P7, P8): search metadata, structured data, Search Console launch, Insights articles
 - `clarteon-site-quality` (P6 to P8): e2e and Lighthouse tests, alerts, analytics, backups and restore
+- `clarteon-deploy`: Vercel deploys from GitHub Actions, onboarding, rollback, token rotation
 - `clarteon-launch` (P7 and P8): go-live checklist and post-launch review loop
 
 ## Definition of done

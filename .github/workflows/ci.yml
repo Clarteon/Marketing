@@ -57,3 +57,14 @@ jobs:
             playwright-report/
             .lighthouseci/
           retention-days: 7
+
+  # Vercel's Git integration cannot reach private org repos on Hobby, so Actions deploys after checks pass.
+  deploy:
+    needs: [ci, browser]
+    if: github.event_name != 'workflow_dispatch'
+    permissions:
+      contents: read
+      pull-requests: write
+    uses: Clarteon/.github/.github/workflows/vercel-deploy.yml@v1.1.0
+    secrets:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
