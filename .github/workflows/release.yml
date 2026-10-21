@@ -1,0 +1,21 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    uses: Clarteon/.github/.github/workflows/ci.yml@v1
+
+  release:
+    needs: ci
+    permissions:
+      contents: write
+    uses: Clarteon/.github/.github/workflows/release.yml@v1
+    with:
+      tag: ${{ github.ref_name }}
