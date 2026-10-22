@@ -72,6 +72,7 @@ Reason for this order: forms, booking and knowledge are plain server functions t
   - [ ] Only published content is indexed
   - [ ] Unanswered questions appear in the review queue, and approvals re-sync
   - [ ] Review pages require sign-in
+- Note (October 22, 2026): the content chunker and build-time keyword index, search, redaction, Neon FAQ store, secure sync endpoint, review queue, sign-in, audit log and tests are in place. A live Neon smoke test approved an FAQ, reindexed to 55 chunks, then removed it and synced back to 54. CI run `39756007585` passed and deployed `0546a1e`. Production still needs `ADMIN_AUTH_SECRET` and `SYNC_SECRET` set in Vercel: until then `/admin/login` shows the configuration notice and `POST /api/sync` returns `503`. The queue review cadence remains a human decision.
 
 ## P5 Clara (size L)
 
