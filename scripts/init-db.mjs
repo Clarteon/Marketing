@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { neon } from "@neondatabase/serverless";
+import { sqlStatements } from "./lib/sql.mjs";
 
 const databaseUrl = process.env.DATABASE_URL;
 if (!databaseUrl) {
@@ -8,10 +9,7 @@ if (!databaseUrl) {
 }
 
 const schema = await readFile(new URL("../db/schema.sql", import.meta.url), "utf8");
-const statements = schema
-  .split(";")
-  .map((statement) => statement.trim())
-  .filter(Boolean);
+const statements = sqlStatements(schema);
 
 const sql = neon(databaseUrl);
 

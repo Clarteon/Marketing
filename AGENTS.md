@@ -38,7 +38,7 @@ npm run test:watch     # Vitest watch mode
 npm run test:e2e       # Playwright: builds, serves on :3100, runs e2e/ (run `npx playwright install chromium` once)
 npm run lhci           # Lighthouse budget against the last build
 npm run check:placeholders  # fail if [ALL CAPS] placeholders reach published output
-npm run db:init        # apply the lead table to the configured Neon database
+npm run db:init        # apply the lead and booking tables to Neon
 npm run db:prune -- --dry-run  # count leads past the 12-month retention period
 npm run google:oauth   # one-time Google Calendar OAuth helper
 npm run alert:test     # send one test alert to TEAM_ALERT_EMAIL (needs the Resend env vars)

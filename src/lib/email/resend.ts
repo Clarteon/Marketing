@@ -19,6 +19,8 @@ export interface SendEmailOptions {
   maxAttempts?: number;
   retryBaseMs?: number;
   timeoutMs?: number;
+  /** Internal team alerts must not feed the visitor-email usage counter. */
+  countUsage?: boolean;
 }
 
 function delay(ms: number): Promise<void> {
@@ -38,7 +40,7 @@ export async function sendEmail(
   message: OutboundEmail,
   options: SendEmailOptions = {},
 ): Promise<void> {
-  const { maxAttempts = 3, retryBaseMs = 400, timeoutMs = 10_000 } = options;
+  const { maxAttempts = 3, retryBaseMs = 400, timeoutMs = 10_000, countUsage = true } = options;
   const config = getConfig();
   const apiKey = config.RESEND_API_KEY;
   const from = config.EMAIL_FROM;
@@ -79,7 +81,7 @@ export async function sendEmail(
     }
 
     if (response.ok) {
-      recordUsage("email", config.EMAIL_DAILY_ALERT_THRESHOLD);
+      if (countUsage) recordUsage("email", config.EMAIL_DAILY_ALERT_THRESHOLD);
       return;
     }
 

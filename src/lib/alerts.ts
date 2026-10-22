@@ -66,7 +66,7 @@ export async function alertTeam(
         html: `<pre>${text.replace(/&/g, "&amp;").replace(/</g, "&lt;")}</pre>`,
         idempotencyKey: `alert-${kind}-${bucket}`,
       },
-      { maxAttempts: 2 },
+      { maxAttempts: 2, countUsage: false },
     );
     logServerEvent("alert_sent", { kind });
     return true;
