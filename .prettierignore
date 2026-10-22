@@ -10,3 +10,4 @@ public
 test-results
 playwright-report
 .lighthouseci
+src/lib/knowledge/generated

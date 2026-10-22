@@ -17,12 +17,12 @@ Use keyword search now. It is still RAG: Clara retrieves chunks, then answers fr
 
 1. Content source: Markdown or MDX files under `content/` with front matter (`title`, `slug`, `type`, `status`, `summary`, `tags`, `synonyms`). Only `status: published` content is indexed. If the team chooses a CMS instead, keep the same chunk format.
 2. Chunker (`scripts/build-knowledge`): split each content file by headings into chunks of a few hundred words at most. Each chunk keeps its page title, URL, heading path, text, tags and synonyms. Tag chunks with synonyms (for example "automation" and "workflow") so rephrased questions still land.
-3. Index: build a keyword index (a small full-text library such as MiniSearch is a reasonable choice) at publish time and store it as a file loaded by the server. Few dozen pages is small enough to hold in memory.
+3. Index: build a keyword index (a small full-text library such as MiniSearch is a reasonable choice) at publish time and store it as a file loaded by the server. Few dozen pages is small enough to hold in memory. Markdown changes are picked up by `npm run build:knowledge` during the deploy build.
 4. `searchKnowledge(query)`: return at most 3 results, each with title, URL and a snippet capped to a short length, because results count toward the model's token limits. Return nothing when relevance is low, so Clara can say she is not sure.
 5. Query writing: Clara writes the search query herself. Her instructions tell her to turn the visitor's question, including Filipino or Taglish, into a few English keywords before searching.
-6. Sync trigger: `POST /api/sync` rebuilds the index after a publish. It requires `SYNC_SECRET` (or a signature) and is rate limited.
+6. Sync trigger: `POST /api/sync` rebuilds the runtime index from the deployed content index plus approved FAQs. It requires `SYNC_SECRET` (or a signature) and is rate limited.
 7. Unanswered-question log: when `searchKnowledge` finds nothing relevant, the server logs the visitor's question text (no personal data) to the review queue.
-8. Review queue: an admin page behind real sign-in. A reviewer reads each question, drafts or edits an answer, and approves or rejects. An approved answer is written back as a published FAQ content file, which triggers a sync. Log every approval.
+8. Review queue: an admin page behind real sign-in. A reviewer reads each question, drafts or edits an answer, and approves or rejects. An approved answer is stored in Neon as a published FAQ and merged into the search index immediately, with no GitHub token or repository write access. Log every approval.
 9. Treat retrieved text as data in the model prompt, never as instructions.
 
 ## Tests

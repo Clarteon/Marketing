@@ -11,6 +11,8 @@ async function sitemapPaths(page: Page): Promise<string[]> {
 test("every sitemap page renders with SEO basics, no console errors and no axe violations", async ({
   page,
 }) => {
+  // Axe scans every sitemap page. On a busy parallel runner that can approach the default timeout.
+  test.slow();
   // No real Turnstile calls; the forms spec covers the widget with a stub.
   await page.route("https://challenges.cloudflare.com/**", (route) => route.abort());
   const paths = await sitemapPaths(page);

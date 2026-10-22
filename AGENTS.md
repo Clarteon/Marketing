@@ -12,7 +12,7 @@ This file is the agent-neutral equivalent of `CLAUDE.md`. The always-on rules li
 
 - Next.js (App Router) with TypeScript, server API routes for chat, lead capture and sync
 - Chat model: Groq's OpenAI-compatible API, free tier first (gpt-oss-120b, then fallbacks), upgradeable to pay-as-you-go
-- Knowledge: site content synced on publish into a keyword search index (RAG), embeddings documented as a future upgrade
+- Knowledge: site content synced on publish into a keyword search index (RAG), with approved FAQ answers stored in Neon; embeddings documented as a future upgrade
 - Booking: Google Calendar API with Google Meet links
 - Email: Resend free plan, sent from a verified Clarteon domain
 - Lead log: Neon Postgres (see `db/README.md`), with your own scheduled backups
@@ -38,7 +38,7 @@ npm run test:watch     # Vitest watch mode
 npm run test:e2e       # Playwright: builds, serves on :3100, runs e2e/ (run `npx playwright install chromium` once)
 npm run lhci           # Lighthouse budget against the last build
 npm run check:placeholders  # fail if [ALL CAPS] placeholders reach published output
-npm run db:init        # apply the lead and booking tables to Neon
+npm run db:init        # apply the lead, booking and knowledge tables to Neon
 npm run db:prune -- --dry-run  # count leads past the 12-month retention period
 npm run google:oauth   # one-time Google Calendar OAuth helper
 npm run alert:test     # send one test alert to TEAM_ALERT_EMAIL (needs the Resend env vars)

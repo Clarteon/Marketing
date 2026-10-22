@@ -2,7 +2,13 @@ import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from "node:
 import { relative, resolve, isAbsolute } from "node:path";
 
 export const BACKUP_FORMAT = "clarteon-backup-v1";
-export const BACKUP_TABLES = ["leads", "bookings"];
+export const BACKUP_TABLES = [
+  "leads",
+  "bookings",
+  "knowledge_questions",
+  "knowledge_faqs",
+  "knowledge_audit",
+];
 const MIN_PASSPHRASE = 16;
 
 function keyFor(passphrase, salt) {

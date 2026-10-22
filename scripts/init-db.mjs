@@ -17,9 +17,9 @@ try {
   for (const statement of statements) {
     await sql.query(statement);
   }
-  console.log("Lead and booking database schema is ready.");
+  console.log("Clarteon database schema is ready (leads, bookings and knowledge).");
 } catch (error) {
-  console.error("Could not apply the lead and booking database schema.");
+  console.error("Could not apply the Clarteon database schema.");
   console.error(error instanceof Error ? error.name : "Unknown error");
   process.exitCode = 1;
 }

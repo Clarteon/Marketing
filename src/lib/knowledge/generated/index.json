@@ -1,0 +1,1315 @@
+{
+  "version": 1,
+  "generatedAt": "2026-10-22T08:40:51.603Z",
+  "chunks": [
+    {
+      "id": "about#how-we-work-with-clients-2",
+      "url": "/about",
+      "title": "How we work with clients",
+      "headingPath": [
+        "Clarity first.",
+        "How we work with clients"
+      ],
+      "text": "We keep the first step small: a discovery call to understand the problem, then a plain-language recommendation. If the work is a fit, we build in short, visible steps and stay for the questions that only appear after launch.",
+      "tags": [
+        "about",
+        "clarteon",
+        "team",
+        "clarity",
+        "technology partner"
+      ],
+      "synonyms": [
+        "company",
+        "founders",
+        "team",
+        "about us"
+      ]
+    },
+    {
+      "id": "about#overview",
+      "url": "/about",
+      "title": "Clarity first.",
+      "headingPath": [
+        "Clarity first."
+      ],
+      "text": "Why Clarteon exists, what the name means, and how we work with clients. About Clarteon Clarteon is a technology partner. The name comes from the French clarté, meaning clarity, and that is the standard we hold the work to.",
+      "tags": [
+        "about",
+        "clarteon",
+        "team",
+        "clarity",
+        "technology partner"
+      ],
+      "synonyms": [
+        "company",
+        "founders",
+        "team",
+        "about us"
+      ]
+    },
+    {
+      "id": "about#the-team-3",
+      "url": "/about",
+      "title": "The team",
+      "headingPath": [
+        "Clarity first.",
+        "The team"
+      ],
+      "text": "Clarteon is a young company. The founding team’s bios and certifications will be published here when they are ready. We do not publish credentials we cannot support.",
+      "tags": [
+        "about",
+        "clarteon",
+        "team",
+        "clarity",
+        "technology partner"
+      ],
+      "synonyms": [
+        "company",
+        "founders",
+        "team",
+        "about us"
+      ]
+    },
+    {
+      "id": "about#why-clarteon-exists-1",
+      "url": "/about",
+      "title": "Why Clarteon exists",
+      "headingPath": [
+        "Clarity first.",
+        "Why Clarteon exists"
+      ],
+      "text": "Most technology projects start with a tool looking for a problem. Clarteon starts the other way around. We find the repetitive work or the broken handoff that is slowing a business down, then recommend the clearest way to fix it. Sometimes that is automation. Sometimes it is a chatbot, a piece of custom software, a website, or a connection between tools you already use.",
+      "tags": [
+        "about",
+        "clarteon",
+        "team",
+        "clarity",
+        "technology partner"
+      ],
+      "synonyms": [
+        "company",
+        "founders",
+        "team",
+        "about us"
+      ]
+    },
+    {
+      "id": "contact#booking",
+      "url": "/contact#book",
+      "title": "Book a free discovery call",
+      "headingPath": [
+        "Tell us what is slowing you down.",
+        "Book a free discovery call"
+      ],
+      "text": "Choose a time that works for you. The call is 30 minutes, and you will get a Google Meet link by email.",
+      "tags": [
+        "contact",
+        "discovery call",
+        "project brief",
+        "message"
+      ],
+      "synonyms": [
+        "get in touch",
+        "enquiry",
+        "contact us",
+        "booking"
+      ]
+    },
+    {
+      "id": "contact#brief",
+      "url": "/contact#brief",
+      "title": "Send a project brief",
+      "headingPath": [
+        "Tell us what is slowing you down.",
+        "Send a project brief"
+      ],
+      "text": "Tell us what is slow, what you have tried, and what a good outcome looks like. We will reply by email.",
+      "tags": [
+        "contact",
+        "discovery call",
+        "project brief",
+        "message"
+      ],
+      "synonyms": [
+        "get in touch",
+        "enquiry",
+        "contact us",
+        "booking"
+      ]
+    },
+    {
+      "id": "contact#message",
+      "url": "/contact#message",
+      "title": "Or message us",
+      "headingPath": [
+        "Tell us what is slowing you down.",
+        "Or message us"
+      ],
+      "text": "Prefer email? Write to us directly and we will reply. info@clarteon.tech",
+      "tags": [
+        "contact",
+        "discovery call",
+        "project brief",
+        "message"
+      ],
+      "synonyms": [
+        "get in touch",
+        "enquiry",
+        "contact us",
+        "booking"
+      ]
+    },
+    {
+      "id": "contact#overview",
+      "url": "/contact",
+      "title": "Tell us what is slowing you down.",
+      "headingPath": [
+        "Tell us what is slowing you down."
+      ],
+      "text": "Book a discovery call, send a project brief, or message Clarteon. Contact Three ways in: book a discovery call, send a project brief, or message us directly.",
+      "tags": [
+        "contact",
+        "discovery call",
+        "project brief",
+        "message"
+      ],
+      "synonyms": [
+        "get in touch",
+        "enquiry",
+        "contact us",
+        "booking"
+      ]
+    },
+    {
+      "id": "home#overview",
+      "url": "/",
+      "title": "Technology that starts with your problem.",
+      "headingPath": [
+        "Technology that starts with your problem."
+      ],
+      "text": "Clarteon is a technology partner that starts with the problem, then finds the clearest way to automate, build or improve it. Your business-focused technology partner Clarteon is the technology partner that believes the right solution starts with the right question. We find the repetitive work slowing your business down, then automate it or build what you need, so you can grow. Book a free discovery call. Send a project brief. Or message us",
+      "tags": [
+        "technology partner",
+        "automation",
+        "AI assistants",
+        "custom software",
+        "websites",
+        "discovery call"
+      ],
+      "synonyms": [
+        "IT partner",
+        "digital agency",
+        "software partner",
+        "automation partner"
+      ]
+    },
+    {
+      "id": "home#problem-1",
+      "url": "/solutions#operations",
+      "title": "Too much manual admin",
+      "headingPath": [
+        "Technology that starts with your problem.",
+        "Too much manual admin"
+      ],
+      "text": "Your team copies the same information between email, spreadsheets and tools. It works, until the volume grows. Likely solution: Workflow automation",
+      "tags": [
+        "technology partner",
+        "automation",
+        "AI assistants",
+        "custom software",
+        "websites",
+        "discovery call"
+      ],
+      "synonyms": [
+        "IT partner",
+        "digital agency",
+        "software partner",
+        "automation partner"
+      ]
+    },
+    {
+      "id": "home#problem-2",
+      "url": "/solutions#web",
+      "title": "A website that does not pull its weight",
+      "headingPath": [
+        "Technology that starts with your problem.",
+        "A website that does not pull its weight"
+      ],
+      "text": "Visitors cannot find what they need, and interest does not turn into a conversation. Likely solution: A clearer website",
+      "tags": [
+        "technology partner",
+        "automation",
+        "AI assistants",
+        "custom software",
+        "websites",
+        "discovery call"
+      ],
+      "synonyms": [
+        "IT partner",
+        "digital agency",
+        "software partner",
+        "automation partner"
+      ]
+    },
+    {
+      "id": "home#problem-3",
+      "url": "/solutions#software",
+      "title": "Software that almost fits",
+      "headingPath": [
+        "Technology that starts with your problem.",
+        "Software that almost fits"
+      ],
+      "text": "Off-the-shelf tools push your team into someone else’s process. The workarounds pile up. Likely solution: Custom software or integration",
+      "tags": [
+        "technology partner",
+        "automation",
+        "AI assistants",
+        "custom software",
+        "websites",
+        "discovery call"
+      ],
+      "synonyms": [
+        "IT partner",
+        "digital agency",
+        "software partner",
+        "automation partner"
+      ]
+    },
+    {
+      "id": "home#problem-4",
+      "url": "/solutions#conversations",
+      "title": "The same questions, again and again",
+      "headingPath": [
+        "Technology that starts with your problem.",
+        "The same questions, again and again"
+      ],
+      "text": "Questions arrive by email and chat, and the answer depends on who is available. Likely solution: An AI assistant or chatbot",
+      "tags": [
+        "technology partner",
+        "automation",
+        "AI assistants",
+        "custom software",
+        "websites",
+        "discovery call"
+      ],
+      "synonyms": [
+        "IT partner",
+        "digital agency",
+        "software partner",
+        "automation partner"
+      ]
+    },
+    {
+      "id": "home#proof",
+      "url": "/",
+      "title": "Work you can look at.",
+      "headingPath": [
+        "Technology that starts with your problem.",
+        "Work you can look at."
+      ],
+      "text": "We publish client work only with permission, named or anonymous. The first case studies are being prepared. In the meantime, tell us what you are working on. See our work",
+      "tags": [
+        "technology partner",
+        "automation",
+        "AI assistants",
+        "custom software",
+        "websites",
+        "discovery call"
+      ],
+      "synonyms": [
+        "IT partner",
+        "digital agency",
+        "software partner",
+        "automation partner"
+      ]
+    },
+    {
+      "id": "home#step-1",
+      "url": "/",
+      "title": "Diagnose",
+      "headingPath": [
+        "Technology that starts with your problem.",
+        "Process",
+        "Diagnose"
+      ],
+      "text": "We start with the work that is slowing you down, not with a product to sell. We ask what happens today and where it breaks.",
+      "tags": [
+        "technology partner",
+        "automation",
+        "AI assistants",
+        "custom software",
+        "websites",
+        "discovery call"
+      ],
+      "synonyms": [
+        "IT partner",
+        "digital agency",
+        "software partner",
+        "automation partner"
+      ]
+    },
+    {
+      "id": "home#step-2",
+      "url": "/",
+      "title": "Recommend",
+      "headingPath": [
+        "Technology that starts with your problem.",
+        "Process",
+        "Recommend"
+      ],
+      "text": "You get a clear recommendation: the likely solution, the trade-offs, and the smallest useful next step.",
+      "tags": [
+        "technology partner",
+        "automation",
+        "AI assistants",
+        "custom software",
+        "websites",
+        "discovery call"
+      ],
+      "synonyms": [
+        "IT partner",
+        "digital agency",
+        "software partner",
+        "automation partner"
+      ]
+    },
+    {
+      "id": "home#step-3",
+      "url": "/",
+      "title": "Build",
+      "headingPath": [
+        "Technology that starts with your problem.",
+        "Process",
+        "Build"
+      ],
+      "text": "We build in short, visible steps, so you can see progress and change direction before the end.",
+      "tags": [
+        "technology partner",
+        "automation",
+        "AI assistants",
+        "custom software",
+        "websites",
+        "discovery call"
+      ],
+      "synonyms": [
+        "IT partner",
+        "digital agency",
+        "software partner",
+        "automation partner"
+      ]
+    },
+    {
+      "id": "home#step-4",
+      "url": "/",
+      "title": "Support",
+      "headingPath": [
+        "Technology that starts with your problem.",
+        "Process",
+        "Support"
+      ],
+      "text": "We stay after launch to fix what surfaces, answer questions, and help the system settle into daily work.",
+      "tags": [
+        "technology partner",
+        "automation",
+        "AI assistants",
+        "custom software",
+        "websites",
+        "discovery call"
+      ],
+      "synonyms": [
+        "IT partner",
+        "digital agency",
+        "software partner",
+        "automation partner"
+      ]
+    },
+    {
+      "id": "how-we-work#call",
+      "url": "/how-we-work",
+      "title": "What to expect on a discovery call",
+      "headingPath": [
+        "Four steps. No jargon.",
+        "What to expect on a discovery call"
+      ],
+      "text": "A short conversation about the problem, not a sales presentation. We ask what is slowing you down, what you have tried, and what a good outcome looks like. We look for the smallest useful next step, not the biggest possible project. You leave with a clear idea of the likely direction and whether we are a fit. If we are not the right fit, we say so and point you toward a better option. No preparation is required beyond a rough description of the problem.",
+      "tags": [
+        "how we work",
+        "process",
+        "discovery call",
+        "diagnose",
+        "recommend",
+        "build",
+        "support"
+      ],
+      "synonyms": [
+        "process",
+        "working together",
+        "what to expect"
+      ]
+    },
+    {
+      "id": "how-we-work#overview",
+      "url": "/how-we-work",
+      "title": "Four steps. No jargon.",
+      "headingPath": [
+        "Four steps. No jargon."
+      ],
+      "text": "Diagnose, recommend, build and support, plus what to expect on a discovery call. How we work A clear process from first question to working system. You always know what is happening and what comes next.",
+      "tags": [
+        "how we work",
+        "process",
+        "discovery call",
+        "diagnose",
+        "recommend",
+        "build",
+        "support"
+      ],
+      "synonyms": [
+        "process",
+        "working together",
+        "what to expect"
+      ]
+    },
+    {
+      "id": "how-we-work#step-1",
+      "url": "/how-we-work",
+      "title": "Diagnose",
+      "headingPath": [
+        "Four steps. No jargon.",
+        "Process",
+        "Diagnose"
+      ],
+      "text": "A discovery call and, if needed, a closer look at the current process. We want to understand the problem before proposing work.",
+      "tags": [
+        "how we work",
+        "process",
+        "discovery call",
+        "diagnose",
+        "recommend",
+        "build",
+        "support"
+      ],
+      "synonyms": [
+        "process",
+        "working together",
+        "what to expect"
+      ]
+    },
+    {
+      "id": "how-we-work#step-2",
+      "url": "/how-we-work",
+      "title": "Recommend",
+      "headingPath": [
+        "Four steps. No jargon.",
+        "Process",
+        "Recommend"
+      ],
+      "text": "A plain-language recommendation: the likely solution, what it would take, and what we would not do.",
+      "tags": [
+        "how we work",
+        "process",
+        "discovery call",
+        "diagnose",
+        "recommend",
+        "build",
+        "support"
+      ],
+      "synonyms": [
+        "process",
+        "working together",
+        "what to expect"
+      ]
+    },
+    {
+      "id": "how-we-work#step-3",
+      "url": "/how-we-work",
+      "title": "Build",
+      "headingPath": [
+        "Four steps. No jargon.",
+        "Process",
+        "Build"
+      ],
+      "text": "Short, visible increments. You see the work as it takes shape and can change direction early.",
+      "tags": [
+        "how we work",
+        "process",
+        "discovery call",
+        "diagnose",
+        "recommend",
+        "build",
+        "support"
+      ],
+      "synonyms": [
+        "process",
+        "working together",
+        "what to expect"
+      ]
+    },
+    {
+      "id": "how-we-work#step-4",
+      "url": "/how-we-work",
+      "title": "Support",
+      "headingPath": [
+        "Four steps. No jargon.",
+        "Process",
+        "Support"
+      ],
+      "text": "After launch, we fix what surfaces, answer questions, and help the team settle into the new way of working.",
+      "tags": [
+        "how we work",
+        "process",
+        "discovery call",
+        "diagnose",
+        "recommend",
+        "build",
+        "support"
+      ],
+      "synonyms": [
+        "process",
+        "working together",
+        "what to expect"
+      ]
+    },
+    {
+      "id": "insights#empty",
+      "url": "/insights",
+      "title": "No articles are published yet.",
+      "headingPath": [
+        "Notes on the work behind the work.",
+        "No articles are published yet."
+      ],
+      "text": "The first pieces are being written. In the meantime, the Solutions page is the best place to start.",
+      "tags": [
+        "insights",
+        "articles",
+        "automation",
+        "AI assistants",
+        "custom software"
+      ],
+      "synonyms": [
+        "blog",
+        "articles",
+        "guides"
+      ]
+    },
+    {
+      "id": "insights#overview",
+      "url": "/insights",
+      "title": "Notes on the work behind the work.",
+      "headingPath": [
+        "Notes on the work behind the work."
+      ],
+      "text": "Short articles tied to the problems on this site. Insights Short pieces tied to the problems on this site. Each one ends with a way to talk about your own situation.",
+      "tags": [
+        "insights",
+        "articles",
+        "automation",
+        "AI assistants",
+        "custom software"
+      ],
+      "synonyms": [
+        "blog",
+        "articles",
+        "guides"
+      ]
+    },
+    {
+      "id": "our-work#empty",
+      "url": "/our-work",
+      "title": "No case studies are published yet.",
+      "headingPath": [
+        "Work you can look at.",
+        "No case studies are published yet."
+      ],
+      "text": "The first case studies are being prepared. In the meantime, tell us about a problem you are working on.",
+      "tags": [
+        "case studies",
+        "client work",
+        "results",
+        "portfolio"
+      ],
+      "synonyms": [
+        "portfolio",
+        "projects",
+        "case studies"
+      ]
+    },
+    {
+      "id": "our-work#how-we-choose-what-to-publish-1",
+      "url": "/our-work",
+      "title": "How we choose what to publish",
+      "headingPath": [
+        "Work you can look at.",
+        "How we choose what to publish"
+      ],
+      "text": "We publish a project only when the client has given written permission to be named or described anonymously. Each case study is framed as the problem, what we built, and the result. We use only results the client or our records support.",
+      "tags": [
+        "case studies",
+        "client work",
+        "results",
+        "portfolio"
+      ],
+      "synonyms": [
+        "portfolio",
+        "projects",
+        "case studies"
+      ]
+    },
+    {
+      "id": "our-work#overview",
+      "url": "/our-work",
+      "title": "Work you can look at.",
+      "headingPath": [
+        "Work you can look at."
+      ],
+      "text": "Case studies framed as the problem, what we built, and the result. Our work Case studies framed as the problem, what we built, and the result. We publish only work a client has agreed to share.",
+      "tags": [
+        "case studies",
+        "client work",
+        "results",
+        "portfolio"
+      ],
+      "synonyms": [
+        "portfolio",
+        "projects",
+        "case studies"
+      ]
+    },
+    {
+      "id": "privacy#discovery-call-bookings-2",
+      "url": "/privacy",
+      "title": "Discovery-call bookings",
+      "headingPath": [
+        "Privacy",
+        "Discovery-call bookings"
+      ],
+      "text": "When you book a discovery call, we collect your name, email address, the time you choose, your timezone and any notes you add. We use Neon to store the booking record, Resend to send confirmation emails, and Google Calendar to create the event and its Google Meet link. Google processes the event details and sends the calendar invitation. We keep booking details only as long as needed to arrange and follow up on the call, then delete them unless a client relationship or law requires a longer period. You can ask us to remove your booking details sooner.",
+      "tags": [
+        "privacy",
+        "data",
+        "personal information",
+        "AI provider",
+        "retention"
+      ],
+      "synonyms": [
+        "data policy",
+        "privacy policy",
+        "GDPR",
+        "data protection"
+      ]
+    },
+    {
+      "id": "privacy#how-long-we-keep-project-briefs-3",
+      "url": "/privacy",
+      "title": "How long we keep project briefs",
+      "headingPath": [
+        "Privacy",
+        "How long we keep project briefs"
+      ],
+      "text": "We keep project briefs for 12 months from submission, then delete or anonymize them, unless a conversation is active and needs the history. You can ask us to remove your brief sooner.",
+      "tags": [
+        "privacy",
+        "data",
+        "personal information",
+        "AI provider",
+        "retention"
+      ],
+      "synonyms": [
+        "data policy",
+        "privacy policy",
+        "GDPR",
+        "data protection"
+      ]
+    },
+    {
+      "id": "privacy#legal-review-7",
+      "url": "/privacy",
+      "title": "Legal review",
+      "headingPath": [
+        "Privacy",
+        "Legal review"
+      ],
+      "text": "This page is a plain-language draft for review by a qualified lawyer before launch. It is not legal advice.",
+      "tags": [
+        "privacy",
+        "data",
+        "personal information",
+        "AI provider",
+        "retention"
+      ],
+      "synonyms": [
+        "data policy",
+        "privacy policy",
+        "GDPR",
+        "data protection"
+      ]
+    },
+    {
+      "id": "privacy#overview",
+      "url": "/privacy",
+      "title": "Privacy",
+      "headingPath": [
+        "Privacy"
+      ],
+      "text": "How Clarteon handles project briefs, discovery-call bookings, and what will change when Clara goes live. Privacy How Clarteon handles information from the project brief form and discovery-call booking, and what will change when Clara goes live.",
+      "tags": [
+        "privacy",
+        "data",
+        "personal information",
+        "AI provider",
+        "retention"
+      ],
+      "synonyms": [
+        "data policy",
+        "privacy policy",
+        "GDPR",
+        "data protection"
+      ]
+    },
+    {
+      "id": "privacy#site-analytics-4",
+      "url": "/privacy",
+      "title": "Site analytics",
+      "headingPath": [
+        "Privacy",
+        "Site analytics"
+      ],
+      "text": "We use Cloudflare Web Analytics to count page visits and measure how fast pages load. It does not set cookies, and Cloudflare states that it does not track individual visitors across other websites. When a page loads, your browser sends Cloudflare information about that visit, such as the page address and how long it took to load. We see only totals, not individual visitors.",
+      "tags": [
+        "privacy",
+        "data",
+        "personal information",
+        "AI provider",
+        "retention"
+      ],
+      "synonyms": [
+        "data policy",
+        "privacy policy",
+        "GDPR",
+        "data protection"
+      ]
+    },
+    {
+      "id": "privacy#what-the-project-brief-form-collects-1",
+      "url": "/privacy",
+      "title": "What the project brief form collects",
+      "headingPath": [
+        "Privacy",
+        "What the project brief form collects"
+      ],
+      "text": "When you send a project brief, we collect your name, email address, optional company and team size, and the message you write. We also receive the time of submission and the technical signal from our bot check. We use this information only to reply to you and to keep the form safe. The form saves your brief in our lead database before sending any email. Our providers are Neon (database hosting), Resend (email delivery), Cloudflare Turnstile (bot check) and Vercel (hosting). Each provider processes the data needed for its part of the service.",
+      "tags": [
+        "privacy",
+        "data",
+        "personal information",
+        "AI provider",
+        "retention"
+      ],
+      "synonyms": [
+        "data policy",
+        "privacy policy",
+        "GDPR",
+        "data protection"
+      ]
+    },
+    {
+      "id": "privacy#when-clara-goes-live-6",
+      "url": "/privacy",
+      "title": "When Clara goes live",
+      "headingPath": [
+        "Privacy",
+        "When Clara goes live"
+      ],
+      "text": "Clara will collect the messages you send and process them with a third-party AI provider so she can reply. This page will name that provider and its retention terms before Clara is switched on.",
+      "tags": [
+        "privacy",
+        "data",
+        "personal information",
+        "AI provider",
+        "retention"
+      ],
+      "synonyms": [
+        "data policy",
+        "privacy policy",
+        "GDPR",
+        "data protection"
+      ]
+    },
+    {
+      "id": "privacy#your-choices-5",
+      "url": "/privacy",
+      "title": "Your choices",
+      "headingPath": [
+        "Privacy",
+        "Your choices"
+      ],
+      "text": "You can ask for your information to be removed. Email info@clarteon.tech and a person will help.",
+      "tags": [
+        "privacy",
+        "data",
+        "personal information",
+        "AI provider",
+        "retention"
+      ],
+      "synonyms": [
+        "data policy",
+        "privacy policy",
+        "GDPR",
+        "data protection"
+      ]
+    },
+    {
+      "id": "solutions#overview",
+      "url": "/solutions",
+      "title": "Start with the problem. The solution follows.",
+      "headingPath": [
+        "Start with the problem. The solution follows."
+      ],
+      "text": "Problems grouped by theme, each with the kind of work that usually helps. Solutions Most projects start with a repeated problem. Find the one that sounds familiar, then see the kind of work that usually helps.",
+      "tags": [
+        "solutions",
+        "automation",
+        "AI assistants",
+        "chatbots",
+        "custom software",
+        "CRM",
+        "API integration",
+        "websites"
+      ],
+      "synonyms": [
+        "services",
+        "what we do",
+        "problems",
+        "solutions"
+      ]
+    },
+    {
+      "id": "solutions#theme-1",
+      "url": "/solutions#operations",
+      "title": "Manual work and operations",
+      "headingPath": [
+        "Start with the problem. The solution follows.",
+        "Manual work and operations"
+      ],
+      "text": "The work that repeats is often the work that can be automated.",
+      "tags": [
+        "solutions",
+        "automation",
+        "AI assistants",
+        "chatbots",
+        "custom software",
+        "CRM",
+        "API integration",
+        "websites"
+      ],
+      "synonyms": [
+        "services",
+        "what we do",
+        "problems",
+        "solutions"
+      ]
+    },
+    {
+      "id": "solutions#theme-1-problem-1",
+      "url": "/solutions#operations",
+      "title": "Repeated data entry",
+      "headingPath": [
+        "Start with the problem. The solution follows.",
+        "Manual work and operations",
+        "Repeated data entry"
+      ],
+      "text": "Information is copied between email, spreadsheets and the CRM. Every copy is a chance for a mistake. Likely solution: Workflow automation",
+      "tags": [
+        "solutions",
+        "automation",
+        "AI assistants",
+        "chatbots",
+        "custom software",
+        "CRM",
+        "API integration",
+        "websites"
+      ],
+      "synonyms": [
+        "services",
+        "what we do",
+        "problems",
+        "solutions"
+      ]
+    },
+    {
+      "id": "solutions#theme-1-problem-2",
+      "url": "/solutions#operations",
+      "title": "Approvals that wait",
+      "headingPath": [
+        "Start with the problem. The solution follows.",
+        "Manual work and operations",
+        "Approvals that wait"
+      ],
+      "text": "Requests sit in inboxes until someone remembers them. The delay is invisible until it matters. Likely solution: Automation with clear handoffs",
+      "tags": [
+        "solutions",
+        "automation",
+        "AI assistants",
+        "chatbots",
+        "custom software",
+        "CRM",
+        "API integration",
+        "websites"
+      ],
+      "synonyms": [
+        "services",
+        "what we do",
+        "problems",
+        "solutions"
+      ]
+    },
+    {
+      "id": "solutions#theme-1-problem-3",
+      "url": "/solutions#operations",
+      "title": "Reporting that eats a day",
+      "headingPath": [
+        "Start with the problem. The solution follows.",
+        "Manual work and operations",
+        "Reporting that eats a day"
+      ],
+      "text": "Someone rebuilds the same report every week from several sources. Likely solution: Connected reporting",
+      "tags": [
+        "solutions",
+        "automation",
+        "AI assistants",
+        "chatbots",
+        "custom software",
+        "CRM",
+        "API integration",
+        "websites"
+      ],
+      "synonyms": [
+        "services",
+        "what we do",
+        "problems",
+        "solutions"
+      ]
+    },
+    {
+      "id": "solutions#theme-2",
+      "url": "/solutions#conversations",
+      "title": "Customer conversations",
+      "headingPath": [
+        "Start with the problem. The solution follows.",
+        "Customer conversations"
+      ],
+      "text": "Fast, consistent answers without adding more inboxes.",
+      "tags": [
+        "solutions",
+        "automation",
+        "AI assistants",
+        "chatbots",
+        "custom software",
+        "CRM",
+        "API integration",
+        "websites"
+      ],
+      "synonyms": [
+        "services",
+        "what we do",
+        "problems",
+        "solutions"
+      ]
+    },
+    {
+      "id": "solutions#theme-2-problem-1",
+      "url": "/solutions#conversations",
+      "title": "The same questions",
+      "headingPath": [
+        "Start with the problem. The solution follows.",
+        "Customer conversations",
+        "The same questions"
+      ],
+      "text": "The team answers the same questions by email and chat. Likely solution: An AI assistant or chatbot",
+      "tags": [
+        "solutions",
+        "automation",
+        "AI assistants",
+        "chatbots",
+        "custom software",
+        "CRM",
+        "API integration",
+        "websites"
+      ],
+      "synonyms": [
+        "services",
+        "what we do",
+        "problems",
+        "solutions"
+      ]
+    },
+    {
+      "id": "solutions#theme-2-problem-2",
+      "url": "/solutions#conversations",
+      "title": "Leads that go cold",
+      "headingPath": [
+        "Start with the problem. The solution follows.",
+        "Customer conversations",
+        "Leads that go cold"
+      ],
+      "text": "Enquiries arrive while the team is busy, and follow-up depends on memory. Likely solution: Lead capture and follow-up automation",
+      "tags": [
+        "solutions",
+        "automation",
+        "AI assistants",
+        "chatbots",
+        "custom software",
+        "CRM",
+        "API integration",
+        "websites"
+      ],
+      "synonyms": [
+        "services",
+        "what we do",
+        "problems",
+        "solutions"
+      ]
+    },
+    {
+      "id": "solutions#theme-2-problem-3",
+      "url": "/solutions#conversations",
+      "title": "Handoffs that lose context",
+      "headingPath": [
+        "Start with the problem. The solution follows.",
+        "Customer conversations",
+        "Handoffs that lose context"
+      ],
+      "text": "A conversation moves between people and the customer has to repeat themselves. Likely solution: A shared customer record or CRM",
+      "tags": [
+        "solutions",
+        "automation",
+        "AI assistants",
+        "chatbots",
+        "custom software",
+        "CRM",
+        "API integration",
+        "websites"
+      ],
+      "synonyms": [
+        "services",
+        "what we do",
+        "problems",
+        "solutions"
+      ]
+    },
+    {
+      "id": "solutions#theme-3",
+      "url": "/solutions#software",
+      "title": "Software and data",
+      "headingPath": [
+        "Start with the problem. The solution follows.",
+        "Software and data"
+      ],
+      "text": "When the tool almost fits, the workarounds become the real process.",
+      "tags": [
+        "solutions",
+        "automation",
+        "AI assistants",
+        "chatbots",
+        "custom software",
+        "CRM",
+        "API integration",
+        "websites"
+      ],
+      "synonyms": [
+        "services",
+        "what we do",
+        "problems",
+        "solutions"
+      ]
+    },
+    {
+      "id": "solutions#theme-3-problem-1",
+      "url": "/solutions#software",
+      "title": "Tools that do not talk",
+      "headingPath": [
+        "Start with the problem. The solution follows.",
+        "Software and data",
+        "Tools that do not talk"
+      ],
+      "text": "Your CRM, calendar and finance tool each hold part of the picture. Likely solution: API integration",
+      "tags": [
+        "solutions",
+        "automation",
+        "AI assistants",
+        "chatbots",
+        "custom software",
+        "CRM",
+        "API integration",
+        "websites"
+      ],
+      "synonyms": [
+        "services",
+        "what we do",
+        "problems",
+        "solutions"
+      ]
+    },
+    {
+      "id": "solutions#theme-3-problem-2",
+      "url": "/solutions#software",
+      "title": "Spreadsheets as software",
+      "headingPath": [
+        "Start with the problem. The solution follows.",
+        "Software and data",
+        "Spreadsheets as software"
+      ],
+      "text": "A spreadsheet runs a critical process, and only one person understands it. Likely solution: Custom software",
+      "tags": [
+        "solutions",
+        "automation",
+        "AI assistants",
+        "chatbots",
+        "custom software",
+        "CRM",
+        "API integration",
+        "websites"
+      ],
+      "synonyms": [
+        "services",
+        "what we do",
+        "problems",
+        "solutions"
+      ]
+    },
+    {
+      "id": "solutions#theme-3-problem-3",
+      "url": "/solutions#software",
+      "title": "Reports no one trusts",
+      "headingPath": [
+        "Start with the problem. The solution follows.",
+        "Software and data",
+        "Reports no one trusts"
+      ],
+      "text": "Different teams count the same thing differently. Likely solution: A single source of truth",
+      "tags": [
+        "solutions",
+        "automation",
+        "AI assistants",
+        "chatbots",
+        "custom software",
+        "CRM",
+        "API integration",
+        "websites"
+      ],
+      "synonyms": [
+        "services",
+        "what we do",
+        "problems",
+        "solutions"
+      ]
+    },
+    {
+      "id": "solutions#theme-4",
+      "url": "/solutions#web",
+      "title": "Web presence",
+      "headingPath": [
+        "Start with the problem. The solution follows.",
+        "Web presence"
+      ],
+      "text": "A website should answer the question a visitor arrived with.",
+      "tags": [
+        "solutions",
+        "automation",
+        "AI assistants",
+        "chatbots",
+        "custom software",
+        "CRM",
+        "API integration",
+        "websites"
+      ],
+      "synonyms": [
+        "services",
+        "what we do",
+        "problems",
+        "solutions"
+      ]
+    },
+    {
+      "id": "solutions#theme-4-problem-1",
+      "url": "/solutions#web",
+      "title": "Visitors cannot find the answer",
+      "headingPath": [
+        "Start with the problem. The solution follows.",
+        "Web presence",
+        "Visitors cannot find the answer"
+      ],
+      "text": "The site describes what you do, but not the problem the visitor is trying to solve. Likely solution: A clearer website",
+      "tags": [
+        "solutions",
+        "automation",
+        "AI assistants",
+        "chatbots",
+        "custom software",
+        "CRM",
+        "API integration",
+        "websites"
+      ],
+      "synonyms": [
+        "services",
+        "what we do",
+        "problems",
+        "solutions"
+      ]
+    },
+    {
+      "id": "solutions#theme-4-problem-2",
+      "url": "/solutions#web",
+      "title": "Interest does not become a conversation",
+      "headingPath": [
+        "Start with the problem. The solution follows.",
+        "Web presence",
+        "Interest does not become a conversation"
+      ],
+      "text": "People look around and leave without a clear next step. Likely solution: A website with a clear path to a discovery call",
+      "tags": [
+        "solutions",
+        "automation",
+        "AI assistants",
+        "chatbots",
+        "custom software",
+        "CRM",
+        "API integration",
+        "websites"
+      ],
+      "synonyms": [
+        "services",
+        "what we do",
+        "problems",
+        "solutions"
+      ]
+    },
+    {
+      "id": "solutions#theme-4-problem-3",
+      "url": "/solutions#web",
+      "title": "Updates need a developer",
+      "headingPath": [
+        "Start with the problem. The solution follows.",
+        "Web presence",
+        "Updates need a developer"
+      ],
+      "text": "Simple copy changes wait in a queue. Likely solution: A manageable content setup",
+      "tags": [
+        "solutions",
+        "automation",
+        "AI assistants",
+        "chatbots",
+        "custom software",
+        "CRM",
+        "API integration",
+        "websites"
+      ],
+      "synonyms": [
+        "services",
+        "what we do",
+        "problems",
+        "solutions"
+      ]
+    }
+  ]
+}

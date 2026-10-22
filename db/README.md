@@ -1,7 +1,8 @@
-# Lead and booking database
+# Lead, booking and knowledge database
 
-The project brief form saves leads to a Neon Postgres database, and the booking
-flow uses the same database for its pending and confirmed bookings. The tables
+The project brief form saves leads to a Neon Postgres database, the booking flow
+uses the same database for its pending and confirmed bookings, and Clara's
+approved FAQ answers and unanswered-question queue live there too. The tables
 and indexes live in `schema.sql`.
 
 ## Apply the schema
@@ -24,9 +25,10 @@ npm run db:backup -- --out "D:/secure/clarteon-2026-10-21.backup"
 ```
 
 The file is encrypted with AES-256-GCM and must be written outside this
-repository; the script refuses a path inside it. Treat every backup as personal
-data: keep it off shared drives, and delete old files on the same 12-month
-retention schedule as the leads.
+repository; the script refuses a path inside it. The backup includes leads,
+bookings, the redacted knowledge questions, approved FAQs and the knowledge
+audit log. Treat every backup as personal data: keep it off shared drives, and
+delete old files on the same 12-month retention schedule as the leads.
 
 ## Restore
 
@@ -56,6 +58,12 @@ Booking details are kept only as long as needed to arrange and follow up on the
 call, unless a client relationship or law requires a longer period. The
 `db:prune` script currently handles leads only; remove expired bookings in the
 same scheduled maintenance run until a retention script covers them.
+
+Knowledge questions are redacted before they are stored, but they are still
+visitor text. A retention period for the review queue is a human decision and
+is not set yet. Until it is, keep the queue small and delete reviewed questions
+that are no longer useful. Published FAQ answers and the approval audit log are
+not personal data.
 
 A deletion request from a visitor should be handled by a person with database
 access. Delete the matching rows, then confirm the deletion to the visitor.

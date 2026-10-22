@@ -2,6 +2,7 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { describe, expect, it } from "vitest";
 import {
+  BACKUP_TABLES,
   assertOutsideRepo,
   decryptBackup,
   encryptBackup,
@@ -45,6 +46,13 @@ describe("backup encryption", () => {
 });
 
 describe("restore inserts", () => {
+  it("includes the knowledge tables in a backup", () => {
+    expect(BACKUP_TABLES).toContain("knowledge_questions");
+    expect(BACKUP_TABLES).toContain("knowledge_faqs");
+    expect(BACKUP_TABLES).toContain("knowledge_audit");
+    expect(BACKUP_TABLES).not.toContain("knowledge_index");
+  });
+
   it("builds a parameterized insert that never overwrites", () => {
     expect(insertStatement("leads", { id: "1", email: "ada@example.com" })).toEqual({
       text: "INSERT INTO leads (id, email) VALUES ($1, $2) ON CONFLICT DO NOTHING",

@@ -16,7 +16,7 @@ Reason for this order: forms, booking and knowledge are plain server functions t
 | P1 | Primary call to action (default: discovery call), founder bios and certifications, final copy for sections beyond the hero |
 | P2 | Email sending address, whether to keep a lead log, retention period |
 | P3 | Booking rules (working hours, call length, buffer, minimum notice, whose calendar). Google authorization is settled: OAuth for a free Google Account on `admin@clarteon.tech`, no Workspace (see the P3 note) |
-| P4 | Where content lives (default: files in the repo), who reviews the unanswered-question queue and how often |
+| P4 | Who reviews the unanswered-question queue and how often (content is Markdown in the repo and approved FAQs live in Neon; the admin sign-in is ready; review cadence still open) |
 | P5 | Confirm exact Groq limits on the console limits page, read Groq's data terms |
 | P7 | First two or three case studies with client permission, analytics approach |
 
@@ -66,7 +66,7 @@ Reason for this order: forms, booking and knowledge are plain server functions t
 ## P4 Knowledge layer (size M)
 
 - Skill: `clarteon-knowledge-sync`
-- Deliverables: content front matter and chunker, keyword search index built at publish time, `search_knowledge` function returning two or three short snippets, secured sync endpoint, unanswered-question log, admin review queue behind sign-in, approved answers written back as FAQ content that re-syncs.
+- Deliverables: content front matter and chunker, keyword search index built at publish time, `search_knowledge` function returning two or three short snippets, secured sync endpoint, unanswered-question log, admin review queue behind sign-in, approved answers stored as published FAQs in Neon and re-synced immediately without repository write access.
 - Exit criteria:
   - [ ] Publishing content updates search results after a sync
   - [ ] Only published content is indexed
