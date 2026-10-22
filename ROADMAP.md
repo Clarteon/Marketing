@@ -68,11 +68,11 @@ Reason for this order: forms, booking and knowledge are plain server functions t
 - Skill: `clarteon-knowledge-sync`
 - Deliverables: content front matter and chunker, keyword search index built at publish time, `search_knowledge` function returning two or three short snippets, secured sync endpoint, unanswered-question log, admin review queue behind sign-in, approved answers stored as published FAQs in Neon and re-synced immediately without repository write access.
 - Exit criteria:
-  - [ ] Publishing content updates search results after a sync
-  - [ ] Only published content is indexed
-  - [ ] Unanswered questions appear in the review queue, and approvals re-sync
-  - [ ] Review pages require sign-in
-- Note (October 22, 2026): the content chunker and build-time keyword index, search, redaction, Neon FAQ store, secure sync endpoint, review queue, sign-in, audit log and tests are in place. A live Neon smoke test approved an FAQ, reindexed to 55 chunks, then removed it and synced back to 54. CI run `39756007585` passed and deployed `0546a1e`. Production still needs `ADMIN_AUTH_SECRET` and `SYNC_SECRET` set in Vercel: until then `/admin/login` shows the configuration notice and `POST /api/sync` returns `503`. The queue review cadence remains a human decision.
+  - [x] Publishing content updates search results after a sync
+  - [x] Only published content is indexed
+  - [x] Unanswered questions appear in the review queue, and approvals re-sync
+  - [x] Review pages require sign-in
+- Note (October 22, 2026): the content chunker and build-time keyword index, search, redaction, Neon FAQ store, secure sync endpoint, review queue, sign-in, audit log and tests are in place. A live Neon smoke test approved an FAQ, reindexed to 55 chunks, then removed it and synced back to 54. CI run `39764845248` passed and deployed `6f71068`. Production now has `ADMIN_AUTH_SECRET` and `SYNC_SECRET`: `/admin/login` shows the password form, `/admin/review` redirects to sign-in, and `/api/sync` returns `401` without a valid secret. Run one authenticated sync with the saved secret and confirm `chunkCount: 54`. The queue review cadence remains a human decision.
 
 ## P5 Clara (size L)
 
