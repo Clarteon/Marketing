@@ -50,9 +50,10 @@ export const envSchema = z.object({
   EMAIL_REPLY_TO: optionalEmail,
   TEAM_ALERT_EMAIL: optionalEmail,
 
-  // Sync and admin
+  // Sync, admin and chat sessions
   SYNC_SECRET: optionalLongSecret,
   ADMIN_AUTH_SECRET: optionalLongSecret,
+  CHAT_SESSION_SECRET: optionalLongSecret,
 
   // Limits
   RATE_LIMIT_WINDOW_SECONDS: positiveInteger(60),

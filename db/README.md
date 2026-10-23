@@ -1,6 +1,6 @@
 # Lead, booking and knowledge database
 
-The project brief form saves leads to a Neon Postgres database, the booking flow
+The project brief form and Clara save leads to a Neon Postgres database, the booking flow
 uses the same database for its pending and confirmed bookings, and Clara's
 approved FAQ answers and unanswered-question queue live there too. The tables
 and indexes live in `schema.sql`.

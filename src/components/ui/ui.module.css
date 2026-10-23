@@ -802,7 +802,7 @@
   position: fixed;
   right: 1rem;
   bottom: 1rem;
-  z-index: 40;
+  z-index: 70;
 }
 
 @media (max-width: 980px) {

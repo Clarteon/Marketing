@@ -17,8 +17,13 @@ create table if not exists leads (
   constraint leads_team_size_check check (
     team_size is null or team_size in ('1', '2-10', '11-50', '51-200', '200+', 'not-sure')
   ),
-  constraint leads_source_check check (source in ('website-form'))
+  constraint leads_source_check check (source in ('website-form', 'clara-chat'))
 );
+
+-- Older databases were created with the website-form-only constraint. Replacing
+-- it is safe: the check only widens the allowed values.
+alter table leads drop constraint if exists leads_source_check;
+alter table leads add constraint leads_source_check check (source in ('website-form', 'clara-chat'));
 
 create index if not exists leads_created_at_idx on leads (created_at);
 create index if not exists leads_email_idx on leads (email);

@@ -13,14 +13,19 @@ describe("database schema", () => {
     const schema = await readFile(resolve(process.cwd(), "db/schema.sql"), "utf8");
     const statements = sqlStatements(schema);
 
-    expect(statements).toHaveLength(13);
-    expect(statements.every((statement) => /^create /i.test(statement))).toBe(true);
+    expect(statements).toHaveLength(15);
+    expect(statements.every((statement) => /^(create|alter) /i.test(statement))).toBe(true);
     expect(
       statements.some((statement) => statement.includes("create table if not exists bookings")),
     ).toBe(true);
     expect(
       statements.some((statement) =>
         statement.includes("create table if not exists knowledge_questions"),
+      ),
+    ).toBe(true);
+    expect(
+      statements.some((statement) =>
+        statement.includes("check (source in ('website-form', 'clara-chat'))"),
       ),
     ).toBe(true);
   });

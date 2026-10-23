@@ -3,7 +3,7 @@ import { getConfig } from "@/lib/config";
 import type { TeamSize } from "./constants";
 import { NeonLeadStore } from "./neon-store";
 
-export type LeadSource = "website-form";
+export type LeadSource = "website-form" | "clara-chat";
 export type EmailKind = "team" | "receipt";
 
 export interface NewLead {
@@ -26,8 +26,18 @@ export interface SaveLeadResult {
   created: boolean;
 }
 
+export interface LeadUpdate {
+  name: string;
+  email: string;
+  company?: string;
+  need: string;
+  teamSize?: TeamSize;
+}
+
 export interface LeadStore {
   save(input: NewLead): Promise<SaveLeadResult>;
+  /** Clara may add detail across turns. Form leads are never changed by this path. */
+  updateFromChat?(id: string, input: LeadUpdate): Promise<Lead>;
   markEmailSent(id: string, kind: EmailKind): Promise<void>;
   markEmailFailure(id: string, errorCode: string): Promise<void>;
 }

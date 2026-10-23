@@ -3,7 +3,7 @@ title: "Privacy"
 slug: privacy
 type: page
 status: published
-summary: "How Clarteon handles project briefs, discovery-call bookings, and what will change when Clara goes live."
+summary: "How Clarteon handles information from the project brief form, discovery-call bookings and Clara, our AI assistant."
 tags:
   - privacy
   - data
@@ -16,11 +16,11 @@ synonyms:
   - GDPR
   - data protection
 seoTitle: "Privacy"
-seoDescription: "How Clarteon handles information from the project brief form and discovery-call booking, who processes it, how long it is kept, and how to ask for removal."
+seoDescription: "How Clarteon handles information from the project brief form, discovery-call bookings and Clara, our AI assistant, and how to ask for removal."
 hero:
   eyebrow: "Privacy"
   title: "Privacy"
-  intro: "How Clarteon handles information from the project brief form and discovery-call booking, and what will change when Clara goes live."
+  intro: "How Clarteon handles information from the project brief form, discovery-call bookings and Clara, our AI assistant."
 ---
 ## What the project brief form collects
 
@@ -46,9 +46,13 @@ We use Cloudflare Web Analytics to count page visits and measure how fast pages 
 
 You can ask for your information to be removed. Email info@clarteon.tech and a person will help.
 
-## When Clara goes live
+## Clara, our AI assistant
 
-Clara will collect the messages you send and process them with a third-party AI provider so she can reply. This page will name that provider and its retention terms before Clara is switched on.
+Clara is an AI assistant. When you chat with her, the messages you send are processed by our AI provider, Groq, so she can reply. Groq receives the conversation text needed to generate a reply. Groq's privacy policy states that it does not retain inputs and outputs by default, and that it may keep them for up to 30 days for reliability and abuse monitoring. We do not store your chat transcript in our lead database.
+
+Cloudflare Turnstile checks that you are a person before your first message. If Clara cannot answer from our published content, we log the question with names, email addresses and other personal details removed, so a person can review it and improve our answers. We keep those notes only as long as needed for that purpose.
+
+Please do not share passwords, payment details, government identification or other sensitive information in chat. If you are under 18, please do not use the chat or share personal details.
 
 ## Legal review
 

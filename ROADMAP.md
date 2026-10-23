@@ -79,10 +79,11 @@ Reason for this order: forms, booking and knowledge are plain server functions t
 - Skill: `clarteon-clara-chat`
 - Deliverables: `/api/chat` with streaming, Groq client with model fallback chain, tool calling for the six tools, token budgeting and history trimming, message caps, chat widget with quick-start buttons and a privacy notice, degraded mode, the system prompt.
 - Exit criteria:
-  - [ ] End-to-end conversation reaches a booked call and a saved lead
-  - [ ] Model fallback and email-only mode work when limits are forced
-  - [ ] Privacy notice appears before the first message
-  - [ ] Chat output is rendered safely as text
+  - [x] End-to-end conversation reaches a booked call and a saved lead
+  - [x] Model fallback and email-only mode work when limits are forced
+  - [x] Privacy notice appears before the first message
+  - [x] Chat output is rendered safely as text
+- Note (October 23, 2026): `/api/chat` streams from Groq through `gpt-oss-120b`, `gpt-oss-20b` and Qwen, then falls back to an email-only panel. Turnstile plus a signed `clarteon_chat` cookie gate the first message, and the six tools validate input and rate limits on the server. The suite includes a full saved-lead and booked-call conversation, forced fallback, the privacy gate, safe text rendering and degraded links; the chat e2e spec passes 8/8. Production still needs `GROQ_API_KEY`, a matching Turnstile site/secret pair and `CHAT_SESSION_SECRET` (or `ADMIN_AUTH_SECRET`); the `clara-chat` lead-source constraint is applied. Lighthouse stays above the 0.7 performance gate with the existing LCP warnings; P6 owns that work.
 
 ## P6 Hardening and testing (size M)
 

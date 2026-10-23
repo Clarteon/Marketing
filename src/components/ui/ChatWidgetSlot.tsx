@@ -1,11 +1,13 @@
+import { ClaraChat } from "@/components/chat/ClaraChat";
 import styles from "./ui.module.css";
 
 /**
- * Mount point for Clara. P5 replaces the empty slot with the chat widget; the
- * slot exists on every page in the meantime so the layout can stay stable.
+ * Mount point for Clara on every page.
  */
-export function ChatWidgetSlot() {
+export function ChatWidgetSlot({ turnstileSiteKey }: { turnstileSiteKey?: string }) {
   return (
-    <div id="clara-chat-slot" data-clara-chat-slot className={styles.chatSlot} aria-hidden="true" />
+    <div id="clara-chat-slot" data-clara-chat-slot className={styles.chatSlot}>
+      <ClaraChat turnstileSiteKey={turnstileSiteKey} />
+    </div>
   );
 }

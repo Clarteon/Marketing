@@ -1,6 +1,6 @@
 import "server-only";
 import { neon } from "@neondatabase/serverless";
-import type { EmailKind, Lead, LeadStore, NewLead, SaveLeadResult } from "./store";
+import type { EmailKind, Lead, LeadStore, LeadUpdate, NewLead, SaveLeadResult } from "./store";
 
 interface LeadRow {
   id: string;
@@ -67,6 +67,25 @@ export class NeonLeadStore implements LeadStore {
     }
 
     return { lead: mapRow(existing[0]), created: false };
+  }
+
+  async updateFromChat(id: string, input: LeadUpdate): Promise<Lead> {
+    const rows = (await this.sql`
+      UPDATE leads
+      SET name = ${input.name},
+          email = ${input.email},
+          company = ${input.company ?? null},
+          need = ${input.need},
+          team_size = ${input.teamSize ?? null}
+      WHERE id = ${id} AND source = 'clara-chat'
+      RETURNING id, request_id, name, email, company, need, team_size, source, created_at
+    `) as unknown as LeadRow[];
+
+    if (rows.length === 0) {
+      throw new Error("The Clara lead could not be updated.");
+    }
+
+    return mapRow(rows[0]);
   }
 
   async markEmailSent(id: string, kind: EmailKind): Promise<void> {

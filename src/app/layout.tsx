@@ -60,7 +60,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <Header />
         {children}
         <Footer />
-        <ChatWidgetSlot />
+        <ChatWidgetSlot turnstileSiteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} />
         <Analytics />
       </body>
     </html>
