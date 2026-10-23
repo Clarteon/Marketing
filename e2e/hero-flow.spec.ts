@@ -14,7 +14,9 @@ test("diagram selection persists, previews related paths, and resets", async ({
   const assistant = diagram.getByRole("button", { name: "AI assistants" });
   const status = diagram.getByRole("status");
   await diagram.scrollIntoViewIfNeeded();
-  const initialHeight = (await diagram.boundingBox())!.height;
+  // Layout height, not boundingBox: the scroll-reveal entrance scales the box while it plays.
+  const layoutHeight = () => diagram.evaluate((element) => (element as HTMLElement).offsetHeight);
+  const initialHeight = await layoutHeight();
 
   if (isMobile) await manual.tap();
   else await manual.click();
@@ -38,7 +40,7 @@ test("diagram selection persists, previews related paths, and resets", async ({
     await expect(status).toContainText("Copying & pasting data");
   }
 
-  expect((await diagram.boundingBox())!.height).toBe(initialHeight);
+  expect(await layoutHeight()).toBe(initialHeight);
   await diagram.getByRole("button", { name: "Reset" }).click();
   await expect(manual).toHaveAttribute("aria-pressed", "false");
   await expect(status).toContainText("Select an icon to learn more.");
@@ -77,6 +79,8 @@ test("diagram fits phone, tablet and desktop with readable targets and stable de
     const diagram = page.getByRole("region", { name: /interactive flow/i });
     await diagram.scrollIntoViewIfNeeded();
     const box = (await diagram.boundingBox())!;
+    // Layout height, not boundingBox: the scroll-reveal entrance scales the box while it plays.
+    const height = await diagram.evaluate((element) => (element as HTMLElement).offsetHeight);
     expect(box.x).toBeGreaterThanOrEqual(0);
     expect(box.x + box.width).toBeLessThanOrEqual(width);
     const nodes = diagram.getByRole("button").filter({ has: page.locator("svg") });
@@ -86,7 +90,9 @@ test("diagram fits phone, tablet and desktop with readable targets and stable de
       expect(target.width).toBeGreaterThanOrEqual(44);
       expect(target.height).toBeGreaterThanOrEqual(44);
       await node.click();
-      expect((await diagram.boundingBox())!.height).toBe(box.height);
+      expect(await diagram.evaluate((element) => (element as HTMLElement).offsetHeight)).toBe(
+        height,
+      );
       const status = diagram.getByRole("status");
       expect(await status.evaluate((element) => element.scrollHeight <= element.clientHeight)).toBe(
         true,
