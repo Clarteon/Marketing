@@ -15,7 +15,8 @@ const contentSecurityPolicy = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "font-src 'self' data:",
-  `connect-src 'self' ${turnstileOrigin}${analyticsConnect}${isDev ? " ws: wss:" : ""}`,
+  // Turnstile probes the browser with a `data:,` connection from its challenge frame.
+  `connect-src 'self' data: ${turnstileOrigin}${analyticsConnect}${isDev ? " ws: wss:" : ""}`,
   `frame-src ${turnstileOrigin}`,
   "object-src 'none'",
   "base-uri 'self'",
