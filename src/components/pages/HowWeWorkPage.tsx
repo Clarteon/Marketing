@@ -3,6 +3,8 @@ import { BookingSection } from "@/components/ui/BookingSection";
 import { Button } from "@/components/ui/Button";
 import { Page } from "@/components/ui/Page";
 import { PageHero } from "@/components/ui/PageHero";
+import { ProcessConduit } from "@/components/ui/ProcessConduit";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { Section } from "@/components/ui/Section";
 import styles from "./pages.module.css";
 
@@ -21,7 +23,7 @@ export function HowWeWorkPage({ data }: { data: HowWeWorkData }) {
       />
 
       <Section aria-labelledby="steps-title">
-        <div className={styles.sectionHeader}>
+        <ScrollReveal className={styles.sectionHeader}>
           <p className={styles.eyebrow}>The process</p>
           <h2 id="steps-title" className={styles.sectionTitle}>
             From problem to working system.
@@ -30,21 +32,13 @@ export function HowWeWorkPage({ data }: { data: HowWeWorkData }) {
             Each step has a clear output, so you can decide whether to keep going before the next
             one starts.
           </p>
-        </div>
+        </ScrollReveal>
 
-        <ol className={styles.steps}>
-          {data.steps.map((step, index) => (
-            <li className={styles.step} key={step.title}>
-              <span className={styles.stepNumber}>{index + 1}</span>
-              <h3 className={styles.stepTitle}>{step.title}</h3>
-              <p className={styles.stepBody}>{step.body}</p>
-            </li>
-          ))}
-        </ol>
+        <ProcessConduit steps={data.steps} tone="paper" />
       </Section>
 
       <Section tone="stone" aria-labelledby="call-title">
-        <div className={styles.callout}>
+        <ScrollReveal className={styles.callout}>
           <div className={styles.calloutHeader}>
             <p className={styles.eyebrow}>Discovery call</p>
             <h2 id="call-title" className={styles.calloutTitle}>
@@ -60,10 +54,12 @@ export function HowWeWorkPage({ data }: { data: HowWeWorkData }) {
               </li>
             ))}
           </ul>
-        </div>
+        </ScrollReveal>
       </Section>
 
-      <BookingSection />
+      <ScrollReveal>
+        <BookingSection />
+      </ScrollReveal>
     </Page>
   );
 }

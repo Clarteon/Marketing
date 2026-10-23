@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Page } from "@/components/ui/Page";
 import { PageHero } from "@/components/ui/PageHero";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { Section } from "@/components/ui/Section";
 import styles from "./pages.module.css";
 
@@ -28,15 +29,15 @@ export function SolutionsPage({ data }: { data: SolutionsData }) {
           tone={index % 2 === 1 ? "stone" : "paper"}
           aria-labelledby={`${theme.id}-title`}
         >
-          <div className={styles.sectionHeader}>
+          <ScrollReveal className={styles.sectionHeader}>
             <p className={styles.eyebrow}>{String(index + 1).padStart(2, "0")}</p>
             <h2 id={`${theme.id}-title`} className={styles.sectionTitle}>
               {theme.title}
             </h2>
             <p className={styles.sectionIntro}>{theme.intro}</p>
-          </div>
+          </ScrollReveal>
 
-          <div className={styles.problemGrid}>
+          <ScrollReveal stagger className={styles.problemGrid}>
             {theme.problems.map((problem) => (
               <Card as="article" key={problem.title} className={styles.problemCard}>
                 <h3 className={styles.problemTitle}>{problem.title}</h3>
@@ -47,7 +48,7 @@ export function SolutionsPage({ data }: { data: SolutionsData }) {
                 </p>
               </Card>
             ))}
-          </div>
+          </ScrollReveal>
 
           <div className={styles.themeAction}>
             <Button href="/contact#book" variant="text">
@@ -57,7 +58,9 @@ export function SolutionsPage({ data }: { data: SolutionsData }) {
         </Section>
       ))}
 
-      <BookingSection />
+      <ScrollReveal>
+        <BookingSection />
+      </ScrollReveal>
     </Page>
   );
 }

@@ -1,0 +1,231 @@
+/* ==========================================================================
+   Clarteon Scroll Effects: Aperture Optical Resolution & Reticle Viewfinder
+   ========================================================================== */
+
+/* Aperture Optical Resolution: Reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px) scale(0.985);
+  filter: blur(6px);
+  transition:
+    opacity 650ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 650ms cubic-bezier(0.16, 1, 0.3, 1),
+    filter 650ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform, filter;
+}
+
+.reveal[data-revealed="true"] {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+}
+
+/* Aperture Optical Resolution: Staggered Children (Grids) */
+.revealStagger > * {
+  opacity: 0;
+  transform: translateY(22px) scale(0.985);
+  filter: blur(6px);
+  transition:
+    opacity 650ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 650ms cubic-bezier(0.16, 1, 0.3, 1),
+    filter 650ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform, filter;
+}
+
+.revealStagger[data-revealed="true"] > *:nth-child(1) {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+  transition-delay: 0ms;
+}
+
+.revealStagger[data-revealed="true"] > *:nth-child(2) {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+  transition-delay: 80ms;
+}
+
+.revealStagger[data-revealed="true"] > *:nth-child(3) {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+  transition-delay: 160ms;
+}
+
+.revealStagger[data-revealed="true"] > *:nth-child(4) {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+  transition-delay: 240ms;
+}
+
+.revealStagger[data-revealed="true"] > *:nth-child(5) {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+  transition-delay: 320ms;
+}
+
+.revealStagger[data-revealed="true"] > *:nth-child(6) {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+  transition-delay: 400ms;
+}
+
+/* ==========================================================================
+   Rangefinder Reticle Frame (Viewfinder Corners)
+   ========================================================================== */
+.reticleContainer {
+  position: relative;
+  border-radius: var(--radius-card);
+  transition: box-shadow 350ms ease;
+}
+
+.reticleCorner {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  pointer-events: none;
+  z-index: 2;
+  border-color: rgba(10, 10, 10, 0.2);
+  transition:
+    top 450ms cubic-bezier(0.16, 1, 0.3, 1),
+    bottom 450ms cubic-bezier(0.16, 1, 0.3, 1),
+    left 450ms cubic-bezier(0.16, 1, 0.3, 1),
+    right 450ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 450ms ease,
+    opacity 450ms ease;
+}
+
+/* Offset positions before lock */
+.cornerTopLeft {
+  top: -8px;
+  left: -8px;
+  border-top: 2px solid;
+  border-left: 2px solid;
+  border-top-left-radius: 4px;
+}
+
+.cornerTopRight {
+  top: -8px;
+  right: -8px;
+  border-top: 2px solid;
+  border-right: 2px solid;
+  border-top-right-radius: 4px;
+}
+
+.cornerBottomLeft {
+  bottom: -8px;
+  left: -8px;
+  border-bottom: 2px solid;
+  border-left: 2px solid;
+  border-bottom-left-radius: 4px;
+}
+
+.cornerBottomRight {
+  bottom: -8px;
+  right: -8px;
+  border-bottom: 2px solid;
+  border-right: 2px solid;
+  border-bottom-right-radius: 4px;
+}
+
+/* Locked state (snapped directly onto the card corners) */
+.reticleContainer[data-locked="true"] .cornerTopLeft {
+  top: 0;
+  left: 0;
+  border-color: var(--ink);
+}
+
+.reticleContainer[data-locked="true"] .cornerTopRight {
+  top: 0;
+  right: 0;
+  border-color: var(--ink);
+}
+
+.reticleContainer[data-locked="true"] .cornerBottomLeft {
+  bottom: 0;
+  left: 0;
+  border-color: var(--ink);
+}
+
+.reticleContainer[data-locked="true"] .cornerBottomRight {
+  bottom: 0;
+  right: 0;
+  border-color: var(--ink);
+}
+
+/* Dark mode / Tone Ink variants */
+.reticleInk .reticleCorner {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.reticleInk[data-locked="true"] .reticleCorner {
+  border-color: var(--lime);
+  box-shadow: 0 0 10px rgba(198, 244, 50, 0.3);
+}
+
+/* Reticle status badge */
+.reticleBadge {
+  position: absolute;
+  top: 0.75rem;
+  right: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  opacity: 0;
+  transform: translateY(-4px);
+  transition:
+    opacity 400ms ease 150ms,
+    transform 400ms ease 150ms;
+}
+
+.reticleContainer[data-locked="true"] .reticleBadge {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reticleDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: var(--lime);
+  box-shadow: 0 0 6px var(--lime);
+}
+
+/* ==========================================================================
+   Accessibility & Reduced Motion
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal[data-revealed="false"],
+  .revealStagger > *,
+  .revealStagger[data-revealed="false"] > * {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+  }
+
+  .reticleCorner {
+    top: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    transition: none !important;
+  }
+
+  .reticleBadge {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}

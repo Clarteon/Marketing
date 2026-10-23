@@ -3,6 +3,7 @@ import { Fraunces, Inter } from "next/font/google";
 import type { ReactNode } from "react";
 import { Analytics } from "@/components/ui/Analytics";
 import { ChatWidgetSlot } from "@/components/ui/ChatWidgetSlot";
+import { CustomCursor } from "@/components/ui/CustomCursor";
 import { Footer } from "@/components/ui/Footer";
 import { Header } from "@/components/ui/Header";
 import { getSiteUrl, isIndexingAllowed } from "@/lib/site";
@@ -62,6 +63,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <Footer />
         <ChatWidgetSlot turnstileSiteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} />
         <Analytics />
+        <CustomCursor />
       </body>
     </html>
   );

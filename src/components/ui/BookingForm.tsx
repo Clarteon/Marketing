@@ -363,7 +363,7 @@ export function BookingForm({ turnstileSiteKey }: BookingFormProps) {
           <p className={styles.formNote}>
             Send a project brief and a person on the Clarteon team will find a time with you.
           </p>
-          <Button href="#brief" variant="secondary">
+          <Button href="#brief" variant="primary">
             Send a project brief
           </Button>
         </div>
@@ -411,7 +411,7 @@ export function BookingForm({ turnstileSiteKey }: BookingFormProps) {
             Booking is not available right now. Send a project brief and we will find a time with
             you.
           </p>
-          <Button href="#brief" variant="secondary">
+          <Button href="#brief" variant="primary">
             Send a project brief
           </Button>
         </div>
@@ -420,7 +420,7 @@ export function BookingForm({ turnstileSiteKey }: BookingFormProps) {
       {availability === "ready" && groups.length === 0 ? (
         <div className={styles.bookingFallback}>
           <p>No open times in the next 30 days. Send a project brief and we will find a time.</p>
-          <Button href="#brief" variant="secondary">
+          <Button href="#brief" variant="primary">
             Send a project brief
           </Button>
         </div>

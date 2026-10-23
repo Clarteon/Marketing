@@ -25,11 +25,11 @@ describe("published content", () => {
 
     expect(home.frontMatter.hero.title).toBe("Technology that starts with your problem.");
     expect(home.frontMatter.hero.intro).toBe(
-      "Clarteon is the technology partner that believes the right solution starts with the right question. We find the repetitive work slowing your business down, then automate it or build what you need, so you can grow.",
+      "Give your team more time to grow the business by removing repetitive work. We find the right solution, then automate the work or build what’s missing.",
     );
     expect(home.frontMatter.hero.actions[0].label).toBe("Book a free discovery call");
     expect(home.frontMatter.hero.actions[1].label).toBe("Send a project brief");
-    expect(home.frontMatter.hero.actions[2].label).toBe("Or message us");
+    expect(home.frontMatter.hero.actions).toHaveLength(2);
   });
 
   it("has the required front matter on every published page", async () => {

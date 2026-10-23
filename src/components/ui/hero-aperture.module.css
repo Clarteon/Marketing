@@ -1,0 +1,246 @@
+.center {
+  position: relative;
+  grid-column: span 6 / span 6;
+  display: grid;
+  place-items: center;
+  height: 100%;
+}
+
+.housing {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: var(--ink);
+  box-shadow:
+    0 2px 4px rgba(10, 10, 10, 0.04),
+    0 12px 32px -4px rgba(10, 10, 10, 0.18),
+    inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  transition:
+    transform 350ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 350ms ease;
+}
+
+.housing[data-active="true"] {
+  transform: scale(1.03);
+  box-shadow:
+    0 4px 8px rgba(10, 10, 10, 0.06),
+    0 16px 40px -4px rgba(10, 10, 10, 0.24),
+    0 0 24px rgba(198, 244, 50, 0.22),
+    inset 0 1px 1px rgba(255, 255, 255, 0.3);
+}
+
+.ambientGlow {
+  position: absolute;
+  inset: -24px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(198, 244, 50, 0.28) 0%,
+    rgba(198, 244, 50, 0.1) 45%,
+    rgba(198, 244, 50, 0) 72%
+  );
+  opacity: 0.45;
+  pointer-events: none;
+  transition:
+    opacity 400ms ease,
+    transform 400ms ease;
+  animation: glow-breathe-idle 4s ease-in-out infinite alternate;
+}
+
+.housing[data-active="true"] .ambientGlow {
+  opacity: 1;
+  animation: glow-breathe-active 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow-breathe-idle {
+  from {
+    transform: scale(0.96);
+    opacity: 0.35;
+  }
+  to {
+    transform: scale(1.04);
+    opacity: 0.55;
+  }
+}
+
+@keyframes glow-breathe-active {
+  from {
+    transform: scale(1.04);
+    opacity: 0.75;
+  }
+  to {
+    transform: scale(1.18);
+    opacity: 1;
+  }
+}
+
+.pulseWave {
+  position: absolute;
+  inset: -12px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(198, 244, 50, 0.5);
+  pointer-events: none;
+  opacity: 0;
+}
+
+.housing[data-active="true"] .pulseWave {
+  animation: pulse-radiate 2.4s cubic-bezier(0.1, 0.8, 0.3, 1) infinite;
+}
+
+@keyframes pulse-radiate {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.8;
+  }
+  60% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* Outer Precision Dial - Ambient Drift */
+.outerDial {
+  position: absolute;
+  inset: -20px;
+  width: calc(100% + 40px);
+  height: calc(100% + 40px);
+  pointer-events: none;
+  animation: dial-drift 80s linear infinite;
+  opacity: 0.85;
+}
+
+@keyframes dial-drift {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Interactive Reticle Ring - Targets Active Node with Precision */
+.ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  transition: transform 650ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tile {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  overflow: hidden;
+  border-radius: 20px;
+  background: var(--lime);
+  box-shadow:
+    0 4px 14px rgba(10, 10, 10, 0.16),
+    inset 0 1px 1px rgba(255, 255, 255, 0.6);
+  transition:
+    transform 400ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 400ms ease;
+}
+
+.housing[data-active="true"] .tile {
+  transform: scale(1.035);
+  box-shadow:
+    0 6px 18px rgba(10, 10, 10, 0.22),
+    0 0 14px rgba(198, 244, 50, 0.5),
+    inset 0 1px 1px rgba(255, 255, 255, 0.8);
+}
+
+.tileSheen {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.35) 0%,
+    rgba(255, 255, 255, 0.08) 40%,
+    rgba(0, 0, 0, 0.05) 100%
+  );
+  pointer-events: none;
+}
+
+.symbol {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.focus {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: aperture-focus 600ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes aperture-focus {
+  0% {
+    transform: scale(0.65);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.22);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.wordmark {
+  position: absolute;
+  top: calc(50% + 98px);
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  line-height: 1.1;
+}
+
+@media (max-width: 640px) {
+  .housing {
+    width: 120px;
+    height: 120px;
+  }
+
+  .outerDial {
+    inset: -14px;
+    width: calc(100% + 28px);
+    height: calc(100% + 28px);
+  }
+
+  .tile {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+  }
+
+  .wordmark {
+    top: calc(50% + 74px);
+    font-size: 1.125rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .center,
+  .center *,
+  .center *::before,
+  .center *::after {
+    animation: none !important;
+    animation-duration: 0s !important;
+    transition: none !important;
+    transition-duration: 0s !important;
+    transform: none !important;
+  }
+}

@@ -323,29 +323,60 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
       <button
         ref={bubbleRef}
         type="button"
-        className={styles.bubble}
+        className={`${styles.bubble} ${open ? styles.bubbleOpen : ""}`}
+        aria-label="Chat with Clara"
         aria-expanded={open}
         aria-controls="clara-chat-panel"
         onClick={() => (open ? closeChat() : setOpen(true))}
       >
-        <span className={styles.bubbleIcon} aria-hidden="true">
-          <svg viewBox="0 0 24 24" focusable="false" xmlns="http://www.w3.org/2000/svg">
+        <span className={styles.pulseRing} aria-hidden="true" />
+        <span className={styles.pulseRingSecond} aria-hidden="true" />
+
+        <span className={styles.beacon} aria-hidden="true">
+          <span className={styles.beaconDot} />
+          <span className={styles.beaconPing} />
+        </span>
+
+        <span className={styles.tooltip} role="tooltip" aria-hidden="true">
+          {open ? "Close chat" : "Chat with Clara"}
+        </span>
+
+        <span className={styles.srOnly}>Chat with Clara</span>
+
+        <span className={styles.iconContainer} aria-hidden="true">
+          <svg
+            className={`${styles.icon} ${styles.chatIcon}`}
+            viewBox="0 0 24 24"
+            focusable="false"
+            xmlns="http://www.w3.org/2000/svg"
+          >
             <path
               d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H9l-5 4V6.5Z"
               fill="none"
               stroke="currentColor"
-              strokeWidth="1.8"
+              strokeWidth="1.9"
               strokeLinejoin="round"
             />
+            <circle cx="8.5" cy="10.5" r="1.2" fill="currentColor" className={styles.dot1} />
+            <circle cx="12" cy="10.5" r="1.2" fill="currentColor" className={styles.dot2} />
+            <circle cx="15.5" cy="10.5" r="1.2" fill="currentColor" className={styles.dot3} />
+          </svg>
+
+          <svg
+            className={`${styles.icon} ${styles.closeIcon}`}
+            viewBox="0 0 24 24"
+            focusable="false"
+            xmlns="http://www.w3.org/2000/svg"
+          >
             <path
-              d="M8 9h8M8 12.5h5"
+              d="M6 6l12 12M18 6L6 18"
+              fill="none"
               stroke="currentColor"
-              strokeWidth="1.8"
+              strokeWidth="2.2"
               strokeLinecap="round"
             />
           </svg>
         </span>
-        <span>Chat with Clara</span>
       </button>
 
       {open ? (

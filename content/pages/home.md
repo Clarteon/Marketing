@@ -19,10 +19,10 @@ synonyms:
 seoTitle: "Technology that starts with your problem."
 seoDescription: "Clarteon is a business-focused technology partner. We find the repetitive work slowing your business down, then automate it or build what you need."
 hero:
-  eyebrow: "Your business-focused technology partner"
+  eyebrow: "Your business tech partner"
   title: "Technology that starts with your problem."
   highlight: "problem."
-  intro: "Clarteon is the technology partner that believes the right solution starts with the right question. We find the repetitive work slowing your business down, then automate it or build what you need, so you can grow."
+  intro: "Give your team more time to grow the business by removing repetitive work. We find the right solution, then automate the work or build what’s missing."
   actions:
     - label: "Book a free discovery call"
       href: "/contact#book"
@@ -30,9 +30,6 @@ hero:
     - label: "Send a project brief"
       href: "/contact#brief"
       variant: secondary
-    - label: "Or message us"
-      href: "/contact#message"
-      variant: text
 problems:
   - title: "Too much manual admin"
     body: "Your team copies the same information between email, spreadsheets and tools. It works, until the volume grows."

@@ -1,10 +1,10 @@
-@keyframes section-slide {
+@keyframes beam-spin {
   from {
-    transform: translateY(18px);
+    transform: translate(-50%, -50%) rotate(0deg);
   }
 
   to {
-    transform: translateY(0);
+    transform: translate(-50%, -50%) rotate(360deg);
   }
 }
 
@@ -41,23 +41,119 @@
   gap: 1rem;
 }
 
+.problemVisualization {
+  margin-top: clamp(3.5rem, 6vw, 5.5rem);
+}
+
+.visualizationHeader {
+  display: grid;
+  max-width: 54rem;
+  gap: 1rem;
+  margin-bottom: clamp(2rem, 3.5vw, 3rem);
+}
+
+.visualizationTitle {
+  font-size: clamp(2.25rem, 4.5vw, 3.5rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+  color: var(--fg, var(--ink));
+}
+
 .problemCard {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
   padding: clamp(1.4rem, 2vw, 1.75rem);
+  overflow: hidden;
+  box-shadow:
+    0 1px 3px rgba(10, 10, 10, 0.04),
+    0 4px 12px rgba(10, 10, 10, 0.02);
   transition:
-    border-color 220ms ease,
-    transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 280ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 240ms ease;
+}
+
+.borderBeam {
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+.borderBeam::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 250%;
+  height: 250%;
+  transform: translate(-50%, -50%) rotate(0deg);
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 150deg,
+    rgba(198, 244, 50, 0.08) 190deg,
+    rgba(198, 244, 50, 0.35) 230deg,
+    var(--lime) 270deg,
+    #d8fb48 300deg,
+    #ffffff 325deg,
+    var(--lime) 345deg,
+    transparent 360deg
+  );
+  animation: beam-spin 3.5s linear infinite;
+  animation-play-state: paused;
 }
 
 .problemGrid .problemCard {
-  border-color: transparent;
+  border-color: rgba(10, 10, 10, 0.06);
+}
+
+.interactiveCard {
+  cursor: pointer;
 }
 
 .problemCard:hover {
+  border-color: rgba(198, 244, 50, 0.3);
+  box-shadow:
+    0 20px 40px -10px rgba(10, 10, 10, 0.1),
+    0 8px 18px -4px rgba(10, 10, 10, 0.04),
+    0 0 24px -4px rgba(198, 244, 50, 0.22);
+  transform: translateY(-6px);
+}
+
+.problemCard:hover .borderBeam,
+.problemCard:focus-within .borderBeam {
+  opacity: 1;
+}
+
+.problemCard:hover .borderBeam::before,
+.problemCard:focus-within .borderBeam::before {
+  animation-play-state: running;
+}
+
+.interactiveCard:active {
+  transform: translateY(-2px) scale(0.99);
+  box-shadow: 0 6px 14px -3px rgba(10, 10, 10, 0.08);
+  transition-duration: 80ms;
+}
+
+.problemCard:focus-within {
   border-color: var(--ink);
-  transform: translateY(-4px);
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
 }
 
 .problemTitle {
@@ -79,18 +175,52 @@
 .solution {
   display: flex;
   flex-wrap: wrap;
+  align-items: baseline;
   gap: 0.35rem;
   margin-top: auto;
-  padding-top: 1rem;
+  padding-top: 1.25rem;
   color: var(--muted);
   font-size: 0.875rem;
 }
 
-.solution a {
+.solutionPrefix {
+  color: var(--muted);
+}
+
+.solutionStatic {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.solution a,
+.solutionLink {
+  position: static;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   color: var(--ink);
   font-weight: 600;
   text-decoration: underline;
   text-underline-offset: 0.2em;
+  text-decoration-thickness: 1.5px;
+  transition: text-decoration-thickness 180ms ease;
+}
+
+.solution a:hover,
+.problemCard:hover .solutionLink {
+  text-decoration-thickness: 2.5px;
+}
+
+.interactiveCard .solutionLink::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-card);
+  z-index: 1;
+}
+
+.solutionLink:focus-visible {
+  outline: none;
 }
 
 .steps {
@@ -132,6 +262,16 @@
   color: var(--muted);
   font-size: 1rem;
   line-height: 1.55;
+}
+
+.proofFrame {
+  max-width: 54rem;
+  padding: clamp(1.75rem, 3.5vw, 2.75rem);
+  background: var(--paper);
+  border: 1px solid var(--border);
+  box-shadow:
+    0 1px 3px rgba(10, 10, 10, 0.03),
+    0 6px 18px rgba(10, 10, 10, 0.02);
 }
 
 .proof {
@@ -201,10 +341,19 @@
   text-decoration: none;
 }
 
-.listLink:hover {
+.listLink:hover,
+.listItem:hover .listLink {
   text-decoration: underline;
   text-decoration-thickness: 2px;
   text-underline-offset: 0.2em;
+}
+
+.listItem .listLink::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-card);
+  z-index: 1;
 }
 
 .listSummary {
@@ -272,21 +421,18 @@
   }
 }
 
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .sectionHeader,
-    .problemGrid,
-    .steps,
-    .proof {
-      animation: section-slide linear both;
-      animation-timeline: view();
-      animation-range: entry 0% cover 30%;
-    }
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .problemCard:hover {
+  .problemCard,
+  .problemCard:hover,
+  .problemCard:active,
+  .problemCard:focus-within {
     transform: none;
+    transition: none;
+  }
+
+  .borderBeam,
+  .borderBeam::before {
+    animation: none !important;
+    transition: none;
   }
 }
