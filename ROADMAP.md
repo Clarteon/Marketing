@@ -93,7 +93,7 @@ Reason for this order: forms, booking and knowledge are plain server functions t
   - [ ] All 26 Clara scenarios pass
   - [ ] No open high-severity findings in the security review
   - [ ] Alerts fire in a test for usage threshold, failed booking and failed email
-- Note (October 21, 2026): alert logic, e2e tests (Playwright, desktop and mobile) and the Lighthouse budget are in place and run in the CI `browser` job, with encrypted backups (`db:backup`, `db:restore`). Alert tests cover all three triggers; a live alert to the team inbox (`npm run alert:test`) is still to be checked before ticking the box. Cloudflare Web Analytics is wired and needs its Production token.
+- Note (October 21, 2026): alert logic, e2e tests (Playwright, desktop and mobile) and the Lighthouse budget are in place and run in the CI `browser` job, with encrypted backups (`db:backup`, `db:restore`). Alert tests cover all three triggers; a live alert to the team inbox (`npm run alert:test`) is still to be checked before ticking the box. Cloudflare Web Analytics is wired and needs its Production token. Known vendor noise (October 23, 2026): Turnstile's own challenge iframe logs a `data:` CSP violation from its internal policy; Cloudflare says these console messages do not affect functionality (cloudflare/cloudflare-docs#30360). Our page CSP is not the source, so no site change is needed.
 
 ## P7 Content and launch (size M)
 
