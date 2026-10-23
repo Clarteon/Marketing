@@ -27,7 +27,7 @@
 - Headline: Technology that starts with your problem.
 - Subhead: Clarteon is the technology partner that believes the right solution starts with the right question. We find the repetitive work slowing your business down, then automate it or build what you need, so you can grow.
 - Actions: Book a free discovery call, Send a project brief, Or message us.
-- Section headings: "Tell us what is slowing you down." (problems), "Four steps. No jargon." (process), "Work you can look at." (proof), "Tell us the problem. We will find the clearest way through." (closing).
+- Section headings: "Tell us what is slowing you down." (problems), "Four steps. Clear and simple." (process), "Work you can look at." (proof), "Tell us the problem. We will find the clearest way through." (closing).
 
 ## Placeholders
 

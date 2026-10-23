@@ -3,9 +3,14 @@ import type { HomeData } from "@/lib/page-schemas";
 import { BookingSection } from "@/components/ui/BookingSection";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { HeroFlowVisualization } from "@/components/ui/HeroFlowVisualization";
 import { Page } from "@/components/ui/Page";
 import { PageHero } from "@/components/ui/PageHero";
+import { ProcessConduit } from "@/components/ui/ProcessConduit";
+import { ReticleFrame } from "@/components/ui/ReticleFrame";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { Section } from "@/components/ui/Section";
+import { cx } from "@/lib/cx";
 import styles from "./pages.module.css";
 
 export function HomePage({ data }: { data: HomeData }) {
@@ -30,67 +35,77 @@ export function HomePage({ data }: { data: HomeData }) {
       />
 
       <Section tone="stone" aria-labelledby="problems-title">
-        <div className={styles.sectionHeader}>
+        <ScrollReveal className={styles.sectionHeader}>
           <p className={styles.eyebrow}>What we hear most</p>
           <h2 id="problems-title" className={styles.sectionTitle}>
             Tell us what is slowing you down.
           </h2>
-        </div>
+        </ScrollReveal>
 
-        <div className={styles.problemGrid}>
+        <ScrollReveal stagger className={styles.problemGrid}>
           {data.problems.map((problem) => (
-            <Card as="article" key={problem.title} className={styles.problemCard}>
+            <Card
+              as="article"
+              key={problem.title}
+              className={cx(styles.problemCard, problem.href ? styles.interactiveCard : undefined)}
+            >
               <h3 className={styles.problemTitle}>{problem.title}</h3>
               <p className={styles.problemBody}>{problem.body}</p>
               <p className={styles.solution}>
-                <span>Often solved with</span>
+                <span className={styles.solutionPrefix}>Often solved with</span>
                 {problem.href ? (
-                  <Link href={problem.href}>{problem.solution}</Link>
+                  <Link href={problem.href} className={styles.solutionLink}>
+                    {problem.solution}
+                  </Link>
                 ) : (
-                  <span>{problem.solution}</span>
+                  <span className={styles.solutionStatic}>{problem.solution}</span>
                 )}
               </p>
             </Card>
           ))}
-        </div>
+        </ScrollReveal>
+
+        <ScrollReveal className={styles.problemVisualization}>
+          <div className={styles.visualizationHeader}>
+            <p className={styles.eyebrow}>How we connect the dots</p>
+            <h3 className={styles.visualizationTitle}>See how your problems find the right fix.</h3>
+          </div>
+          <HeroFlowVisualization />
+        </ScrollReveal>
       </Section>
 
       <Section tone="ink" className={styles.processSection} aria-labelledby="process-title">
-        <div className={styles.sectionHeader}>
+        <ScrollReveal className={styles.sectionHeader}>
           <p className={styles.eyebrow}>How we work</p>
           <h2 id="process-title" className={styles.sectionTitle}>
-            Four steps. No jargon.
+            Four steps. Clear and simple.
           </h2>
-        </div>
+        </ScrollReveal>
 
-        <ol className={styles.steps}>
-          {data.steps.map((step, index) => (
-            <li className={styles.step} key={step.title}>
-              <span className={styles.stepNumber}>{index + 1}</span>
-              <h3 className={styles.stepTitle}>{step.title}</h3>
-              <p className={styles.stepBody}>{step.body}</p>
-            </li>
-          ))}
-        </ol>
+        <ProcessConduit steps={data.steps} />
       </Section>
 
       <Section aria-labelledby="proof-title">
-        <div className={styles.proof}>
-          <div className={styles.sectionHeader}>
-            <h2 id="proof-title" className={styles.sectionTitle}>
-              {data.proof.title}
-            </h2>
-            <p className={styles.sectionIntro}>{data.proof.body}</p>
+        <ReticleFrame className={styles.proofFrame}>
+          <div className={styles.proof}>
+            <div className={styles.sectionHeader}>
+              <h2 id="proof-title" className={styles.sectionTitle}>
+                {data.proof.title}
+              </h2>
+              <p className={styles.sectionIntro}>{data.proof.body}</p>
+            </div>
+            <div className={styles.proofActions}>
+              <Button href={data.proof.href} variant="secondary">
+                {data.proof.linkLabel}
+              </Button>
+            </div>
           </div>
-          <div className={styles.proofActions}>
-            <Button href={data.proof.href} variant="secondary">
-              {data.proof.linkLabel}
-            </Button>
-          </div>
-        </div>
+        </ReticleFrame>
       </Section>
 
-      <BookingSection tone="lime" />
+      <ScrollReveal>
+        <BookingSection tone="lime" />
+      </ScrollReveal>
     </Page>
   );
 }

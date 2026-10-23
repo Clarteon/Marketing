@@ -8,6 +8,7 @@ type Tone = "paper" | "stone" | "outline";
 interface CardProps extends Omit<HTMLAttributes<HTMLElement>, "children"> {
   as?: CardTag;
   tone?: Tone;
+  interactive?: boolean;
   children: ReactNode;
 }
 
@@ -20,12 +21,24 @@ const toneClass: Record<Tone, string> = {
 export function Card({
   as: Tag = "div",
   tone = "paper",
+  interactive,
   className,
   children,
   ...props
 }: CardProps) {
+  const isInteractive = interactive ?? Tag === "article";
+
   return (
-    <Tag className={cx(styles.card, toneClass[tone], className)} {...props}>
+    <Tag
+      className={cx(
+        styles.card,
+        toneClass[tone],
+        isInteractive && styles.cardInteractive,
+        className,
+      )}
+      {...props}
+    >
+      {isInteractive ? <div className={styles.borderBeam} aria-hidden="true" /> : null}
       {children}
     </Tag>
   );

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-23T04:21:16.466Z",
+  "generatedAt": "2026-10-23T18:07:19.710Z",
   "chunks": [
     {
       "id": "about#how-we-work-with-clients-2",
@@ -187,7 +187,7 @@
       "headingPath": [
         "Technology that starts with your problem."
       ],
-      "text": "Clarteon is a technology partner that starts with the problem, then finds the clearest way to automate, build or improve it. Your business-focused technology partner Clarteon is the technology partner that believes the right solution starts with the right question. We find the repetitive work slowing your business down, then automate it or build what you need, so you can grow. Book a free discovery call. Send a project brief. Or message us",
+      "text": "Clarteon is a technology partner that starts with the problem, then finds the clearest way to automate, build or improve it. Your business tech partner Give your team more time to grow the business by removing repetitive work. We find the right solution, then automate the work or build what’s missing. Book a free discovery call. Send a project brief",
       "tags": [
         "technology partner",
         "automation",
@@ -428,7 +428,7 @@
       "url": "/how-we-work",
       "title": "What to expect on a discovery call",
       "headingPath": [
-        "Four steps. No jargon.",
+        "Four steps. Clear and simple.",
         "What to expect on a discovery call"
       ],
       "text": "A short conversation about the problem, not a sales presentation. We ask what is slowing you down, what you have tried, and what a good outcome looks like. We look for the smallest useful next step, not the biggest possible project. You leave with a clear idea of the likely direction and whether we are a fit. If we are not the right fit, we say so and point you toward a better option. No preparation is required beyond a rough description of the problem.",
@@ -450,9 +450,9 @@
     {
       "id": "how-we-work#overview",
       "url": "/how-we-work",
-      "title": "Four steps. No jargon.",
+      "title": "Four steps. Clear and simple.",
       "headingPath": [
-        "Four steps. No jargon."
+        "Four steps. Clear and simple."
       ],
       "text": "Diagnose, recommend, build and support, plus what to expect on a discovery call. How we work A clear process from first question to working system. You always know what is happening and what comes next.",
       "tags": [
@@ -475,7 +475,7 @@
       "url": "/how-we-work",
       "title": "Diagnose",
       "headingPath": [
-        "Four steps. No jargon.",
+        "Four steps. Clear and simple.",
         "Process",
         "Diagnose"
       ],
@@ -500,7 +500,7 @@
       "url": "/how-we-work",
       "title": "Recommend",
       "headingPath": [
-        "Four steps. No jargon.",
+        "Four steps. Clear and simple.",
         "Process",
         "Recommend"
       ],
@@ -525,7 +525,7 @@
       "url": "/how-we-work",
       "title": "Build",
       "headingPath": [
-        "Four steps. No jargon.",
+        "Four steps. Clear and simple.",
         "Process",
         "Build"
       ],
@@ -550,7 +550,7 @@
       "url": "/how-we-work",
       "title": "Support",
       "headingPath": [
-        "Four steps. No jargon.",
+        "Four steps. Clear and simple.",
         "Process",
         "Support"
       ],

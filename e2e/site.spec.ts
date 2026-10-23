@@ -35,12 +35,16 @@ test("every sitemap page renders with SEO basics, no console errors and no axe v
     await expect(page.locator('meta[property="og:image"]'), path).toHaveCount(1);
     await expect(page.getByRole("link", { name: "Privacy" }).last(), path).toBeVisible();
 
-    // Axe measures contrast mid fade-in on slow runners; scroll-driven animations never finish, so skip them.
+    // Wait for entrances, skipping scroll timelines and perpetual diagram effects.
     await page.evaluate(() =>
       Promise.all(
         document
           .getAnimations()
-          .filter((animation) => animation.timeline === document.timeline)
+          .filter(
+            (animation) =>
+              animation.timeline === document.timeline &&
+              animation.effect?.getComputedTiming().iterations !== Infinity,
+          )
           .map((animation) => animation.finished),
       ),
     );

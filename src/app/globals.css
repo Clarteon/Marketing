@@ -7,6 +7,11 @@
   --lime-dark: #b8e52c;
   --line: #e4e4e0;
 
+  --fg: var(--ink);
+  --bg: var(--paper);
+  --border: var(--line);
+  --muted: var(--graphite);
+
   --radius-sm: 8px;
   --radius-card: 20px;
   --radius-pill: 999px;
@@ -216,5 +221,20 @@ section[id] {
     animation-iteration-count: 1 !important;
     transition-delay: 0ms !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+@media (pointer: fine) {
+  html.custom-cursor-active,
+  html.custom-cursor-active *,
+  html.custom-cursor-active *::before,
+  html.custom-cursor-active *::after {
+    cursor: none !important;
+  }
+
+  html.custom-cursor-active input,
+  html.custom-cursor-active textarea,
+  html.custom-cursor-active [contenteditable="true"] {
+    cursor: text !important;
   }
 }

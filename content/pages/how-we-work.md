@@ -1,5 +1,5 @@
 ---
-title: "Four steps. No jargon."
+title: "Four steps. Clear and simple."
 slug: how-we-work
 type: page
 status: published
@@ -20,7 +20,7 @@ seoTitle: "How we work"
 seoDescription: "A clear four-step process: diagnose the problem, recommend the likely solution, build in visible steps and support the work after launch."
 hero:
   eyebrow: "How we work"
-  title: "Four steps. No jargon."
+  title: "Four steps. Clear and simple."
   intro: "A clear process from first question to working system. You always know what is happening and what comes next."
 steps:
   - title: "Diagnose"
