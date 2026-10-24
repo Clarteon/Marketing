@@ -3,7 +3,7 @@ import { cx } from "@/lib/cx";
 import styles from "./ui.module.css";
 
 interface LogoProps {
-  variant?: "full" | "symbol";
+  variant?: "full" | "symbol" | "stacked";
   className?: string;
 }
 
@@ -31,9 +31,9 @@ export function LogoSymbol(props: SVGProps<SVGSVGElement>) {
 
 export function Logo({ variant = "full", className }: LogoProps) {
   return (
-    <span className={cx(styles.logo, className)}>
+    <span className={cx(styles.logo, variant === "stacked" && styles.logoStacked, className)}>
       <LogoSymbol className={styles.symbol} />
-      {variant === "full" ? (
+      {variant !== "symbol" ? (
         <span className={styles.wordmark}>Clarteon</span>
       ) : (
         <span className="sr-only">Clarteon</span>

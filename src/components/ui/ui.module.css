@@ -361,7 +361,30 @@
 
 .footerLogo .wordmark {
   color: var(--ink);
+  font-size: clamp(1.85rem, 3.5vw, 2.5rem);
+  letter-spacing: -0.035em;
 }
+
+.logoStacked {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.logoStacked .symbol {
+  width: clamp(3rem, 5.5vw, 3.85rem);
+  height: clamp(3rem, 5.5vw, 3.85rem);
+  transition:
+    transform 650ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    filter 320ms ease;
+}
+
+.footerHome:hover .logoStacked .symbol {
+  transform: rotate(90deg) scale(1.08);
+  filter: drop-shadow(0 0 16px rgba(198, 244, 50, 0.6));
+}
+
 
 @property --angle {
   syntax: "<angle>";
@@ -1220,35 +1243,56 @@
 .elasticHighlight {
   position: relative;
   display: inline-block;
+  vertical-align: baseline;
+  color: #0a0a0a;
   white-space: nowrap;
-  z-index: 1;
-  color: var(--ink);
+  line-height: 1.02;
+  isolation: isolate;
+  margin-inline: 0.05em;
+  padding-inline: 0.18em;
+}
+
+.elasticHighlight::before {
+  content: "";
+  position: absolute;
+  top: 0.15em;
+  bottom: -0.06em;
+  left: 0;
+  right: 0;
+  background-color: var(--lime);
+  border-radius: 0.15em;
+  z-index: -1;
+  transition:
+    transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.elasticHighlight:hover::before {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(198, 244, 50, 0.45);
 }
 
 :global([data-theme="dark"]) .elasticHighlight,
-:global(.dark) .elasticHighlight {
+:global(.dark) .elasticHighlight,
+:global([data-tone="ink"]) .elasticHighlight {
   color: #0a0a0a;
 }
 
-.elasticHighlight::before,
+:global([data-theme="dark"]) .elasticHighlight::before,
+:global(.dark) .elasticHighlight::before,
+:global([data-tone="ink"]) .elasticHighlight::before {
+  background-color: var(--lime);
+  box-shadow: 0 0 20px rgba(198, 244, 50, 0.25);
+}
+
+:global([data-theme="dark"]) .elasticHighlight:hover::before,
+:global(.dark) .elasticHighlight:hover::before,
+:global([data-tone="ink"]) .elasticHighlight:hover::before {
+  box-shadow: 0 0 26px rgba(198, 244, 50, 0.5);
+}
+
 .elasticHighlight::after {
   display: none !important;
-}
-
-.elasticSvg {
-  position: absolute;
-  left: -0.08em;
-  top: 5%;
-  width: calc(100% + 0.16em);
-  height: 95%;
-  pointer-events: none;
-  z-index: -1;
-  overflow: visible;
-}
-
-.sketchStroke {
-  fill: var(--lime);
-  opacity: 0.9;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1505,126 +1549,251 @@
   color: var(--graphite);
 }
 
+@keyframes clarteonConduitFlowTop {
+  0% {
+    left: -20%;
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    left: 115%;
+    opacity: 0;
+  }
+}
+
+@keyframes clarteonConduitFlowBot {
+  0% {
+    right: -20%;
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    right: 115%;
+    opacity: 0;
+  }
+}
+
+.footerHorizon {
+  position: relative;
+  width: 100%;
+}
+
+.footerHorizonLine {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--ink) 18%, transparent) 20%,
+    color-mix(in srgb, var(--ink) 18%, transparent) 80%,
+    transparent 100%
+  );
+}
+
+.footerHorizonGlow {
+  width: 100%;
+  height: 1.25rem;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--ink) 3%, transparent) 0%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
 .footer {
   background: var(--paper);
   color: var(--ink);
+  overflow: hidden;
 }
 
 .footerInner {
+  display: grid;
+  gap: clamp(1.5rem, 2.75vw, 2.25rem);
   width: min(100% - 2.5rem, var(--max-width));
   margin-inline: auto;
-  padding-block: clamp(3rem, 5vw, 4.5rem) 5.5rem;
+  padding-block: clamp(2.25rem, 4vw, 3.25rem) 2.25rem;
 }
 
-.footerTop {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.65fr);
-  align-items: start;
-  gap: 3rem;
-}
-
-.footerBrand {
-  display: grid;
-  gap: 0.75rem;
-  justify-items: start;
-  max-width: 26rem;
+.footerBrandCentered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.85rem;
+  max-width: 44rem;
+  margin-inline: auto;
 }
 
 .footerHome {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   min-height: 44px;
   text-decoration: none;
+  outline-offset: 4px;
 }
 
 .footerTagline {
-  max-width: 29ch;
-  color: var(--graphite);
-  font-size: 1.125rem;
-  line-height: 1.5;
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: clamp(1.4rem, 2.75vw, 2.125rem);
+  font-weight: 400;
+  line-height: 1.25;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  max-width: 28ch;
+  margin-inline: auto;
 }
 
-.footerLinks {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-template-rows: repeat(3, auto);
-  grid-auto-flow: column;
-  gap: 0.25rem 2rem;
-  list-style: none;
+.footerEmailWrap {
+  margin-top: 0.25rem;
 }
 
-.footerLink,
-.footerEmail {
+.footerEmailPill {
   display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.5rem 1.35rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+  background: var(--stone);
+  color: var(--ink);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition:
+    background 220ms ease,
+    border-color 220ms ease,
+    color 220ms ease,
+    transform 220ms ease,
+    box-shadow 220ms ease;
+}
+
+.footerEmailArrow {
+  color: var(--graphite);
+  transition: transform 220ms ease, color 220ms ease;
+}
+
+.footerEmailPill:hover {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 14px rgba(10, 10, 10, 0.1);
+}
+
+.footerEmailPill:hover .footerEmailArrow {
+  color: var(--lime);
+  transform: translate(2px, -2px);
+}
+
+.footerNavBand {
+  width: 100%;
+  max-width: 48rem;
+  margin-inline: auto;
+}
+
+.conduitRail {
+  position: relative;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--ink) 20%, transparent) 20%,
+    color-mix(in srgb, var(--ink) 20%, transparent) 80%,
+    transparent 100%
+  );
+  overflow: hidden;
+}
+
+.conduitPulseTop {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 140px;
+  background: linear-gradient(90deg, transparent 0%, var(--lime) 50%, var(--ink) 100%);
+  box-shadow: 0 0 10px rgba(198, 244, 50, 0.7);
+  animation: clarteonConduitFlowTop 3.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.conduitPulseBot {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 140px;
+  background: linear-gradient(270deg, transparent 0%, var(--lime) 50%, var(--ink) 100%);
+  box-shadow: 0 0 10px rgba(198, 244, 50, 0.7);
+  animation: clarteonConduitFlowBot 4.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.footerNav {
+  padding-block: 0.65rem;
+}
+
+.footerLinksRibbon {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem clamp(1.25rem, 3.5vw, 2.75rem);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.footerLinkItem {
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+.footerLinksRibbon:hover .footerLinkItem {
+  opacity: 0.4;
+}
+
+.footerLinksRibbon .footerLinkItem:hover {
+  opacity: 1;
+  transform: translateY(-1.5px);
+}
+
+.footerLink {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
   min-height: 44px;
   color: var(--ink);
-  font-size: 1rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
   text-decoration: none;
 }
 
-.footerLink:hover,
-.footerEmail:hover {
-  text-decoration: underline;
-  text-underline-offset: 0.3em;
+.footerLink::after {
+  content: "";
+  position: absolute;
+  bottom: 8px;
+  left: 0;
+  width: 100%;
+  height: 1.5px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.footerSignature {
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-block: 0.5em;
-  margin-block: clamp(2.5rem, 5vw, 4.5rem) clamp(1.5rem, 3vw, 2.5rem);
-  font-size: clamp(4.15rem, 18vw, 15rem);
-  text-align: center;
-}
-
-.footerSignatureStack {
-  display: grid;
-  justify-items: center;
-  flex-shrink: 0;
-  font-family: var(--font-fraunces), Georgia, serif;
-  font-style: italic;
-  font-weight: 600;
-  letter-spacing: -0.055em;
-  line-height: 0.86;
-}
-
-.footerSignatureOutline,
-.footerSignatureHighlight {
-  display: block;
-  grid-area: 1 / 1;
-  white-space: nowrap;
-}
-
-.footerSignatureOutline {
-  color: color-mix(in srgb, var(--ink) 12%, var(--paper));
-}
-
-.footerSignatureOutline:first-child {
-  transform: translateY(-0.45em);
-}
-
-.footerSignatureOutline:last-child {
-  transform: translateY(0.45em);
-}
-
-@supports (-webkit-text-stroke: 1px currentColor) {
-  .footerSignatureOutline {
-    color: transparent;
-    -webkit-text-stroke: 1px color-mix(in srgb, var(--ink) 26%, var(--paper));
-  }
-}
-
-.footerSignatureHighlight {
-  position: relative;
-  z-index: 1;
-  padding: 0.02em 0.12em 0.09em;
-  border-radius: var(--radius-sm);
-  background: var(--lime);
-  color: var(--ink);
+.footerLink:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
 }
 
 .footerBottom {
@@ -1632,7 +1801,9 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5rem 2rem;
+  gap: 1rem 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
 }
 
 .footerLegal {
@@ -1642,11 +1813,27 @@
 
 .footerUtilities {
   display: flex;
+  align-items: center;
   gap: 2rem;
 }
 
 .footerUtilities .footerLink {
   font-size: 0.875rem;
+  color: var(--graphite);
+}
+
+.footerUtilities .footerLink:hover {
+  color: var(--ink);
+}
+
+.backToTopArrow {
+  display: inline-block;
+  margin-left: 0.25rem;
+  transition: transform 200ms ease;
+}
+
+.footerLink:hover .backToTopArrow {
+  transform: translateY(-2px);
 }
 
 .form {
@@ -1833,22 +2020,18 @@
     grid-template-columns: 1fr;
   }
 
-  .footerTop {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-
   .footerInner {
-    padding-bottom: 6rem;
+    padding-bottom: 4rem;
   }
 
-  .footerLinks {
-    max-width: 26rem;
+  .footerLinksRibbon {
+    gap: 0.5rem 1.5rem;
   }
 
   .footerBottom {
     flex-direction: column;
     align-items: flex-start;
+    gap: 1.25rem;
   }
 
   .heroBadge {

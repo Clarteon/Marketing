@@ -1,12 +1,36 @@
 import type { HowWeWorkData } from "@/lib/page-schemas";
 import { BookingSection } from "@/components/ui/BookingSection";
 import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 import { Page } from "@/components/ui/Page";
 import { PageHero } from "@/components/ui/PageHero";
 import { ProcessConduit } from "@/components/ui/ProcessConduit";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { Section } from "@/components/ui/Section";
 import styles from "./pages.module.css";
+
+const callStepHeadings: Record<number, string> = {
+  0: "Understand what is slowing you down",
+  1: "Find the smallest useful step",
+  2: "Agree on direction and fit",
+  3: "Give an honest recommendation",
+  4: "No homework required",
+};
+
+function getPointHeading(point: string, index: number): { heading: string; body: string } {
+  if (point.includes(" — ")) {
+    const [heading, ...rest] = point.split(" — ");
+    return { heading: heading.trim(), body: rest.join(" — ").trim() };
+  }
+  if (point.includes(": ")) {
+    const [heading, ...rest] = point.split(": ");
+    return { heading: heading.trim(), body: rest.join(": ").trim() };
+  }
+  return {
+    heading: callStepHeadings[index] ?? `Step ${index + 1}`,
+    body: point,
+  };
+}
 
 export function HowWeWorkPage({ data }: { data: HowWeWorkData }) {
   return (
@@ -38,8 +62,8 @@ export function HowWeWorkPage({ data }: { data: HowWeWorkData }) {
       </Section>
 
       <Section tone="stone" aria-labelledby="call-title">
-        <ScrollReveal className={styles.callout}>
-          <div className={styles.calloutHeader}>
+        <div className={styles.calloutSingle}>
+          <div className={styles.calloutHeaderSingle}>
             <p className={styles.eyebrow}>Discovery call</p>
             <h2 id="call-title" className={styles.calloutTitle}>
               {data.call.title}
@@ -47,14 +71,28 @@ export function HowWeWorkPage({ data }: { data: HowWeWorkData }) {
             <p className={styles.calloutIntro}>{data.call.intro}</p>
           </div>
 
-          <ul className={styles.calloutList}>
-            {data.call.points.map((point) => (
-              <li className={styles.calloutItem} key={point}>
-                {point}
-              </li>
-            ))}
-          </ul>
-        </ScrollReveal>
+          <ScrollReveal as="ol" stagger className={styles.calloutSteps}>
+            {data.call.points.map((point, index) => {
+              const { heading, body } = getPointHeading(point, index);
+              const stepNumber = String(index + 1).padStart(2, "0");
+              return (
+                <Card as="li" key={point} className={styles.calloutStep}>
+                  <span className={styles.stepNumber} aria-hidden="true">
+                    {stepNumber.split("").map((digit, digitIndex) => (
+                      <span className={styles.stepDigitWindow} key={`${stepNumber}-${digitIndex}`}>
+                        <span className={styles.stepDigit}>{digit}</span>
+                      </span>
+                    ))}
+                  </span>
+                  <div className={styles.stepContent}>
+                    <h3 className={styles.stepHeading}>{heading}</h3>
+                    <p className={styles.calloutStepBody}>{body}</p>
+                  </div>
+                </Card>
+              );
+            })}
+          </ScrollReveal>
+        </div>
       </Section>
 
       <ScrollReveal>
