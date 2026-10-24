@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import axe from "axe-core";
 import { describe, expect, it } from "vitest";
 import type { ReactNode } from "react";
@@ -152,10 +152,9 @@ describe("page accessibility", () => {
     );
 
     expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
-    expect(screen.getByRole("link", { name: /info@clarteon\.tech/i })).toHaveAttribute(
-      "href",
-      "mailto:info@clarteon.tech",
-    );
+    expect(
+      within(screen.getByRole("main")).getByRole("link", { name: /info@clarteon\.tech/i }),
+    ).toHaveAttribute("href", "mailto:info@clarteon.tech");
     await expectNoA11yViolations(container);
   });
 

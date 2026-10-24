@@ -10,6 +10,7 @@ import { ProcessConduit } from "@/components/ui/ProcessConduit";
 import { ReticleFrame } from "@/components/ui/ReticleFrame";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { Section } from "@/components/ui/Section";
+import { WorkFolioIllustration } from "@/components/ui/WorkFolioIllustration";
 import { cx } from "@/lib/cx";
 import styles from "./pages.module.css";
 
@@ -88,24 +89,27 @@ export function HomePage({ data }: { data: HomeData }) {
       <Section aria-labelledby="proof-title">
         <ReticleFrame className={styles.proofFrame}>
           <div className={styles.proof}>
-            <div className={styles.sectionHeader}>
-              <h2 id="proof-title" className={styles.sectionTitle}>
-                {data.proof.title}
-              </h2>
-              <p className={styles.sectionIntro}>{data.proof.body}</p>
+            <div className={styles.proofCopy}>
+              <div className={styles.sectionHeader}>
+                <h2 id="proof-title" className={styles.sectionTitle}>
+                  {data.proof.title}
+                </h2>
+                <p className={styles.sectionIntro}>{data.proof.body}</p>
+              </div>
+              <div className={styles.proofActions}>
+                <Button href={data.proof.href} variant="secondary">
+                  {data.proof.linkLabel}
+                </Button>
+              </div>
             </div>
-            <div className={styles.proofActions}>
-              <Button href={data.proof.href} variant="secondary">
-                {data.proof.linkLabel}
-              </Button>
+            <div className={styles.proofVisual} aria-hidden="true">
+              <WorkFolioIllustration className={styles.proofIcon} />
             </div>
           </div>
         </ReticleFrame>
       </Section>
 
-      <ScrollReveal>
-        <BookingSection tone="lime" />
-      </ScrollReveal>
+      <BookingSection tone="lime" />
     </Page>
   );
 }

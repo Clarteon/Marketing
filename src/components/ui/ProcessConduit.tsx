@@ -21,9 +21,11 @@ const toneClasses: Record<"paper" | "stone" | "ink", string> = {
 
 export function ProcessConduit({ steps, tone = "ink", className }: ProcessConduitProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const stepsListRef = useRef<HTMLOListElement | null>(null);
   const fillRef = useRef<HTMLDivElement | null>(null);
   const milestoneRefs = useRef<(HTMLDivElement | null)[]>([]);
   const stepRefs = useRef<(HTMLLIElement | null)[]>([]);
+  const stepHeaderRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     const prefersReduced =
@@ -31,8 +33,30 @@ export function ProcessConduit({ steps, tone = "ink", className }: ProcessCondui
       typeof window.matchMedia === "function" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+    function updateVerticalTrack(progress: number) {
+      const container = containerRef.current;
+      const list = stepsListRef.current;
+      const firstHeader = stepHeaderRefs.current[0];
+      const lastHeader = stepHeaderRefs.current[stepHeaderRefs.current.length - 1];
+      if (!container || !list || !firstHeader || !lastHeader) return;
+
+      const listTop = list.getBoundingClientRect().top;
+      const firstRect = firstHeader.getBoundingClientRect();
+      const lastRect = lastHeader.getBoundingClientRect();
+      const trackStart = firstRect.top + firstRect.height / 2 - listTop;
+      const trackLength = Math.max(
+        0,
+        lastRect.top + lastRect.height / 2 - firstRect.top - firstRect.height / 2,
+      );
+
+      container.style.setProperty("--process-track-start", `${trackStart}px`);
+      container.style.setProperty("--process-track-length", `${trackLength}px`);
+      container.style.setProperty("--process-progress-factor", progress.toFixed(3));
+    }
+
     if (prefersReduced) {
       if (fillRef.current) fillRef.current.style.width = "100%";
+      updateVerticalTrack(1);
       milestoneRefs.current.forEach((el) => el?.classList.add(styles.milestoneActive));
       stepRefs.current.forEach((el) => el?.classList.add(styles.stepActive));
       return;
@@ -56,6 +80,7 @@ export function ProcessConduit({ steps, tone = "ink", className }: ProcessCondui
       if (fillRef.current) {
         fillRef.current.style.width = `${(progress * 100).toFixed(1)}%`;
       }
+      updateVerticalTrack(progress);
 
       STEP_THRESHOLDS.forEach((threshold, index) => {
         const isActive = progress >= threshold || (index === 0 && progress >= 0.02);
@@ -119,7 +144,7 @@ export function ProcessConduit({ steps, tone = "ink", className }: ProcessCondui
       </div>
 
       {/* Semantic Process Steps */}
-      <ol className={styles.steps}>
+      <ol ref={stepsListRef} className={styles.steps}>
         {steps.map((step, index) => (
           <li
             key={step.title}
@@ -129,7 +154,12 @@ export function ProcessConduit({ steps, tone = "ink", className }: ProcessCondui
             className={cx(styles.step, index === 0 && styles.stepActive)}
             data-step-active={index === 0 ? "true" : "false"}
           >
-            <div className={styles.stepHeader}>
+            <div
+              ref={(el) => {
+                stepHeaderRefs.current[index] = el;
+              }}
+              className={styles.stepHeader}
+            >
               <span className={styles.stepNumber}>{index + 1}</span>
               <span className={styles.stepBeacon} aria-hidden="true" />
             </div>
