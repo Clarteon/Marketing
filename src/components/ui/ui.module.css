@@ -918,13 +918,16 @@
     0 4px 12px rgba(10, 10, 10, 0.02);
 }
 
-.cardInteractive:hover {
-  border-color: rgba(198, 244, 50, 0.35);
-  box-shadow:
-    0 20px 40px -10px rgba(10, 10, 10, 0.1),
-    0 8px 18px -4px rgba(10, 10, 10, 0.04),
-    0 0 24px -4px rgba(198, 244, 50, 0.22);
-  transform: translateY(-6px);
+@media (hover: hover) {
+  .cardInteractive:hover {
+    border-color: rgba(21, 128, 61, 0.22);
+    box-shadow:
+      0 20px 40px -10px rgba(10, 10, 10, 0.1),
+      0 8px 18px -4px rgba(10, 10, 10, 0.04),
+      0 0 20px -5px rgba(21, 128, 61, 0.18),
+      0 0 16px -4px rgba(198, 244, 50, 0.2);
+    transform: translateY(-6px);
+  }
 }
 
 .cardInteractive:active {
@@ -967,13 +970,13 @@
   background: conic-gradient(
     from 0deg,
     transparent 0deg,
-    transparent 150deg,
-    rgba(198, 244, 50, 0.08) 190deg,
-    rgba(198, 244, 50, 0.35) 230deg,
-    var(--lime) 270deg,
-    #d8fb48 300deg,
-    #ffffff 325deg,
-    var(--lime) 345deg,
+    transparent 255deg,
+    rgba(4, 120, 87, 0.15) 270deg,
+    #047857 292deg,
+    #15803d 315deg,
+    #22c55e 336deg,
+    var(--lime) 352deg,
+    #ffffff 357deg,
     transparent 360deg
   );
   animation: clarteon-card-beam-spin 3.5s linear infinite;
@@ -1012,6 +1015,12 @@
   align-items: center;
   min-height: calc(100svh - 74px);
   padding-block: clamp(1rem, 2.5vh, 1.5rem);
+}
+
+@media (min-width: 761px) {
+  .heroHome .heroInner {
+    transform: translateY(-1.25rem);
+  }
 }
 
 .heroInner {
@@ -1212,10 +1221,13 @@
   position: relative;
   display: inline-block;
   white-space: nowrap;
-  z-index: 0;
-  padding: 0;
-  margin: 0;
-  cursor: pointer;
+  z-index: 1;
+  color: var(--ink);
+}
+
+:global([data-theme="dark"]) .elasticHighlight,
+:global(.dark) .elasticHighlight {
+  color: #0a0a0a;
 }
 
 .elasticHighlight::before,
@@ -1225,34 +1237,68 @@
 
 .elasticSvg {
   position: absolute;
-  left: 0;
-  bottom: -0.26em;
-  width: 100%;
-  height: 36px;
-  overflow: visible;
+  left: -0.08em;
+  top: 5%;
+  width: calc(100% + 0.16em);
+  height: 95%;
   pointer-events: none;
   z-index: -1;
+  overflow: visible;
 }
 
-.elasticPath {
-  stroke: var(--lime);
-  stroke-width: clamp(8px, 0.15em, 13px);
-  stroke-linecap: round;
-  fill: none;
-  filter: drop-shadow(0 2px 6px rgba(198, 244, 50, 0.45));
-  transition: filter 240ms ease;
+.sketchStroke {
+  fill: var(--lime);
+  opacity: 0.9;
 }
 
-.elasticHighlight:hover .elasticPath {
-  filter: drop-shadow(0 2px 10px rgba(198, 244, 50, 0.65))
-    drop-shadow(0 0 16px rgba(198, 244, 50, 0.25));
+@media (prefers-reduced-motion: reduce) {
+  .elasticHighlight {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+.bookingSection {
+  position: relative;
+  overflow: hidden;
+}
+
+.bookingAmbientFlow {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: var(--glow-opacity, 0);
+  background: radial-gradient(
+    circle 380px at var(--glow-x, 50%) var(--glow-y, 45%),
+    rgba(255, 255, 255, 0.22) 0%,
+    rgba(255, 255, 255, 0.08) 35%,
+    rgba(255, 255, 255, 0.02) 65%,
+    transparent 85%
+  );
+  transition: opacity 400ms ease;
+}
+
+.toneInk .bookingAmbientFlow,
+.bookingSectionInk .bookingAmbientFlow {
+  background: radial-gradient(
+    circle 400px at var(--glow-x, 50%) var(--glow-y, 45%),
+    rgba(198, 244, 50, 0.11) 0%,
+    rgba(198, 244, 50, 0.04) 40%,
+    transparent 80%
+  );
 }
 
 .booking {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: clamp(1.75rem, 4vw, 2.5rem);
   align-items: start;
+  z-index: 1;
 }
 
 .bookingContent {
@@ -1266,6 +1312,42 @@
   font-weight: 400;
   letter-spacing: -0.03em;
   line-height: 1.04;
+}
+
+.bookingUnderlineWrap {
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.bookingUnderlineText {
+  position: relative;
+  z-index: 1;
+}
+
+.bookingUnderlineSvg {
+  position: absolute;
+  left: 0;
+  bottom: -0.22em;
+  width: 100%;
+  height: 0.38em;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.bookingUnderlinePath {
+  stroke-dasharray: 480;
+  stroke-dashoffset: 480;
+  transition: stroke-dashoffset 70ms linear;
+  color: var(--fg, var(--ink));
+  will-change: stroke-dashoffset;
+}
+
+@media (max-width: 640px) {
+  .bookingUnderlineWrap {
+    white-space: normal;
+  }
 }
 
 .bookingIntro {
@@ -1424,64 +1506,146 @@
 }
 
 .footer {
-  padding-block: clamp(3rem, 6vw, 4.5rem) 2rem;
-  background: var(--stone);
+  background: var(--paper);
   color: var(--ink);
 }
 
 .footerInner {
-  display: grid;
-  gap: 2.5rem;
   width: min(100% - 2.5rem, var(--max-width));
   margin-inline: auto;
+  padding-block: clamp(3rem, 5vw, 4.5rem) 5.5rem;
 }
 
 .footerTop {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 2rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.65fr);
+  align-items: start;
+  gap: 3rem;
 }
 
 .footerBrand {
   display: grid;
-  gap: 1rem;
+  gap: 0.75rem;
+  justify-items: start;
   max-width: 26rem;
 }
 
-.footerTagline {
-  color: var(--graphite);
-}
-
-.footerLinks {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem 1.5rem;
-  list-style: none;
-}
-
-.footerLink {
+.footerHome {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  color: var(--ink);
-  font-size: 0.95rem;
   text-decoration: none;
 }
 
-.footerLink:hover {
+.footerTagline {
+  max-width: 29ch;
+  color: var(--graphite);
+  font-size: 1.125rem;
+  line-height: 1.5;
+}
+
+.footerLinks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(3, auto);
+  grid-auto-flow: column;
+  gap: 0.25rem 2rem;
+  list-style: none;
+}
+
+.footerLink,
+.footerEmail {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 44px;
+  color: var(--ink);
+  font-size: 1rem;
+  text-decoration: none;
+}
+
+.footerLink:hover,
+.footerEmail:hover {
   text-decoration: underline;
-  text-decoration-thickness: 2px;
   text-underline-offset: 0.3em;
+}
+
+.footerSignature {
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-block: 0.5em;
+  margin-block: clamp(2.5rem, 5vw, 4.5rem) clamp(1.5rem, 3vw, 2.5rem);
+  font-size: clamp(4.15rem, 18vw, 15rem);
+  text-align: center;
+}
+
+.footerSignatureStack {
+  display: grid;
+  justify-items: center;
+  flex-shrink: 0;
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-style: italic;
+  font-weight: 600;
+  letter-spacing: -0.055em;
+  line-height: 0.86;
+}
+
+.footerSignatureOutline,
+.footerSignatureHighlight {
+  display: block;
+  grid-area: 1 / 1;
+  white-space: nowrap;
+}
+
+.footerSignatureOutline {
+  color: color-mix(in srgb, var(--ink) 12%, var(--paper));
+}
+
+.footerSignatureOutline:first-child {
+  transform: translateY(-0.45em);
+}
+
+.footerSignatureOutline:last-child {
+  transform: translateY(0.45em);
+}
+
+@supports (-webkit-text-stroke: 1px currentColor) {
+  .footerSignatureOutline {
+    color: transparent;
+    -webkit-text-stroke: 1px color-mix(in srgb, var(--ink) 26%, var(--paper));
+  }
+}
+
+.footerSignatureHighlight {
+  position: relative;
+  z-index: 1;
+  padding: 0.02em 0.12em 0.09em;
+  border-radius: var(--radius-sm);
+  background: var(--lime);
+  color: var(--ink);
 }
 
 .footerBottom {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  padding-top: 2rem;
+  gap: 0.5rem 2rem;
+}
+
+.footerLegal {
   color: var(--graphite);
+  font-size: 0.875rem;
+}
+
+.footerUtilities {
+  display: flex;
+  gap: 2rem;
+}
+
+.footerUtilities .footerLink {
   font-size: 0.875rem;
 }
 
@@ -1654,12 +1818,37 @@
     width: min(100% - 2rem, var(--max-width));
   }
 
+  .headerScrolled .headerInner {
+    background: var(--paper);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .heroHome {
+    min-height: auto;
+    padding-block: clamp(2.25rem, 6vh, 3.25rem) 2.25rem;
+  }
+
   .formGrid {
     grid-template-columns: 1fr;
   }
 
   .footerTop {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .footerInner {
+    padding-bottom: 6rem;
+  }
+
+  .footerLinks {
+    max-width: 26rem;
+  }
+
+  .footerBottom {
     flex-direction: column;
+    align-items: flex-start;
   }
 
   .heroBadge {
@@ -1740,6 +1929,15 @@
   .borderBeam::before {
     animation: none !important;
     transition: none;
+  }
+
+  .bookingUnderlinePath {
+    stroke-dashoffset: 0 !important;
+    transition: none !important;
+  }
+
+  .bookingAmbientFlow {
+    display: none !important;
   }
 }
 

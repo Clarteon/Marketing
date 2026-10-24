@@ -4,6 +4,9 @@
    ========================================================================== */
 
 .conduitContainer {
+  --process-track-start: 2.175rem;
+  --process-track-length: calc(100% - 2.175rem);
+  --process-progress-factor: 0.08;
   position: relative;
   width: 100%;
 }
@@ -285,8 +288,112 @@
 
 @media (max-width: 560px) {
   .steps {
+    position: relative;
     grid-template-columns: 1fr;
     gap: 2rem;
+    padding-inline-start: 1.5rem;
+  }
+
+  .steps::before,
+  .steps::after {
+    content: "";
+    position: absolute;
+    top: 0.8rem;
+    left: 0.3125rem;
+    width: 2px;
+    border-radius: 999px;
+    pointer-events: none;
+  }
+
+  .steps::before {
+    top: var(--process-track-start);
+    height: var(--process-track-length);
+    background: rgba(255, 255, 255, 0.16);
+  }
+
+  .steps::after {
+    top: var(--process-track-start);
+    height: var(--process-track-length);
+    background: linear-gradient(180deg, #9fd620 0%, #c6f432 75%, #ffffff 100%);
+    box-shadow: 0 0 12px rgba(198, 244, 50, 0.55);
+    transform: scaleY(var(--process-progress-factor));
+    transform-origin: top;
+  }
+
+  .stepHeader {
+    position: relative;
+    align-items: center;
+    min-height: 2.75rem;
+    margin-bottom: 0;
+  }
+
+  .step {
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 1fr);
+    column-gap: 0.75rem;
+    row-gap: 0.4rem;
+    align-content: start;
+    opacity: 1;
+    transform: none;
+  }
+
+  .stepHeader {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .stepTitle {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: center;
+    margin: 0;
+  }
+
+  .stepBody {
+    grid-column: 2;
+    grid-row: 2;
+    max-width: 42ch;
+    margin-top: 0;
+  }
+
+  .stepBeacon {
+    position: absolute;
+    top: 50%;
+    left: -1.5rem;
+    z-index: 1;
+    width: 12px;
+    height: 12px;
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    background: #0a0a0a;
+    transform: translateY(-50%);
+  }
+
+  .stepActive .stepBeacon {
+    border-color: var(--lime);
+    box-shadow: 0 0 10px rgba(198, 244, 50, 0.6);
+  }
+
+  .tonePaper .steps::before,
+  .toneStone .steps::before {
+    background: rgba(10, 10, 10, 0.16);
+  }
+
+  .tonePaper .steps::after,
+  .toneStone .steps::after {
+    background: linear-gradient(180deg, #65a30d 0%, #84cc16 75%, #0a0a0a 100%);
+    box-shadow: 0 0 10px rgba(101, 163, 13, 0.35);
+  }
+
+  .tonePaper .stepBeacon,
+  .toneStone .stepBeacon {
+    border-color: rgba(10, 10, 10, 0.25);
+    background: #ffffff;
+  }
+
+  .tonePaper .stepActive .stepBeacon,
+  .toneStone .stepActive .stepBeacon {
+    border-color: #0a0a0a;
+    box-shadow: 0 0 8px rgba(10, 10, 10, 0.2);
   }
 }
 
@@ -301,6 +408,10 @@
   .fillBar {
     width: 100% !important;
     transition: none !important;
+  }
+
+  .steps::after {
+    transform: none !important;
   }
 
   .milestoneNode,

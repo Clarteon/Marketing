@@ -101,9 +101,7 @@ export function CustomCursor() {
       isHoveredRef.current = isInteractive;
 
       // Check if current section/element has dark ink tone, accounting for nested light containers
-      const darkContainer = target.closest(
-        '[class*="toneInk"], [class*="footer"], [data-tone="ink"], footer, .dark-surface',
-      );
+      const darkContainer = target.closest('[class*="toneInk"], [data-tone="ink"], .dark-surface');
       const lightContainer = target.closest(
         '[class*="bookingFormPanel"], [class*="tonePaper"], [class*="toneStone"], [data-tone="paper"], [data-tone="stone"]',
       );

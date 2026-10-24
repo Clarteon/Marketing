@@ -105,4 +105,23 @@ describe("CustomCursor", () => {
     expect(circle?.className).not.toContain("circleDark");
     expect(circle?.className).toContain("hoveredLime");
   });
+
+  it("keeps the dark cursor outline over links in a white footer", () => {
+    const { container } = render(
+      <>
+        <CustomCursor />
+        <footer data-tone="paper">
+          <a href="/privacy" className="footerLink">
+            Privacy
+          </a>
+        </footer>
+      </>,
+    );
+
+    fireEvent.pointerOver(container.querySelector("a")!);
+
+    const circle = container.querySelector('[aria-hidden="true"]');
+    expect(circle?.className).not.toContain("circleDark");
+    expect(circle?.className).toContain("hovered");
+  });
 });

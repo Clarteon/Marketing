@@ -52,11 +52,14 @@ export function CoordinateGrid({ tone = "paper", className }: CoordinateGridProp
     let width = 0;
     let height = 0;
     let dpr = 1;
+    const isCoarsePointer = window.matchMedia?.("(pointer: coarse)").matches ?? false;
+    const gridSpacing = isCoarsePointer ? 52 : SPACING;
     let cols = 0;
     let rows = 0;
     let dots: GridDot[] = [];
     let signalBeams: SignalBeam[] = [];
     let animationFrameId: number | null = null;
+    let touchPulseTimer: number | null = null;
     let isVisible = true;
     let time = 0;
 
@@ -103,14 +106,14 @@ export function CoordinateGrid({ tone = "paper", className }: CoordinateGridProp
 
     function initDots() {
       dots = [];
-      cols = Math.ceil(width / SPACING) + 1;
-      rows = Math.ceil(height / SPACING) + 1;
+      cols = Math.ceil(width / gridSpacing) + 1;
+      rows = Math.ceil(height / gridSpacing) + 1;
 
       for (let r = 0; r <= rows; r++) {
         for (let c = 0; c <= cols; c++) {
           const isCross = c > 0 && r > 0 && c % 5 === 0 && r % 4 === 0;
-          const baseX = c * SPACING;
-          const baseY = r * SPACING;
+          const baseX = c * gridSpacing;
+          const baseY = r * gridSpacing;
           dots.push({
             baseX,
             baseY,
@@ -129,7 +132,7 @@ export function CoordinateGrid({ tone = "paper", className }: CoordinateGridProp
 
     function resize() {
       if (!canvas || !parent) return;
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      dpr = Math.min(window.devicePixelRatio || 1, isCoarsePointer ? 1 : 2);
       const rect = parent.getBoundingClientRect();
       width = Math.max(rect.width, 320);
       height = Math.max(rect.height, 240);
@@ -157,12 +160,12 @@ export function CoordinateGrid({ tone = "paper", className }: CoordinateGridProp
       ctx.strokeStyle = isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(10, 10, 10, 0.085)";
       ctx.beginPath();
       for (let c = 0; c <= cols; c++) {
-        const x = c * SPACING;
+        const x = c * gridSpacing;
         ctx.moveTo(x, 0);
         ctx.lineTo(x, height);
       }
       for (let r = 0; r <= rows; r++) {
-        const y = r * SPACING;
+        const y = r * gridSpacing;
         ctx.moveTo(0, y);
         ctx.lineTo(width, y);
       }
@@ -211,12 +214,12 @@ export function CoordinateGrid({ tone = "paper", className }: CoordinateGridProp
       ctx.strokeStyle = restingLineColor;
       ctx.beginPath();
       for (let c = 0; c <= cols; c++) {
-        const x = c * SPACING;
+        const x = c * gridSpacing;
         ctx.moveTo(x, 0);
         ctx.lineTo(x, height);
       }
       for (let r = 0; r <= rows; r++) {
-        const y = r * SPACING;
+        const y = r * gridSpacing;
         ctx.moveTo(0, y);
         ctx.lineTo(width, y);
       }
@@ -239,7 +242,7 @@ export function CoordinateGrid({ tone = "paper", className }: CoordinateGridProp
         ctx.save();
         ctx.lineWidth = 1.5;
         if (beam.axis === "x") {
-          const y = beam.index * SPACING;
+          const y = beam.index * gridSpacing;
           const startX = Math.max(0, beam.direction === 1 ? beam.pos - beam.length : beam.pos);
           const endX = Math.min(width, beam.direction === 1 ? beam.pos : beam.pos + beam.length);
 
@@ -259,7 +262,7 @@ export function CoordinateGrid({ tone = "paper", className }: CoordinateGridProp
             ctx.stroke();
           }
         } else {
-          const x = beam.index * SPACING;
+          const x = beam.index * gridSpacing;
           const startY = Math.max(0, beam.direction === 1 ? beam.pos - beam.length : beam.pos);
           const endY = Math.min(height, beam.direction === 1 ? beam.pos : beam.pos + beam.length);
 
@@ -315,12 +318,12 @@ export function CoordinateGrid({ tone = "paper", className }: CoordinateGridProp
         ctx.strokeStyle = isDark ? "rgba(198, 244, 50, 0.45)" : "rgba(125, 180, 15, 0.50)";
         ctx.beginPath();
         for (let c = 0; c <= cols; c++) {
-          const x = c * SPACING;
+          const x = c * gridSpacing;
           ctx.moveTo(x, 0);
           ctx.lineTo(x, height);
         }
         for (let r = 0; r <= rows; r++) {
-          const y = r * SPACING;
+          const y = r * gridSpacing;
           ctx.moveTo(0, y);
           ctx.lineTo(width, y);
         }
@@ -411,7 +414,29 @@ export function CoordinateGrid({ tone = "paper", className }: CoordinateGridProp
       mouse.isHovering = true;
     }
 
-    function onPointerLeave() {
+    function onPointerDown(e: PointerEvent) {
+      if (e.pointerType !== "touch" || !canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = mouse.targetX = e.clientX - rect.left;
+      mouse.y = mouse.targetY = e.clientY - rect.top;
+      mouse.isHovering = true;
+      if (touchPulseTimer !== null) window.clearTimeout(touchPulseTimer);
+      touchPulseTimer = null;
+    }
+
+    function endTouchPulse(e: PointerEvent) {
+      if (e.pointerType !== "touch") return;
+      if (touchPulseTimer !== null) window.clearTimeout(touchPulseTimer);
+      touchPulseTimer = window.setTimeout(() => {
+        mouse.isHovering = false;
+        mouse.targetX = -1000;
+        mouse.targetY = -1000;
+        touchPulseTimer = null;
+      }, 650);
+    }
+
+    function onPointerLeave(e: PointerEvent) {
+      if (e.pointerType === "touch") return;
       mouse.isHovering = false;
       mouse.targetX = -1000;
       mouse.targetY = -1000;
@@ -423,6 +448,9 @@ export function CoordinateGrid({ tone = "paper", className }: CoordinateGridProp
       renderStatic();
     } else {
       parent.addEventListener("pointermove", onPointerMove as EventListener, { passive: true });
+      parent.addEventListener("pointerdown", onPointerDown as EventListener, { passive: true });
+      parent.addEventListener("pointerup", endTouchPulse as EventListener, { passive: true });
+      parent.addEventListener("pointercancel", endTouchPulse as EventListener, { passive: true });
       parent.addEventListener("pointerleave", onPointerLeave as EventListener, { passive: true });
       render();
     }
@@ -459,7 +487,11 @@ export function CoordinateGrid({ tone = "paper", className }: CoordinateGridProp
 
     return () => {
       if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      if (touchPulseTimer !== null) window.clearTimeout(touchPulseTimer);
       parent.removeEventListener("pointermove", onPointerMove as EventListener);
+      parent.removeEventListener("pointerdown", onPointerDown as EventListener);
+      parent.removeEventListener("pointerup", endTouchPulse as EventListener);
+      parent.removeEventListener("pointercancel", endTouchPulse as EventListener);
       parent.removeEventListener("pointerleave", onPointerLeave as EventListener);
       resizeObserver?.disconnect();
       intersectionObserver?.disconnect();

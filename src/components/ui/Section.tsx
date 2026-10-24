@@ -1,4 +1,4 @@
-import type { HTMLAttributes, ReactNode } from "react";
+import type { HTMLAttributes, ReactNode, Ref } from "react";
 import { cx } from "@/lib/cx";
 import styles from "./ui.module.css";
 
@@ -10,6 +10,7 @@ interface SectionProps extends Omit<HTMLAttributes<HTMLElement>, "children"> {
   width?: Width;
   background?: ReactNode;
   children: ReactNode;
+  ref?: Ref<HTMLElement>;
 }
 
 const toneClass: Record<Tone, string> = {
@@ -25,10 +26,11 @@ export function Section({
   background,
   className,
   children,
+  ref,
   ...props
 }: SectionProps) {
   return (
-    <section className={cx(styles.section, toneClass[tone], className)} {...props}>
+    <section ref={ref} className={cx(styles.section, toneClass[tone], className)} {...props}>
       {background}
       <div className={cx(styles.sectionInner, width === "narrow" && styles.widthNarrow)}>
         {children}

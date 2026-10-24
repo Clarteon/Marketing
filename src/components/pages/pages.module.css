@@ -104,13 +104,13 @@
   background: conic-gradient(
     from 0deg,
     transparent 0deg,
-    transparent 150deg,
-    rgba(198, 244, 50, 0.08) 190deg,
-    rgba(198, 244, 50, 0.35) 230deg,
-    var(--lime) 270deg,
-    #d8fb48 300deg,
-    #ffffff 325deg,
-    var(--lime) 345deg,
+    transparent 255deg,
+    rgba(4, 120, 87, 0.15) 270deg,
+    #047857 292deg,
+    #15803d 315deg,
+    #22c55e 336deg,
+    var(--lime) 352deg,
+    #ffffff 357deg,
     transparent 360deg
   );
   animation: beam-spin 3.5s linear infinite;
@@ -125,23 +125,45 @@
   cursor: pointer;
 }
 
-.problemCard:hover {
-  border-color: rgba(198, 244, 50, 0.3);
+.problemGrid .problemCard:active {
+  border-color: rgba(21, 128, 61, 0.22);
   box-shadow:
     0 20px 40px -10px rgba(10, 10, 10, 0.1),
     0 8px 18px -4px rgba(10, 10, 10, 0.04),
-    0 0 24px -4px rgba(198, 244, 50, 0.22);
-  transform: translateY(-6px);
+    0 0 20px -5px rgba(21, 128, 61, 0.18),
+    0 0 16px -4px rgba(198, 244, 50, 0.2);
+  transform: translateY(-2px) scale(0.99);
+  transition-duration: 80ms;
 }
 
-.problemCard:hover .borderBeam,
+.problemCard:active .borderBeam,
 .problemCard:focus-within .borderBeam {
   opacity: 1;
 }
 
-.problemCard:hover .borderBeam::before,
+.problemCard:active .borderBeam::before,
 .problemCard:focus-within .borderBeam::before {
   animation-play-state: running;
+}
+
+@media (hover: hover) {
+  .problemCard:hover {
+    border-color: rgba(21, 128, 61, 0.22);
+    box-shadow:
+      0 20px 40px -10px rgba(10, 10, 10, 0.1),
+      0 8px 18px -4px rgba(10, 10, 10, 0.04),
+      0 0 20px -5px rgba(21, 128, 61, 0.18),
+      0 0 16px -4px rgba(198, 244, 50, 0.2);
+    transform: translateY(-6px);
+  }
+
+  .problemCard:hover .borderBeam {
+    opacity: 1;
+  }
+
+  .problemCard:hover .borderBeam::before {
+    animation-play-state: running;
+  }
 }
 
 .interactiveCard:active {
@@ -206,9 +228,11 @@
   transition: text-decoration-thickness 180ms ease;
 }
 
-.solution a:hover,
-.problemCard:hover .solutionLink {
-  text-decoration-thickness: 2.5px;
+@media (hover: hover) {
+  .solution a:hover,
+  .problemCard:hover .solutionLink {
+    text-decoration-thickness: 2.5px;
+  }
 }
 
 .interactiveCard .solutionLink::after {
@@ -265,7 +289,8 @@
 }
 
 .proofFrame {
-  max-width: 54rem;
+  max-width: 64rem;
+  margin-inline: auto;
   padding: clamp(1.75rem, 3.5vw, 2.75rem);
   background: var(--paper);
   border: 1px solid var(--border);
@@ -276,12 +301,48 @@
 
 .proof {
   display: grid;
-  gap: 1.5rem;
-  max-width: 52rem;
+  grid-template-columns: minmax(0, 2.1fr) minmax(12rem, 0.9fr);
+  align-items: center;
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  max-width: 60rem;
+  margin-inline: auto;
+}
+
+.proofCopy {
+  min-width: 0;
+}
+
+.proofCopy .sectionTitle {
+  text-wrap: balance;
+}
+
+.proofVisual {
+  width: 100%;
+  pointer-events: none;
+}
+
+.proofIcon {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  font-family: var(--font-inter), system-ui, sans-serif;
 }
 
 .proofActions {
   margin-top: 0.5rem;
+}
+
+@media (max-width: 700px) {
+  .proof {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .proofVisual {
+    width: min(80%, 17rem);
+    justify-self: center;
+    margin-top: -1rem;
+  }
 }
 
 .themeAction {
