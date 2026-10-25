@@ -29,7 +29,9 @@ npm run start          # serve the production build
 npm run lint           # ESLint
 npm run lint:fix       # ESLint with autofix
 npm run format         # Prettier write
-npm run format:check   # Prettier check
+npm run format:check   # Prettier check (the pre-commit hook also formats staged files)
+npm run verify         # everything CI's Verify job runs: formatting, lint, type check, tests, placeholders
+npm run hooks:install  # re-enable the git hooks in a clone that does not have them yet
 npm run typecheck      # next typegen, then tsc --noEmit
 npm test               # Vitest run
 npm run test:watch     # Vitest watch mode
@@ -45,6 +47,12 @@ npm run db:restore -- --in <file> [--confirm]   # dry run by default; inserts mi
 ```
 
 CI and releases call the organization-wide reusable workflows in `Clarteon/.github` (`@v1`). The caller in `.github/workflows/ci.yml` runs lint, formatting, type check, tests, the placeholder check, a production dependency audit and the build, plus a local `browser` job with the e2e suite and the Lighthouse budget; `.github/workflows/release.yml` runs the same checks on a `v*` tag, then publishes a GitHub release. A `deploy` job then ships to Vercel through the shared `vercel-deploy.yml` (`@v1.1.0`): production for pushes to `main`, a preview with a PR comment for pull requests (see the `clarteon-deploy` skill). The knowledge build command is added in P4.
+
+## Commits and pull requests
+
+- `main` is protected: changes land through a pull request, and both required checks, `ci / Verify` and `Browser tests and Lighthouse`, must pass before it can merge. Never merge a red pull request, and never push to `main` directly. A red run on `main` blocks the production deploy and leaves the site on an older build.
+- Run `npm run verify` before you push. `npm install` enables the hooks in `.githooks/`: the pre-commit hook formats staged files with Prettier and re-stages them, and the pre-push hook runs `format:check` and `lint`. If a clone does not have the hooks, run `npm run hooks:install`.
+- `npm run test:e2e` needs Playwright Chromium once (`npx playwright install chromium`). Run it before pushing a change to a page, a form or the booking flow, because CI runs it on every pull request.
 
 ## Working agreements
 
@@ -86,4 +94,4 @@ CI and releases call the organization-wide reusable workflows in `Clarteon/.gith
 
 ## Definition of done
 
-A change is done when it builds, type checks, lints and passes tests, follows the rules above, adds no secrets or bracket placeholders to production output, and the relevant roadmap exit criteria are met.
+A change is done when it builds, type checks, lints and passes tests, `npm run verify` passes locally, follows the rules above, adds no secrets or bracket placeholders to production output, and the relevant roadmap exit criteria are met.

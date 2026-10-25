@@ -385,7 +385,6 @@
   filter: drop-shadow(0 0 16px rgba(198, 244, 50, 0.6));
 }
 
-
 @property --angle {
   syntax: "<angle>";
   initial-value: 0deg;
@@ -1683,7 +1682,9 @@
 
 .footerEmailArrow {
   color: var(--graphite);
-  transition: transform 220ms ease, color 220ms ease;
+  transition:
+    transform 220ms ease,
+    color 220ms ease;
 }
 
 .footerEmailPill:hover {
@@ -1755,7 +1756,9 @@
 }
 
 .footerLinkItem {
-  transition: opacity 220ms ease, transform 220ms ease;
+  transition:
+    opacity 220ms ease,
+    transform 220ms ease;
 }
 
 .footerLinksRibbon:hover .footerLinkItem {
