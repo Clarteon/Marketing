@@ -33,7 +33,7 @@ steps:
     body: "After launch, we fix what surfaces, answer questions, and help the team settle into the new way of working."
 call:
   title: "What to expect on a discovery call"
-  intro: "A short conversation about the problem, not a sales presentation."
+  intro: "Tell us what’s slowing you down. We’ll talk it through and explore a practical next step."
   points:
     - "We ask what is slowing you down, what you have tried, and what a good outcome looks like."
     - "We look for the smallest useful next step, not the biggest possible project."

@@ -57,7 +57,7 @@ export function ContactPage({
         </div>
       </Section>
 
-      <Section id="message" aria-labelledby="message-title">
+      <Section tone="lime" id="message" aria-labelledby="message-title">
         <div className={styles.messagePanel}>
           <p className={styles.eyebrow}>Direct message</p>
           <h2 id="message-title" className={styles.sectionTitle}>
@@ -65,7 +65,7 @@ export function ContactPage({
           </h2>
           <p className={styles.sectionIntro}>{data.message.body}</p>
           <div className={styles.messageAction}>
-            <Button href={`mailto:${data.message.email}`} variant="text">
+            <Button href={`mailto:${data.message.email}`} variant="dark" size="large">
               Email {data.message.email}
             </Button>
           </div>
