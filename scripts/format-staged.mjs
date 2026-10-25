@@ -3,18 +3,20 @@
  * Format the files staged for the next commit with the repository's Prettier
  * and re-stage the ones Prettier changed.
  *
- * Called by the pre-commit hook in `.githooks/`, which `npm install` enables.
- * Keeps `npm run format:check` (and the CI `Verify` job) from failing on code
- * that was already committed, which is the most common cause of a red pull
- * request on this repository.
+ * Called by the pre-commit hook, both from `.githooks/` and from the copy that
+ * `npm install` places in `.git/hooks/`. Prettier is resolved from the
+ * repository root rather than from this file's directory, so the installed
+ * copy works on branches that predate `.githooks/`.
  *
  * Files ignored by `.prettierignore` and files Prettier has no parser for are
  * left alone, so the hook never rewrites generated content or binaries.
  */
 
 import { execFileSync } from "node:child_process";
-import { readFileSync, writeFileSync } from "node:fs";
-import prettier from "prettier";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { createRequire } from "node:module";
+import path from "node:path";
+import { pathToFileURL } from "node:url";
 
 const MAX_REPORTED_FILES = 10;
 
@@ -22,13 +24,21 @@ function git(args) {
   return execFileSync("git", args, { encoding: "utf8" });
 }
 
+const repoRoot = git(["rev-parse", "--show-toplevel"]).trim();
+const requireFromRepo = createRequire(path.join(repoRoot, "package.json"));
+const prettierModule = await import(pathToFileURL(requireFromRepo.resolve("prettier")).href);
+const prettier = prettierModule.default ?? prettierModule;
+
+const ignorePath = path.join(repoRoot, ".prettierignore");
+const fileInfoOptions = existsSync(ignorePath) ? { ignorePath } : {};
+
 function stagedFiles() {
   const output = git(["diff", "--cached", "--name-only", "--diff-filter=ACMR", "-z"]);
   return output.split("\0").filter(Boolean);
 }
 
 async function isFormattable(file) {
-  const info = await prettier.getFileInfo(file, { ignorePath: ".prettierignore" });
+  const info = await prettier.getFileInfo(file, fileInfoOptions);
   return !info.ignored && Boolean(info.inferredParser);
 }
 
