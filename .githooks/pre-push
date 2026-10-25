@@ -1,9 +1,13 @@
 #!/bin/sh
+# Managed by Clarteon scripts/install-git-hooks.mjs
+#
 # Pre-push guardrail: catch the two failures that have broken `main` most
 # often (unformatted files and lint errors) before the push reaches CI.
 # The full check set runs in CI and in `npm run verify`.
 #
-# Enabled automatically by `npm install` through scripts/install-git-hooks.mjs.
+# `npm install` copies this file into .git/hooks/, so it keeps working when you
+# switch to a branch created before .githooks/ existed. Re-enable after a clone
+# with `npm run hooks:install`.
 # Bypass once with `git push --no-verify` when you know what you are doing.
 
 set -u

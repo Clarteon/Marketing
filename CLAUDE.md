@@ -51,7 +51,7 @@ CI and releases call the organization-wide reusable workflows in `Clarteon/.gith
 ## Commits and pull requests
 
 - `main` is protected: changes land through a pull request, and both required checks, `ci / Verify` and `Browser tests and Lighthouse`, must pass before it can merge. Never merge a red pull request, and never push to `main` directly. A red run on `main` blocks the production deploy and leaves the site on an older build.
-- Run `npm run verify` before you push. `npm install` enables the hooks in `.githooks/`: the pre-commit hook formats staged files with Prettier and re-stages them, and the pre-push hook runs `format:check` and `lint`. If a clone does not have the hooks, run `npm run hooks:install`.
+- Run `npm run verify` before you push. `npm install` copies the hooks from `.githooks/` into `.git/hooks/`, so they keep working on any branch, including branches created before the hooks existed: pre-commit formats staged files with Prettier and re-stages them, pre-push runs `format:check` and `lint`. If a clone does not have the hooks, run `npm run hooks:install`. Do not point `core.hooksPath` at `.githooks/`: the folder is tracked, so checking out an older branch removes it and silently disables the hooks.
 - `npm run test:e2e` needs Playwright Chromium once (`npx playwright install chromium`). Run it before pushing a change to a page, a form or the booking flow, because CI runs it on every pull request.
 
 ## Working agreements

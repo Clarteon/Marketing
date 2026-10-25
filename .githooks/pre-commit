@@ -1,10 +1,13 @@
 #!/bin/sh
+# Managed by Clarteon scripts/install-git-hooks.mjs
+#
 # Pre-commit guardrail: format the files in this commit with Prettier and
 # re-stage them, so CI's `npm run format:check` cannot fail on code that was
 # already committed.
 #
-# Enabled automatically by `npm install` through scripts/install-git-hooks.mjs.
-# Re-enable after a clone with `npm run hooks:install`.
+# `npm install` copies this file into .git/hooks/, so it keeps working when you
+# switch to a branch created before .githooks/ existed. Re-enable after a clone
+# with `npm run hooks:install`.
 # Bypass once with `git commit --no-verify` when you know what you are doing.
 
 set -u
@@ -18,7 +21,14 @@ if [ ! -d node_modules/prettier ]; then
   exit 0
 fi
 
-if ! node scripts/format-staged.mjs; then
+formatter="$repo_root/scripts/format-staged.mjs"
+if [ ! -f "$formatter" ]; then
+  # This branch predates the formatter: use the copy installed in .git/hooks.
+  formatter="$(git rev-parse --git-common-dir)/hooks/format-staged.mjs"
+fi
+[ -f "$formatter" ] || exit 0
+
+if ! node "$formatter"; then
   echo "pre-commit: formatting failed. Run 'npm run format' and commit again." >&2
   exit 1
 fi
