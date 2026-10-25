@@ -1,10 +1,11 @@
 import type { ContactData } from "@/lib/page-schemas";
 import { BookingSection } from "@/components/ui/BookingSection";
 import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
 import { Page } from "@/components/ui/Page";
 import { PageHero } from "@/components/ui/PageHero";
 import { ProjectBriefForm } from "@/components/ui/ProjectBriefForm";
+import { ReticleFrame } from "@/components/ui/ReticleFrame";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { Section } from "@/components/ui/Section";
 import styles from "./pages.module.css";
 
@@ -43,33 +44,35 @@ export function ContactPage({
 
       <Section tone="stone" id="brief" aria-labelledby="brief-title">
         <div className={styles.contactGrid}>
-          <div className={styles.sectionHeader}>
+          <ScrollReveal variant="slide" stagger className={styles.sectionHeader}>
             <p className={styles.eyebrow}>Project brief</p>
             <h2 id="brief-title" className={styles.sectionTitle}>
               {data.brief.title}
             </h2>
             <p className={styles.sectionIntro}>{data.brief.intro}</p>
-          </div>
+          </ScrollReveal>
 
-          <Card className={styles.formCard}>
+          <ScrollReveal variant="settle">
             <ProjectBriefForm turnstileSiteKey={turnstileSiteKey} />
-          </Card>
+          </ScrollReveal>
         </div>
       </Section>
 
       <Section tone="lime" id="message" aria-labelledby="message-title">
-        <div className={styles.messagePanel}>
-          <p className={styles.eyebrow}>Direct message</p>
-          <h2 id="message-title" className={styles.sectionTitle}>
-            {data.message.title}
-          </h2>
-          <p className={styles.sectionIntro}>{data.message.body}</p>
-          <div className={styles.messageAction}>
-            <Button href={`mailto:${data.message.email}`} variant="dark" size="large">
-              Email {data.message.email}
-            </Button>
-          </div>
-        </div>
+        <ReticleFrame className={styles.messageFrame}>
+          <ScrollReveal variant="wipe" className={styles.messagePanel}>
+            <p className={styles.eyebrow}>Direct message</p>
+            <h2 id="message-title" className={styles.sectionTitle}>
+              {data.message.title}
+            </h2>
+            <p className={styles.sectionIntro}>{data.message.body}</p>
+            <div className={styles.messageAction}>
+              <Button href={`mailto:${data.message.email}`} variant="dark" size="large">
+                Email {data.message.email}
+              </Button>
+            </div>
+          </ScrollReveal>
+        </ReticleFrame>
       </Section>
     </Page>
   );

@@ -1,7 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type FormEvent } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type FormEvent,
+  type KeyboardEvent as ReactKeyboardEvent,
+} from "react";
 import {
   BOOKING_DEFAULT_TIMEZONE,
   BOOKING_FORM_MIN_SUBMIT_MS,
@@ -14,7 +22,9 @@ import {
   slotDateKey,
   timeZoneLabel,
 } from "@/lib/booking/format";
+import { addDaysToDateKey, parseDateKey, weekdayForDateKey } from "@/lib/booking/time";
 import { Button } from "./Button";
+import { SelectField } from "./SelectField";
 import { TurnstileWidget } from "./TurnstileWidget";
 import styles from "./ui.module.css";
 
@@ -73,6 +83,7 @@ const COMMON_TIMEZONES = [
 ] as const;
 
 type AvailabilityState = "loading" | "ready" | "unavailable" | "error";
+type BookingStep = "date" | "time" | "details";
 type Status =
   | { kind: "idle"; message: "" }
   | { kind: "error"; message: string }
@@ -97,6 +108,15 @@ async function waitForMinimumSubmit(startedAt: number): Promise<void> {
   }
 }
 
+function focusAfterPaint(elementId: string): void {
+  const focus = () => document.getElementById(elementId)?.focus();
+  if (typeof window.requestAnimationFrame === "function") {
+    window.requestAnimationFrame(focus);
+  } else {
+    window.setTimeout(focus, 0);
+  }
+}
+
 function groupSlots(slots: Slot[], timezone: string): SlotGroup[] {
   const groups = new Map<string, SlotGroup>();
   for (const slot of slots) {
@@ -112,7 +132,66 @@ function groupSlots(slots: Slot[], timezone: string): SlotGroup[] {
       slots: [slot],
     });
   }
-  return [...groups.values()];
+  return [...groups.values()].sort((left, right) => left.key.localeCompare(right.key));
+}
+
+function calendarMonthKey(dateKey: string): string {
+  return dateKey.slice(0, 7);
+}
+
+function calendarMonthLabel(monthKey: string): string {
+  const [year, month] = monthKey.split("-").map(Number);
+  return new Intl.DateTimeFormat("en", {
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(Date.UTC(year, month - 1, 1, 12)));
+}
+
+function calendarDays(monthKey: string): (string | null)[] {
+  const [year, month] = monthKey.split("-").map(Number);
+  const firstDay = `${monthKey}-01`;
+  const offset = (weekdayForDateKey(firstDay) + 6) % 7;
+  const dayCount = new Date(Date.UTC(year, month, 0)).getUTCDate();
+  const days: (string | null)[] = [
+    ...Array.from({ length: offset }, () => null),
+    ...Array.from({ length: dayCount }, (_, index) => addDaysToDateKey(firstDay, index)),
+  ];
+  // Six weeks keep the calendar height stable for every month.
+  while (days.length < 42) days.push(null);
+  return days;
+}
+
+function calendarDayNumber(dateKey: string): string {
+  return String(parseDateKey(dateKey).day);
+}
+
+function nextAvailableDate(
+  startKey: string,
+  step: number,
+  availableDateKeys: Set<string>,
+): string | null {
+  let candidate = startKey;
+  for (let attempt = 0; attempt < 370; attempt += 1) {
+    candidate = addDaysToDateKey(candidate, step);
+    if (availableDateKeys.has(candidate)) return candidate;
+  }
+  return null;
+}
+
+function availableDateInWeek(
+  dateKey: string,
+  edge: "start" | "end",
+  availableDateKeys: Set<string>,
+): string | null {
+  const weekday = (weekdayForDateKey(dateKey) + 6) % 7;
+  const monday = addDaysToDateKey(dateKey, -weekday);
+  const offsets = edge === "start" ? [0, 1, 2, 3, 4, 5, 6] : [6, 5, 4, 3, 2, 1, 0];
+  return (
+    offsets
+      .map((offset) => addDaysToDateKey(monday, offset))
+      .find((key) => availableDateKeys.has(key)) ?? null
+  );
 }
 
 export function BookingForm({ turnstileSiteKey }: BookingFormProps) {
@@ -130,6 +209,10 @@ export function BookingForm({ turnstileSiteKey }: BookingFormProps) {
   const [availability, setAvailability] = useState<AvailabilityState>("loading");
   const [refreshKey, setRefreshKey] = useState(0);
   const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
+  const [selectedDateKey, setSelectedDateKey] = useState<string | null>(null);
+  const [visibleMonthKey, setVisibleMonthKey] = useState<string | null>(null);
+  const [calendarFocusDateKey, setCalendarFocusDateKey] = useState<string | null>(null);
+  const [step, setStep] = useState<BookingStep>("date");
   const [token, setToken] = useState("");
   const [resetKey, setResetKey] = useState(0);
   const [submitting, setSubmitting] = useState(false);
@@ -140,6 +223,30 @@ export function BookingForm({ turnstileSiteKey }: BookingFormProps) {
   const configured = Boolean(turnstileSiteKey);
   const selectedSlot = slots.find((slot) => slot.id === selectedSlotId);
   const groups = useMemo(() => groupSlots(slots, timezone), [slots, timezone]);
+  const availableGroups = useMemo(
+    () => new Map(groups.map((group) => [group.key, group])),
+    [groups],
+  );
+  const availableDateKeys = useMemo(() => new Set(availableGroups.keys()), [availableGroups]);
+  const firstGroup = groups[0];
+  const selectedGroup = selectedDateKey ? availableGroups.get(selectedDateKey) : undefined;
+  const activeDateKey =
+    calendarFocusDateKey && availableDateKeys.has(calendarFocusDateKey)
+      ? calendarFocusDateKey
+      : (selectedGroup ?? firstGroup)?.key;
+  const currentMonthKey = visibleMonthKey ?? (firstGroup ? calendarMonthKey(firstGroup.key) : null);
+  const stepNumber = step === "date" ? 1 : step === "time" ? 2 : 3;
+  const monthKeys = useMemo(
+    () => [...new Set(groups.map((group) => calendarMonthKey(group.key)))],
+    [groups],
+  );
+  const currentMonthIndex = currentMonthKey ? monthKeys.indexOf(currentMonthKey) : -1;
+  const previousMonthKey = currentMonthIndex > 0 ? monthKeys[currentMonthIndex - 1] : null;
+  const nextMonthKey =
+    currentMonthIndex >= 0 && currentMonthIndex < monthKeys.length - 1
+      ? monthKeys[currentMonthIndex + 1]
+      : null;
+  const daysInCalendar = currentMonthKey ? calendarDays(currentMonthKey) : [];
   const timezoneOptions = useMemo(() => {
     const values: string[] = [...COMMON_TIMEZONES];
     if (!values.includes(timezone)) values.unshift(timezone);
@@ -149,6 +256,11 @@ export function BookingForm({ turnstileSiteKey }: BookingFormProps) {
   useEffect(() => {
     startedAtRef.current = Date.now();
   }, []);
+
+  useEffect(() => {
+    if (step === "details") document.getElementById("booking-name")?.focus();
+    if (step === "time") document.getElementById("booking-times-title")?.focus();
+  }, [step]);
 
   useEffect(() => {
     if (!configured) return;
@@ -193,16 +305,107 @@ export function BookingForm({ turnstileSiteKey }: BookingFormProps) {
   function selectSlot(slotId: string) {
     if (slotId !== selectedSlotId) requestIdRef.current = null;
     setSelectedSlotId(slotId);
+    const slot = slots.find((value) => value.id === slotId);
+    if (slot) {
+      const dateKey = slotDateKey(slot.start, timezone);
+      setSelectedDateKey(dateKey);
+      setCalendarFocusDateKey(dateKey);
+      setVisibleMonthKey(calendarMonthKey(dateKey));
+    }
     setStatus({ kind: "idle", message: "" });
+  }
+
+  function selectDate(dateKey: string) {
+    if (!availableDateKeys.has(dateKey)) return;
+    if (dateKey !== selectedDateKey) {
+      requestIdRef.current = null;
+      setSelectedSlotId(null);
+    }
+    setSelectedDateKey(dateKey);
+    setCalendarFocusDateKey(dateKey);
+    setVisibleMonthKey(calendarMonthKey(dateKey));
+    setStep("time");
+    setStatus({ kind: "idle", message: "" });
+  }
+
+  function showMonth(monthKey: string | null, focusDate = false) {
+    if (!monthKey) return;
+    const group = groups.find((value) => calendarMonthKey(value.key) === monthKey);
+    if (!group) return;
+    setVisibleMonthKey(monthKey);
+    setCalendarFocusDateKey(group.key);
+    if (focusDate) {
+      focusAfterPaint(`booking-date-${group.key}`);
+    }
+  }
+
+  function returnToTimes() {
+    resetVerification();
+    setStep("time");
+    if (selectedSlotId) {
+      focusAfterPaint(`booking-slot-${selectedSlotId}`);
+    }
+  }
+
+  function returnToDates() {
+    setStep("date");
+    const dateKey = selectedGroup?.key ?? firstGroup?.key;
+    if (dateKey) {
+      setVisibleMonthKey(calendarMonthKey(dateKey));
+      setCalendarFocusDateKey(dateKey);
+      focusAfterPaint(`booking-date-${dateKey}`);
+    }
+  }
+
+  function handleCalendarKeyDown(event: ReactKeyboardEvent<HTMLDivElement>) {
+    if (!activeDateKey) return;
+    let stepDays: number | null = null;
+    if (event.key === "ArrowLeft") stepDays = -1;
+    else if (event.key === "ArrowRight") stepDays = 1;
+    else if (event.key === "ArrowUp") stepDays = -7;
+    else if (event.key === "ArrowDown") stepDays = 7;
+    else if (event.key === "Home" || event.key === "End") {
+      const targetDateKey = availableDateInWeek(
+        activeDateKey,
+        event.key === "Home" ? "start" : "end",
+        availableDateKeys,
+      );
+      if (!targetDateKey) return;
+      event.preventDefault();
+      setCalendarFocusDateKey(targetDateKey);
+      setVisibleMonthKey(calendarMonthKey(targetDateKey));
+      focusAfterPaint(`booking-date-${targetDateKey}`);
+      return;
+    } else if (event.key === "PageUp") {
+      showMonth(previousMonthKey, true);
+      event.preventDefault();
+      return;
+    } else if (event.key === "PageDown") {
+      showMonth(nextMonthKey, true);
+      event.preventDefault();
+      return;
+    }
+
+    if (stepDays === null) return;
+    const nextDateKey = nextAvailableDate(activeDateKey, stepDays, availableDateKeys);
+    if (!nextDateKey) return;
+    event.preventDefault();
+    setCalendarFocusDateKey(nextDateKey);
+    setVisibleMonthKey(calendarMonthKey(nextDateKey));
+    focusAfterPaint(`booking-date-${nextDateKey}`);
   }
 
   function changeTimezone(value: string) {
     // Same zone means no refetch, so clearing the slots here would leave the picker loading forever.
     if (value === timezone) return;
     setSelectedTimezone(value);
+    setSelectedDateKey(null);
+    setCalendarFocusDateKey(null);
+    setVisibleMonthKey(null);
     setSelectedSlotId(null);
     setSlots([]);
     setAvailability("loading");
+    setStep("date");
     setStatus({ kind: "idle", message: "" });
     resetVerification();
   }
@@ -263,6 +466,7 @@ export function BookingForm({ turnstileSiteKey }: BookingFormProps) {
         requestIdRef.current = null;
         resetVerification();
         setSelectedSlotId(null);
+        setStep("date");
         setConfirmation(payload.booking);
         setConfirmationEmailSent(payload.confirmationEmailSent === true);
         setStatus({ kind: "success", message: "Your discovery call is booked." });
@@ -274,12 +478,15 @@ export function BookingForm({ turnstileSiteKey }: BookingFormProps) {
       if (response.status === 409) {
         requestIdRef.current = null;
         setSelectedSlotId(null);
+        setSelectedDateKey(null);
+        setVisibleMonthKey(null);
+        setStep("date");
         setSlots([]);
         setAvailability("loading");
         setRefreshKey((value) => value + 1);
         setStatus({
           kind: "error",
-          message: "That time was just taken. Choose another time below.",
+          message: "That time was just taken. Choose a date to see the latest available times.",
         });
       } else if (response.status === 429) {
         setStatus({
@@ -294,12 +501,16 @@ export function BookingForm({ turnstileSiteKey }: BookingFormProps) {
       } else if (response.status === 400) {
         requestIdRef.current = null;
         setSelectedSlotId(null);
+        setSelectedDateKey(null);
+        setVisibleMonthKey(null);
+        setStep("date");
         setSlots([]);
         setAvailability("loading");
         setRefreshKey((value) => value + 1);
         setStatus({
           kind: "error",
-          message: "That time is no longer available. Choose another time below.",
+          message:
+            "That time is no longer available. Choose a date to see the latest available times.",
         });
       } else {
         setStatus({
@@ -373,30 +584,17 @@ export function BookingForm({ turnstileSiteKey }: BookingFormProps) {
 
   return (
     <div className={styles.bookingFormPanel}>
-      <div className={styles.bookingFormHeader}>
-        <p className={styles.eyebrow}>Discovery call</p>
-        <h3 className={styles.bookingFormTitle}>Choose a time that works for you.</h3>
-        <p className={styles.formNote}>
-          30 minutes on Google Meet. Times are shown in your timezone.
-        </p>
-      </div>
-
       <div className={styles.bookingTimezone}>
-        <label className={styles.label} htmlFor="booking-timezone">
-          Times shown in
-        </label>
-        <select
-          className={styles.select}
+        <SelectField
           id="booking-timezone"
+          label="Times shown in"
+          density="compact"
           value={timezone}
-          onChange={(event) => changeTimezone(event.target.value)}
-        >
-          {timezoneOptions.map((value) => (
-            <option key={value} value={value}>
-              {timeZoneLabel(value)}
-            </option>
-          ))}
-        </select>
+          onValueChange={(value) => {
+            if (value !== null) changeTimezone(value);
+          }}
+          options={timezoneOptions.map((value) => ({ value, label: timeZoneLabel(value) }))}
+        />
       </div>
 
       {availability === "loading" ? (
@@ -427,147 +625,317 @@ export function BookingForm({ turnstileSiteKey }: BookingFormProps) {
       ) : null}
 
       {availability === "ready" && groups.length > 0 ? (
-        <div className={styles.bookingSlotGroups}>
-          {groups.map((group) => {
-            const labelId = `booking-day-${group.key}`;
-            return (
-              <div className={styles.bookingSlotDay} key={group.key}>
-                <p className={styles.bookingSlotDayLabel} id={labelId}>
-                  {group.label}
+        <div className={styles.bookingFlow}>
+          <ol className={styles.bookingProgress} aria-label="Booking progress">
+            {(["Date", "Time", "Details"] as const).map((label, index) => (
+              <li
+                key={label}
+                aria-current={stepNumber === index + 1 ? "step" : undefined}
+                data-complete={stepNumber > index + 1}
+              >
+                <span aria-hidden="true">{index + 1}</span>
+                {label}
+              </li>
+            ))}
+          </ol>
+
+          <div className={styles.bookingDateStep} hidden={step !== "date"}>
+            <div className={styles.bookingCalendar}>
+              <div className={styles.bookingCalendarHeader}>
+                <button
+                  className={styles.bookingCalendarNav}
+                  type="button"
+                  aria-label="Previous available month"
+                  disabled={!previousMonthKey}
+                  onClick={() => showMonth(previousMonthKey)}
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="m15 5-7 7 7 7 2-2-5-5 5-5-2-2Z" />
+                  </svg>
+                </button>
+                <p className={styles.bookingCalendarMonth} aria-live="polite">
+                  {currentMonthKey ? calendarMonthLabel(currentMonthKey) : "Available dates"}
                 </p>
-                <div className={styles.bookingSlotGrid} role="group" aria-labelledby={labelId}>
-                  {group.slots.map((slot) => (
+                <button
+                  className={styles.bookingCalendarNav}
+                  type="button"
+                  aria-label="Next available month"
+                  disabled={!nextMonthKey}
+                  onClick={() => showMonth(nextMonthKey)}
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="m9 5-2 2 5 5-5 5 2 2 7-7-7-7Z" />
+                  </svg>
+                </button>
+              </div>
+
+              <div
+                className={styles.bookingCalendarGrid}
+                role="grid"
+                aria-label={
+                  currentMonthKey
+                    ? `Available dates for ${calendarMonthLabel(currentMonthKey)}`
+                    : "Available dates"
+                }
+                onKeyDown={handleCalendarKeyDown}
+              >
+                <div className={styles.bookingCalendarRow} role="row">
+                  {[
+                    ["Monday", "Mon"],
+                    ["Tuesday", "Tue"],
+                    ["Wednesday", "Wed"],
+                    ["Thursday", "Thu"],
+                    ["Friday", "Fri"],
+                    ["Saturday", "Sat"],
+                    ["Sunday", "Sun"],
+                  ].map(([label, shortLabel]) => (
+                    <div
+                      className={styles.bookingCalendarWeekday}
+                      key={label}
+                      role="columnheader"
+                      aria-label={label}
+                    >
+                      {shortLabel}
+                    </div>
+                  ))}
+                </div>
+                {Array.from({ length: Math.ceil(daysInCalendar.length / 7) }, (_, rowIndex) => (
+                  <div className={styles.bookingCalendarRow} role="row" key={rowIndex}>
+                    {daysInCalendar
+                      .slice(rowIndex * 7, rowIndex * 7 + 7)
+                      .map((dateKey, dayIndex) => {
+                        if (!dateKey) {
+                          return (
+                            <div
+                              className={styles.bookingCalendarBlank}
+                              role="gridcell"
+                              key={`blank-${rowIndex}-${dayIndex}`}
+                            />
+                          );
+                        }
+
+                        const group = availableGroups.get(dateKey);
+                        const isSelected = selectedGroup?.key === dateKey;
+                        const isActive = activeDateKey === dateKey;
+                        const dayLabel =
+                          group?.label ??
+                          new Intl.DateTimeFormat("en", {
+                            timeZone: "UTC",
+                            weekday: "long",
+                            month: "long",
+                            day: "numeric",
+                          }).format(new Date(`${dateKey}T12:00:00Z`));
+
+                        return (
+                          <div
+                            className={styles.bookingCalendarCell}
+                            key={dateKey}
+                            role="gridcell"
+                            aria-selected={isSelected}
+                          >
+                            <button
+                              id={`booking-date-${dateKey}`}
+                              className={[
+                                styles.bookingCalendarDay,
+                                group ? styles.bookingCalendarDayAvailable : "",
+                                isSelected ? styles.bookingCalendarDaySelected : "",
+                              ]
+                                .filter(Boolean)
+                                .join(" ")}
+                              type="button"
+                              disabled={!group}
+                              tabIndex={group && isActive ? 0 : -1}
+                              aria-label={
+                                group ? `${dayLabel}, available` : `${dayLabel}, no available times`
+                              }
+                              onFocus={() => {
+                                if (group) setCalendarFocusDateKey(dateKey);
+                              }}
+                              onClick={() => selectDate(dateKey)}
+                            >
+                              {calendarDayNumber(dateKey)}
+                            </button>
+                          </div>
+                        );
+                      })}
+                  </div>
+                ))}
+              </div>
+              <p className={styles.bookingCalendarNote}>
+                Choose a highlighted date to see available times.
+              </p>
+            </div>
+          </div>
+
+          <div className={styles.bookingTimeStep} hidden={step !== "time"}>
+            <div className={styles.bookingTimes}>
+              <div className={styles.bookingTimesHeader}>
+                <div>
+                  <p id="booking-times-title" tabIndex={-1} className={styles.bookingSlotDayLabel}>
+                    {selectedGroup?.label ?? "Choose a date"}
+                  </p>
+                  <p className={styles.bookingTimesCount}>
+                    {selectedGroup?.slots.length ?? 0} available times
+                  </p>
+                </div>
+                <Button type="button" variant="text" onClick={returnToDates}>
+                  Change date
+                </Button>
+              </div>
+              {selectedGroup ? (
+                <div
+                  className={styles.bookingSlotGrid}
+                  role="group"
+                  aria-label={`Available times on ${selectedGroup.label}`}
+                >
+                  {selectedGroup.slots.map((slot) => (
                     <button
+                      id={`booking-slot-${slot.id}`}
                       className={styles.bookingSlot}
                       key={slot.id}
                       type="button"
                       aria-pressed={selectedSlotId === slot.id}
-                      aria-label={`${group.label} at ${formatSlotTime(slot.start, timezone)}`}
+                      aria-label={`${selectedGroup.label} at ${formatSlotTime(slot.start, timezone)}`}
                       onClick={() => selectSlot(slot.id)}
                     >
                       {formatSlotTime(slot.start, timezone)}
                     </button>
                   ))}
                 </div>
+              ) : null}
+            </div>
+            <div className={styles.bookingStepActions}>
+              <p className={styles.bookingStepHint}>
+                {selectedSlot
+                  ? formatSlotDateTime(selectedSlot.start, timezone)
+                  : "Choose a time to continue."}
+              </p>
+              <Button type="button" disabled={!selectedSlot} onClick={() => setStep("details")}>
+                Continue
+              </Button>
+            </div>
+          </div>
+
+          <div className={styles.bookingDetailsStep} hidden={step !== "details" || !selectedSlot}>
+            {selectedSlot ? (
+              <div className={styles.bookingSelected}>
+                <p>
+                  <strong>{formatSlotDateTime(selectedSlot.start, timezone)}</strong>
+                  <span> · 30 min on Google Meet</span>
+                </p>
+                <Button type="button" variant="text" onClick={returnToTimes}>
+                  Change time
+                </Button>
               </div>
-            );
-          })}
+            ) : null}
+
+            <form ref={formRef} className={styles.form} onSubmit={handleSubmit}>
+              <div className={styles.formGrid}>
+                <div className={styles.field}>
+                  <label className={styles.label} htmlFor="booking-name">
+                    Name
+                  </label>
+                  <input
+                    className={styles.input}
+                    id="booking-name"
+                    name="name"
+                    type="text"
+                    autoComplete="name"
+                    maxLength={120}
+                    required
+                  />
+                </div>
+                <div className={styles.field}>
+                  <label className={styles.label} htmlFor="booking-email">
+                    Email
+                  </label>
+                  <input
+                    className={styles.input}
+                    id="booking-email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    maxLength={254}
+                    required
+                  />
+                </div>
+              </div>
+
+              <details className={styles.bookingOptionalNote}>
+                <summary>
+                  Share a little context <span>(optional)</span>
+                </summary>
+                <div className={styles.field}>
+                  <label className={styles.label} htmlFor="booking-notes">
+                    What would you like to talk about?
+                  </label>
+                  <textarea
+                    className={styles.textarea}
+                    id="booking-notes"
+                    name="notes"
+                    maxLength={1_000}
+                  />
+                </div>
+              </details>
+
+              <div className={styles.honeypot} aria-hidden="true">
+                <label htmlFor="booking-website">Website</label>
+                <input
+                  id="booking-website"
+                  name="website"
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                />
+              </div>
+
+              <div className={styles.checkboxField}>
+                <input
+                  className={styles.checkbox}
+                  id="booking-consent"
+                  name="consent"
+                  type="checkbox"
+                  required
+                />
+                <label className={styles.checkboxLabel} htmlFor="booking-consent">
+                  I agree that Clarteon may use these details to arrange the call. See the{" "}
+                  <Link href="/privacy">Privacy page</Link>.
+                </label>
+              </div>
+
+              {step === "details" ? (
+                <TurnstileWidget
+                  key={resetKey}
+                  siteKey={turnstileSiteKey!}
+                  action={BOOKING_TURNSTILE_ACTION}
+                  onToken={(value) => setToken(value)}
+                  onError={() => {
+                    setToken("");
+                    setStatus({
+                      kind: "error",
+                      message: "Verification expired or could not load. Please try again.",
+                    });
+                  }}
+                />
+              ) : null}
+
+              <div className={styles.formActions}>
+                <Button type="submit" disabled={submitting || !selectedSlot || !token}>
+                  {submitting ? "Booking…" : "Book discovery call"}
+                </Button>
+                <p className={styles.formNote} id="booking-form-note">
+                  A Google Meet link will be sent after your booking is confirmed.
+                </p>
+              </div>
+
+              {status.kind === "error" ? (
+                <p className={styles.formError} role="alert">
+                  {status.message}
+                </p>
+              ) : null}
+            </form>
+          </div>
         </div>
-      ) : null}
-
-      {selectedSlot ? (
-        <div className={styles.bookingSelected}>
-          <p>
-            Selected: <strong>{formatSlotDateTime(selectedSlot.start, timezone)}</strong>
-          </p>
-          <Button type="button" variant="text" onClick={() => setSelectedSlotId(null)}>
-            Change time
-          </Button>
-        </div>
-      ) : null}
-
-      {selectedSlot ? (
-        <form ref={formRef} className={styles.form} onSubmit={handleSubmit}>
-          <div className={styles.formGrid}>
-            <div className={styles.field}>
-              <label className={styles.label} htmlFor="booking-name">
-                Name
-              </label>
-              <input
-                className={styles.input}
-                id="booking-name"
-                name="name"
-                type="text"
-                autoComplete="name"
-                maxLength={120}
-                required
-              />
-            </div>
-
-            <div className={styles.field}>
-              <label className={styles.label} htmlFor="booking-email">
-                Email
-              </label>
-              <input
-                className={styles.input}
-                id="booking-email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                maxLength={254}
-                required
-              />
-            </div>
-          </div>
-
-          <div className={styles.field}>
-            <label className={styles.label} htmlFor="booking-notes">
-              What would you like to talk about? <span className={styles.hint}>(optional)</span>
-            </label>
-            <textarea
-              className={styles.textarea}
-              id="booking-notes"
-              name="notes"
-              maxLength={1_000}
-            />
-          </div>
-
-          <div className={styles.honeypot} aria-hidden="true">
-            <label htmlFor="booking-website">Website</label>
-            <input
-              id="booking-website"
-              name="website"
-              type="text"
-              tabIndex={-1}
-              autoComplete="off"
-            />
-          </div>
-
-          <div className={styles.checkboxField}>
-            <input
-              className={styles.checkbox}
-              id="booking-consent"
-              name="consent"
-              type="checkbox"
-              required
-            />
-            <label className={styles.checkboxLabel} htmlFor="booking-consent">
-              I agree that Clarteon may use these details to arrange the call. See the{" "}
-              <Link href="/privacy">Privacy page</Link>.
-            </label>
-          </div>
-
-          <TurnstileWidget
-            key={resetKey}
-            siteKey={turnstileSiteKey!}
-            action={BOOKING_TURNSTILE_ACTION}
-            onToken={(value) => {
-              setToken(value);
-            }}
-            onError={() => {
-              setToken("");
-              setStatus({
-                kind: "error",
-                message: "Verification expired or could not load. Please try again.",
-              });
-            }}
-          />
-
-          <div className={styles.formActions}>
-            <Button type="submit" disabled={submitting || !token}>
-              {submitting ? "Booking…" : "Book discovery call"}
-            </Button>
-            <p className={styles.formNote} id="booking-form-note">
-              You will get a Google Meet link by email. Protected by Cloudflare Turnstile.
-            </p>
-          </div>
-
-          {status.kind === "error" ? (
-            <p className={styles.formError} role="alert">
-              {status.message}
-            </p>
-          ) : null}
-        </form>
       ) : null}
 
       {status.kind === "error" && !selectedSlot ? (

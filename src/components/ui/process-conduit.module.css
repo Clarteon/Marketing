@@ -358,16 +358,39 @@
     top: 50%;
     left: -1.5rem;
     z-index: 1;
+    display: grid;
+    place-items: center;
     width: 12px;
     height: 12px;
-    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
     background: #0a0a0a;
     transform: translateY(-50%);
+    transition:
+      border-color 300ms ease,
+      background-color 300ms ease,
+      box-shadow 300ms ease,
+      transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .stepBeacon::after {
+    content: "";
+    display: block;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transition: background-color 300ms ease;
   }
 
   .stepActive .stepBeacon {
     border-color: var(--lime);
+    background: #0a0a0a;
     box-shadow: 0 0 10px rgba(198, 244, 50, 0.6);
+    transform: translateY(-50%) scale(1.15);
+  }
+
+  .stepActive .stepBeacon::after {
+    background: var(--lime);
   }
 
   .tonePaper .steps::before,
@@ -383,14 +406,26 @@
 
   .tonePaper .stepBeacon,
   .toneStone .stepBeacon {
-    border-color: rgba(10, 10, 10, 0.25);
+    border-color: rgba(10, 10, 10, 0.2);
     background: #ffffff;
+  }
+
+  .tonePaper .stepBeacon::after,
+  .toneStone .stepBeacon::after {
+    background: rgba(10, 10, 10, 0.25);
   }
 
   .tonePaper .stepActive .stepBeacon,
   .toneStone .stepActive .stepBeacon {
     border-color: #0a0a0a;
-    box-shadow: 0 0 8px rgba(10, 10, 10, 0.2);
+    background: #ffffff;
+    box-shadow: 0 0 8px rgba(10, 10, 10, 0.15);
+    transform: translateY(-50%) scale(1.15);
+  }
+
+  .tonePaper .stepActive .stepBeacon::after,
+  .toneStone .stepActive .stepBeacon::after {
+    background: #0a0a0a;
   }
 }
 

@@ -33,6 +33,7 @@
     "alert:test": "node --env-file-if-exists=.env.local scripts/send-test-alert.mjs"
   },
   "dependencies": {
+    "@base-ui/react": "1.9.0",
     "@neondatabase/serverless": "1.2.0",
     "next": "16.4.2",
     "react": "19.3.1",

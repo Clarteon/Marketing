@@ -102,12 +102,68 @@ test.describe("discovery call booking", () => {
 
   async function chooseSlotAndFill(page: Page) {
     await page.goto("/contact#book");
-    await page.getByLabel("Times shown in").selectOption("UTC");
-    await page.locator("#book").getByRole("button", { pressed: false }).first().click();
+    await page.getByRole("combobox", { name: "Times shown in" }).click();
+    await page.getByRole("option", { name: "UTC" }).click();
+    await page
+      .locator("#book")
+      .getByRole("button", { name: /, available$/ })
+      .first()
+      .click();
+    await page
+      .locator("#book")
+      .getByRole("group", { name: /Available times on/ })
+      .getByRole("button")
+      .first()
+      .click();
+    await page.getByRole("button", { name: "Continue" }).click();
     await page.locator("#booking-name").fill("Ada Lovelace");
     await page.locator("#booking-email").fill("ada@example.com");
     await page.locator("#booking-consent").check();
   }
+
+  test("shows the calendar first and reveals times after keyboard date selection", async ({
+    page,
+  }) => {
+    await page.goto("/contact#book");
+    const booking = page.locator("#book");
+    await expect(booking.getByRole("grid")).toBeVisible();
+    await expect(booking.getByRole("group", { name: /Available times on/ })).toHaveCount(0);
+    await expect(booking.getByRole("button", { name: "Continue" })).toBeHidden();
+    const date = booking.getByRole("button", { name: /, available$/ }).first();
+    await date.focus();
+    await date.press("Enter");
+    await expect(booking.getByRole("grid")).toBeHidden();
+    await expect(booking.getByRole("group", { name: /Available times on/ })).toBeVisible();
+    await expect(booking.getByRole("button", { name: "Continue" })).toBeDisabled();
+    await booking.getByRole("button", { name: "Change date" }).click();
+    await expect(booking.getByRole("grid")).toBeVisible();
+    await expect(date).toBeFocused();
+  });
+
+  test("keeps the card height consistent between four-week and six-week months", async ({
+    page,
+  }) => {
+    const slots = ["2027-02-01T01:00:00.000Z", "2027-05-31T01:00:00.000Z"].map((start, index) => ({
+      id: `month-${index}`,
+      start,
+      end: new Date(new Date(start).getTime() + 30 * 60_000).toISOString(),
+    }));
+    await page.unroute("/api/booking/availability**");
+    await page.route("/api/booking/availability**", (route) =>
+      route.fulfill({ json: { ok: true, slots } }),
+    );
+    await page.goto("/contact#book");
+    const booking = page.locator("#book");
+    await expect(booking.getByRole("grid", { name: /February 2027/ })).toBeVisible();
+    const card = booking.locator('[class*="bookingFormPanel"]');
+    const before = await card.boundingBox();
+    await booking.getByRole("button", { name: "Next available month" }).click();
+    await expect(booking.getByRole("grid", { name: /May 2027/ })).toBeVisible();
+    const after = await card.boundingBox();
+    expect(before).not.toBeNull();
+    expect(after).not.toBeNull();
+    expect(Math.abs(after!.height - before!.height)).toBeLessThanOrEqual(1);
+  });
 
   test("books a slot and shows the Meet link", async ({ page }) => {
     let sent: Record<string, unknown> | undefined;

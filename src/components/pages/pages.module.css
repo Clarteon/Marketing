@@ -38,7 +38,7 @@
 .problemGrid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1rem;
+  gap: clamp(1.5rem, 2vw, 2rem);
 }
 
 .problemVisualization {
@@ -346,7 +346,7 @@
 }
 
 .themeAction {
-  margin-top: 1.75rem;
+  margin-top: 2rem;
 }
 
 .calloutSingle {
@@ -610,7 +610,7 @@
 
 .list {
   display: grid;
-  gap: 1.25rem;
+  gap: 1.5rem;
   list-style: none;
 }
 
@@ -662,6 +662,11 @@
   display: grid;
   max-width: 52rem;
   gap: 1.25rem;
+}
+
+.messageFrame {
+  max-width: 52rem;
+  padding: clamp(1.5rem, 4vw, 3rem);
 }
 
 .messagePanel .eyebrow {

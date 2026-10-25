@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, type RefObject } from "react";
+import { usePathname } from "next/navigation";
 import { cx } from "@/lib/cx";
 import { BookingForm } from "./BookingForm";
 import { Button } from "./Button";
@@ -22,16 +23,17 @@ const defaultBody =
 const highlightPhrase = "clearest way through";
 
 function renderHighlightedTitle(title: string, underlinePathRef: RefObject<SVGPathElement | null>) {
-  if (!title.includes(highlightPhrase)) {
+  const phrase = title.includes(highlightPhrase) ? highlightPhrase : "discovery call";
+  if (!title.includes(phrase)) {
     return title;
   }
 
-  const parts = title.split(highlightPhrase);
+  const parts = title.split(phrase);
   return (
     <>
       {parts[0]}
       <span className={styles.bookingUnderlineWrap}>
-        <span className={styles.bookingUnderlineText}>{highlightPhrase}</span>
+        <span className={styles.bookingUnderlineText}>{phrase}</span>
         <svg
           className={styles.bookingUnderlineSvg}
           viewBox="0 0 340 18"
@@ -48,7 +50,7 @@ function renderHighlightedTitle(title: string, underlinePathRef: RefObject<SVGPa
           />
         </svg>
       </span>
-      {parts.slice(1).join(highlightPhrase)}
+      {parts.slice(1).join(phrase)}
     </>
   );
 }
@@ -65,6 +67,7 @@ export function BookingSection({
   const onLime = tone === "lime";
   const sectionRef = useRef<HTMLElement | null>(null);
   const underlinePathRef = useRef<SVGPathElement | null>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     const sectionNode = sectionRef.current;
@@ -97,7 +100,7 @@ export function BookingSection({
       window.removeEventListener("scroll", updateProgress);
       window.removeEventListener("resize", updateProgress);
     };
-  }, []);
+  }, [pathname, title]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
     const node = sectionRef.current;
@@ -124,6 +127,7 @@ export function BookingSection({
       aria-labelledby={titleId}
       className={cx(
         styles.bookingSection,
+        mode === "form" && styles.bookingSectionForm,
         onLime ? styles.bookingSectionLime : styles.bookingSectionInk,
       )}
       background={<div className={styles.bookingAmbientFlow} aria-hidden="true" />}

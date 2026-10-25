@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Page } from "@/components/ui/Page";
 import { PageHero } from "@/components/ui/PageHero";
-import { ScrollReveal } from "@/components/ui/ScrollReveal";
+import { ScrollReveal, type ScrollRevealVariant } from "@/components/ui/ScrollReveal";
 import { Section } from "@/components/ui/Section";
 import styles from "./pages.module.css";
+
+const themeEntrances: ScrollRevealVariant[] = ["slide", "wipe", "settle", "rise", "focus"];
 
 export function SolutionsPage({ data }: { data: SolutionsData }) {
   return (
@@ -29,7 +31,10 @@ export function SolutionsPage({ data }: { data: SolutionsData }) {
           tone={index % 2 === 1 ? "stone" : "paper"}
           aria-labelledby={`${theme.id}-title`}
         >
-          <ScrollReveal className={styles.sectionHeader}>
+          <ScrollReveal
+            variant={themeEntrances[index % themeEntrances.length]}
+            className={styles.sectionHeader}
+          >
             <p className={styles.eyebrow}>{String(index + 1).padStart(2, "0")}</p>
             <h2 id={`${theme.id}-title`} className={styles.sectionTitle}>
               {theme.title}
@@ -37,7 +42,11 @@ export function SolutionsPage({ data }: { data: SolutionsData }) {
             <p className={styles.sectionIntro}>{theme.intro}</p>
           </ScrollReveal>
 
-          <ScrollReveal stagger className={styles.problemGrid}>
+          <ScrollReveal
+            stagger
+            variant={themeEntrances[index % themeEntrances.length]}
+            className={styles.problemGrid}
+          >
             {theme.problems.map((problem) => (
               <Card as="article" key={problem.title} className={styles.problemCard}>
                 <h3 className={styles.problemTitle}>{problem.title}</h3>
@@ -50,11 +59,11 @@ export function SolutionsPage({ data }: { data: SolutionsData }) {
             ))}
           </ScrollReveal>
 
-          <div className={styles.themeAction}>
+          <ScrollReveal variant="rise" className={styles.themeAction}>
             <Button href="/contact#book" variant="text">
               Talk through this problem
             </Button>
-          </div>
+          </ScrollReveal>
         </Section>
       ))}
 

@@ -63,7 +63,10 @@ describe("booking form", () => {
       await vi.advanceTimersByTimeAsync(0);
     });
 
-    fireEvent.click(screen.getByRole("button", { name: /at/ }));
+    expect(screen.queryByRole("group", { name: /Available times on/ })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /Tuesday, October 27, available/ }));
+    fireEvent.click(screen.getByRole("button", { name: / at / }));
+    fireEvent.click(screen.getByRole("button", { name: "Continue" }));
     fireEvent.change(screen.getByLabelText("Name"), { target: { value: "Ada Lovelace" } });
     fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ada@example.com" } });
     fireEvent.change(screen.getByLabelText(/What would you like to talk about/), {
@@ -106,14 +109,92 @@ describe("booking form", () => {
       await vi.advanceTimersByTimeAsync(0);
     });
 
-    const select = screen.getByLabelText<HTMLSelectElement>("Times shown in");
-    fireEvent.change(select, { target: { value: select.value } });
+    fireEvent.click(screen.getByRole("combobox", { name: "Times shown in" }));
+    fireEvent.click(screen.getByRole("option", { name: "UTC" }));
 
     await act(async () => {
       await vi.advanceTimersByTimeAsync(0);
     });
 
-    expect(screen.getByRole("button", { name: /at/ })).toBeInTheDocument();
+    expect(screen.getByRole("grid", { name: /Available dates/ })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /Tuesday, October 27, available/ }));
+    expect(screen.getByRole("button", { name: / at / })).toBeInTheDocument();
+  });
+
+  it("reveals times only after choosing a date and clears a time when the date changes", async () => {
+    const secondSlot = {
+      ...slot,
+      id: "slot-2",
+      start: "2026-10-28T01:00:00.000Z",
+      end: "2026-10-28T01:30:00.000Z",
+    };
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => jsonResponse({ ok: true, slots: [slot, secondSlot] })),
+    );
+    render(<BookingForm turnstileSiteKey="site-key" />);
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0);
+    });
+
+    expect(screen.queryByRole("button", { name: / at / })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Continue" })).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: /Tuesday, October 27, available/ }));
+    expect(screen.queryByRole("grid")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Continue" })).toBeDisabled();
+    fireEvent.click(screen.getByRole("button", { name: / at / }));
+    expect(screen.getByRole("button", { name: "Continue" })).toBeEnabled();
+    fireEvent.click(screen.getByRole("button", { name: "Change date" }));
+    fireEvent.click(screen.getByRole("button", { name: /Wednesday, October 28, available/ }));
+    expect(screen.getByRole("button", { name: "Continue" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: / at / })).toHaveAttribute("aria-pressed", "false");
+  });
+
+  it("browses available months without choosing a date", async () => {
+    const novemberSlot = {
+      ...slot,
+      id: "november-slot",
+      start: "2026-11-02T01:00:00.000Z",
+      end: "2026-11-02T01:30:00.000Z",
+    };
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => jsonResponse({ ok: true, slots: [slot, novemberSlot] })),
+    );
+    render(<BookingForm turnstileSiteKey="site-key" />);
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0);
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Next available month" }));
+    expect(screen.getByRole("grid", { name: /November 2026/ })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: / at / })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /Monday, November 2, available/ }));
+    expect(screen.getByRole("group", { name: /Monday, November 2/ })).toBeInTheDocument();
+  });
+
+  it("keeps six calendar weeks for short and long months", async () => {
+    const monthSlots = ["2027-02-01T01:00:00.000Z", "2027-05-31T01:00:00.000Z"].map(
+      (start, index) => ({
+        id: `month-${index}`,
+        start,
+        end: new Date(new Date(start).getTime() + 30 * 60_000).toISOString(),
+      }),
+    );
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => jsonResponse({ ok: true, slots: monthSlots })),
+    );
+    render(<BookingForm turnstileSiteKey="site-key" />);
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0);
+    });
+    expect(screen.getAllByRole("row")).toHaveLength(7);
+    expect(screen.getAllByRole("gridcell")).toHaveLength(42);
+    fireEvent.click(screen.getByRole("button", { name: "Next available month" }));
+    expect(screen.getByRole("grid", { name: /May 2027/ })).toBeInTheDocument();
+    expect(screen.getAllByRole("row")).toHaveLength(7);
+    expect(screen.getAllByRole("gridcell")).toHaveLength(42);
   });
 
   it("offers the project brief when availability is unavailable", async () => {

@@ -3,6 +3,7 @@ import { BookingSection } from "@/components/ui/BookingSection";
 import { Markdown } from "@/components/ui/Markdown";
 import { Page } from "@/components/ui/Page";
 import { PageHero } from "@/components/ui/PageHero";
+import { ReadingProgress } from "@/components/ui/ReadingProgress";
 import { Section } from "@/components/ui/Section";
 
 interface ArticlePageProps {
@@ -15,7 +16,9 @@ export function ArticlePage({ page, eyebrow }: ArticlePageProps) {
     <Page>
       <PageHero eyebrow={eyebrow} title={page.frontMatter.title} intro={page.frontMatter.summary} />
       <Section width="narrow">
-        <Markdown>{page.body}</Markdown>
+        <ReadingProgress>
+          <Markdown>{page.body}</Markdown>
+        </ReadingProgress>
       </Section>
       <BookingSection />
     </Page>

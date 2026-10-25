@@ -57,8 +57,7 @@
 }
 
 .input,
-.textarea,
-.select {
+.textarea {
   width: 100%;
   min-height: 44px;
   padding: 0.7rem 0.8rem;
@@ -76,16 +75,14 @@
 }
 
 .input:focus-visible,
-.textarea:focus-visible,
-.select:focus-visible {
+.textarea:focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 2px;
   border-color: var(--ink);
 }
 
 .input:disabled,
-.textarea:disabled,
-.select:disabled {
+.textarea:disabled {
   background: var(--stone);
   color: var(--graphite);
   cursor: not-allowed;

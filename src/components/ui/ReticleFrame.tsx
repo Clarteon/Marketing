@@ -2,6 +2,7 @@
 
 import type { HTMLAttributes, ReactNode } from "react";
 import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import { cx } from "@/lib/cx";
 import styles from "./scroll-effects.module.css";
 
@@ -20,10 +21,12 @@ export function ReticleFrame({
   ...props
 }: ReticleFrameProps) {
   const ref = useRef<HTMLDivElement | null>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     const node = ref.current;
     if (!node) return;
+    node.dataset.locked = "false";
 
     if (
       typeof window === "undefined" ||
@@ -35,28 +38,31 @@ export function ReticleFrame({
       return;
     }
 
-    // Check if already in viewport
-    const rect = node.getBoundingClientRect();
-    if (rect.top < window.innerHeight && rect.bottom > 0) {
-      node.dataset.locked = "true";
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        if (entry?.isIntersecting) {
+    let observer: IntersectionObserver | null = null;
+    let frame = window.requestAnimationFrame(() => {
+      frame = window.requestAnimationFrame(() => {
+        if (node.getBoundingClientRect().top < window.innerHeight) {
           node.dataset.locked = "true";
-          observer.unobserve(node);
+          return;
         }
-      },
-      { threshold: 0.2, rootMargin: "0px 0px -8% 0px" },
-    );
+        observer = new IntersectionObserver(
+          (entries) => {
+            if (entries[0]?.isIntersecting) {
+              node.dataset.locked = "true";
+              observer?.unobserve(node);
+            }
+          },
+          { threshold: 0.2, rootMargin: "0px 0px -8% 0px" },
+        );
+        observer.observe(node);
+      });
+    });
 
-    observer.observe(node);
-
-    return () => observer.disconnect();
-  }, []);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      observer?.disconnect();
+    };
+  }, [pathname]);
 
   return (
     <div

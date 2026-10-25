@@ -2,76 +2,118 @@
    Clarteon Scroll Effects: Aperture Optical Resolution & Reticle Viewfinder
    ========================================================================== */
 
-/* Aperture Optical Resolution: Reveal */
-.reveal {
-  opacity: 0;
-  transform: translateY(22px) scale(0.985);
-  filter: blur(6px);
-  transition:
-    opacity 650ms cubic-bezier(0.16, 1, 0.3, 1),
-    transform 650ms cubic-bezier(0.16, 1, 0.3, 1),
-    filter 650ms cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform, filter;
+/* Final, readable states are the default, including without JavaScript. */
+.reveal,
+.revealStagger {
+  --reveal-transform: translateY(22px) scale(0.985);
+  --reveal-filter: blur(6px);
 }
 
-.reveal[data-revealed="true"] {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-  filter: blur(0);
+.reveal[data-variant="rise"],
+.revealStagger[data-variant="rise"] {
+  --reveal-transform: translateY(24px);
+  --reveal-filter: none;
 }
 
-/* Aperture Optical Resolution: Staggered Children (Grids) */
-.revealStagger > * {
-  opacity: 0;
-  transform: translateY(22px) scale(0.985);
-  filter: blur(6px);
-  transition:
-    opacity 650ms cubic-bezier(0.16, 1, 0.3, 1),
-    transform 650ms cubic-bezier(0.16, 1, 0.3, 1),
-    filter 650ms cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform, filter;
+.reveal[data-variant="slide"],
+.revealStagger[data-variant="slide"] {
+  --reveal-transform: translateX(-24px);
+  --reveal-filter: none;
 }
 
-.revealStagger[data-revealed="true"] > *:nth-child(1) {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-  filter: blur(0);
-  transition-delay: 0ms;
+.reveal[data-variant="settle"],
+.revealStagger[data-variant="settle"] {
+  --reveal-transform: translateY(8px) scale(0.96);
+  --reveal-filter: none;
 }
 
-.revealStagger[data-revealed="true"] > *:nth-child(2) {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-  filter: blur(0);
-  transition-delay: 80ms;
+.reveal[data-variant="wipe"],
+.revealStagger[data-variant="wipe"] {
+  --reveal-transform: none;
+  --reveal-filter: none;
 }
 
-.revealStagger[data-revealed="true"] > *:nth-child(3) {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-  filter: blur(0);
-  transition-delay: 160ms;
+@media (prefers-reduced-motion: no-preference) {
+  .reveal[data-motion-ready="true"],
+  .revealStagger[data-motion-ready="true"] > * {
+    transition:
+      opacity 650ms cubic-bezier(0.16, 1, 0.3, 1),
+      transform 650ms cubic-bezier(0.16, 1, 0.3, 1),
+      filter 650ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .reveal[data-motion-ready="true"][data-revealed="false"],
+  .revealStagger[data-motion-ready="true"][data-revealed="false"] > * {
+    opacity: 0;
+    transform: var(--reveal-transform);
+    filter: var(--reveal-filter);
+    transition: none;
+  }
+
+  .revealStagger[data-motion-ready="true"][data-revealed="true"] > * {
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  .reveal[data-variant="wipe"][data-motion-ready="true"][data-revealed="true"],
+  .revealStagger[data-variant="wipe"][data-motion-ready="true"][data-revealed="true"] > * {
+    animation: scroll-wipe 650ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    animation-delay: var(--reveal-delay, 0ms);
+  }
+
+  .reveal:focus-within,
+  .revealStagger:focus-within > * {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    clip-path: none !important;
+    transition: none !important;
+  }
 }
 
-.revealStagger[data-revealed="true"] > *:nth-child(4) {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-  filter: blur(0);
-  transition-delay: 240ms;
+@keyframes scroll-wipe {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+
+  to {
+    clip-path: inset(0);
+  }
 }
 
-.revealStagger[data-revealed="true"] > *:nth-child(5) {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-  filter: blur(0);
-  transition-delay: 320ms;
+.readingContent {
+  position: relative;
 }
 
-.revealStagger[data-revealed="true"] > *:nth-child(6) {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-  filter: blur(0);
-  transition-delay: 400ms;
+.readingTrack {
+  display: none;
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: -1.25rem;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--line);
+  pointer-events: none;
+}
+
+.readingFill {
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  border-radius: inherit;
+  transform-origin: center top;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .readingContent[data-reading-ready="true"] > .readingTrack {
+    display: block;
+  }
+}
+
+@media (max-width: 640px) {
+  .readingTrack {
+    inset-inline-start: -0.75rem;
+    width: 2px;
+  }
 }
 
 /* ==========================================================================
@@ -212,15 +254,32 @@
     opacity: 1 !important;
     transform: none !important;
     filter: none !important;
+    clip-path: none !important;
     transition: none !important;
   }
 
   .reticleCorner {
-    top: 0 !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
     transition: none !important;
+  }
+
+  .cornerTopLeft,
+  .cornerTopRight {
+    top: 0 !important;
+  }
+
+  .cornerBottomLeft,
+  .cornerBottomRight {
+    bottom: 0 !important;
+  }
+
+  .cornerTopLeft,
+  .cornerBottomLeft {
+    left: 0 !important;
+  }
+
+  .cornerTopRight,
+  .cornerBottomRight {
+    right: 0 !important;
   }
 
   .reticleBadge {
