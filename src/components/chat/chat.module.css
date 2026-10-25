@@ -41,7 +41,6 @@
 }
 
 .bubble:focus-visible,
-.close:focus-visible,
 .send:focus-visible,
 .quickStarts button:focus-visible,
 .inlineLink:focus-visible {
@@ -339,29 +338,6 @@
   color: #d9d9d2;
   font-size: 0.78rem;
   letter-spacing: 0.02em;
-}
-
-.close {
-  min-width: 44px;
-  min-height: 44px;
-  padding: 0.45rem 0.7rem;
-  border: 1.5px solid rgb(255 255 255 / 55%);
-  border-radius: var(--radius-pill);
-  background: transparent;
-  color: var(--paper);
-  font: inherit;
-  font-size: 0.82rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.close:hover {
-  border-color: var(--lime);
-  color: var(--lime);
-}
-
-.close:focus-visible {
-  outline-color: var(--lime);
 }
 
 .messages {

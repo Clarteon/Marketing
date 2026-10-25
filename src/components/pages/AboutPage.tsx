@@ -10,7 +10,7 @@ export function AboutPage({ data, body }: { data: SimplePageData; body: string }
     <Page>
       <PageHero eyebrow={data.hero.eyebrow} title={data.hero.title} intro={data.hero.intro} />
       <Section>
-        <Markdown>{body}</Markdown>
+        <Markdown reveal>{body}</Markdown>
       </Section>
       <BookingSection />
     </Page>

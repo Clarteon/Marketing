@@ -3,6 +3,7 @@ import { BookingSection } from "@/components/ui/BookingSection";
 import { Markdown } from "@/components/ui/Markdown";
 import { Page } from "@/components/ui/Page";
 import { PageHero } from "@/components/ui/PageHero";
+import { ReadingProgress } from "@/components/ui/ReadingProgress";
 import { Section } from "@/components/ui/Section";
 
 export function PrivacyPage({ data, body }: { data: SimplePageData; body: string }) {
@@ -10,7 +11,9 @@ export function PrivacyPage({ data, body }: { data: SimplePageData; body: string
     <Page>
       <PageHero eyebrow={data.hero.eyebrow} title={data.hero.title} intro={data.hero.intro} />
       <Section width="narrow">
-        <Markdown>{body}</Markdown>
+        <ReadingProgress>
+          <Markdown>{body}</Markdown>
+        </ReadingProgress>
       </Section>
       <BookingSection />
     </Page>

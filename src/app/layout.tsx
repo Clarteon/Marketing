@@ -7,6 +7,7 @@ import { ChatWidgetSlot } from "@/components/ui/ChatWidgetSlot";
 import { CustomCursor } from "@/components/ui/CustomCursor";
 import { Footer } from "@/components/ui/Footer";
 import { Header } from "@/components/ui/Header";
+import { ToastProvider } from "@/components/ui/ToastProvider";
 import { getSiteUrl, isIndexingAllowed } from "@/lib/site";
 import "./globals.css";
 
@@ -54,18 +55,24 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${inter.variable}`}>
+    <html
+      lang="en"
+      data-scroll-behavior="smooth"
+      className={`${fraunces.variable} ${inter.variable}`}
+    >
       <body>
-        <a className="skip-link" href="#main">
-          Skip to content
-        </a>
-        <Header />
-        {children}
-        <Footer />
-        <ChatWidgetSlot turnstileSiteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} />
-        <Analytics />
-        <CustomCursor />
-        {process.env.NODE_ENV === "development" && <Agentation />}
+        <ToastProvider>
+          <a className="skip-link" href="#main">
+            Skip to content
+          </a>
+          <Header />
+          {children}
+          <Footer />
+          <ChatWidgetSlot turnstileSiteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} />
+          <Analytics />
+          <CustomCursor />
+          {process.env.NODE_ENV === "development" && <Agentation />}
+        </ToastProvider>
       </body>
     </html>
   );

@@ -2,6 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { SelectField } from "@/components/ui/SelectField";
+import { useToast, type ToastOptions } from "@/components/ui/ToastProvider";
 import type { ReviewQuestion } from "@/lib/knowledge/types";
 import styles from "@/app/admin/admin.module.css";
 
@@ -11,7 +13,7 @@ interface ReviewQueueProps {
 
 interface ReviewItemProps {
   question: ReviewQuestion;
-  onDone: (id: string, message: string) => void;
+  onDone: (id: string, toast: ToastOptions) => void;
 }
 
 const sourceOptions = [
@@ -100,7 +102,7 @@ function ReviewItem({ question, onDone }: ReviewItemProps) {
           setError("Your session expired. Sign in again.");
         } else if (response.status === 409) {
           setError("This question was already reviewed.");
-          onDone(question.id, "The question was already reviewed.");
+          onDone(question.id, { kind: "info", message: "The question was already reviewed." });
         } else if (response.status === 503) {
           setError("The knowledge store is unavailable. Try again later.");
         } else {
@@ -110,15 +112,18 @@ function ReviewItem({ question, onDone }: ReviewItemProps) {
       }
 
       if (action === "reject") {
-        onDone(question.id, "Question rejected.");
+        onDone(question.id, { kind: "success", message: "Question rejected." });
         return;
       }
 
       onDone(
         question.id,
         payload.reindexed === false
-          ? "Answer published. The search index will refresh on the next sync."
-          : "Answer published and the search index was refreshed.",
+          ? {
+              kind: "warning",
+              message: "Answer published. The search index will refresh on the next sync.",
+            }
+          : { kind: "success", message: "Answer published and the search index was refreshed." },
       );
     } catch {
       setError("Could not reach the server. Try again.");
@@ -200,24 +205,14 @@ function ReviewItem({ question, onDone }: ReviewItemProps) {
         </div>
       </div>
 
-      <div className={styles.field}>
-        <label className={styles.label} htmlFor={`source-${question.id}`}>
-          Link the answer to
-        </label>
-        <select
-          className={styles.select}
-          id={`source-${question.id}`}
-          value={sourceUrl}
-          onChange={(event) => setSourceUrl(event.target.value)}
-          disabled={busy !== null}
-        >
-          {sourceOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </div>
+      <SelectField
+        id={`source-${question.id}`}
+        label="Link the answer to"
+        value={sourceUrl}
+        onValueChange={(value) => setSourceUrl(value ?? "")}
+        disabled={busy !== null}
+        options={sourceOptions}
+      />
 
       {error ? (
         <p className={styles.error} role="alert">
@@ -249,12 +244,12 @@ function ReviewItem({ question, onDone }: ReviewItemProps) {
 
 export function ReviewQueue({ questions }: ReviewQueueProps) {
   const router = useRouter();
+  const { addToast } = useToast();
   const [items, setItems] = useState(questions);
-  const [message, setMessage] = useState("");
 
-  function onDone(id: string, nextMessage: string) {
+  function onDone(id: string, toast: ToastOptions) {
     setItems((current) => current.filter((item) => item.id !== id));
-    setMessage(nextMessage);
+    addToast(toast);
     router.refresh();
   }
 
@@ -271,11 +266,6 @@ export function ReviewQueue({ questions }: ReviewQueueProps) {
 
   return (
     <div className={styles.queue}>
-      {message ? (
-        <p className={styles.success} role="status">
-          {message}
-        </p>
-      ) : null}
       {items.map((question) => (
         <ReviewItem key={question.id} question={question} onDone={onDone} />
       ))}

@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/Card";
 import { Markdown } from "@/components/ui/Markdown";
 import { Page } from "@/components/ui/Page";
 import { PageHero } from "@/components/ui/PageHero";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { Section } from "@/components/ui/Section";
 import styles from "./pages.module.css";
 
@@ -22,7 +23,7 @@ export function OurWorkPage({ data, body, items }: OurWorkPageProps) {
       <PageHero eyebrow={data.hero.eyebrow} title={data.hero.title} intro={data.hero.intro} />
 
       <Section aria-labelledby="work-title">
-        <div className={styles.sectionHeader}>
+        <ScrollReveal variant="wipe" className={styles.sectionHeader}>
           <p className={styles.eyebrow}>Case studies</p>
           <h2 id="work-title" className={styles.sectionTitle}>
             {items.length > 0 ? "Work you can look at." : data.empty.title}
@@ -37,12 +38,12 @@ export function OurWorkPage({ data, body, items }: OurWorkPageProps) {
               </div>
             </>
           ) : null}
-        </div>
+        </ScrollReveal>
 
         {items.length > 0 ? (
           <ul className={styles.list}>
             {items.map((item) => (
-              <li key={item.frontMatter.slug}>
+              <ScrollReveal as="li" key={item.frontMatter.slug} variant="slide">
                 <Card as="article" className={styles.listItem}>
                   <h3>
                     <Link className={styles.listLink} href={`/our-work/${item.frontMatter.slug}`}>
@@ -51,7 +52,7 @@ export function OurWorkPage({ data, body, items }: OurWorkPageProps) {
                   </h3>
                   <p className={styles.listSummary}>{item.frontMatter.summary}</p>
                 </Card>
-              </li>
+              </ScrollReveal>
             ))}
           </ul>
         ) : null}
@@ -59,7 +60,7 @@ export function OurWorkPage({ data, body, items }: OurWorkPageProps) {
 
       {body.trim() ? (
         <Section tone="stone">
-          <Markdown>{body}</Markdown>
+          <Markdown reveal>{body}</Markdown>
         </Section>
       ) : null}
 

@@ -98,7 +98,6 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
 
   const panelRef = useRef<HTMLElement>(null);
   const bubbleRef = useRef<HTMLButtonElement>(null);
-  const closeRef = useRef<HTMLButtonElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const sessionIdRef = useRef<string | null>(null);
@@ -109,7 +108,15 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
 
   useEffect(() => {
     if (!open) return;
-    closeRef.current?.focus();
+
+    if (!privacyAccepted) {
+      const initialFocus =
+        panelRef.current?.querySelector<HTMLElement>("button:not([disabled])") ??
+        panelRef.current?.querySelector<HTMLElement>("a[href]");
+      initialFocus?.focus();
+    } else {
+      inputRef.current?.focus();
+    }
 
     const onKeyDown = (event: globalThis.KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -143,7 +150,7 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
 
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [open]);
+  }, [open, privacyAccepted]);
 
   useEffect(() => {
     if (!open) return;
@@ -395,15 +402,6 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
               </h2>
               <p className={styles.subtitle}>Clarteon’s AI assistant</p>
             </div>
-            <button
-              ref={closeRef}
-              type="button"
-              className={styles.close}
-              onClick={closeChat}
-              aria-label="Close chat"
-            >
-              Close
-            </button>
           </header>
 
           <div

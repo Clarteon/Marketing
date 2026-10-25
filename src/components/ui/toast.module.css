@@ -1,0 +1,202 @@
+.viewport {
+  position: fixed;
+  z-index: 120;
+  top: max(1rem, env(safe-area-inset-top));
+  right: max(1rem, env(safe-area-inset-right));
+  display: grid;
+  gap: 0.75rem;
+  width: min(26rem, calc(100vw - 2rem));
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  pointer-events: none;
+}
+
+.toast {
+  --accent: #1457b8;
+  --tint: #eff5ff;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--line));
+  border-radius: var(--radius-card);
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 8px 28px rgb(10 10 10 / 14%);
+  pointer-events: auto;
+  animation: enter 220ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.success {
+  --accent: #1f7a45;
+  --tint: #eef8f1;
+}
+
+.error {
+  --accent: #a4231c;
+  --tint: #fdf0ef;
+}
+
+.warning {
+  --accent: #9a5700;
+  --tint: #fff7e8;
+}
+
+.info {
+  --accent: #1457b8;
+  --tint: #eff5ff;
+}
+
+.loading {
+  --accent: var(--graphite);
+  --tint: var(--stone);
+}
+
+.icon,
+.spinner {
+  flex: 0 0 1.5rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--accent);
+}
+
+.icon {
+  fill: var(--accent);
+}
+
+.iconMark {
+  fill: var(--paper);
+}
+
+.spinner {
+  border: 3px solid var(--line);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 700ms linear infinite;
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+}
+
+.label {
+  margin: 0;
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.message {
+  margin: 0.2rem 0 0;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.close,
+.action {
+  display: inline-grid;
+  place-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.close {
+  flex: 0 0 44px;
+  margin: -0.45rem -0.45rem 0 0;
+}
+
+.close svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-width: 1.8;
+}
+
+.close:hover,
+.action:hover {
+  background: var(--tint);
+}
+
+.close:focus-visible,
+.action:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.action {
+  min-height: 44px;
+  margin: 0.35rem 0 -0.25rem -0.5rem;
+  padding: 0.4rem 0.5rem;
+  color: var(--accent);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.closing {
+  animation: exit 220ms ease-in both;
+}
+
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes exit {
+  to {
+    opacity: 0;
+    transform: translateY(-0.35rem);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@media (max-width: 640px) {
+  .viewport {
+    top: max(0.75rem, env(safe-area-inset-top));
+    right: max(0.75rem, env(safe-area-inset-right));
+    left: max(0.75rem, env(safe-area-inset-left));
+    width: auto;
+  }
+
+  .toast {
+    padding: 0.85rem;
+    border-radius: var(--radius-sm);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast,
+  .closing {
+    animation-duration: 1ms;
+  }
+
+  .spinner {
+    animation-duration: 1400ms;
+  }
+}
