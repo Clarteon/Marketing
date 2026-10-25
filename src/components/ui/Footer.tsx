@@ -75,7 +75,10 @@ export function Footer() {
               Privacy
             </Link>
             <a href="#" className={styles.footerLink}>
-              Back to top <span aria-hidden="true" className={styles.backToTopArrow}>↑</span>
+              Back to top{" "}
+              <span aria-hidden="true" className={styles.backToTopArrow}>
+                ↑
+              </span>
             </a>
           </div>
         </div>

@@ -1,0 +1,31 @@
+#!/bin/sh
+# Pre-push guardrail: catch the two failures that have broken `main` most
+# often (unformatted files and lint errors) before the push reaches CI.
+# The full check set runs in CI and in `npm run verify`.
+#
+# Enabled automatically by `npm install` through scripts/install-git-hooks.mjs.
+# Bypass once with `git push --no-verify` when you know what you are doing.
+
+set -u
+
+repo_root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
+cd "$repo_root" || exit 0
+
+if [ ! -d node_modules/prettier ] || [ ! -d node_modules/eslint ]; then
+  echo "pre-push: dependencies are not installed, skipping local checks (run npm install)."
+  exit 0
+fi
+
+echo "pre-push: npm run format:check"
+if ! npm run --silent format:check; then
+  echo "pre-push: files are not formatted. Run 'npm run format' and push again." >&2
+  exit 1
+fi
+
+echo "pre-push: npm run lint"
+if ! npm run --silent lint; then
+  echo "pre-push: lint failed. Run 'npm run lint:fix', fix what remains, then push again." >&2
+  exit 1
+fi
+
+exit 0

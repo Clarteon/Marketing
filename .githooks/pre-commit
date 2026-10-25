@@ -1,0 +1,26 @@
+#!/bin/sh
+# Pre-commit guardrail: format the files in this commit with Prettier and
+# re-stage them, so CI's `npm run format:check` cannot fail on code that was
+# already committed.
+#
+# Enabled automatically by `npm install` through scripts/install-git-hooks.mjs.
+# Re-enable after a clone with `npm run hooks:install`.
+# Bypass once with `git commit --no-verify` when you know what you are doing.
+
+set -u
+
+repo_root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
+cd "$repo_root" || exit 0
+
+# A fresh clone before `npm install` must not block commits.
+if [ ! -d node_modules/prettier ]; then
+  echo "pre-commit: Prettier is not installed yet, skipping the format check (run npm install)."
+  exit 0
+fi
+
+if ! node scripts/format-staged.mjs; then
+  echo "pre-commit: formatting failed. Run 'npm run format' and commit again." >&2
+  exit 1
+fi
+
+exit 0
