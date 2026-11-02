@@ -45,6 +45,11 @@ export function CoordinateGrid({ tone = "paper", className }: CoordinateGridProp
     const context = canvas.getContext("2d");
     if (!context) return;
     const ctx: CanvasRenderingContext2D = context;
+    const baseLayer = document.createElement("canvas");
+    const baseContext = baseLayer.getContext("2d");
+    if (!baseContext) return;
+    const baseCtx: CanvasRenderingContext2D = baseContext;
+    let gridPath = new Path2D();
 
     const parent = canvas.closest("section") || canvas.parentElement;
     if (!parent) return;
@@ -60,8 +65,16 @@ export function CoordinateGrid({ tone = "paper", className }: CoordinateGridProp
     let signalBeams: SignalBeam[] = [];
     let animationFrameId: number | null = null;
     let touchPulseTimer: number | null = null;
-    let isVisible = true;
+    let isVisible = !("IntersectionObserver" in window);
+    let lastFrameTime = 0;
+    let lastPointerMove = -Infinity;
+    let pointerDirty = false;
+    let snapPointer = false;
+    let pointerX = 0;
+    let pointerY = 0;
     let time = 0;
+    const motionQuery = window.matchMedia?.("(prefers-reduced-motion: reduce)");
+    let prefersReducedMotion = motionQuery?.matches ?? false;
 
     const mouse = {
       x: -1000,
@@ -132,10 +145,14 @@ export function CoordinateGrid({ tone = "paper", className }: CoordinateGridProp
 
     function resize() {
       if (!canvas || !parent) return;
-      dpr = Math.min(window.devicePixelRatio || 1, isCoarsePointer ? 1 : 2);
+      const nextDpr = Math.min(window.devicePixelRatio || 1, isCoarsePointer ? 1 : 2);
       const rect = parent.getBoundingClientRect();
-      width = Math.max(rect.width, 320);
-      height = Math.max(rect.height, 240);
+      const nextWidth = Math.max(rect.width, 320);
+      const nextHeight = Math.max(rect.height, 240);
+      if (nextWidth === width && nextHeight === height && nextDpr === dpr) return;
+      width = nextWidth;
+      height = nextHeight;
+      dpr = nextDpr;
 
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
@@ -143,33 +160,30 @@ export function CoordinateGrid({ tone = "paper", className }: CoordinateGridProp
       ctx.scale(dpr, dpr);
 
       initDots();
+      // Rasterize the unchanged grid once per size, rather than repainting every line each frame.
+      gridPath = new Path2D();
+      for (let c = 0; c <= cols; c++) {
+        gridPath.moveTo(c * gridSpacing, 0);
+        gridPath.lineTo(c * gridSpacing, height);
+      }
+      for (let r = 0; r <= rows; r++) {
+        gridPath.moveTo(0, r * gridSpacing);
+        gridPath.lineTo(width, r * gridSpacing);
+      }
+      baseLayer.width = canvas.width;
+      baseLayer.height = canvas.height;
+      baseCtx.scale(dpr, dpr);
+      baseCtx.lineWidth = 1;
+      baseCtx.strokeStyle =
+        tone === "ink" ? "rgba(255, 255, 255, 0.08)" : "rgba(10, 10, 10, 0.085)";
+      baseCtx.stroke(gridPath);
     }
-
-    // Check prefers-reduced-motion safely
-    const prefersReducedMotion =
-      typeof window !== "undefined" &&
-      typeof window.matchMedia === "function" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     function renderStatic() {
       ctx.clearRect(0, 0, width, height);
       const isDark = tone === "ink";
 
-      // Calibrated crisp resting lines
-      ctx.lineWidth = 1;
-      ctx.strokeStyle = isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(10, 10, 10, 0.085)";
-      ctx.beginPath();
-      for (let c = 0; c <= cols; c++) {
-        const x = c * gridSpacing;
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, height);
-      }
-      for (let r = 0; r <= rows; r++) {
-        const y = r * gridSpacing;
-        ctx.moveTo(0, y);
-        ctx.lineTo(width, y);
-      }
-      ctx.stroke();
+      ctx.drawImage(baseLayer, 0, 0, width, height);
 
       // Static dots and precision crosshairs
       for (let i = 0; i < dots.length; i++) {
@@ -192,43 +206,48 @@ export function CoordinateGrid({ tone = "paper", className }: CoordinateGridProp
       }
     }
 
-    function render() {
-      if (!isVisible) return;
-      time += 0.015;
+    function render(timestamp: number) {
+      animationFrameId = null;
+      if (!isVisible || document.hidden || prefersReducedMotion) return;
+      animationFrameId = requestAnimationFrame(render);
+      // Keep the ambient motion at 30fps; respond at 60fps while the pointer moves.
+      const interval = 1000 / (timestamp - lastPointerMove < 200 ? 60 : 30);
+      if (lastFrameTime && timestamp - lastFrameTime < interval - 0.5) return;
+      const step = lastFrameTime ? Math.min((timestamp - lastFrameTime) / (1000 / 60), 2) : 1;
+      lastFrameTime = timestamp;
+      time += 0.015 * step;
+
+      if (pointerDirty && canvas) {
+        const rect = canvas.getBoundingClientRect();
+        mouse.targetX = pointerX - rect.left;
+        mouse.targetY = pointerY - rect.top;
+        if (snapPointer) {
+          mouse.x = mouse.targetX;
+          mouse.y = mouse.targetY;
+          snapPointer = false;
+        }
+        pointerDirty = false;
+      }
 
       // Smooth mouse lerping with momentum
-      mouse.x += (mouse.targetX - mouse.x) * 0.12;
-      mouse.y += (mouse.targetY - mouse.y) * 0.12;
+      const follow = 1 - Math.pow(0.65, step);
+      mouse.x += (mouse.targetX - mouse.x) * follow;
+      mouse.y += (mouse.targetY - mouse.y) * follow;
 
       ctx.clearRect(0, 0, width, height);
 
       const isDark = tone === "ink";
       // Calibrated noticeable yet balanced resting colors
-      const restingLineColor = isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(10, 10, 10, 0.085)";
       const restingDotColor = isDark ? "rgba(255, 255, 255, 0.22)" : "rgba(10, 10, 10, 0.22)";
       const restingCrossColor = isDark ? "rgba(255, 255, 255, 0.35)" : "rgba(10, 10, 10, 0.32)";
       const activeColor = "#c6f432"; // Clarteon Lime
 
-      // 1. Draw base coordinate lines
-      ctx.lineWidth = 1;
-      ctx.strokeStyle = restingLineColor;
-      ctx.beginPath();
-      for (let c = 0; c <= cols; c++) {
-        const x = c * gridSpacing;
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, height);
-      }
-      for (let r = 0; r <= rows; r++) {
-        const y = r * gridSpacing;
-        ctx.moveTo(0, y);
-        ctx.lineTo(width, y);
-      }
-      ctx.stroke();
+      ctx.drawImage(baseLayer, 0, 0, width, height);
 
       // 2. Traveling ambient signal beams (subtle, rhythmic, intelligent pulse)
       for (let b = 0; b < signalBeams.length; b++) {
         const beam = signalBeams[b];
-        beam.pos += beam.speed * beam.direction;
+        beam.pos += beam.speed * beam.direction * step;
 
         const maxBoundary = beam.axis === "x" ? width : height;
         if (beam.direction === 1 && beam.pos - beam.length > maxBoundary) {
@@ -316,22 +335,13 @@ export function CoordinateGrid({ tone = "paper", className }: CoordinateGridProp
 
         ctx.lineWidth = 1.25;
         ctx.strokeStyle = isDark ? "rgba(198, 244, 50, 0.45)" : "rgba(125, 180, 15, 0.50)";
-        ctx.beginPath();
-        for (let c = 0; c <= cols; c++) {
-          const x = c * gridSpacing;
-          ctx.moveTo(x, 0);
-          ctx.lineTo(x, height);
-        }
-        for (let r = 0; r <= rows; r++) {
-          const y = r * gridSpacing;
-          ctx.moveTo(0, y);
-          ctx.lineTo(width, y);
-        }
-        ctx.stroke();
+        ctx.stroke(gridPath);
         ctx.restore();
       }
 
       // 4. Render and animate coordinate points and crosshairs
+      const restingDots = new Path2D();
+      const restingCrosses = new Path2D();
       for (let i = 0; i < dots.length; i++) {
         const dot = dots[i];
 
@@ -342,29 +352,46 @@ export function CoordinateGrid({ tone = "paper", className }: CoordinateGridProp
 
         // Proximity calculation with smooth exponential falloff
         let proximity = 0;
+        let forceX = 0;
+        let forceY = 0;
         if (mouse.isHovering) {
           const dx = mouse.x - dot.baseX;
           const dy = mouse.y - dot.baseY;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-
-          if (dist < MAX_DIST) {
+          const distanceSquared = dx * dx + dy * dy;
+          if (distanceSquared < MAX_DIST * MAX_DIST) {
+            const dist = Math.sqrt(distanceSquared);
             const linearProximity = 1 - dist / MAX_DIST;
             // Exponential curve produces a natural magnetic spring feel
             proximity = Math.pow(linearProximity, 1.3);
             const force = proximity * 22;
-            const angle = Math.atan2(dy, dx);
-            dot.vx -= Math.cos(angle) * force * 0.22;
-            dot.vy -= Math.sin(angle) * force * 0.22;
+            forceX = (dx / Math.max(dist, 0.001)) * force * 0.22;
+            forceY = (dy / Math.max(dist, 0.001)) * force * 0.22;
           }
         }
 
         // Spring restitution towards resting coordinate with gentle damping
-        dot.vx += (dot.baseX - dot.x) * 0.07;
-        dot.vy += (dot.baseY + idleWave - dot.y) * 0.07;
-        dot.vx *= 0.81;
-        dot.vy *= 0.81;
-        dot.x += dot.vx;
-        dot.y += dot.vy;
+        for (let tick = 0; tick < Math.round(step); tick++) {
+          dot.vx += (dot.baseX - dot.x) * 0.07 - forceX;
+          dot.vy += (dot.baseY + idleWave - dot.y) * 0.07 - forceY;
+          dot.vx *= 0.81;
+          dot.vy *= 0.81;
+          dot.x += dot.vx;
+          dot.y += dot.vy;
+        }
+
+        // Batch the resting dots/crosses into two draw calls, retaining individual highlighted dots.
+        if (proximity <= 0.06) {
+          if (dot.isCross) {
+            restingCrosses.moveTo(dot.x - 4.5, dot.y);
+            restingCrosses.lineTo(dot.x + 4.5, dot.y);
+            restingCrosses.moveTo(dot.x, dot.y - 4.5);
+            restingCrosses.lineTo(dot.x, dot.y + 4.5);
+          } else {
+            restingDots.moveTo(dot.x + 1.75, dot.y);
+            restingDots.arc(dot.x, dot.y, 1.75, 0, Math.PI * 2);
+          }
+          continue;
+        }
 
         // Render dot or crosshair
         if (dot.isCross) {
@@ -402,24 +429,26 @@ export function CoordinateGrid({ tone = "paper", className }: CoordinateGridProp
         }
       }
 
-      animationFrameId = requestAnimationFrame(render);
+      ctx.fillStyle = restingDotColor;
+      ctx.fill(restingDots);
+      ctx.strokeStyle = restingCrossColor;
+      ctx.lineWidth = 1;
+      ctx.stroke(restingCrosses);
     }
 
     // Pointer handlers (support mouse, trackpad, and touch without blocking scroll)
     function onPointerMove(e: PointerEvent) {
-      if (!canvas) return;
-      const rect = canvas.getBoundingClientRect();
-      mouse.targetX = e.clientX - rect.left;
-      mouse.targetY = e.clientY - rect.top;
+      pointerX = e.clientX;
+      pointerY = e.clientY;
+      pointerDirty = true;
+      lastPointerMove = performance.now();
       mouse.isHovering = true;
     }
 
     function onPointerDown(e: PointerEvent) {
-      if (e.pointerType !== "touch" || !canvas) return;
-      const rect = canvas.getBoundingClientRect();
-      mouse.x = mouse.targetX = e.clientX - rect.left;
-      mouse.y = mouse.targetY = e.clientY - rect.top;
-      mouse.isHovering = true;
+      if (e.pointerType !== "touch") return;
+      onPointerMove(e);
+      snapPointer = true;
       if (touchPulseTimer !== null) window.clearTimeout(touchPulseTimer);
       touchPulseTimer = null;
     }
@@ -438,61 +467,68 @@ export function CoordinateGrid({ tone = "paper", className }: CoordinateGridProp
     function onPointerLeave(e: PointerEvent) {
       if (e.pointerType === "touch") return;
       mouse.isHovering = false;
+      pointerDirty = false;
       mouse.targetX = -1000;
       mouse.targetY = -1000;
     }
 
-    resize();
-
-    if (prefersReducedMotion) {
-      renderStatic();
-    } else {
-      parent.addEventListener("pointermove", onPointerMove as EventListener, { passive: true });
-      parent.addEventListener("pointerdown", onPointerDown as EventListener, { passive: true });
-      parent.addEventListener("pointerup", endTouchPulse as EventListener, { passive: true });
-      parent.addEventListener("pointercancel", endTouchPulse as EventListener, { passive: true });
-      parent.addEventListener("pointerleave", onPointerLeave as EventListener, { passive: true });
-      render();
+    function syncAnimation() {
+      if (animationFrameId !== null) cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
+      lastFrameTime = 0;
+      if (prefersReducedMotion) renderStatic();
+      else if (isVisible && !document.hidden) animationFrameId = requestAnimationFrame(render);
     }
+
+    function onMotionChange() {
+      prefersReducedMotion = motionQuery?.matches ?? false;
+      syncAnimation();
+    }
+
+    resize();
+    renderStatic();
+    syncAnimation();
+    parent.addEventListener("pointermove", onPointerMove as EventListener, { passive: true });
+    parent.addEventListener("pointerdown", onPointerDown as EventListener, { passive: true });
+    parent.addEventListener("pointerup", endTouchPulse as EventListener, { passive: true });
+    parent.addEventListener("pointercancel", endTouchPulse as EventListener, { passive: true });
+    parent.addEventListener("pointerleave", onPointerLeave as EventListener, { passive: true });
+    document.addEventListener("visibilitychange", syncAnimation);
+    motionQuery?.addEventListener("change", onMotionChange);
 
     // ResizeObserver
     let resizeObserver: ResizeObserver | null = null;
     if (typeof ResizeObserver !== "undefined") {
       resizeObserver = new ResizeObserver(() => {
         resize();
-        if (prefersReducedMotion) {
-          renderStatic();
-        }
+        renderStatic();
       });
       resizeObserver.observe(parent);
     }
 
     // IntersectionObserver to pause loop when scrolled out of view
     let intersectionObserver: IntersectionObserver | null = null;
-    if (typeof IntersectionObserver !== "undefined" && !prefersReducedMotion) {
+    if (typeof IntersectionObserver !== "undefined") {
       intersectionObserver = new IntersectionObserver(
         ([entry]) => {
           isVisible = entry.isIntersecting;
-          if (isVisible) {
-            if (animationFrameId) cancelAnimationFrame(animationFrameId);
-            animationFrameId = requestAnimationFrame(render);
-          } else if (animationFrameId) {
-            cancelAnimationFrame(animationFrameId);
-          }
+          syncAnimation();
         },
-        { threshold: 0.05 },
+        { threshold: 0 },
       );
       intersectionObserver.observe(parent);
     }
 
     return () => {
-      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      if (animationFrameId !== null) cancelAnimationFrame(animationFrameId);
       if (touchPulseTimer !== null) window.clearTimeout(touchPulseTimer);
       parent.removeEventListener("pointermove", onPointerMove as EventListener);
       parent.removeEventListener("pointerdown", onPointerDown as EventListener);
       parent.removeEventListener("pointerup", endTouchPulse as EventListener);
       parent.removeEventListener("pointercancel", endTouchPulse as EventListener);
       parent.removeEventListener("pointerleave", onPointerLeave as EventListener);
+      document.removeEventListener("visibilitychange", syncAnimation);
+      motionQuery?.removeEventListener("change", onMotionChange);
       resizeObserver?.disconnect();
       intersectionObserver?.disconnect();
     };

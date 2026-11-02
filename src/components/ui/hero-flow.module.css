@@ -1,4 +1,5 @@
 .stage {
+  --flow-animation-state: paused;
   --coral: #e94b65;
   --coral-line: #ffc5ce;
   --coral-surface: #fff3f5;
@@ -524,6 +525,16 @@
   .message {
     font-size: 0.8125rem;
   }
+}
+
+/* Pause perpetual effects only; descriptions must still complete their entrance. */
+.stage[data-motion-playing="true"] {
+  --flow-animation-state: running;
+}
+
+.connector,
+.node {
+  animation-play-state: var(--flow-animation-state) !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

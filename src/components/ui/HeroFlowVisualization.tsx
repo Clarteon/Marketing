@@ -231,10 +231,11 @@ export function HeroFlowVisualization() {
     const measure = () => {
       const rect = el.getBoundingClientRect();
       if (rect.width > 0 && rect.height > 0) {
-        setDimensions({
-          width: Math.round(rect.width),
-          height: Math.round(rect.height),
-        });
+        const width = Math.round(rect.width);
+        const height = Math.round(rect.height);
+        setDimensions((current) =>
+          current.width === width && current.height === height ? current : { width, height },
+        );
       }
     };
 
@@ -242,6 +243,39 @@ export function HeroFlowVisualization() {
     const ro = new ResizeObserver(measure);
     ro.observe(el);
     return () => ro.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const graph = graphRef.current;
+    const stage = graph?.closest<HTMLElement>("[data-hero-flow]");
+    const svg = graph?.querySelector("svg");
+    if (!graph || !stage || !svg) return;
+
+    const motionQuery = window.matchMedia?.("(prefers-reduced-motion: reduce)");
+    let inView = !("IntersectionObserver" in window);
+    const update = () => {
+      const playing = inView && !document.hidden && !motionQuery?.matches;
+      stage.dataset.motionPlaying = String(playing);
+      // CSS animation-play-state does not pause SVG's animateMotion timeline.
+      if (playing) svg.unpauseAnimations?.();
+      else svg.pauseAnimations?.();
+    };
+    const observer =
+      "IntersectionObserver" in window
+        ? new IntersectionObserver(([entry]) => {
+            inView = entry.isIntersecting;
+            update();
+          })
+        : null;
+    update();
+    observer?.observe(stage);
+    document.addEventListener("visibilitychange", update);
+    motionQuery?.addEventListener("change", update);
+    return () => {
+      observer?.disconnect();
+      document.removeEventListener("visibilitychange", update);
+      motionQuery?.removeEventListener("change", update);
+    };
   }, []);
 
   const getReticleRotation = () => {
@@ -282,6 +316,7 @@ export function HeroFlowVisualization() {
     <div
       className={styles.stage}
       data-hero-flow=""
+      data-motion-playing="false"
       aria-label="Interactive flow: Business challenges through Clarteon to technology solutions"
       role="region"
       onKeyDown={(event) => {

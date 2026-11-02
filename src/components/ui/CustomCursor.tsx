@@ -51,23 +51,39 @@ export function CustomCursor() {
 
     let mouseX = -100;
     let mouseY = -100;
-    let circleX = -100;
-    let circleY = -100;
     let currentScale = 1;
     let initialized = false;
-    let rafId: number;
+    let visible = false;
+    let rafId: number | null = null;
+
+    function schedule() {
+      if (rafId === null && visible && !document.hidden) {
+        rafId = requestAnimationFrame(renderLoop);
+      }
+    }
+
+    function show() {
+      if (!visible) {
+        visible = true;
+        setIsVisible(true);
+      }
+      schedule();
+    }
+
+    function hide() {
+      visible = false;
+      setIsVisible(false);
+      isClickingRef.current = false;
+      if (rafId !== null) cancelAnimationFrame(rafId);
+      rafId = null;
+    }
 
     const onPointerMove = (e: PointerEvent) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
 
-      if (!initialized) {
-        circleX = mouseX;
-        circleY = mouseY;
-        initialized = true;
-      }
-
-      setIsVisible(true);
+      initialized = true;
+      show();
     };
 
     const onPointerOver = (e: PointerEvent) => {
@@ -109,39 +125,41 @@ export function CustomCursor() {
         darkContainer && (!lightContainer || !darkContainer.contains(lightContainer)),
       );
       setIsDarkTone(isDark);
+      schedule();
     };
 
     const onPointerDown = () => {
       isClickingRef.current = true;
+      schedule();
     };
 
     const onPointerUp = () => {
       isClickingRef.current = false;
+      schedule();
     };
 
     const onMouseLeave = () => {
-      setIsVisible(false);
-      isClickingRef.current = false;
+      hide();
     };
 
     const onMouseEnter = (e: MouseEvent) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
-      circleX = mouseX;
-      circleY = mouseY;
-      setIsVisible(true);
+      initialized = true;
+      show();
     };
 
     const onWindowBlur = () => {
-      setIsVisible(false);
-      isClickingRef.current = false;
+      hide();
     };
 
-    // Physics-based spring interpolation loop for liquid motion
-    const renderLoop = () => {
-      // 0.15 lerp damping gives that luxurious, fluid weight
-      circleX += (mouseX - circleX) * 0.15;
-      circleY += (mouseY - circleY) * 0.15;
+    const onVisibilityChange = () => {
+      if (document.hidden) hide();
+    };
+
+    function renderLoop() {
+      rafId = null;
+      if (!initialized || !visible || document.hidden) return;
 
       // Determine spring target scale
       let targetScale = 1.0;
@@ -151,14 +169,17 @@ export function CustomCursor() {
         targetScale = isLimeTargetRef.current ? 2.1 : 2.0;
       }
 
-      currentScale += (targetScale - currentScale) * 0.18;
+      currentScale += (targetScale - currentScale) * 0.3;
+      const isSettled = Math.abs(targetScale - currentScale) < 0.001;
+      if (isSettled) currentScale = targetScale;
 
       if (circleRef.current) {
-        circleRef.current.style.transform = `translate3d(${circleX}px, ${circleY}px, 0) translate(-50%, -50%) scale(${currentScale.toFixed(3)})`;
+        // Follow the latest pointer position without a trailing spring; keep the scale feedback.
+        circleRef.current.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%) scale(${currentScale.toFixed(3)})`;
       }
 
-      rafId = requestAnimationFrame(renderLoop);
-    };
+      if (!isSettled) schedule();
+    }
 
     window.addEventListener("pointermove", onPointerMove, { passive: true });
     window.addEventListener("pointerover", onPointerOver, { passive: true });
@@ -167,8 +188,7 @@ export function CustomCursor() {
     document.addEventListener("mouseleave", onMouseLeave);
     document.addEventListener("mouseenter", onMouseEnter);
     window.addEventListener("blur", onWindowBlur);
-
-    rafId = requestAnimationFrame(renderLoop);
+    document.addEventListener("visibilitychange", onVisibilityChange);
 
     return () => {
       document.documentElement.classList.remove("custom-cursor-active");
@@ -179,7 +199,8 @@ export function CustomCursor() {
       document.removeEventListener("mouseleave", onMouseLeave);
       document.removeEventListener("mouseenter", onMouseEnter);
       window.removeEventListener("blur", onWindowBlur);
-      cancelAnimationFrame(rafId);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      if (rafId !== null) cancelAnimationFrame(rafId);
     };
   }, [isSupported]);
 

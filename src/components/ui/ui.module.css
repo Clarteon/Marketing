@@ -1045,6 +1045,29 @@
   }
 }
 
+.workFolio {
+  position: relative;
+}
+
+.workFolioSwash {
+  position: absolute;
+  left: -12.5%;
+  top: 13.4073%;
+  width: 125%;
+  height: 85.2823%;
+  max-width: none;
+  object-fit: contain;
+  opacity: 0.58;
+  transform: rotate(-9deg);
+}
+
+.workFolioDrawing {
+  position: relative;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
 .heroInner {
   position: relative;
   z-index: 1;
@@ -1156,7 +1179,7 @@
   letter-spacing: -0.03em;
   line-height: 1.02;
   text-wrap: balance;
-  animation: clarteon-rise 700ms cubic-bezier(0.2, 0.8, 0.2, 1) 80ms both;
+  animation: clarteon-slide 500ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 .heroHome .heroTitle {
@@ -1170,7 +1193,7 @@
   color: var(--muted);
   font-size: clamp(1.125rem, 1.5vw, 1.25rem);
   text-wrap: pretty;
-  animation: clarteon-rise 700ms cubic-bezier(0.2, 0.8, 0.2, 1) 160ms both;
+  animation: clarteon-slide 500ms cubic-bezier(0.2, 0.8, 0.2, 1) 60ms both;
 }
 
 .heroActions {
@@ -1179,7 +1202,7 @@
   align-items: center;
   gap: 0.75rem 1.25rem;
   margin-top: 2rem;
-  animation: clarteon-rise 700ms cubic-bezier(0.2, 0.8, 0.2, 1) 240ms both;
+  animation: clarteon-slide 500ms cubic-bezier(0.2, 0.8, 0.2, 1) 100ms both;
 }
 
 .highlight {
@@ -1901,7 +1924,7 @@
 
 @keyframes clarteonConduitFlowTop {
   0% {
-    left: -20%;
+    transform: translateX(-20cqw);
     opacity: 0;
   }
   15% {
@@ -1911,14 +1934,14 @@
     opacity: 1;
   }
   100% {
-    left: 115%;
+    transform: translateX(115cqw);
     opacity: 0;
   }
 }
 
 @keyframes clarteonConduitFlowBot {
   0% {
-    right: -20%;
+    transform: translateX(20cqw);
     opacity: 0;
   }
   15% {
@@ -1928,7 +1951,7 @@
     opacity: 1;
   }
   100% {
-    right: 115%;
+    transform: translateX(-115cqw);
     opacity: 0;
   }
 }
@@ -2058,6 +2081,7 @@
 }
 
 .conduitRail {
+  container-type: inline-size;
   position: relative;
   width: 100%;
   height: 1px;
@@ -2073,6 +2097,7 @@
 
 .conduitPulseTop {
   position: absolute;
+  left: 0;
   top: 0;
   height: 100%;
   width: 140px;
@@ -2083,6 +2108,7 @@
 
 .conduitPulseBot {
   position: absolute;
+  right: 0;
   top: 0;
   height: 100%;
   width: 140px;

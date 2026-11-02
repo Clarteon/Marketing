@@ -1,4 +1,4 @@
-import { fireEvent, render } from "@testing-library/react";
+import { act, fireEvent, render } from "@testing-library/react";
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { CustomCursor } from "@/components/ui/CustomCursor";
 
@@ -22,7 +22,49 @@ describe("CustomCursor", () => {
 
   afterEach(() => {
     document.documentElement.className = "";
+    vi.restoreAllMocks();
     vi.unstubAllGlobals();
+  });
+
+  it("coalesces pointer movement into one frame, follows without trailing, and stops when settled", () => {
+    const frames = new Map<number, FrameRequestCallback>();
+    let nextId = 0;
+    vi.stubGlobal(
+      "requestAnimationFrame",
+      vi.fn((callback: FrameRequestCallback) => {
+        frames.set(++nextId, callback);
+        return nextId;
+      }),
+    );
+    vi.stubGlobal("cancelAnimationFrame", (id: number) => frames.delete(id));
+    const { container, unmount } = render(<CustomCursor />);
+    const circle = container.firstElementChild as HTMLElement;
+    expect(frames.size).toBe(0);
+
+    fireEvent(window, new MouseEvent("pointermove", { clientX: 100, clientY: 50 }));
+    fireEvent(window, new MouseEvent("pointermove", { clientX: 420, clientY: 180 }));
+    expect(frames.size).toBe(1);
+    const flush = () => {
+      const [id, callback] = frames.entries().next().value!;
+      frames.delete(id);
+      act(() => callback(16));
+    };
+    flush();
+    expect(circle.style.transform).toContain("translate3d(420px, 180px, 0)");
+    expect(frames.size).toBe(0);
+
+    fireEvent.pointerDown(window);
+    for (let frame = 0; frame < 30 && frames.size; frame++) flush();
+    expect(circle.style.transform).toContain("scale(0.750)");
+    expect(frames.size).toBe(0);
+    fireEvent.pointerUp(window);
+    expect(frames.size).toBe(1);
+    fireEvent.blur(window);
+    expect(frames.size).toBe(0);
+    expect(circle.className).toContain("hidden");
+    unmount();
+    fireEvent(window, new MouseEvent("pointermove", { clientX: 500, clientY: 200 }));
+    expect(frames.size).toBe(0);
   });
 
   it("renders a single plain circle and activates custom-cursor-active class", () => {

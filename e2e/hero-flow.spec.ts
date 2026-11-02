@@ -125,3 +125,54 @@ test("reduced motion keeps all interactions functional without animation", async
   );
   expect(animated).toBe(0);
 });
+
+test("flow effects pause offscreen and resume without losing the selected explanation", async ({
+  page,
+}) => {
+  const diagram = page.getByRole("region", { name: /interactive flow/i });
+  const svg = diagram.locator("svg").first();
+  await expect(diagram).toHaveAttribute("data-motion-playing", "false");
+  await diagram.getByRole("button", { name: "Copying & pasting data" }).click();
+  await expect(diagram).toHaveAttribute("data-motion-playing", "true");
+  await expect
+    .poll(() => svg.evaluate((node) => (node as SVGSVGElement).animationsPaused()))
+    .toBe(false);
+
+  await page.getByRole("heading", { level: 1 }).scrollIntoViewIfNeeded();
+  await expect(diagram).toHaveAttribute("data-motion-playing", "false");
+  await expect(diagram.locator("path[data-node]").first()).toHaveCSS(
+    "animation-play-state",
+    "paused",
+  );
+  const pausedTime = await svg.evaluate((node) => (node as SVGSVGElement).getCurrentTime());
+  // Sample the SVG timeline across a real interval to verify that no hidden animation work advances it.
+  await page.waitForTimeout(250);
+  expect(await svg.evaluate((node) => (node as SVGSVGElement).getCurrentTime())).toBe(pausedTime);
+
+  await diagram.scrollIntoViewIfNeeded();
+  await expect(diagram).toHaveAttribute("data-motion-playing", "true");
+  // Scrolling can place a different node under the stationary desktop pointer.
+  await diagram.getByText("Business challenges", { exact: true }).hover();
+  await expect(diagram.getByRole("status")).toContainText("Copying & pasting data");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(diagram).toHaveAttribute("data-motion-playing", "false");
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await expect(diagram).toHaveAttribute("data-motion-playing", "true");
+});
+
+test("proof artwork defers the mobile download and loads when approached", async ({
+  page,
+  isMobile,
+}) => {
+  const artwork = page.locator('img[src*="proof-paint-swash"]');
+  // Native lazy-load distances vary by viewport/network; the desktop illustration can already
+  // be within Chrome's prefetch margin. The taller mobile page must defer it past the hero.
+  if (isMobile) {
+    expect(await artwork.evaluate((node) => (node as HTMLImageElement).naturalWidth)).toBe(0);
+  }
+  await artwork.scrollIntoViewIfNeeded();
+  await expect
+    .poll(() => artwork.evaluate((node) => (node as HTMLImageElement).naturalWidth))
+    .toBeGreaterThan(0);
+  expect(await artwork.evaluate((node) => (node as HTMLImageElement).complete)).toBe(true);
+});
