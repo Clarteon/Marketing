@@ -22,7 +22,6 @@ const toneClasses: Record<"paper" | "stone" | "ink", string> = {
 export function ProcessConduit({ steps, tone = "ink", className }: ProcessConduitProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const stepsListRef = useRef<HTMLOListElement | null>(null);
-  const fillRef = useRef<HTMLDivElement | null>(null);
   const milestoneRefs = useRef<(HTMLDivElement | null)[]>([]);
   const stepRefs = useRef<(HTMLLIElement | null)[]>([]);
   const stepHeaderRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -33,7 +32,7 @@ export function ProcessConduit({ steps, tone = "ink", className }: ProcessCondui
       typeof window.matchMedia === "function" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    function updateVerticalTrack(progress: number) {
+    function measureVerticalTrack() {
       const container = containerRef.current;
       const list = stepsListRef.current;
       const firstHeader = stepHeaderRefs.current[0];
@@ -51,12 +50,11 @@ export function ProcessConduit({ steps, tone = "ink", className }: ProcessCondui
 
       container.style.setProperty("--process-track-start", `${trackStart}px`);
       container.style.setProperty("--process-track-length", `${trackLength}px`);
-      container.style.setProperty("--process-progress-factor", progress.toFixed(3));
     }
 
     if (prefersReduced) {
-      if (fillRef.current) fillRef.current.style.width = "100%";
-      updateVerticalTrack(1);
+      measureVerticalTrack();
+      containerRef.current?.style.setProperty("--process-progress-factor", "1");
       milestoneRefs.current.forEach((el) => el?.classList.add(styles.milestoneActive));
       stepRefs.current.forEach((el) => el?.classList.add(styles.stepActive));
       return;
@@ -66,6 +64,8 @@ export function ProcessConduit({ steps, tone = "ink", className }: ProcessCondui
     if (!container) return;
 
     let rafId: number | null = null;
+    let inView = !("IntersectionObserver" in window);
+    let lastProgress = "";
 
     function handleScroll() {
       if (!container) return;
@@ -77,10 +77,11 @@ export function ProcessConduit({ steps, tone = "ink", className }: ProcessCondui
       const currentSpan = startTrigger - rect.top;
       const progress = Math.min(1, Math.max(0, currentSpan / totalSpan));
 
-      if (fillRef.current) {
-        fillRef.current.style.width = `${(progress * 100).toFixed(1)}%`;
+      const nextProgress = progress.toFixed(3);
+      if (nextProgress !== lastProgress) {
+        container.style.setProperty("--process-progress-factor", nextProgress);
+        lastProgress = nextProgress;
       }
-      updateVerticalTrack(progress);
 
       STEP_THRESHOLDS.forEach((threshold, index) => {
         const isActive = progress >= threshold || (index === 0 && progress >= 0.02);
@@ -97,17 +98,32 @@ export function ProcessConduit({ steps, tone = "ink", className }: ProcessCondui
     }
 
     function onScroll() {
-      if (rafId) return;
+      if (rafId !== null || !inView || document.hidden) return;
       rafId = window.requestAnimationFrame(() => {
         handleScroll();
         rafId = null;
       });
     }
 
+    const resizeObserver = new ResizeObserver(() => {
+      measureVerticalTrack();
+      onScroll();
+    });
+    if (stepsListRef.current) resizeObserver.observe(stepsListRef.current);
+    const observer =
+      "IntersectionObserver" in window
+        ? new IntersectionObserver(([entry]) => {
+            inView = entry.isIntersecting;
+            // Set the final state once on exit, too; skip the rest of offscreen scrolling.
+            handleScroll();
+          })
+        : null;
+    observer?.observe(container);
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll, { passive: true });
     // Initial evaluation via RAF so it is not synchronous within the effect body
     rafId = window.requestAnimationFrame(() => {
+      measureVerticalTrack();
       handleScroll();
       rafId = null;
     });
@@ -115,6 +131,8 @@ export function ProcessConduit({ steps, tone = "ink", className }: ProcessCondui
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
+      resizeObserver.disconnect();
+      observer?.disconnect();
       if (rafId) window.cancelAnimationFrame(rafId);
     };
   }, []);
@@ -124,7 +142,7 @@ export function ProcessConduit({ steps, tone = "ink", className }: ProcessCondui
       {/* Horizontal Laser Conduit Track (Desktop) */}
       <div className={styles.trackWrapper} aria-hidden="true">
         <div className={styles.trackLine}>
-          <div ref={fillRef} className={styles.fillBar} style={{ width: "8%" }} />
+          <div className={styles.fillBar} />
           <div className={styles.milestones}>
             {steps.map((_, index) => (
               <div

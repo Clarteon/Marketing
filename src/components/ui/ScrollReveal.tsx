@@ -25,7 +25,7 @@ export function ScrollReveal({
   stagger = false,
   variant = "focus",
   threshold = 0.1,
-  rootMargin = "0px 0px -6% 0px",
+  rootMargin = "0px",
   delayMs = 0,
   className,
   onFocusCapture,

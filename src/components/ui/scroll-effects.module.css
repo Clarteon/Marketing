@@ -6,7 +6,7 @@
 .reveal,
 .revealStagger {
   --reveal-transform: translateY(22px) scale(0.985);
-  --reveal-filter: blur(6px);
+  --reveal-filter: blur(3px);
 }
 
 .reveal[data-variant="rise"],
@@ -37,9 +37,9 @@
   .reveal[data-motion-ready="true"],
   .revealStagger[data-motion-ready="true"] > * {
     transition:
-      opacity 650ms cubic-bezier(0.16, 1, 0.3, 1),
-      transform 650ms cubic-bezier(0.16, 1, 0.3, 1),
-      filter 650ms cubic-bezier(0.16, 1, 0.3, 1);
+      opacity 450ms cubic-bezier(0.16, 1, 0.3, 1),
+      transform 450ms cubic-bezier(0.16, 1, 0.3, 1),
+      filter 450ms cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .reveal[data-motion-ready="true"][data-revealed="false"],

@@ -9,7 +9,7 @@
   pointer-events: none;
   z-index: 9999;
   border-radius: 50%;
-  will-change: transform, background-color, border-color, box-shadow, opacity;
+  will-change: transform;
   user-select: none;
 
   /* Universal high-contrast Electric Lime:

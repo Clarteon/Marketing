@@ -232,6 +232,12 @@
   }
 }
 
+.ambientGlow,
+.pulseWave,
+.outerDial {
+  animation-play-state: var(--flow-animation-state, paused) !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .center,
   .center *,
