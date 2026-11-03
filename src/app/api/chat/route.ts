@@ -76,7 +76,7 @@ export async function POST(request: Request): Promise<Response> {
     return json({ ok: false, error: "chat_unavailable" }, 503);
   }
 
-  if (input.history.length + 1 > config.CHAT_MAX_MESSAGES) {
+  if (input.history.length + 1 > config.CHAT_MAX_MESSAGES && !input.confirmationToken) {
     return json({ ok: false, error: "message_limit" }, 429);
   }
 
@@ -162,6 +162,7 @@ export async function POST(request: Request): Promise<Response> {
             send({ type: "text", text });
           },
           onStatus: (status) => send({ type: "status", status }),
+          onConfirmation: (confirmation) => send({ type: "confirmation", ...confirmation }),
         });
 
         if (result.degraded) {

@@ -58,6 +58,7 @@ interface ModelRequestOptions {
   timeoutMs?: number;
   turnTimeoutMs?: number;
   maxCompletionTokens?: number;
+  responseSchema?: Record<string, unknown>;
 }
 
 interface RawCompletion {
@@ -95,13 +96,22 @@ function requestBody(
   messages: ModelMessage[],
   tools: ToolDefinition[],
   maxCompletionTokens: number,
+  responseSchema?: Record<string, unknown>,
 ): Record<string, unknown> {
   return {
     model,
     messages,
-    tools,
-    tool_choice: "auto",
-    stream: true,
+    ...(responseSchema
+      ? {
+          response_format: {
+            type: "json_schema",
+            json_schema: { name: "clara_scope", strict: true, schema: responseSchema },
+          },
+        }
+      : tools.length
+        ? { tools, tool_choice: "auto" }
+        : {}),
+    stream: !responseSchema,
     ...modelParameters(model, maxCompletionTokens),
   };
 }
@@ -291,6 +301,59 @@ async function readStream(
   return { content, toolCalls, finishReason };
 }
 
+async function readJsonCompletion(
+  response: Response,
+  signal: AbortSignal | undefined,
+  timeoutMs: number,
+): Promise<RawCompletion> {
+  if (!response.body) throw new ChatUnavailableError("empty_response");
+  const reader = response.body.getReader();
+  let timedOut = false;
+  const cancel = () => {
+    void reader.cancel().catch(() => undefined);
+  };
+  const timer = setTimeout(() => {
+    timedOut = true;
+    cancel();
+  }, timeoutMs);
+  signal?.addEventListener("abort", cancel, { once: true });
+  const decoder = new TextDecoder();
+  let text = "";
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (signal?.aborted) throw new ChatUnavailableError("aborted");
+      if (timedOut) throw new ChatUnavailableError("response_timeout");
+      if (done) break;
+      text += decoder.decode(value, { stream: true });
+      if (text.length > 50_000) {
+        cancel();
+        throw new ChatUnavailableError("response_too_large");
+      }
+    }
+    text += decoder.decode();
+    const body = JSON.parse(text) as {
+      choices?: Array<{
+        message?: { content?: unknown; tool_calls?: unknown[] };
+        finish_reason?: string;
+      }>;
+    };
+    const choice = body.choices?.[0];
+    if (
+      !choice ||
+      typeof choice.message?.content !== "string" ||
+      choice.message.tool_calls?.length ||
+      choice.finish_reason === "length"
+    )
+      throw new ChatUnavailableError("invalid_json_response");
+    return { content: choice.message.content, toolCalls: [], finishReason: choice.finish_reason };
+  } finally {
+    clearTimeout(timer);
+    signal?.removeEventListener("abort", cancel);
+    reader.releaseLock();
+  }
+}
+
 /**
  * Stream one model round, walking the configured fallback chain. Text is
  * forwarded as it arrives; a failure after the first visible token is not
@@ -309,6 +372,7 @@ export async function streamModelCompletion({
   timeoutMs = CHAT_MODEL_TIMEOUT_MS,
   turnTimeoutMs = CHAT_TURN_TIMEOUT_MS,
   maxCompletionTokens = CHAT_MAX_COMPLETION_TOKENS,
+  responseSchema,
 }: ModelRequestOptions): Promise<ChatModelResult> {
   const uniqueModels = [...new Set(models.filter((model) => SAFE_MODEL.test(model)))];
   if (!apiKey || uniqueModels.length === 0) throw new ChatUnavailableError("not_configured");
@@ -341,9 +405,11 @@ export async function streamModelCompletion({
             headers: {
               Authorization: `Bearer ${apiKey}`,
               "Content-Type": "application/json",
-              Accept: "text/event-stream",
+              Accept: responseSchema ? "application/json" : "text/event-stream",
             },
-            body: JSON.stringify(requestBody(model, messages, tools, maxCompletionTokens)),
+            body: JSON.stringify(
+              requestBody(model, messages, tools, maxCompletionTokens, responseSchema),
+            ),
           },
           remainingForAttempt,
           signal,
@@ -375,7 +441,9 @@ export async function streamModelCompletion({
           1,
           Math.min(timeoutMs, turnTimeoutMs - (now() - startedAt)),
         );
-        const result = await readStream(response, emit, signal, remainingForStream);
+        const result = responseSchema
+          ? await readJsonCompletion(response, signal, remainingForStream)
+          : await readStream(response, emit, signal, remainingForStream);
         if (result.content.length === 0 && result.toolCalls.length === 0) {
           lastCode = "empty_response";
           break;
