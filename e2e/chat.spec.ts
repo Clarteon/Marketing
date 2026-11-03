@@ -27,6 +27,44 @@ async function openChat(page: Page) {
 }
 
 test.describe("Clara chat", () => {
+  test("confirms device time and searches for a different city", async ({ page }) => {
+    const requests: Array<Record<string, unknown>> = [];
+    await page.route("/api/chat", (route) => {
+      requests.push(route.request().postDataJSON() as Record<string, unknown>);
+      return route.fulfill({
+        contentType: "application/x-ndjson",
+        body: ndjson([
+          {
+            type: "text",
+            text:
+              requests.length === 1
+                ? "Shall we use your device’s local time? [Choose your local time](#clara-timezone)"
+                : "Here are the available call times.",
+          },
+          { type: "done" },
+        ]),
+      });
+    });
+    await page.goto("/");
+    await openChat(page);
+    const panel = page.locator("#clara-chat-panel");
+    await panel.getByLabel("Your message to Clara").fill("I’d like to book a discovery call.");
+    await panel.getByRole("button", { name: "Send message" }).click();
+    await expect(panel.getByRole("button", { name: "Yes, use this time" })).toBeVisible();
+    await panel.getByRole("button", { name: "Choose another location" }).click();
+    await panel.getByLabel("Search city or time zone").fill("Manila");
+    await expect(panel.getByRole("button", { name: /^Manila —/ })).toBeVisible();
+    expect(await panel.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+    await panel.screenshot({ path: test.info().outputPath("clara-timezone.png") });
+    await panel.getByRole("button", { name: /^Manila —/ }).click();
+    await expect(panel.getByText("Here are the available call times.")).toBeVisible();
+    expect(requests[1]).toMatchObject({
+      timezone: "Asia/Manila",
+      message: expect.stringContaining("Asia/Manila"),
+    });
+    await expect(panel.getByRole("group", { name: "Choose your local time" })).toHaveCount(0);
+  });
+
   test.beforeEach(async ({ page }) => {
     await stubTurnstile(page);
   });

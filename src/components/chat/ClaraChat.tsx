@@ -9,6 +9,7 @@ import { TurnstileWidget } from "@/components/ui/TurnstileWidget";
 import { CHAT_TURNSTILE_ACTION } from "@/lib/chat/constants";
 import { site } from "@/lib/site";
 import styles from "./chat.module.css";
+import { detectedTimezone, TimezoneChoices } from "./TimezoneChoices";
 
 interface ClaraChatProps {
   turnstileSiteKey?: string;
@@ -111,6 +112,7 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
+  const [selectedTimezone, setSelectedTimezone] = useState<string>();
   const [sending, setSending] = useState(false);
   const [token, setToken] = useState("");
   const [turnstileKey, setTurnstileKey] = useState(0);
@@ -219,7 +221,7 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
     setError(errorMessage(code));
   }
 
-  async function sendMessage(raw: string, confirmationToken?: string) {
+  async function sendMessage(raw: string, confirmationToken?: string, timezoneOverride?: string) {
     const message = raw.trim();
     if (!message || sendingRef.current || !privacyAccepted) return;
     if (!chatAvailable) {
@@ -268,7 +270,7 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
           message,
           history,
           turnstileToken: botVerified ? undefined : token,
-          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          timezone: timezoneOverride ?? selectedTimezone ?? detectedTimezone(),
           pageUrl: window.location.pathname,
           confirmationToken,
         }),
@@ -477,7 +479,11 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
                           urlTransform={chatLink}
                           components={{
                             a: ({ href, children }) =>
-                              href ? <a href={href}>{children}</a> : <span>{children}</span>,
+                              href === "#clara-timezone" ? null : href ? (
+                                <a href={href}>{children}</a>
+                              ) : (
+                                <span>{children}</span>
+                              ),
                           }}
                         >
                           {item.content}
@@ -486,6 +492,24 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
                     ) : (
                       <p className={styles.messageText}>{item.content}</p>
                     )}
+                    {item.role === "assistant" &&
+                    item.id === messages.at(-1)?.id &&
+                    item.content.includes("](#clara-timezone)") &&
+                    !sending &&
+                    !activeDegraded &&
+                    !error &&
+                    !confirmation ? (
+                      <TimezoneChoices
+                        onChoose={(zone, label) => {
+                          setSelectedTimezone(zone);
+                          void sendMessage(
+                            `Show discovery call times in ${label} (${zone}).`,
+                            undefined,
+                            zone,
+                          );
+                        }}
+                      />
+                    ) : null}
                   </div>
                 ))}
 

@@ -536,6 +536,59 @@
   color: var(--paper);
 }
 
+.timezoneChoices {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+}
+
+.timezoneChoices p {
+  margin: 0;
+}
+
+.timezoneSearch {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0.6rem;
+  border: 1px solid var(--graphite);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: 1rem;
+}
+
+.timezoneResults {
+  display: grid;
+  gap: 0.25rem;
+  max-height: 11rem;
+  overflow-y: auto;
+}
+
+.timezoneResults button {
+  min-height: 44px;
+  padding: 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+.timezoneResults button:hover {
+  background: var(--stone);
+}
+
+.timezoneChoices :is(button, input):focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
 .degraded {
   display: grid;
   gap: 0.75rem;

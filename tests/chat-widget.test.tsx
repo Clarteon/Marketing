@@ -46,6 +46,43 @@ async function send(text: string) {
 }
 
 describe("Clara chat widget", () => {
+  it("confirms detected local time and keeps an override on later messages", async () => {
+    const fetchMock = vi.fn().mockImplementation(() =>
+      Promise.resolve(
+        streamResponse([
+          {
+            type: "text",
+            text: "Shall we use your local time? [Choose your local time](#clara-timezone)",
+          },
+          { type: "done" },
+        ]),
+      ),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    render(<ClaraChat turnstileSiteKey="site-key" />);
+    await openAndAccept();
+    fireEvent.click(screen.getByRole("button", { name: "Complete verification" }));
+    await send("I’d like to book a discovery call.");
+    fireEvent.click(await screen.findByRole("button", { name: "Yes, use this time" }));
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
+    const detected = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    expect(JSON.parse(fetchMock.mock.calls[1][1].body).timezone).toBe(detected);
+    fireEvent.click(await screen.findByRole("button", { name: "Choose another location" }));
+    fireEvent.change(screen.getByLabelText("Search city or time zone"), {
+      target: { value: "London" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /^London —/ }));
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(3));
+    expect(JSON.parse(fetchMock.mock.calls[2][1].body)).toMatchObject({
+      timezone: "Europe/London",
+      message: expect.stringContaining("Europe/London"),
+    });
+    await screen.findByRole("button", { name: "Yes, use this time" });
+    await send("What is the next available day?");
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(4));
+    expect(JSON.parse(fetchMock.mock.calls[3][1].body).timezone).toBe("Europe/London");
+  });
+
   afterEach(() => {
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
