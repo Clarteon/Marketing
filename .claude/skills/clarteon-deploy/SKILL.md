@@ -12,7 +12,7 @@ Follow `.claude/rules/security.md`. The shared workflow and its full docs live i
 ## How it works
 
 - Vercel's Git integration does not support private organization repositories on the Hobby plan, so the Vercel project has no Git connection. The `deploy` job in `.github/workflows/ci.yml` calls `vercel-deploy.yml` after `ci` and `browser` pass.
-- A push to `main` deploys production. A pull request from a branch in this repository deploys a preview and posts its URL as a pull request comment. Pull requests from forks are skipped.
+- A push to `main` deploys production. Pull requests do not deploy: on Hobby, Vercel blocks any deploy whose commit author is not the account owner. Merge pull requests with "Create a merge commit" so the owner authors the commit on `main`; squash and rebase merges keep the contributor as author and the production deploy is blocked.
 - The job needs the `VERCEL_TOKEN` repository secret and the `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID` repository variables (IDs from `.vercel/project.json`, not secrets). GitHub Free does not share organization secrets with private repositories, so the token is set per repository.
 - Do not reconnect a Git repository in the Vercel project, or every push deploys twice.
 
@@ -27,7 +27,7 @@ Follow `.claude/rules/security.md`. The shared workflow and its full docs live i
 From the repository root, with `gh` signed in as someone who can manage its secrets:
 
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/Clarteon/.github/v1.1.0/scripts/setup-vercel-deploy.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/Clarteon/.github/v1.2.0/scripts/setup-vercel-deploy.sh)
 ```
 
 The script links the Vercel project, sets the two variables and asks for the token without echoing it. Create the token in Vercel under Account Settings, Tokens, scoped to the team, expiring in 90 days or less.
