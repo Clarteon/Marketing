@@ -46,7 +46,7 @@ npm run db:backup -- --out <file outside repo>  # encrypted lead and booking bac
 npm run db:restore -- --in <file> [--confirm]   # dry run by default; inserts missing rows only
 ```
 
-CI and releases call the organization-wide reusable workflows in `Clarteon/.github` (`@v1`). The caller in `.github/workflows/ci.yml` runs lint, formatting, type check, tests, the placeholder check, a production dependency audit and the build, plus a local `browser` job with the e2e suite and the Lighthouse budget; `.github/workflows/release.yml` runs the same checks on a `v*` tag, then publishes a GitHub release. A `deploy` job then ships to Vercel through the shared `vercel-deploy.yml` (`@v1.2.0`): production for pushes to `main`, a preview with a PR comment for pull requests (see the `clarteon-deploy` skill). The knowledge build command is added in P4.
+CI and releases call the organization-wide reusable workflows in `Clarteon/.github` (`@v1`). The caller in `.github/workflows/ci.yml` runs lint, formatting, type check, tests, the placeholder check, a production dependency audit and the build, plus a local `browser` job with the e2e suite and the Lighthouse budget; `.github/workflows/release.yml` runs the same checks on a `v*` tag, then publishes a GitHub release. A `deploy` job then ships to Vercel through the shared `vercel-deploy.yml` (`@v1.2.0`): production for pushes to `main` only, no pull request previews while on Hobby (see the `clarteon-deploy` skill). The knowledge build command is added in P4.
 
 ## Commits and pull requests
 
