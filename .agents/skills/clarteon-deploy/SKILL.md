@@ -27,7 +27,7 @@ Follow `.agents/rules/security.md`. The shared workflow and its full docs live i
 From the repository root, with `gh` signed in as someone who can manage its secrets:
 
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/Clarteon/.github/v1.1.0/scripts/setup-vercel-deploy.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/Clarteon/.github/v1.2.0/scripts/setup-vercel-deploy.sh)
 ```
 
 The script links the Vercel project, sets the two variables and asks for the token without echoing it. Create the token in Vercel under Account Settings, Tokens, scoped to the team, expiring in 90 days or less.
