@@ -33,6 +33,36 @@ const base = {
 };
 
 describe("Groq model client", () => {
+  it("requests strict JSON without streaming or tools for classification", async () => {
+    const onText = vi.fn();
+    const fetchMock = vi.fn().mockResolvedValue(
+      Response.json({
+        choices: [{ message: { content: '{"kind":"business"}' }, finish_reason: "stop" }],
+      }),
+    );
+    const responseSchema = {
+      type: "object",
+      properties: { kind: { type: "string" } },
+      required: ["kind"],
+      additionalProperties: false,
+    };
+    const result = await streamModelCompletion({
+      ...base,
+      fetchImpl: fetchMock,
+      responseSchema,
+      onText,
+    });
+    const body = JSON.parse(fetchMock.mock.calls[0][1].body);
+    expect(body.stream).toBe(false);
+    expect(body).not.toHaveProperty("tools");
+    expect(body.response_format.json_schema).toMatchObject({
+      strict: true,
+      schema: responseSchema,
+    });
+    expect(result.content).toBe('{"kind":"business"}');
+    expect(onText).not.toHaveBeenCalled();
+  });
+
   it("streams text and sends a stable, low-reasoning request", async () => {
     const onText = vi.fn();
     const fetchMock = vi.fn().mockResolvedValue(sse([completion("Hello "), completion("there.")]));

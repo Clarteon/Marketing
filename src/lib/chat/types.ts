@@ -38,7 +38,9 @@ export interface ChatModelResult {
 }
 
 export interface ChatEvent {
-  type: "text" | "status" | "degraded" | "error" | "done";
+  type: "text" | "status" | "degraded" | "error" | "done" | "confirmation";
+  token?: string;
+  description?: string;
   text?: string;
   status?: string;
   message?: string;

@@ -76,6 +76,85 @@ test.describe("Clara chat", () => {
     expect(requests[1]).not.toHaveProperty("turnstileToken");
   });
 
+  test("makes formatted replies readable without overflowing the panel", async ({ page }) => {
+    await page.route("/api/chat", (route) =>
+      route.fulfill({
+        contentType: "application/x-ndjson",
+        body: ndjson([
+          { type: "text", text: "Start with **report" },
+          {
+            type: "text",
+            text: "ing automation**.\n\n*The team can confirm the fit.*\n\n- Collect updates automatically\n- Flag missing information\n- Review exceptions together\n\n1. Map the workflow\n2. Test a small change\n\n[Book a discovery call](/contact#book)\n\nWhich step takes the most time?",
+          },
+          { type: "done" },
+        ]),
+      }),
+    );
+    await page.goto("/");
+    await openChat(page);
+    await page.getByLabel("Your message to Clara").fill("Our reports are hard to manage.");
+    await page.getByRole("button", { name: "Send message" }).click();
+    const panel = page.locator("#clara-chat-panel");
+    await expect(panel.locator("strong")).toHaveText("reporting automation");
+    await expect(panel.locator("em")).toHaveText("The team can confirm the fit.");
+    await expect(panel.locator("ul > li")).toHaveCount(3);
+    await expect(panel.locator("ol > li")).toHaveCount(2);
+    await expect(panel.getByRole("link", { name: "Book a discovery call" })).toHaveAttribute(
+      "href",
+      "/contact#book",
+    );
+    expect(await panel.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(
+      true,
+    );
+    await panel.screenshot({ path: test.info().outputPath("clara-formatting.png") });
+  });
+
+  test("reviews an action before confirming and allows cancellation", async ({ page }) => {
+    const requests: Array<Record<string, unknown>> = [];
+    await page.route("/api/chat", (route) => {
+      const request = route.request().postDataJSON() as Record<string, unknown>;
+      requests.push(request);
+      return route.fulfill({
+        contentType: "application/x-ndjson",
+        body: ndjson(
+          request.confirmationToken
+            ? [{ type: "text", text: "Your details were saved." }, { type: "done" }]
+            : [
+                {
+                  type: "confirmation",
+                  token: "e2e-signed-proposal",
+                  description:
+                    "Save these details and send the lead notifications\nName: Ada\nEmail: ada@example.com",
+                },
+                { type: "text", text: "Please review the details below." },
+                { type: "done" },
+              ],
+        ),
+      });
+    });
+    await page.goto("/");
+    await openChat(page);
+    const panel = page.locator("#clara-chat-panel");
+    await panel.getByLabel("Your message to Clara").fill("Please save my details.");
+    await panel.getByRole("button", { name: "Send message" }).click();
+    await expect(panel.getByRole("group", { name: "Review action details" })).toContainText(
+      "ada@example.com",
+    );
+    expect(requests).toHaveLength(1);
+    await panel.screenshot({ path: test.info().outputPath("action-confirmation.png") });
+    await panel.getByRole("button", { name: "Cancel", exact: true }).click();
+    await expect(panel.getByRole("group", { name: "Review action details" })).toHaveCount(0);
+    expect(requests).toHaveLength(1);
+    await panel.getByLabel("Your message to Clara").fill("Prepare the details again.");
+    await panel.getByRole("button", { name: "Send message" }).click();
+    await panel.getByRole("button", { name: "Confirm", exact: true }).click();
+    await expect(panel.getByText("Your details were saved.")).toBeVisible();
+    expect(requests[2]).toMatchObject({
+      message: "Confirm this action.",
+      confirmationToken: "e2e-signed-proposal",
+    });
+  });
+
   test("never renders model text as HTML", async ({ page }) => {
     await page.route("/api/chat", (route) =>
       route.fulfill({

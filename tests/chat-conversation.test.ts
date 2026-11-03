@@ -5,6 +5,8 @@ import type { ChatModelResult, ModelToolCall } from "@/lib/chat/types";
 import type { ChatToolDependencies } from "@/lib/chat/tools";
 import { resetChatUsageForTests } from "@/lib/chat/usage";
 import { resetRateLimitsForTests } from "@/lib/guardrails/rate-limit";
+import { encodeSlotId } from "@/lib/booking/slots";
+import type { ActionConfirmation } from "@/lib/chat/confirmation";
 
 const config = {
   GROQ_API_KEY: "test-key",
@@ -31,6 +33,10 @@ describe("Clara end-to-end conversation", () => {
   });
 
   it("saves a lead and books a call through the real tool layer", async () => {
+    const slotId = encodeSlotId(
+      new Date("2026-10-26T01:00:00.000Z"),
+      new Date("2026-10-26T01:30:00.000Z"),
+    );
     const store = {
       save: vi.fn(async (lead: Record<string, unknown>) => ({
         lead: { ...lead, id: "lead-1", createdAt: new Date("2026-10-23T08:00:00.000Z") },
@@ -42,7 +48,7 @@ describe("Clara end-to-end conversation", () => {
     const getAvailability = vi.fn().mockResolvedValue({
       slots: [
         {
-          id: "slot-1",
+          id: slotId,
           start: "2026-10-26T01:00:00.000Z",
           end: "2026-10-26T01:30:00.000Z",
         },
@@ -79,7 +85,6 @@ describe("Clara end-to-end conversation", () => {
           }),
         ],
       }),
-      modelStep({ text: "Thanks, Ada. I saved your details." }),
       modelStep({
         calls: [call("availability-1", "check_availability", { timezone: "Asia/Manila" })],
       }),
@@ -87,14 +92,13 @@ describe("Clara end-to-end conversation", () => {
       modelStep({
         calls: [
           call("book-1", "book_call", {
-            slot_id: "slot-1",
+            slot_id: slotId,
             name: "Ada Lovelace",
             email: "ada@example.com",
             notes: "Weekly reporting automation.",
           }),
         ],
       }),
-      modelStep({ text: "Your discovery call is booked for Monday at 9:00." }),
     ];
 
     const streamModel = vi.fn(async (options: { onText: (text: string) => void }) => {
@@ -107,13 +111,15 @@ describe("Clara end-to-end conversation", () => {
     const sessionId = crypto.randomUUID();
     const history: ChatHistoryMessage[] = [];
     const replies: string[] = [];
+    let pending: ActionConfirmation | undefined;
 
-    async function turn(message: string): Promise<void> {
+    async function turn(message: string, confirmationToken?: string): Promise<void> {
       const request: ChatRequest = {
         sessionId,
         message,
         history: [...history],
         timezone: "Asia/Manila",
+        confirmationToken,
       };
       let reply = "";
       const result = await runChatTurn({
@@ -121,6 +127,9 @@ describe("Clara end-to-end conversation", () => {
         sessionId,
         ip: "203.0.113.7",
         pageUrl: "/contact",
+        onConfirmation: (value) => {
+          pending = value;
+        },
         onText: (text) => {
           reply += text;
         },
@@ -128,6 +137,9 @@ describe("Clara end-to-end conversation", () => {
           config,
           streamModel: streamModel as never,
           toolDependencies,
+          confirmationSecret: "test-secret-for-action-confirmation",
+          now: new Date("2026-10-23T08:00:00.000Z"),
+          classifyScope: async () => ({ kind: "business", businessMessage: "", language: "en" }),
         },
       });
 
@@ -137,14 +149,18 @@ describe("Clara end-to-end conversation", () => {
     }
 
     await turn("Hi, I need help with reporting. I am Ada, ada@example.com.");
+    expect(store.save).not.toHaveBeenCalled();
+    expect(pending?.description).toContain("ada@example.com");
+    await turn("Confirm this action.", pending?.token);
     await turn("Can we book a discovery call? I am in Asia/Manila.");
     await turn("The first time works. Please book it for Ada Lovelace, ada@example.com.");
+    expect(bookDiscoveryCall).not.toHaveBeenCalled();
+    expect(pending?.description).toContain("Book a discovery call");
+    await turn("Confirm this action.", pending?.token);
 
-    expect(replies).toEqual([
-      "Thanks, Ada. I saved your details.",
-      "I have a few times. The first is Monday at 9:00.",
-      "Your discovery call is booked for Monday at 9:00.",
-    ]);
+    expect(replies[1]).toContain("Your details were saved");
+    expect(replies[2]).toContain("I have a few times");
+    expect(replies[4]).toContain("Your discovery call is confirmed");
     expect(store.save).toHaveBeenCalledWith(
       expect.objectContaining({
         name: "Ada Lovelace",
@@ -159,13 +175,13 @@ describe("Clara end-to-end conversation", () => {
     });
     expect(bookDiscoveryCall).toHaveBeenCalledWith(
       expect.objectContaining({
-        slotId: "slot-1",
+        slotId,
         name: "Ada Lovelace",
         email: "ada@example.com",
         timezone: "Asia/Manila",
       }),
       {},
     );
-    expect(streamModel).toHaveBeenCalledTimes(6);
+    expect(streamModel).toHaveBeenCalledTimes(4);
   });
 });

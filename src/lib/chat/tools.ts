@@ -32,6 +32,7 @@ import {
   buildSolutionBriefVisitorEmail,
 } from "./email";
 import { hasPriceIntent } from "./prompt";
+import { actionSchemas, isAction, hasSensitiveContent } from "./confirmation";
 import {
   availabilityArgsSchema,
   bookCallArgsSchema,
@@ -53,6 +54,7 @@ export interface ChatToolDependencies {
 }
 
 export interface ChatToolContext {
+  actionConfirmed?: boolean;
   sessionId: string;
   ip: string;
   pageUrl: string;
@@ -710,6 +712,12 @@ export async function executeChatTool(
   args: unknown,
   context: ChatToolContext,
 ): Promise<ToolResult> {
+  if (isAction(name)) {
+    const parsed = actionSchemas[name].safeParse(args);
+    if (!parsed.success) return invalidArguments();
+    if (!context.actionConfirmed) return { ok: false, error: "confirmation_required" };
+    if (hasSensitiveContent(parsed.data)) return { ok: false, error: "sensitive_data" };
+  }
   switch (name) {
     case "search_knowledge":
       return searchKnowledgeTool(args, context);
@@ -750,7 +758,7 @@ export const chatTools: ToolDefinition[] = [
     function: {
       name: "save_lead",
       description:
-        "Save the visitor's details once they give a name and email. Call again to update the same lead.",
+        "Propose saving volunteered details only when the visitor wants a relevant follow-up. A name and email alone are not consent. The server requires explicit confirmation before saving or sending notifications.",
       parameters: {
         type: "object",
         properties: {
@@ -829,7 +837,7 @@ export const chatTools: ToolDefinition[] = [
     function: {
       name: "handoff_to_team",
       description:
-        "Alert the team when a person is needed or the question is out of scope. Collect only contact details the visitor chose to give.",
+        "Propose contacting the team only about a relevant Clarteon question that needs a person, or an explicit relevant contact request. Never use for unrelated trivia or homework. Requires visitor confirmation.",
       parameters: {
         type: "object",
         properties: {

@@ -15,6 +15,7 @@ function context(overrides: Partial<ChatToolContext> = {}): ChatToolContext {
     priceIntent: false,
     now: NOW,
     timezone: "Asia/Manila",
+    actionConfirmed: true,
     ...overrides,
   };
 }

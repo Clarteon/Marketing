@@ -15,6 +15,7 @@ export const chatRequestSchema = z.object({
   sessionId: z.uuid(),
   message: z.string().trim().min(1).max(CHAT_MESSAGE_MAX_CHARS),
   history: z.array(historyMessageSchema).max(CHAT_HISTORY_MAX_MESSAGES).default([]),
+  confirmationToken: z.string().min(1).max(16_384).optional(),
   turnstileToken: z.preprocess(
     (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
     z.string().trim().max(4_096).optional(),

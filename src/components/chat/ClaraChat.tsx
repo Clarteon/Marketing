@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
+import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/Button";
 import { TurnstileWidget } from "@/components/ui/TurnstileWidget";
 import { CHAT_TURNSTILE_ACTION } from "@/lib/chat/constants";
@@ -20,7 +21,9 @@ interface ChatMessage {
 }
 
 interface ChatEvent {
-  type: "text" | "status" | "degraded" | "error" | "done";
+  type: "text" | "status" | "degraded" | "error" | "done" | "confirmation";
+  token?: string;
+  description?: string;
   text?: string;
   status?: string;
   message?: string;
@@ -29,6 +32,25 @@ interface ChatEvent {
 
 const MAX_CLIENT_MESSAGES = 20;
 const WELCOME = "Hi, I’m Clara, Clarteon’s AI assistant. What is slowing your team down right now?";
+
+// Model links can only navigate to the site, its mailbox, or meeting providers.
+function chatLink(value: string): string | undefined {
+  if (value === `mailto:${site.email}`) return value;
+  if (/^[\/#]/.test(value) && !/[\\\s]/.test(value) && !value.startsWith("//")) return value;
+  try {
+    const url = new URL(value);
+    if (url.protocol !== "https:" || url.username || url.password || url.port) return;
+    if (
+      url.hostname === "clarteon.tech" ||
+      url.hostname === "meet.google.com" ||
+      url.hostname === "calendar.google.com" ||
+      (url.hostname === "www.google.com" && url.pathname.startsWith("/calendar/"))
+    )
+      return url.href;
+  } catch {
+    // Unsupported or incomplete links stay readable while the reply streams.
+  }
+}
 
 function newSessionId(): string {
   const cryptoApi = globalThis.crypto;
@@ -95,6 +117,9 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
   const [botVerified, setBotVerified] = useState(false);
   const [degraded, setDegraded] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [confirmation, setConfirmation] = useState<{ token: string; description: string } | null>(
+    null,
+  );
 
   const panelRef = useRef<HTMLElement>(null);
   const bubbleRef = useRef<HTMLButtonElement>(null);
@@ -194,7 +219,7 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
     setError(errorMessage(code));
   }
 
-  async function sendMessage(raw: string) {
+  async function sendMessage(raw: string, confirmationToken?: string) {
     const message = raw.trim();
     if (!message || sendingRef.current || !privacyAccepted) return;
     if (!chatAvailable) {
@@ -205,7 +230,7 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
       setError("Please complete the quick check below, then send your message.");
       return;
     }
-    if (messages.length + 1 > MAX_CLIENT_MESSAGES) {
+    if (messages.length + 1 > MAX_CLIENT_MESSAGES && !confirmationToken) {
       setDegraded(errorMessage("message_limit"));
       return;
     }
@@ -226,6 +251,7 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
     setInput("");
     setError(null);
     setDegraded(null);
+    setConfirmation(null);
     setSending(true);
     sendingRef.current = true;
 
@@ -244,6 +270,7 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
           turnstileToken: botVerified ? undefined : token,
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
           pageUrl: window.location.pathname,
+          confirmationToken,
         }),
       });
 
@@ -273,6 +300,8 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
               item.id === assistantId ? { ...item, content: item.content + event.text } : item,
             ),
           );
+        } else if (event.type === "confirmation" && event.token && event.description) {
+          setConfirmation({ token: event.token, description: event.description });
         } else if (event.type === "degraded") {
           degradedMessage = event.message ?? errorMessage("chat_unavailable");
           setDegraded(degradedMessage);
@@ -440,9 +469,51 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
                     }`}
                   >
                     <span className={styles.speaker}>{item.role === "user" ? "You" : "Clara"}</span>
-                    <p className={styles.messageText}>{item.content}</p>
+                    {item.role === "assistant" ? (
+                      <div className={styles.assistantText}>
+                        <ReactMarkdown
+                          allowedElements={["p", "strong", "em", "ul", "ol", "li", "a", "br"]}
+                          unwrapDisallowed
+                          urlTransform={chatLink}
+                          components={{
+                            a: ({ href, children }) =>
+                              href ? <a href={href}>{children}</a> : <span>{children}</span>,
+                          }}
+                        >
+                          {item.content}
+                        </ReactMarkdown>
+                      </div>
+                    ) : (
+                      <p className={styles.messageText}>{item.content}</p>
+                    )}
                   </div>
                 ))}
+
+                {confirmation ? (
+                  <div className={styles.degraded} role="group" aria-label="Review action details">
+                    <p className={styles.messageText}>{confirmation.description}</p>
+                    <div className={styles.degradedActions}>
+                      <Button
+                        type="button"
+                        disabled={sending}
+                        onClick={() => void sendMessage("Confirm this action.", confirmation.token)}
+                      >
+                        Confirm
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        disabled={sending}
+                        onClick={() => setConfirmation(null)}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                    <p>
+                      Only confirm if these details are correct. You can cancel or ask for changes.
+                    </p>
+                  </div>
+                ) : null}
 
                 {sending ? (
                   <div className={`${styles.message} ${styles.assistantMessage}`}>

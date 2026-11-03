@@ -6,6 +6,12 @@ import type { ChatRequest } from "@/lib/chat/schema";
 import type { ChatModelResult, ModelToolCall } from "@/lib/chat/types";
 
 vi.mock("@/lib/alerts", () => ({ alertTeam: vi.fn().mockResolvedValue(true) }));
+vi.mock("@/lib/chat/scope", async (original) => ({
+  ...(await original<typeof import("@/lib/chat/scope")>()),
+  classifyChatScope: vi
+    .fn()
+    .mockResolvedValue({ kind: "business", businessMessage: "", language: "en" }),
+}));
 vi.mock("@/lib/chat/tools", () => ({
   chatTools: [],
   executeChatTool: vi.fn(),

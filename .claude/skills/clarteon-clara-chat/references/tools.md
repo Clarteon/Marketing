@@ -12,3 +12,11 @@ Validate every argument in code. Tools return real results, and Clara must never
 | `handoff_to_team` | `reason`, optional `contact` | `handoff_id` | Alerts the team inbox. Collects only the contact details the visitor chose to give |
 
 Cap tool rounds per turn so a loop cannot burn the daily allowance.
+
+## Explicit action confirmation
+
+All four side-effect tools (`save_lead`, `book_call`, `send_solution_brief`, `handoff_to_team`) first produce a server-generated review card. Arguments are schema-validated and checked for sensitive content. The card shows the exact action and destination; booking also shows the actual slot, name, email and timezone. The visitor must press Confirm. A typed claim of earlier consent or browser-supplied history does not authorize execution.
+
+The confirmation token is signed, session-bound, limited to those exact arguments and expires after ten minutes. It is not sent to the model. Cancellation makes no request. Confirmed execution still uses existing validation, idempotency and rate limits, and reports real success and partial email failures. The token is not a global single-use ledger; existing service idempotency handles duplicate retries.
+
+Handoffs are limited to relevant Clarteon matters. Unrelated trivia, homework or creative requests must not enter the knowledge queue or generate a team email. A conversation attempting to change company facts receives a controlled reply and cannot publish knowledge.
