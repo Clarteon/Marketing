@@ -38,3 +38,5 @@ tests/                          unit, integration, and the Clara scenario suite
 - Performance: the Lighthouse budget in `lighthouserc.json` runs in CI. Do not lower a threshold to pass; fix the page or ask.
 - Accessibility: axe runs in unit tests and on every sitemap page in the e2e suite. Review keyboard use manually.
 - Commits: small and focused, with a message that says what changed and why. Run `npm run verify` before pushing. `npm install` copies the hooks from `.githooks/` into `.git/hooks/`, where they survive branch switches: pre-commit formats staged files and pre-push checks formatting and lint. `main` only accepts pull requests whose `ci / Verify` and `Browser tests and Lighthouse` checks pass.
+- Code comments: do not add comments to code.
+- Attribution: no AI or agent attribution in commits, pull requests or pushes. No `Co-Authored-By` trailers or "Generated with" lines.
