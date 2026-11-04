@@ -26,6 +26,8 @@ describe("Clara prompt", () => {
 
     expect(prompt).toContain("You are Clara, the AI assistant for Clarteon");
     expect(prompt).toContain("<boundaries>");
+    expect(prompt).toContain("[Choose your local time](#clara-timezone)");
+    expect(prompt).toContain("without asking again");
     expect(prompt.trimEnd().endsWith("Today's date: October 23, 2026")).toBe(true);
   });
 
