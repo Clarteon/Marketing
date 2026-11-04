@@ -96,11 +96,13 @@ async function readPageFile(filePath: string, directory: string): Promise<Conten
 
 /**
  * Read one published content file by slug. Returns null for a missing or draft
- * entry, so a draft never renders on the site.
+ * entry, so a draft never renders on the site. includeDrafts is only used by
+ * the development-only preview route.
  */
 export async function getPage(
   slug: string,
   type: ContentType = "page",
+  options: { includeDrafts?: boolean } = {},
 ): Promise<ContentPage | null> {
   if (!slugPattern.test(slug)) return null;
 
@@ -109,7 +111,7 @@ export async function getPage(
 
   try {
     const page = await readPageFile(filePath, directory);
-    return page.frontMatter.status === "published" ? page : null;
+    return options.includeDrafts || page.frontMatter.status === "published" ? page : null;
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === "ENOENT") return null;
     throw error;
