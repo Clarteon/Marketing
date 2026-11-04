@@ -113,6 +113,9 @@ function requestBody(
         : {}),
     stream: !responseSchema,
     ...modelParameters(model, maxCompletionTokens),
+    // Routing is a factual decision, not creative generation. Keep ordinary
+    // replies unchanged while reducing sampling variation in scope decisions.
+    ...(responseSchema && model.startsWith("openai/gpt-oss") ? { temperature: 0 } : {}),
   };
 }
 

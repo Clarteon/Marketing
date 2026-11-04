@@ -191,7 +191,7 @@ export async function runChatTurn({
     );
   }
   logServerEvent("chat_scope", { kind: decision.kind });
-  const redirect = scopeReply(decision, request.message);
+  const redirect = scopeReply(decision, request.message, safeHistory);
   if (redirect) return complete(redirect);
   const businessMessage = decision.kind === "mixed" ? decision.businessMessage : request.message;
   onStatus?.("working");
