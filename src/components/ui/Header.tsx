@@ -126,11 +126,11 @@ export function Header() {
                 key={item.href}
                 href={item.href}
                 className={cx(styles.navLink, isActive && styles.navLinkActive)}
+                aria-current={isActive ? "page" : undefined}
                 onMouseEnter={(e) => handleItemHover(e.currentTarget)}
                 onFocus={(e) => handleItemHover(e.currentTarget)}
               >
                 <span>{item.label}</span>
-                {isActive && <span className={styles.activeDot} aria-hidden="true" />}
               </Link>
             );
           })}
@@ -202,10 +202,10 @@ export function Header() {
                 key={item.href}
                 href={item.href}
                 className={cx(styles.mobileNavLink, isActive && styles.mobileNavLinkActive)}
+                aria-current={isActive ? "page" : undefined}
                 onClick={() => setOpen(false)}
               >
                 <span>{item.label}</span>
-                {isActive && <span className={styles.mobileActiveDot} aria-hidden="true" />}
               </Link>
             );
           })}

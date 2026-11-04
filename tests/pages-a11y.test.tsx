@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import axe from "axe-core";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import * as navigation from "next/navigation";
 import type { ReactNode } from "react";
 import { ChatWidgetSlot } from "@/components/ui/ChatWidgetSlot";
 import { Footer } from "@/components/ui/Footer";
@@ -187,6 +188,16 @@ describe("navigation and forms", () => {
     fireEvent.keyDown(document, { key: "Escape" });
     expect(screen.getByRole("button", { name: "Menu" })).toHaveAttribute("aria-expanded", "false");
     expect(menu).toHaveAttribute("hidden");
+  });
+
+  it("marks only the current page link in both navs", () => {
+    const spy = vi.spyOn(navigation, "usePathname").mockReturnValue("/solutions/automation");
+    render(<Header />);
+    spy.mockRestore();
+
+    const current = document.querySelectorAll('[aria-current="page"]');
+    expect(current).toHaveLength(2);
+    current.forEach((link) => expect(link).toHaveTextContent("Solutions"));
   });
 
   it("shows the project brief fields and stays closed without a bot-check key", async () => {

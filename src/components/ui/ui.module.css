@@ -191,19 +191,15 @@
   color: var(--ink);
 }
 
-.navLinkActive {
+.navLinkActive,
+.mobileNavLinkActive {
   font-weight: 600;
 }
 
-.activeDot {
-  display: inline-block;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--lime);
-  box-shadow: 0 0 6px rgba(198, 244, 50, 0.55);
-  flex-shrink: 0;
-  transition: transform 200ms ease;
+.navLinkActive > span,
+.mobileNavLinkActive > span {
+  text-decoration: underline 2px var(--ink);
+  text-underline-offset: 0.4em;
 }
 
 .headerActions {
@@ -302,19 +298,6 @@
 .mobileNavLink:hover {
   padding-left: 0.35rem;
   color: var(--ink);
-}
-
-.mobileNavLinkActive {
-  font-weight: 600;
-}
-
-.mobileActiveDot {
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--lime);
-  box-shadow: 0 0 6px rgba(198, 244, 50, 0.55);
 }
 
 .mobileNavActions {
