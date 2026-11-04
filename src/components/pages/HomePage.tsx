@@ -19,7 +19,7 @@ export function HomePage({ data }: { data: HomeData }) {
     <Page>
       <PageHero
         variant="home"
-        eyebrow={data.hero.eyebrow}
+
         title={data.hero.title}
         highlight={data.hero.highlight}
         intro={data.hero.intro}

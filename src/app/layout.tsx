@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fraunces, Inter } from "next/font/google";
+import { Fraunces, Schibsted_Grotesk } from "next/font/google";
 import type { ReactNode } from "react";
 import { Agentation } from "agentation";
 import { Analytics } from "@/components/ui/Analytics";
@@ -18,9 +18,10 @@ const fraunces = Fraunces({
   axes: ["opsz"],
 });
 
-const inter = Inter({
+const schibsted = Schibsted_Grotesk({
   subsets: ["latin"],
-  variable: "--font-inter",
+  style: ["normal", "italic"],
+  variable: "--font-sans",
   display: "swap",
 });
 
@@ -58,7 +59,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={`${fraunces.variable} ${inter.variable}`}
+      className={`${fraunces.variable} ${schibsted.variable}`}
     >
       <body>
         <ToastProvider>

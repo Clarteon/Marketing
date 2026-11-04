@@ -445,10 +445,8 @@
 
 .speaker {
   color: var(--graphite);
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-size: 0.8125rem;
+  font-weight: 600;
 }
 
 .userMessage .speaker {
@@ -490,10 +488,6 @@
 
 .assistantText li > p + p {
   margin-top: 0.4rem;
-}
-
-.assistantText strong {
-  font-weight: 700;
 }
 
 .assistantText em {
@@ -727,7 +721,7 @@
   color: var(--ink);
   font: inherit;
   font-size: 0.88rem;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
 }
 

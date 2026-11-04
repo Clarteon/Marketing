@@ -6,7 +6,6 @@ import { Section, type Tone } from "./Section";
 import styles from "./ui.module.css";
 
 interface PageHeroProps {
-  eyebrow?: string;
   title: string;
   highlight?: string;
   intro?: string;
@@ -19,7 +18,6 @@ interface PageHeroProps {
 }
 
 export function PageHero({
-  eyebrow,
   title,
   highlight,
   intro,
@@ -57,16 +55,6 @@ export function PageHero({
     >
       <div className={cx(styles.heroInner, Boolean(visual) && styles.heroInnerWithVisual)}>
         <div className={styles.heroContent}>
-          {eyebrow ? (
-            isHome ? (
-              <p className={styles.heroBadge}>
-                <span className={styles.heroBadgeDot} aria-hidden="true" />
-                {eyebrow}
-              </p>
-            ) : (
-              <p className={styles.eyebrow}>{eyebrow}</p>
-            )
-          ) : null}
           <h1
             className={styles.heroTitle}
             style={{ "--words": title.trim().split(/\s+/).length } as CSSProperties}

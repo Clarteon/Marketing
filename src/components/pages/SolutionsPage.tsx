@@ -14,7 +14,6 @@ export function SolutionsPage({ data }: { data: SolutionsData }) {
   return (
     <Page>
       <PageHero
-        eyebrow={data.hero.eyebrow}
         title={data.hero.title}
         intro={data.hero.intro}
         actions={

@@ -69,7 +69,7 @@ describe("page accessibility", () => {
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Technology that starts with your problem.",
     );
-    expect(screen.getByText("Your business tech partner")).toBeInTheDocument();
+    expect(screen.queryByText("Your business tech partner")).not.toBeInTheDocument();
     expect(screen.getByTestId("elastic-highlight")).toHaveTextContent("problem.");
     await expectNoA11yViolations(container);
   });

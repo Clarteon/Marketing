@@ -18,7 +18,7 @@ interface InsightsPageProps {
 export function InsightsPage({ data, items }: InsightsPageProps) {
   return (
     <Page>
-      <PageHero eyebrow={data.hero.eyebrow} title={data.hero.title} intro={data.hero.intro} />
+      <PageHero title={data.hero.title} intro={data.hero.intro} />
 
       <Section aria-labelledby="insights-title">
         <ScrollReveal variant="settle" className={styles.sectionHeader}>

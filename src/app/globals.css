@@ -42,15 +42,21 @@ body {
   background: var(--paper);
   color: var(--ink);
   font-family:
-    var(--font-inter, system-ui),
+    var(--font-sans, system-ui),
     system-ui,
     -apple-system,
     "Segoe UI",
     sans-serif;
   font-size: 1.125rem;
-  line-height: 1.65;
+  line-height: 1.6;
+  font-kerning: normal;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+strong,
+b {
+  font-weight: 600;
 }
 
 h1,
@@ -211,10 +217,6 @@ section[id] {
 
 .prose a:hover {
   text-decoration-thickness: 3px;
-}
-
-.prose strong {
-  font-weight: 600;
 }
 
 .prose blockquote {

@@ -8,7 +8,7 @@ import { Section } from "@/components/ui/Section";
 export function AboutPage({ data, body }: { data: SimplePageData; body: string }) {
   return (
     <Page>
-      <PageHero eyebrow={data.hero.eyebrow} title={data.hero.title} intro={data.hero.intro} />
+      <PageHero title={data.hero.title} intro={data.hero.intro} />
       <Section>
         <Markdown reveal>{body}</Markdown>
       </Section>

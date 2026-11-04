@@ -20,7 +20,7 @@ interface OurWorkPageProps {
 export function OurWorkPage({ data, body, items }: OurWorkPageProps) {
   return (
     <Page>
-      <PageHero eyebrow={data.hero.eyebrow} title={data.hero.title} intro={data.hero.intro} />
+      <PageHero title={data.hero.title} intro={data.hero.intro} />
 
       <Section aria-labelledby="work-title">
         <ScrollReveal variant="wipe" className={styles.sectionHeader}>

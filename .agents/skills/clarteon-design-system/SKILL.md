@@ -1,6 +1,6 @@
 ---
 name: clarteon-design-system
-description: Implement the Clarteon brand as design tokens and shared UI components (roadmap phase P1): palette, Fraunces and Inter typography, buttons, sections, cards, header, footer and the aperture logo. Use whenever the task involves styling, theming, fonts, colors, the logo, buttons or reusable components for the Clarteon site, even if the user does not mention the design system.
+description: Implement the Clarteon brand as design tokens and shared UI components (roadmap phase P1): palette, Fraunces and Schibsted Grotesk typography, buttons, sections, cards, header, footer and the aperture logo. Use whenever the task involves styling, theming, fonts, colors, the logo, buttons or reusable components for the Clarteon site, even if the user does not mention the design system.
 ---
 
 # Clarteon design system
@@ -18,7 +18,7 @@ Define the tokens once (CSS variables or the framework's theme config) and use t
 --graphite: #5C5C58;  --lime: #C6F432;  --line: #E4E4E0;
 ```
 
-- Fonts via the framework's font loader: Fraunces for headlines (weight 400 to 600, tight negative letter spacing), Inter for body and interface.
+- Fonts via the framework's font loader: Fraunces for headlines (weight 400 to 600, tight negative letter spacing), Schibsted Grotesk for body and interface (variable font, 400 to 900 with italics; use the weight roles in brand-and-copy). Both are exposed as the CSS variables --font-fraunces and --font-sans.
 - Headline sizes scale fluidly with viewport width. Body is 18 to 20 px with generous line height.
 - Spacing steps of 8 px. Corner radius 8 px for small elements, 20 px for cards, fully rounded for buttons.
 

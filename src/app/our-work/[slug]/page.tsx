@@ -33,7 +33,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
   return (
     <>
       <JsonLd data={articleJsonLd(page, getSiteUrl())} />
-      <ArticlePage page={page} eyebrow="Case study" />
+      <ArticlePage page={page} />
     </>
   );
 }

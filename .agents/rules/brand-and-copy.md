@@ -4,7 +4,7 @@
 
 - Palette: Ink #0A0A0A (text, dark sections), Paper #FFFFFF (background), Stone #F4F4F2 (cards, quiet sections), Graphite #5C5C58 (secondary text), Lime #C6F432 (actions and highlights).
 - Lime is a spotlight, never a wash. Use it only as a fill with Ink text on top. Never use lime as text on a light background, because the contrast is too low.
-- Fonts: Fraunces for headlines, Inter for body and interface. Instrument Serif is the alternative headline face.
+- Fonts: Fraunces for headlines, Schibsted Grotesk for body and interface: Regular (400) for text, Medium (500) for navigation and labels, Semibold (600) for buttons and emphasis, Italic only for real emphasis inside text. Labels are sentence case, never small tracked capitals. Schibsted Grotesk has no weight below 400. Instrument Serif is the alternative headline face.
 - Logo: wordmark "Clarteon" in Fraunces plus a small aperture symbol, a lime tile holding a "C" that opens like a lens around one point of focus. It must work at 16 px as a favicon.
 - Feel: clean and corporate, but bold and minimal. Generous whitespace, one idea per section, few elements.
 - Buttons: pill shape, at least 44 px tall (56 px for hero actions), primary is lime with Ink text, secondary is an Ink outline.

@@ -36,7 +36,6 @@ export function HowWeWorkPage({ data }: { data: HowWeWorkData }) {
   return (
     <Page>
       <PageHero
-        eyebrow={data.hero.eyebrow}
         title={data.hero.title}
         intro={data.hero.intro}
         actions={

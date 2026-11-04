@@ -33,7 +33,7 @@ export default async function InsightPage({ params }: { params: Promise<{ slug: 
   return (
     <>
       <JsonLd data={articleJsonLd(page, getSiteUrl())} />
-      <ArticlePage page={page} eyebrow="Insight" />
+      <ArticlePage page={page} />
     </>
   );
 }

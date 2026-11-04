@@ -146,7 +146,7 @@
 
 .stepNumber {
   display: block;
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
   font-size: clamp(2.5rem, 4vw, 3.5rem);
   font-weight: 400;
   letter-spacing: -0.02em;
@@ -178,7 +178,7 @@
 }
 
 .stepTitle {
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
   font-size: 1.375rem;
   font-weight: 600;
   line-height: 1.25;

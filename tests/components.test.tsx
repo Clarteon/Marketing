@@ -76,17 +76,15 @@ describe("design system", () => {
     );
   });
 
-  it("renders the home badge and highlighted phrase", () => {
+  it("renders the highlighted phrase", () => {
     render(
       <PageHero
         variant="home"
-        eyebrow="Your business tech partner"
         title="Technology that starts with your problem."
         highlight="problem."
       />,
     );
 
-    expect(screen.getByText("Your business tech partner")).toBeInTheDocument();
     expect(screen.getByTestId("elastic-highlight")).toHaveTextContent("problem.");
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Technology that starts with your problem.",

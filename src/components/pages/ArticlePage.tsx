@@ -8,13 +8,12 @@ import { Section } from "@/components/ui/Section";
 
 interface ArticlePageProps {
   page: ContentPage;
-  eyebrow: string;
 }
 
-export function ArticlePage({ page, eyebrow }: ArticlePageProps) {
+export function ArticlePage({ page }: ArticlePageProps) {
   return (
     <Page>
-      <PageHero eyebrow={eyebrow} title={page.frontMatter.title} intro={page.frontMatter.summary} />
+      <PageHero title={page.frontMatter.title} intro={page.frontMatter.summary} />
       <Section width="narrow">
         <ReadingProgress>
           <Markdown>{page.body}</Markdown>
