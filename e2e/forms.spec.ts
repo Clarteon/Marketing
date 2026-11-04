@@ -43,6 +43,27 @@ test.describe("project brief form", () => {
     );
   });
 
+  test("loads the brief from its existing anchor and keeps entered details after scrolling", async ({
+    page,
+  }) => {
+    await page.goto("/contact");
+    await page.waitForLoadState("networkidle");
+    await expect(page.locator("#brief-name")).toHaveCount(0);
+    const formSpace = page.locator('[data-deferred-form="brief"]');
+    // Layout height excludes the existing reveal animation's temporary scale.
+    const placeholderHeight = await formSpace.evaluate(
+      (node) => (node as HTMLElement).offsetHeight,
+    );
+    await page.getByRole("link", { name: "Send a project brief", exact: true }).click();
+    await expect(page.locator("#brief-name")).toBeVisible();
+    const loadedHeight = await formSpace.evaluate((node) => (node as HTMLElement).offsetHeight);
+    expect(Math.abs(loadedHeight - placeholderHeight)).toBeLessThan(2);
+    await page.locator("#brief-name").fill("Example visitor");
+    await page.locator("h1").scrollIntoViewIfNeeded();
+    await page.locator("#brief-title").scrollIntoViewIfNeeded();
+    await expect(page.locator("#brief-name")).toHaveValue("Example visitor");
+  });
+
   test("sends only the expected fields and confirms the brief", async ({ page }) => {
     let sent: Record<string, unknown> | undefined;
     await page.route("/api/lead", async (route) => {
@@ -98,6 +119,32 @@ test.describe("discovery call booking", () => {
     await page.route("/api/booking/availability**", (route) =>
       route.fulfill({ json: { ok: true, timezone: "UTC", slots: slotsFromTomorrow() } }),
     );
+  });
+
+  test("does not fetch availability before the calendar is needed", async ({ page }) => {
+    let availabilityRequests = 0;
+    page.on("request", (request) => {
+      if (request.url().includes("/api/booking/availability")) availabilityRequests += 1;
+    });
+    await page.goto("/contact");
+    await page.waitForLoadState("networkidle");
+    expect(availabilityRequests).toBe(0);
+    await page.getByRole("link", { name: "Book a discovery call", exact: true }).click();
+    await expect(page.locator("#book").getByRole("grid")).toBeVisible();
+    expect(availabilityRequests).toBeGreaterThan(0);
+  });
+
+  test("offers a recovery path if the deferred booking code cannot load", async ({ page }) => {
+    await page.goto("/contact");
+    await page.waitForLoadState("networkidle");
+    await page.route("**/_next/static/chunks/*.js", (route) => route.abort());
+    await page.getByRole("link", { name: "Book a discovery call", exact: true }).click();
+    await expect(page.locator("#book").getByRole("alert")).toContainText(
+      "booking form couldn’t load",
+    );
+    await expect(
+      page.locator("#book").getByRole("link", { name: "email the team" }),
+    ).toHaveAttribute("href", "mailto:info@clarteon.tech");
   });
 
   async function chooseSlotAndFill(page: Page) {

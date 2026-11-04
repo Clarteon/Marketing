@@ -2,6 +2,8 @@
 
 Recorded: November 4, 2026 (Asia/Manila).
 
+Follow-up: the Contact startup-performance failure recorded below is resolved by the loading fix in the separate [performance audit and verification record](contact-performance.md) on the same branch. The final Lighthouse run passes all required budgets; remaining advisory warnings and historical failure measurements are retained.
+
 Branch: `fix/clara-response-reliability`, based on local `main` at `d1a24d3`.
 
 Final dependency check: local `main` advanced during this work to `85a2efd` (merge of the newer `clara-timezone-choices` work). This branch remains based on the approved `d1a24d3` and does not include those newer timezone-choice changes. Both touch `src/lib/chat/prompt.ts`; integrate and verify that work before publishing a combined revision. No merge, rebase or history rewrite was performed here.

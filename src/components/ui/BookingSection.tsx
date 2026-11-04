@@ -3,7 +3,7 @@
 import { useEffect, useRef, type RefObject } from "react";
 import { usePathname } from "next/navigation";
 import { cx } from "@/lib/cx";
-import { BookingForm } from "./BookingForm";
+import { DeferredForm } from "./DeferredForm";
 import { Button } from "./Button";
 import { Section } from "./Section";
 import styles from "./ui.module.css";
@@ -147,7 +147,7 @@ export function BookingSection({
 
         <div className={styles.bookingActions}>
           {mode === "form" ? (
-            <BookingForm turnstileSiteKey={turnstileSiteKey} />
+            <DeferredForm kind="booking" turnstileSiteKey={turnstileSiteKey} />
           ) : mode === "link" ? (
             <>
               <Button href="/contact#book" variant={onLime ? "dark" : "primary"} size="large">
