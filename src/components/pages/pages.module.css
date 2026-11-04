@@ -59,6 +59,12 @@
   color: var(--fg, var(--ink));
 }
 
+@media (max-width: 640px) {
+  .visualizationTitle {
+    font-size: clamp(1.75rem, 8vw, 2.125rem);
+  }
+}
+
 .problemCard {
   position: relative;
   display: flex;
@@ -660,12 +666,11 @@
 
 .messagePanel {
   display: grid;
-  max-width: 52rem;
   gap: 1.25rem;
 }
 
 .messageFrame {
-  max-width: 52rem;
+  max-width: none;
   padding: clamp(1.5rem, 4vw, 3rem);
 }
 
@@ -689,6 +694,20 @@
 
 .messageAction {
   margin-top: 0.75rem;
+}
+
+@media (min-width: 900px) {
+  .messagePanel {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: clamp(2rem, 6vw, 5rem);
+  }
+
+  .messageAction {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+    margin-top: 0;
+  }
 }
 
 .emptyActions {
