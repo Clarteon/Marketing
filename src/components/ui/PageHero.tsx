@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { cx } from "@/lib/cx";
 import { CoordinateGrid } from "./CoordinateGrid";
 import { ElasticHighlight } from "./ElasticHighlight";
@@ -33,6 +33,21 @@ export function PageHero({
   const isHome = variant === "home";
   const highlightIndex = highlight ? title.indexOf(highlight) : -1;
   const hasHighlight = highlightIndex >= 0;
+  let wordIndex = 0;
+  const animateWords = (text: string) =>
+    text.split(/(\s+)/).map((part) =>
+      part.trim() ? (
+        <span
+          key={wordIndex}
+          className={styles.heroWord}
+          style={{ "--i": wordIndex++ } as CSSProperties}
+        >
+          {part}
+        </span>
+      ) : (
+        part
+      ),
+    );
 
   return (
     <Section
@@ -52,15 +67,20 @@ export function PageHero({
               <p className={styles.eyebrow}>{eyebrow}</p>
             )
           ) : null}
-          <h1 className={styles.heroTitle}>
+          <h1
+            className={styles.heroTitle}
+            style={{ "--words": title.trim().split(/\s+/).length } as CSSProperties}
+          >
             {hasHighlight ? (
               <>
-                {title.slice(0, highlightIndex)}
-                <ElasticHighlight>{highlight}</ElasticHighlight>
-                {title.slice(highlightIndex + highlight!.length)}
+                {animateWords(title.slice(0, highlightIndex))}
+                <span className={styles.heroWord} style={{ "--i": wordIndex++ } as CSSProperties}>
+                  <ElasticHighlight>{highlight}</ElasticHighlight>
+                </span>
+                {animateWords(title.slice(highlightIndex + highlight!.length))}
               </>
             ) : (
-              title
+              animateWords(title)
             )}
           </h1>
           {intro ? <p className={styles.heroIntro}>{intro}</p> : null}

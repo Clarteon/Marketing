@@ -87,8 +87,9 @@ describe("design system", () => {
     );
 
     expect(screen.getByText("Your business tech partner")).toBeInTheDocument();
-    expect(screen.getByRole("heading", { level: 1 }).querySelector("span")).toHaveTextContent(
-      "problem.",
+    expect(screen.getByTestId("elastic-highlight")).toHaveTextContent("problem.");
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
+      "Technology that starts with your problem.",
     );
   });
 
