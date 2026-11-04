@@ -136,6 +136,7 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
 
     if (!privacyAccepted) {
       const initialFocus =
+        panelRef.current?.querySelector<HTMLElement>("[data-chat-initial-focus]:not([disabled])") ??
         panelRef.current?.querySelector<HTMLElement>("button:not([disabled])") ??
         panelRef.current?.querySelector<HTMLElement>("a[href]");
       initialFocus?.focus();
@@ -176,6 +177,46 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [open, privacyAccepted]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const panel = panelRef.current;
+    const visualViewport = window.visualViewport;
+    if (!panel || !visualViewport) return;
+
+    const updateVisibleViewport = () => {
+      const keyboardCoversViewport =
+        document.activeElement === inputRef.current &&
+        visualViewport.offsetTop + visualViewport.height < window.innerHeight - 100;
+
+      if (!keyboardCoversViewport) {
+        panel.style.removeProperty("--clara-visible-height");
+        panel.style.removeProperty("--clara-visible-top");
+        panel.style.removeProperty("--clara-visible-bottom");
+        return;
+      }
+
+      panel.style.setProperty("--clara-visible-height", `${visualViewport.height}px`);
+      panel.style.setProperty("--clara-visible-top", `${visualViewport.offsetTop}px`);
+      panel.style.setProperty(
+        "--clara-visible-bottom",
+        `${Math.max(0, window.innerHeight - visualViewport.offsetTop - visualViewport.height)}px`,
+      );
+    };
+
+    visualViewport.addEventListener("resize", updateVisibleViewport);
+    visualViewport.addEventListener("scroll", updateVisibleViewport);
+    updateVisibleViewport();
+
+    return () => {
+      visualViewport.removeEventListener("resize", updateVisibleViewport);
+      visualViewport.removeEventListener("scroll", updateVisibleViewport);
+      panel.style.removeProperty("--clara-visible-height");
+      panel.style.removeProperty("--clara-visible-top");
+      panel.style.removeProperty("--clara-visible-bottom");
+    };
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -431,6 +472,14 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
               </h2>
               <p className={styles.subtitle}>Clarteon’s AI assistant</p>
             </div>
+            <button
+              type="button"
+              className={styles.closeButton}
+              aria-label="Close chat"
+              onClick={closeChat}
+            >
+              Close
+            </button>
           </header>
 
           <div
@@ -455,7 +504,7 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
                   </Link>{" "}
                   for how chats are handled.
                 </p>
-                <Button type="button" onClick={acceptPrivacy}>
+                <Button type="button" data-chat-initial-focus onClick={acceptPrivacy}>
                   I understand
                 </Button>
               </div>
