@@ -54,6 +54,7 @@ describe("Groq model client", () => {
     });
     const body = JSON.parse(fetchMock.mock.calls[0][1].body);
     expect(body.stream).toBe(false);
+    expect(body.temperature).toBe(0);
     expect(body).not.toHaveProperty("tools");
     expect(body.response_format.json_schema).toMatchObject({
       strict: true,
@@ -85,7 +86,23 @@ describe("Groq model client", () => {
       include_reasoning: false,
       reasoning_effort: "low",
       max_completion_tokens: 600,
+      temperature: 0.5,
     });
+  });
+
+  it("preserves the fallback model sampling parameters for classification", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      Response.json({
+        choices: [{ message: { content: '{"kind":"business"}' }, finish_reason: "stop" }],
+      }),
+    );
+    await streamModelCompletion({
+      ...base,
+      models: ["qwen/qwen3.8-27b"],
+      fetchImpl: fetchMock,
+      responseSchema: { type: "object", properties: { kind: { type: "string" } } },
+    });
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body).temperature).toBe(0.5);
   });
 
   it("assembles streamed tool calls, including split arguments", async () => {

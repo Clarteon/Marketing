@@ -45,4 +45,21 @@ describe("Scope classifier transport and validation", () => {
     });
     await expect(classifyChatScope(input)).rejects.toThrow();
   });
+
+  it.each(["privacy_processing", "data_deletion", "booking_recovery", "adequate_process"])(
+    "accepts the schema-constrained %s decision without tool access",
+    async (kind) => {
+      vi.mocked(streamModelCompletion).mockResolvedValue({
+        model: "test",
+        content: JSON.stringify({ kind, language: "en", businessMessage: "" }),
+        toolCalls: [],
+      });
+      expect((await classifyChatScope(input)).kind).toBe(kind);
+      const options = vi.mocked(streamModelCompletion).mock.calls[0][0];
+      expect(options.tools).toEqual([]);
+      expect(options.responseSchema).toMatchObject({
+        properties: { kind: { enum: expect.arrayContaining([kind]) } },
+      });
+    },
+  );
 });

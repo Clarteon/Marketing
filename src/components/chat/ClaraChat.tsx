@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
-import ReactMarkdown from "react-markdown";
+import { MessageMarkdown as ReactMarkdown } from "./MessageMarkdown";
 import { Button } from "@/components/ui/Button";
 import { TurnstileWidget } from "@/components/ui/TurnstileWidget";
 import { CHAT_TURNSTILE_ACTION } from "@/lib/chat/constants";

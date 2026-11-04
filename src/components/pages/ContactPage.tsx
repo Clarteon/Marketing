@@ -3,7 +3,7 @@ import { BookingSection } from "@/components/ui/BookingSection";
 import { Button } from "@/components/ui/Button";
 import { Page } from "@/components/ui/Page";
 import { PageHero } from "@/components/ui/PageHero";
-import { ProjectBriefForm } from "@/components/ui/ProjectBriefForm";
+import { DeferredForm } from "@/components/ui/DeferredForm";
 import { ReticleFrame } from "@/components/ui/ReticleFrame";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { Section } from "@/components/ui/Section";
@@ -53,7 +53,7 @@ export function ContactPage({
           </ScrollReveal>
 
           <ScrollReveal variant="settle">
-            <ProjectBriefForm turnstileSiteKey={turnstileSiteKey} />
+            <DeferredForm kind="brief" turnstileSiteKey={turnstileSiteKey} />
           </ScrollReveal>
         </div>
       </Section>

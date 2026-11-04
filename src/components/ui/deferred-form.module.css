@@ -1,0 +1,39 @@
+.frame {
+  min-block-size: 38rem;
+}
+
+/* Reserve the measured collapsed form, including verification error text.
+   Keep this space after activation so following anchors do not move. */
+.brief {
+  min-block-size: 48rem;
+}
+
+@media (max-width: 680px) {
+  .brief {
+    min-block-size: 58rem;
+  }
+}
+
+.placeholder {
+  padding: clamp(1rem, 2.2vw, 1.5rem);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.load {
+  min-block-size: 44px;
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--ink);
+  border-radius: var(--radius-pill);
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}
+
+.load:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 4px;
+}

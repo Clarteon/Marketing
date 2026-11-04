@@ -196,7 +196,7 @@ describe("navigation and forms", () => {
     const data = parsePageData(contactSchema, page);
     render(<ContactPage data={data} turnstileSiteKey="" />);
 
-    expect(screen.getByLabelText("Name")).toBeInTheDocument();
+    expect(await screen.findByLabelText("Name")).toBeInTheDocument();
     expect(screen.getByLabelText("Email")).toBeInTheDocument();
     expect(screen.getByLabelText(/What is slowing you down/)).toBeInTheDocument();
     expect(screen.getByLabelText(/I agree/)).toBeInTheDocument();
