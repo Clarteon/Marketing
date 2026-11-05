@@ -31,15 +31,11 @@
 
 @keyframes clarteon-marker-stroke {
   from {
-    transform: translateX(-104%) rotate(-1.6deg);
-  }
-
-  88% {
-    transform: translateX(0.8%) rotate(-1.6deg);
+    clip-path: inset(0 100% 0 0);
   }
 
   to {
-    transform: translateX(0) rotate(-1.6deg);
+    clip-path: inset(0 0 0 0);
   }
 }
 
@@ -1191,94 +1187,31 @@
   padding-inline: 0.12em;
 }
 
-.highlightInk {
-  position: absolute;
-  inset: 0.26em -0.16em 0.02em -0.08em;
-  z-index: -1;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.highlightInk::before,
-.highlightInk::after {
+.elasticHighlight::before {
   content: "";
   position: absolute;
-  inset: 0;
+  top: 0.15em;
+  bottom: -0.06em;
+  left: 0;
+  right: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(198, 244, 50, 0.95) 0%,
+    rgba(198, 244, 50, 0.78) 6%,
+    rgba(198, 244, 50, 0.85) 50%,
+    rgba(198, 244, 50, 0.75) 94%,
+    rgba(198, 244, 50, 0.95) 100%
+  );
+  border-radius: 0.12em 0.4em 0.18em 0.5em / 0.5em 0.2em 0.45em 0.18em;
+  transform: rotate(-1.2deg) skewX(-6deg);
   animation: clarteon-marker-stroke 380ms cubic-bezier(0.16, 0.86, 0.22, 1)
     calc(var(--i, 0) * 70ms + 210ms) both;
+  z-index: -1;
+  transition: box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.highlightInk::before {
-  background-image:
-    linear-gradient(
-      180deg,
-      rgba(214, 250, 66, 0.84) 0%,
-      rgba(198, 244, 50, 0.72) 34%,
-      rgba(186, 236, 36, 0.84) 86%,
-      rgba(168, 220, 22, 0.9) 100%
-    ),
-    linear-gradient(
-      90deg,
-      rgba(198, 244, 50, 0.9) 0%,
-      rgba(198, 244, 50, 0.76) 7%,
-      rgba(198, 244, 50, 0.86) 42%,
-      rgba(198, 244, 50, 0.72) 76%,
-      rgba(198, 244, 50, 0.88) 100%
-    );
-  clip-path: polygon(
-    0% 22%,
-    3% 12%,
-    11% 16%,
-    24% 8%,
-    38% 13%,
-    52% 7%,
-    66% 12%,
-    79% 6%,
-    90% 11%,
-    97% 8%,
-    100% 18%,
-    100% 52%,
-    99% 84%,
-    95% 95%,
-    86% 92%,
-    74% 97%,
-    61% 91%,
-    48% 96%,
-    35% 90%,
-    23% 95%,
-    12% 90%,
-    4% 96%,
-    0% 82%
-  );
-}
-
-.highlightInk::after {
-  background-image: linear-gradient(
-    90deg,
-    rgba(148, 198, 10, 0.2) 0%,
-    rgba(148, 198, 10, 0.05) 14%,
-    rgba(148, 198, 10, 0.16) 34%,
-    rgba(148, 198, 10, 0) 56%,
-    rgba(148, 198, 10, 0.12) 78%,
-    rgba(148, 198, 10, 0) 100%
-  );
-  clip-path: polygon(
-    6% 26%,
-    18% 18%,
-    34% 22%,
-    52% 16%,
-    70% 21%,
-    84% 17%,
-    94% 24%,
-    94% 84%,
-    82% 90%,
-    66% 85%,
-    48% 91%,
-    32% 86%,
-    16% 91%,
-    6% 84%
-  );
-  animation-delay: calc(var(--i, 0) * 70ms + 250ms);
+.elasticHighlight:hover::before {
+  box-shadow: 0 4px 14px rgba(198, 244, 50, 0.45);
 }
 
 :global([data-theme="dark"]) .elasticHighlight,
@@ -1287,28 +1220,28 @@
   color: #0a0a0a;
 }
 
-:global([data-theme="dark"]) .highlightInk::before,
-:global(.dark) .highlightInk::before,
-:global([data-tone="ink"]) .highlightInk::before {
-  background-image: none;
+:global([data-theme="dark"]) .elasticHighlight::before,
+:global(.dark) .elasticHighlight::before,
+:global([data-tone="ink"]) .elasticHighlight::before {
   background-color: var(--lime);
+  box-shadow: 0 0 20px rgba(198, 244, 50, 0.25);
 }
 
-:global([data-theme="dark"]) .highlightInk::after,
-:global(.dark) .highlightInk::after,
-:global([data-tone="ink"]) .highlightInk::after {
-  background-image: linear-gradient(
-    90deg,
-    rgba(140, 184, 8, 0.22) 0%,
-    rgba(140, 184, 8, 0) 60%,
-    rgba(140, 184, 8, 0.14) 100%
-  );
+:global([data-theme="dark"]) .elasticHighlight:hover::before,
+:global(.dark) .elasticHighlight:hover::before,
+:global([data-tone="ink"]) .elasticHighlight:hover::before {
+  box-shadow: 0 0 26px rgba(198, 244, 50, 0.5);
+}
+
+.elasticHighlight::after {
+  display: none !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .highlightInk::before,
-  .highlightInk::after {
+  .elasticHighlight,
+  .elasticHighlight::before {
     animation: none !important;
+    transition: none !important;
   }
 }
 
