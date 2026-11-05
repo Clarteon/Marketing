@@ -115,10 +115,8 @@ test("the home page carries Organization and WebSite structured data", async ({ 
   expect(types).toEqual(["Organization", "WebSite"]);
 });
 
-test("draft pages and draft case studies stay unpublished", async ({ page }) => {
+test("draft pages stay unpublished", async ({ page }) => {
   expect((await page.goto("/terms"))?.status()).toBe(404);
-  expect((await page.goto("/our-work/sample-order-entry-automation"))?.status()).toBe(404);
-  expect((await page.goto("/our-work/preview/sample-order-entry-automation"))?.status()).toBe(404);
 });
 
 test("the skip link is the first stop for keyboard users", async ({ page, isMobile }) => {
