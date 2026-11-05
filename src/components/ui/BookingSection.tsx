@@ -28,12 +28,15 @@ function renderHighlightedTitle(title: string, underlinePathRef: RefObject<SVGPa
     return title;
   }
 
-  const parts = title.split(phrase);
+  const [before, ...rest] = title.split(phrase);
+  const after = rest.join(phrase);
+  const trailing = after.match(/^[.,!?;:]+/)?.[0] ?? "";
   return (
     <>
-      {parts[0]}
+      {before}
       <span className={styles.bookingUnderlineWrap}>
         <span className={styles.bookingUnderlineText}>{phrase}</span>
+        {trailing}
         <svg
           className={styles.bookingUnderlineSvg}
           viewBox="0 0 340 18"
@@ -50,7 +53,7 @@ function renderHighlightedTitle(title: string, underlinePathRef: RefObject<SVGPa
           />
         </svg>
       </span>
-      {parts.slice(1).join(phrase)}
+      {after.slice(trailing.length)}
     </>
   );
 }

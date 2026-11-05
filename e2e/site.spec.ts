@@ -71,6 +71,35 @@ test("pages have no horizontal overflow", async ({ page }) => {
   }
 });
 
+test("headlines fit a phone and the booking full stop stays with its word", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  for (const path of ["/", "/solutions", "/contact"]) {
+    await page.goto(path);
+    await page.evaluate(() => document.fonts.ready);
+    const lines = await page.locator("h1").evaluate((element) => {
+      const style = getComputedStyle(element);
+      return Math.round(element.getBoundingClientRect().height / parseFloat(style.lineHeight));
+    });
+    expect(lines, path).toBeLessThanOrEqual(2);
+  }
+
+  await page.goto("/");
+  await page.evaluate(() => document.fonts.ready);
+  // The last line of the booking headline used to be the "." alone once the drawn underline
+  // stopped the phrase from wrapping. A bare full stop measures about 10px.
+  const lastLineWidth = await page.locator("#book-title").evaluate((element) => {
+    const range = document.createRange();
+    range.selectNodeContents(element);
+    const rects = [...range.getClientRects()].filter((rect) => rect.width > 1 && rect.height > 1);
+    const bottom = Math.max(...rects.map((rect) => rect.bottom));
+    const lastLine = rects.filter((rect) => Math.abs(rect.bottom - bottom) < 6);
+    const right = Math.max(...lastLine.map((rect) => rect.right));
+    const left = Math.min(...lastLine.map((rect) => rect.left));
+    return Math.round(right - left);
+  });
+  expect(lastLineWidth).toBeGreaterThan(40);
+});
+
 test("a preview build is hidden from search engines", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
