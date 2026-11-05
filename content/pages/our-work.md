@@ -3,26 +3,29 @@ title: "Work you can look at."
 slug: our-work
 type: page
 status: published
-summary: "Case studies framed as the problem, what we built, and the result."
+summary: "Real automations, AI assistants, and custom business systems framed around the problem, what we built, and what changed."
 tags:
   - case studies
   - client work
   - results
   - portfolio
+  - automation
+  - AI assistants
 synonyms:
   - portfolio
   - projects
   - case studies
+  - examples
 seoTitle: "Our work"
-seoDescription: "Case studies from Clarteon, framed as the problem, the solution and the result. We publish only work a client has agreed to share."
+seoDescription: "Real systems and automations built around business problems: order entry, stock and payment portals, support triage, voice AI coaching, and private apps."
 hero:
   eyebrow: "Our work"
   title: "Work you can look at."
-  intro: "Case studies framed as the problem, what we built, and the result. We publish only work a client has agreed to share."
+  intro: "Every build starts with the work slowing a team down: manual order entry, stock guesswork, repetitive support tickets, or training that cannot scale. Each case study lays out the problem, what we built, and what changed in daily work."
 empty:
   title: "No case studies are published yet."
   body: "The first case studies are being prepared. In the meantime, tell us about a problem you are working on."
 ---
-## How we choose what to publish
+## How we present our work
 
-We publish a project only when the client has given written permission to be named or described anonymously. Each case study is framed as the problem, what we built, and the result. We use only results the client or our records support.
+We publish a project only when a client has agreed to be named or described anonymously, alongside reference systems our team has built and tested end to end. Each write-up stays in plain business language: the bottleneck the team faced, the system we put in place, and the measurable difference in daily work.

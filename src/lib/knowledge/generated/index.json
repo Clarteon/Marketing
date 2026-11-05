@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-24T21:10:07.417Z",
+  "generatedAt": "2026-11-05T14:19:00.607Z",
   "chunks": [
     {
       "id": "about#how-we-work-with-clients-2",
@@ -91,6 +91,341 @@
         "founders",
         "team",
         "about us"
+      ]
+    },
+    {
+      "id": "ai-customer-support-triager#approachbrief",
+      "url": "/our-work/ai-customer-support-triager",
+      "title": "Approach Brief",
+      "headingPath": [
+        "Sorting support tickets and escalating urgent customers before a human opens the inbox.",
+        "Approach Brief"
+      ],
+      "text": "We connected the intake form to an automated workflow that tags category, tone, and urgency on arrival, drafts a reply from official FAQ docs, and routes the ticket in Slack.",
+      "tags": [
+        "customer support automation",
+        "ticket triage",
+        "Slack integration",
+        "Airtable",
+        "AI assistant",
+        "workflow automation"
+      ],
+      "synonyms": [
+        "helpdesk automation",
+        "support queue routing",
+        "customer service AI",
+        "ticket escalation"
+      ]
+    },
+    {
+      "id": "ai-customer-support-triager#category",
+      "url": "/our-work/ai-customer-support-triager",
+      "title": "Category",
+      "headingPath": [
+        "Sorting support tickets and escalating urgent customers before a human opens the inbox.",
+        "Category"
+      ],
+      "text": "conversations",
+      "tags": [
+        "customer support automation",
+        "ticket triage",
+        "Slack integration",
+        "Airtable",
+        "AI assistant",
+        "workflow automation"
+      ],
+      "synonyms": [
+        "helpdesk automation",
+        "support queue routing",
+        "customer service AI",
+        "ticket escalation"
+      ]
+    },
+    {
+      "id": "ai-customer-support-triager#categorylabel",
+      "url": "/our-work/ai-customer-support-triager",
+      "title": "Category Label",
+      "headingPath": [
+        "Sorting support tickets and escalating urgent customers before a human opens the inbox.",
+        "Category Label"
+      ],
+      "text": "Customer support & triage",
+      "tags": [
+        "customer support automation",
+        "ticket triage",
+        "Slack integration",
+        "Airtable",
+        "AI assistant",
+        "workflow automation"
+      ],
+      "synonyms": [
+        "helpdesk automation",
+        "support queue routing",
+        "customer service AI",
+        "ticket escalation"
+      ]
+    },
+    {
+      "id": "ai-customer-support-triager#client",
+      "url": "/our-work/ai-customer-support-triager",
+      "title": "Client",
+      "headingPath": [
+        "Sorting support tickets and escalating urgent customers before a human opens the inbox.",
+        "Client"
+      ],
+      "text": "Inbound Customer Support Operations Build",
+      "tags": [
+        "customer support automation",
+        "ticket triage",
+        "Slack integration",
+        "Airtable",
+        "AI assistant",
+        "workflow automation"
+      ],
+      "synonyms": [
+        "helpdesk automation",
+        "support queue routing",
+        "customer service AI",
+        "ticket escalation"
+      ]
+    },
+    {
+      "id": "ai-customer-support-triager#highlights",
+      "url": "/our-work/ai-customer-support-triager",
+      "title": "Highlights",
+      "headingPath": [
+        "Sorting support tickets and escalating urgent customers before a human opens the inbox.",
+        "Highlights"
+      ],
+      "text": "Tags every new ticket by topic, customer tone, and urgency the moment it arrives. Drafts first replies strictly from approved company documentation so answers stay consistent. Routes billing, technical, and account tickets to separate Slack channels and escalates high-urgency issues immediately.",
+      "tags": [
+        "customer support automation",
+        "ticket triage",
+        "Slack integration",
+        "Airtable",
+        "AI assistant",
+        "workflow automation"
+      ],
+      "synonyms": [
+        "helpdesk automation",
+        "support queue routing",
+        "customer service AI",
+        "ticket escalation"
+      ]
+    },
+    {
+      "id": "ai-customer-support-triager#imagealt",
+      "url": "/our-work/ai-customer-support-triager",
+      "title": "Image Alt",
+      "headingPath": [
+        "Sorting support tickets and escalating urgent customers before a human opens the inbox.",
+        "Image Alt"
+      ],
+      "text": "Automated support triage workflow showing ticket classification, company FAQ lookup, Airtable logging, and Slack channel routing.",
+      "tags": [
+        "customer support automation",
+        "ticket triage",
+        "Slack integration",
+        "Airtable",
+        "AI assistant",
+        "workflow automation"
+      ],
+      "synonyms": [
+        "helpdesk automation",
+        "support queue routing",
+        "customer service AI",
+        "ticket escalation"
+      ]
+    },
+    {
+      "id": "ai-customer-support-triager#outcomebrief",
+      "url": "/our-work/ai-customer-support-triager",
+      "title": "Outcome Brief",
+      "headingPath": [
+        "Sorting support tickets and escalating urgent customers before a human opens the inbox.",
+        "Outcome Brief"
+      ],
+      "text": "Frustrated customers with urgent problems trigger an immediate escalation alert, routine questions arrive with a ready-to-send draft, and every ticket is logged in Airtable.",
+      "tags": [
+        "customer support automation",
+        "ticket triage",
+        "Slack integration",
+        "Airtable",
+        "AI assistant",
+        "workflow automation"
+      ],
+      "synonyms": [
+        "helpdesk automation",
+        "support queue routing",
+        "customer service AI",
+        "ticket escalation"
+      ]
+    },
+    {
+      "id": "ai-customer-support-triager#overview",
+      "url": "/our-work/ai-customer-support-triager",
+      "title": "Sorting support tickets and escalating urgent customers before a human opens the inbox.",
+      "headingPath": [
+        "Sorting support tickets and escalating urgent customers before a human opens the inbox."
+      ],
+      "text": "When every support request waits in the same queue for a manual first read, urgent customer issues sit behind routine questions. We built an automated triage pipeline that classifies incoming tickets, drafts replies from approved company FAQs, and alerts the right team channel in Slack.",
+      "tags": [
+        "customer support automation",
+        "ticket triage",
+        "Slack integration",
+        "Airtable",
+        "AI assistant",
+        "workflow automation"
+      ],
+      "synonyms": [
+        "helpdesk automation",
+        "support queue routing",
+        "customer service AI",
+        "ticket escalation"
+      ]
+    },
+    {
+      "id": "ai-customer-support-triager#permission",
+      "url": "/our-work/ai-customer-support-triager",
+      "title": "Permission",
+      "headingPath": [
+        "Sorting support tickets and escalating urgent customers before a human opens the inbox.",
+        "Permission"
+      ],
+      "text": "Approved by lead engineer Aldrei Santua on 2026-11-05",
+      "tags": [
+        "customer support automation",
+        "ticket triage",
+        "Slack integration",
+        "Airtable",
+        "AI assistant",
+        "workflow automation"
+      ],
+      "synonyms": [
+        "helpdesk automation",
+        "support queue routing",
+        "customer service AI",
+        "ticket escalation"
+      ]
+    },
+    {
+      "id": "ai-customer-support-triager#problembrief",
+      "url": "/our-work/ai-customer-support-triager",
+      "title": "Problem Brief",
+      "headingPath": [
+        "Sorting support tickets and escalating urgent customers before a human opens the inbox.",
+        "Problem Brief"
+      ],
+      "text": "Support staff were reading every incoming form submission by hand to figure out what it was about, how urgent it was, and which teammate needed to see it.",
+      "tags": [
+        "customer support automation",
+        "ticket triage",
+        "Slack integration",
+        "Airtable",
+        "AI assistant",
+        "workflow automation"
+      ],
+      "synonyms": [
+        "helpdesk automation",
+        "support queue routing",
+        "customer service AI",
+        "ticket escalation"
+      ]
+    },
+    {
+      "id": "ai-customer-support-triager#solution-type",
+      "url": "/our-work/ai-customer-support-triager",
+      "title": "Solution type",
+      "headingPath": [
+        "Sorting support tickets and escalating urgent customers before a human opens the inbox.",
+        "Solution type"
+      ],
+      "text": "Automated ticket triage, reply drafting, and Slack escalation",
+      "tags": [
+        "customer support automation",
+        "ticket triage",
+        "Slack integration",
+        "Airtable",
+        "AI assistant",
+        "workflow automation"
+      ],
+      "synonyms": [
+        "helpdesk automation",
+        "support queue routing",
+        "customer service AI",
+        "ticket escalation"
+      ]
+    },
+    {
+      "id": "ai-customer-support-triager#the-problem-1",
+      "url": "/our-work/ai-customer-support-triager",
+      "title": "The problem",
+      "headingPath": [
+        "Sorting support tickets and escalating urgent customers before a human opens the inbox.",
+        "The problem"
+      ],
+      "text": "In many growing service businesses, every customer enquiry lands in one shared inbox or form sheet. A team member has to open each message, figure out whether it is a billing mistake, a technical bug, or a simple password question, check the company’s help docs, and copy the right person in Slack. That manual sorting breaks down as volume grows. Routine questions eat up the morning, while an upset customer facing an urgent billing or access failure can sit unread at the bottom of the queue for hours.",
+      "tags": [
+        "customer support automation",
+        "ticket triage",
+        "Slack integration",
+        "Airtable",
+        "AI assistant",
+        "workflow automation"
+      ],
+      "synonyms": [
+        "helpdesk automation",
+        "support queue routing",
+        "customer service AI",
+        "ticket escalation"
+      ]
+    },
+    {
+      "id": "ai-customer-support-triager#the-result-3",
+      "url": "/our-work/ai-customer-support-triager",
+      "title": "The result",
+      "headingPath": [
+        "Sorting support tickets and escalating urgent customers before a human opens the inbox.",
+        "The result"
+      ],
+      "text": "Instead of starting the day with an unsorted pile of messages, the support team opens Slack to find tickets already grouped by department, urgent issues flagged at the top, and a policy-backed draft waiting on each one. First response times drop, handoffs stay consistent regardless of who is on shift, and no upset customer gets lost behind routine admin.",
+      "tags": [
+        "customer support automation",
+        "ticket triage",
+        "Slack integration",
+        "Airtable",
+        "AI assistant",
+        "workflow automation"
+      ],
+      "synonyms": [
+        "helpdesk automation",
+        "support queue routing",
+        "customer service AI",
+        "ticket escalation"
+      ]
+    },
+    {
+      "id": "ai-customer-support-triager#what-we-did-2",
+      "url": "/our-work/ai-customer-support-triager",
+      "title": "What we did",
+      "headingPath": [
+        "Sorting support tickets and escalating urgent customers before a human opens the inbox.",
+        "What we did"
+      ],
+      "text": "We looked at what a senior support lead actually does during the first two minutes with a new ticket, then automated that exact preparation step while keeping a human in control of the final reply. When a customer submits the support form, the workflow reads the message and assigns three clear labels: the department it belongs to (billing, technical, account, or general), the customer’s tone, and the urgency level. At the same time, the system searches the company’s approved FAQ documents and prepares a draft response based on those policies. Next, a routing rule decides where the ticket goes. Standard tickets land in their matching Slack channel with the customer’s message, classification tags, and the suggested reply ready for a teammate to review. If a ticket comes in with both negative sentiment and high urgency, the workflow bypasses the normal queue and posts straight to an urgent escalation channel so the team can step in right away. Every ticket and draft is also recorded in Airtable for tracking.",
+      "tags": [
+        "customer support automation",
+        "ticket triage",
+        "Slack integration",
+        "Airtable",
+        "AI assistant",
+        "workflow automation"
+      ],
+      "synonyms": [
+        "helpdesk automation",
+        "support queue routing",
+        "customer service AI",
+        "ticket escalation"
       ]
     },
     {
@@ -307,7 +642,7 @@
         "Technology that starts with your problem.",
         "Work you can look at."
       ],
-      "text": "We publish client work only with permission, named or anonymous. The first case studies are being prepared. In the meantime, tell us what you are working on. See our work",
+      "text": "Every project here started with a bottleneck: orders buried in chat messages, support queues full of repetitive questions, or manual spreadsheets eating up the week. Explore what we built and what changed. See our work",
       "tags": [
         "technology partner",
         "automation",
@@ -332,7 +667,7 @@
         "Process",
         "Diagnose"
       ],
-      "text": "We start with the work that is slowing you down, not with a product to sell. We ask what happens today and where it breaks.",
+      "text": "We start with the work that is slowing your team down. We ask what happens today, where the handoffs break, and what a good day would look like.",
       "tags": [
         "technology partner",
         "automation",
@@ -431,7 +766,7 @@
         "Four steps. Clear and simple.",
         "What to expect on a discovery call"
       ],
-      "text": "Tell us what’s slowing you down. We’ll talk it through and explore a practical next step. We ask what is slowing you down, what you have tried, and what a good outcome looks like. We look for the smallest useful next step, not the biggest possible project. You leave with a clear idea of the likely direction and whether we are a fit. If we are not the right fit, we say so and point you toward a better option. No preparation is required beyond a rough description of the problem.",
+      "text": "Tell us what’s slowing you down. We’ll talk it through and explore a practical next step. We ask what is slowing you down, what you have tried, and what a good outcome looks like. We look for the smallest useful first step that solves the bottleneck without disrupting your week. You leave with a clear idea of the likely direction and whether we are a fit. If we are not the right fit, we say so and point you toward a better option. No preparation is required beyond a rough description of the problem.",
       "tags": [
         "how we work",
         "process",
@@ -614,6 +949,715 @@
       ]
     },
     {
+      "id": "janelles-satin-bouquet#approachbrief",
+      "url": "/our-work/janelles-satin-bouquet",
+      "title": "Approach Brief",
+      "headingPath": [
+        "Stopping double-sold stock and manual payment checks for a custom bouquet shop.",
+        "Approach Brief"
+      ],
+      "text": "We built a phone-friendly storefront that holds stock at checkout, matches incoming GCash confirmation texts automatically, and alerts the owner on Telegram only when a payment needs a human look.",
+      "tags": [
+        "order automation",
+        "payment verification",
+        "e-commerce",
+        "AI assistant",
+        "inventory management",
+        "small business automation"
+      ],
+      "synonyms": [
+        "Messenger orders",
+        "GCash verification",
+        "online store",
+        "bouquet shop",
+        "stock tracking"
+      ]
+    },
+    {
+      "id": "janelles-satin-bouquet#category",
+      "url": "/our-work/janelles-satin-bouquet",
+      "title": "Category",
+      "headingPath": [
+        "Stopping double-sold stock and manual payment checks for a custom bouquet shop.",
+        "Category"
+      ],
+      "text": "operations",
+      "tags": [
+        "order automation",
+        "payment verification",
+        "e-commerce",
+        "AI assistant",
+        "inventory management",
+        "small business automation"
+      ],
+      "synonyms": [
+        "Messenger orders",
+        "GCash verification",
+        "online store",
+        "bouquet shop",
+        "stock tracking"
+      ]
+    },
+    {
+      "id": "janelles-satin-bouquet#categorylabel",
+      "url": "/our-work/janelles-satin-bouquet",
+      "title": "Category Label",
+      "headingPath": [
+        "Stopping double-sold stock and manual payment checks for a custom bouquet shop.",
+        "Category Label"
+      ],
+      "text": "Orders, stock & payments",
+      "tags": [
+        "order automation",
+        "payment verification",
+        "e-commerce",
+        "AI assistant",
+        "inventory management",
+        "small business automation"
+      ],
+      "synonyms": [
+        "Messenger orders",
+        "GCash verification",
+        "online store",
+        "bouquet shop",
+        "stock tracking"
+      ]
+    },
+    {
+      "id": "janelles-satin-bouquet#client",
+      "url": "/our-work/janelles-satin-bouquet",
+      "title": "Client",
+      "headingPath": [
+        "Stopping double-sold stock and manual payment checks for a custom bouquet shop.",
+        "Client"
+      ],
+      "text": "Janelle’s Satin Bouquet (Dasmariñas, Cavite)",
+      "tags": [
+        "order automation",
+        "payment verification",
+        "e-commerce",
+        "AI assistant",
+        "inventory management",
+        "small business automation"
+      ],
+      "synonyms": [
+        "Messenger orders",
+        "GCash verification",
+        "online store",
+        "bouquet shop",
+        "stock tracking"
+      ]
+    },
+    {
+      "id": "janelles-satin-bouquet#highlights",
+      "url": "/our-work/janelles-satin-bouquet",
+      "title": "Highlights",
+      "headingPath": [
+        "Stopping double-sold stock and manual payment checks for a custom bouquet shop.",
+        "Highlights"
+      ],
+      "text": "Stock locks at checkout so one-of-a-kind bouquets cannot be promised to two buyers at once. GCash payment texts match against unique expected amounts and single-use reference numbers. Ambiguous payments never mark an order paid on their own; they send a Telegram alert for one-tap review.",
+      "tags": [
+        "order automation",
+        "payment verification",
+        "e-commerce",
+        "AI assistant",
+        "inventory management",
+        "small business automation"
+      ],
+      "synonyms": [
+        "Messenger orders",
+        "GCash verification",
+        "online store",
+        "bouquet shop",
+        "stock tracking"
+      ]
+    },
+    {
+      "id": "janelles-satin-bouquet#imagealt",
+      "url": "/our-work/janelles-satin-bouquet",
+      "title": "Image Alt",
+      "headingPath": [
+        "Stopping double-sold stock and manual payment checks for a custom bouquet shop.",
+        "Image Alt"
+      ],
+      "text": "Janelle’s Satin Bouquet online storefront showing handcrafted satin bouquets and custom order options.",
+      "tags": [
+        "order automation",
+        "payment verification",
+        "e-commerce",
+        "AI assistant",
+        "inventory management",
+        "small business automation"
+      ],
+      "synonyms": [
+        "Messenger orders",
+        "GCash verification",
+        "online store",
+        "bouquet shop",
+        "stock tracking"
+      ]
+    },
+    {
+      "id": "janelles-satin-bouquet#outcomebrief",
+      "url": "/our-work/janelles-satin-bouquet",
+      "title": "Outcome Brief",
+      "headingPath": [
+        "Stopping double-sold stock and manual payment checks for a custom bouquet shop.",
+        "Outcome Brief"
+      ],
+      "text": "Buyers price and book orders on their own, exact payments confirm automatically, and the built-in assistant answers questions in English, Tagalog, or Taglish using live shop prices.",
+      "tags": [
+        "order automation",
+        "payment verification",
+        "e-commerce",
+        "AI assistant",
+        "inventory management",
+        "small business automation"
+      ],
+      "synonyms": [
+        "Messenger orders",
+        "GCash verification",
+        "online store",
+        "bouquet shop",
+        "stock tracking"
+      ]
+    },
+    {
+      "id": "janelles-satin-bouquet#overview",
+      "url": "/our-work/janelles-satin-bouquet",
+      "title": "Stopping double-sold stock and manual payment checks for a custom bouquet shop.",
+      "headingPath": [
+        "Stopping double-sold stock and manual payment checks for a custom bouquet shop."
+      ],
+      "text": "A handcrafted bouquet shop in Cavite was taking orders and checking GCash payments by hand over Messenger. We built a mobile storefront that locks stock at checkout, verifies payment texts automatically, and answers buyer questions from live inventory.",
+      "tags": [
+        "order automation",
+        "payment verification",
+        "e-commerce",
+        "AI assistant",
+        "inventory management",
+        "small business automation"
+      ],
+      "synonyms": [
+        "Messenger orders",
+        "GCash verification",
+        "online store",
+        "bouquet shop",
+        "stock tracking"
+      ]
+    },
+    {
+      "id": "janelles-satin-bouquet#permission",
+      "url": "/our-work/janelles-satin-bouquet",
+      "title": "Permission",
+      "headingPath": [
+        "Stopping double-sold stock and manual payment checks for a custom bouquet shop.",
+        "Permission"
+      ],
+      "text": "Approved by shop owner and lead developer Aldrei Santua on 2026-11-05",
+      "tags": [
+        "order automation",
+        "payment verification",
+        "e-commerce",
+        "AI assistant",
+        "inventory management",
+        "small business automation"
+      ],
+      "synonyms": [
+        "Messenger orders",
+        "GCash verification",
+        "online store",
+        "bouquet shop",
+        "stock tracking"
+      ]
+    },
+    {
+      "id": "janelles-satin-bouquet#problembrief",
+      "url": "/our-work/janelles-satin-bouquet",
+      "title": "Problem Brief",
+      "headingPath": [
+        "Stopping double-sold stock and manual payment checks for a custom bouquet shop.",
+        "Problem Brief"
+      ],
+      "text": "Taking orders in chat meant answering the same price questions all day, checking GCash screenshots by eye, and risking selling a one-of-a-kind bouquet twice.",
+      "tags": [
+        "order automation",
+        "payment verification",
+        "e-commerce",
+        "AI assistant",
+        "inventory management",
+        "small business automation"
+      ],
+      "synonyms": [
+        "Messenger orders",
+        "GCash verification",
+        "online store",
+        "bouquet shop",
+        "stock tracking"
+      ]
+    },
+    {
+      "id": "janelles-satin-bouquet#solution-type",
+      "url": "/our-work/janelles-satin-bouquet",
+      "title": "Solution type",
+      "headingPath": [
+        "Stopping double-sold stock and manual payment checks for a custom bouquet shop.",
+        "Solution type"
+      ],
+      "text": "Online storefront, payment automation, and AI shop assistant",
+      "tags": [
+        "order automation",
+        "payment verification",
+        "e-commerce",
+        "AI assistant",
+        "inventory management",
+        "small business automation"
+      ],
+      "synonyms": [
+        "Messenger orders",
+        "GCash verification",
+        "online store",
+        "bouquet shop",
+        "stock tracking"
+      ]
+    },
+    {
+      "id": "janelles-satin-bouquet#the-problem-1",
+      "url": "/our-work/janelles-satin-bouquet",
+      "title": "The problem",
+      "headingPath": [
+        "Stopping double-sold stock and manual payment checks for a custom bouquet shop.",
+        "The problem"
+      ],
+      "text": "Janelle’s Satin Bouquet makes handcrafted satin arrangements in Dasmariñas, Cavite. Because every order ran through Facebook and Messenger, the owner spent hours each day replying to the same questions about prices, ribbon colors, and delivery dates before an order was even placed. Once a customer decided to buy, the manual work grew harder. Each arrangement was handmade in small batches, so two buyers messaging at the same time could claim the same bouquet before the owner updated the page. Payment checks were also done by hand: buyers sent GCash screenshots in chat, and the owner had to check reference numbers and amounts on her phone between making bouquets.",
+      "tags": [
+        "order automation",
+        "payment verification",
+        "e-commerce",
+        "AI assistant",
+        "inventory management",
+        "small business automation"
+      ],
+      "synonyms": [
+        "Messenger orders",
+        "GCash verification",
+        "online store",
+        "bouquet shop",
+        "stock tracking"
+      ]
+    },
+    {
+      "id": "janelles-satin-bouquet#the-result-3",
+      "url": "/our-work/janelles-satin-bouquet",
+      "title": "The result",
+      "headingPath": [
+        "Stopping double-sold stock and manual payment checks for a custom bouquet shop.",
+        "The result"
+      ],
+      "text": "The shop now runs live at shop.janelle-bouquet.workers.dev with a catalog, custom bouquet builder, order tracking, and a mobile admin panel. Buyers get instant answers on pricing and availability at any hour without waiting for a manual chat reply. Most importantly, the payment workflow protects the business by default. Verified payments move straight into production, uncertain claims pause safely for human review, and the owner can manage stock and orders from her phone in minutes instead of spending her evenings sorting through chat threads.",
+      "tags": [
+        "order automation",
+        "payment verification",
+        "e-commerce",
+        "AI assistant",
+        "inventory management",
+        "small business automation"
+      ],
+      "synonyms": [
+        "Messenger orders",
+        "GCash verification",
+        "online store",
+        "bouquet shop",
+        "stock tracking"
+      ]
+    },
+    {
+      "id": "janelles-satin-bouquet#what-we-did-2",
+      "url": "/our-work/janelles-satin-bouquet",
+      "title": "What we did",
+      "headingPath": [
+        "Stopping double-sold stock and manual payment checks for a custom bouquet shop.",
+        "What we did"
+      ],
+      "text": "During diagnosis, we traced where the owner lost the most time: quoting custom bouquets, holding stock during checkout, and verifying GCash payments. Instead of handing her a complicated back-office tool meant for a warehouse team, we built a storefront and admin designed to run entirely from a phone. Customers can now browse ready-made designs, price a build-your-own bouquet step by step, or submit a custom request. When a buyer checks out, the shop holds that item immediately and generates a unique expected payment amount for GCash QR checkout. To remove manual receipt checking, we connected an automated payment matcher. When a payment text arrives, the system checks the reference number and exact amount against open orders. Clear matches confirm the order automatically. If a reference number looks reused or the amount does not line up, the system holds the order in a review queue and sends a Telegram message to the owner so she can approve or reject it with one tap. Finally, we added a shop assistant connected directly to the live product catalog.",
+      "tags": [
+        "order automation",
+        "payment verification",
+        "e-commerce",
+        "AI assistant",
+        "inventory management",
+        "small business automation"
+      ],
+      "synonyms": [
+        "Messenger orders",
+        "GCash verification",
+        "online store",
+        "bouquet shop",
+        "stock tracking"
+      ]
+    },
+    {
+      "id": "janelles-satin-bouquet#what-we-did-2-part-2",
+      "url": "/our-work/janelles-satin-bouquet",
+      "title": "What we did",
+      "headingPath": [
+        "Stopping double-sold stock and manual payment checks for a custom bouquet shop.",
+        "What we did"
+      ],
+      "text": "Unlike generic chatbots that guess at prices, this assistant reads current stock and pricing before replying in English, Tagalog, or Taglish.",
+      "tags": [
+        "order automation",
+        "payment verification",
+        "e-commerce",
+        "AI assistant",
+        "inventory management",
+        "small business automation"
+      ],
+      "synonyms": [
+        "Messenger orders",
+        "GCash verification",
+        "online store",
+        "bouquet shop",
+        "stock tracking"
+      ]
+    },
+    {
+      "id": "manual-order-processing-automation#approachbrief",
+      "url": "/our-work/manual-order-processing-automation",
+      "title": "Approach Brief",
+      "headingPath": [
+        "Replacing manual stock checks and spreadsheet copy-paste on incoming retail orders.",
+        "Approach Brief"
+      ],
+      "text": "We connected the order form, inventory sheet, Gmail, and Telegram into one automated pipeline that checks inputs and stock levels before logging or confirming an order.",
+      "tags": [
+        "order fulfillment",
+        "inventory automation",
+        "workflow automation",
+        "Google Sheets",
+        "retail operations",
+        "Make.com"
+      ],
+      "synonyms": [
+        "spreadsheet automation",
+        "manual data entry",
+        "stock checking",
+        "order confirmation emails"
+      ]
+    },
+    {
+      "id": "manual-order-processing-automation#category",
+      "url": "/our-work/manual-order-processing-automation",
+      "title": "Category",
+      "headingPath": [
+        "Replacing manual stock checks and spreadsheet copy-paste on incoming retail orders.",
+        "Category"
+      ],
+      "text": "operations",
+      "tags": [
+        "order fulfillment",
+        "inventory automation",
+        "workflow automation",
+        "Google Sheets",
+        "retail operations",
+        "Make.com"
+      ],
+      "synonyms": [
+        "spreadsheet automation",
+        "manual data entry",
+        "stock checking",
+        "order confirmation emails"
+      ]
+    },
+    {
+      "id": "manual-order-processing-automation#categorylabel",
+      "url": "/our-work/manual-order-processing-automation",
+      "title": "Category Label",
+      "headingPath": [
+        "Replacing manual stock checks and spreadsheet copy-paste on incoming retail orders.",
+        "Category Label"
+      ],
+      "text": "Orders, stock & payments",
+      "tags": [
+        "order fulfillment",
+        "inventory automation",
+        "workflow automation",
+        "Google Sheets",
+        "retail operations",
+        "Make.com"
+      ],
+      "synonyms": [
+        "spreadsheet automation",
+        "manual data entry",
+        "stock checking",
+        "order confirmation emails"
+      ]
+    },
+    {
+      "id": "manual-order-processing-automation#client",
+      "url": "/our-work/manual-order-processing-automation",
+      "title": "Client",
+      "headingPath": [
+        "Replacing manual stock checks and spreadsheet copy-paste on incoming retail orders.",
+        "Client"
+      ],
+      "text": "SME Retail Fulfillment Pipeline",
+      "tags": [
+        "order fulfillment",
+        "inventory automation",
+        "workflow automation",
+        "Google Sheets",
+        "retail operations",
+        "Make.com"
+      ],
+      "synonyms": [
+        "spreadsheet automation",
+        "manual data entry",
+        "stock checking",
+        "order confirmation emails"
+      ]
+    },
+    {
+      "id": "manual-order-processing-automation#highlights",
+      "url": "/our-work/manual-order-processing-automation",
+      "title": "Highlights",
+      "headingPath": [
+        "Replacing manual stock checks and spreadsheet copy-paste on incoming retail orders.",
+        "Highlights"
+      ],
+      "text": "Catches missing contact details and invalid quantities before they pollute the order log. Checks live stock counts and separates fulfillable orders from out-of-stock requests automatically. Decrements inventory, sends a formatted Gmail receipt to the buyer, and alerts the owner on Telegram in seconds.",
+      "tags": [
+        "order fulfillment",
+        "inventory automation",
+        "workflow automation",
+        "Google Sheets",
+        "retail operations",
+        "Make.com"
+      ],
+      "synonyms": [
+        "spreadsheet automation",
+        "manual data entry",
+        "stock checking",
+        "order confirmation emails"
+      ]
+    },
+    {
+      "id": "manual-order-processing-automation#imagealt",
+      "url": "/our-work/manual-order-processing-automation",
+      "title": "Image Alt",
+      "headingPath": [
+        "Replacing manual stock checks and spreadsheet copy-paste on incoming retail orders.",
+        "Image Alt"
+      ],
+      "text": "Automated order fulfillment pipeline showing form intake, input validation, live inventory lookup, stock updates, and customer email notifications.",
+      "tags": [
+        "order fulfillment",
+        "inventory automation",
+        "workflow automation",
+        "Google Sheets",
+        "retail operations",
+        "Make.com"
+      ],
+      "synonyms": [
+        "spreadsheet automation",
+        "manual data entry",
+        "stock checking",
+        "order confirmation emails"
+      ]
+    },
+    {
+      "id": "manual-order-processing-automation#outcomebrief",
+      "url": "/our-work/manual-order-processing-automation",
+      "title": "Outcome Brief",
+      "headingPath": [
+        "Replacing manual stock checks and spreadsheet copy-paste on incoming retail orders.",
+        "Outcome Brief"
+      ],
+      "text": "Valid orders move from submission to customer receipt with zero manual retyping, while incomplete forms and out-of-stock requests are caught automatically.",
+      "tags": [
+        "order fulfillment",
+        "inventory automation",
+        "workflow automation",
+        "Google Sheets",
+        "retail operations",
+        "Make.com"
+      ],
+      "synonyms": [
+        "spreadsheet automation",
+        "manual data entry",
+        "stock checking",
+        "order confirmation emails"
+      ]
+    },
+    {
+      "id": "manual-order-processing-automation#overview",
+      "url": "/our-work/manual-order-processing-automation",
+      "title": "Replacing manual stock checks and spreadsheet copy-paste on incoming retail orders.",
+      "headingPath": [
+        "Replacing manual stock checks and spreadsheet copy-paste on incoming retail orders."
+      ],
+      "text": "Retail staff were copying form orders into spreadsheets, checking stock by hand, calculating totals, and sending confirmation emails one by one. We replaced the manual chain with a single automated pipeline that validates orders, checks live inventory, updates stock, and notifies both customer and owner.",
+      "tags": [
+        "order fulfillment",
+        "inventory automation",
+        "workflow automation",
+        "Google Sheets",
+        "retail operations",
+        "Make.com"
+      ],
+      "synonyms": [
+        "spreadsheet automation",
+        "manual data entry",
+        "stock checking",
+        "order confirmation emails"
+      ]
+    },
+    {
+      "id": "manual-order-processing-automation#permission",
+      "url": "/our-work/manual-order-processing-automation",
+      "title": "Permission",
+      "headingPath": [
+        "Replacing manual stock checks and spreadsheet copy-paste on incoming retail orders.",
+        "Permission"
+      ],
+      "text": "Approved by lead engineer Aldrei Santua on 2026-11-05",
+      "tags": [
+        "order fulfillment",
+        "inventory automation",
+        "workflow automation",
+        "Google Sheets",
+        "retail operations",
+        "Make.com"
+      ],
+      "synonyms": [
+        "spreadsheet automation",
+        "manual data entry",
+        "stock checking",
+        "order confirmation emails"
+      ]
+    },
+    {
+      "id": "manual-order-processing-automation#problembrief",
+      "url": "/our-work/manual-order-processing-automation",
+      "title": "Problem Brief",
+      "headingPath": [
+        "Replacing manual stock checks and spreadsheet copy-paste on incoming retail orders.",
+        "Problem Brief"
+      ],
+      "text": "Every new order required a staff member to check stock in a spreadsheet, calculate the total, log the row, email the buyer, and message the owner by hand.",
+      "tags": [
+        "order fulfillment",
+        "inventory automation",
+        "workflow automation",
+        "Google Sheets",
+        "retail operations",
+        "Make.com"
+      ],
+      "synonyms": [
+        "spreadsheet automation",
+        "manual data entry",
+        "stock checking",
+        "order confirmation emails"
+      ]
+    },
+    {
+      "id": "manual-order-processing-automation#solution-type",
+      "url": "/our-work/manual-order-processing-automation",
+      "title": "Solution type",
+      "headingPath": [
+        "Replacing manual stock checks and spreadsheet copy-paste on incoming retail orders.",
+        "Solution type"
+      ],
+      "text": "End-to-end order validation, inventory routing, and notifications",
+      "tags": [
+        "order fulfillment",
+        "inventory automation",
+        "workflow automation",
+        "Google Sheets",
+        "retail operations",
+        "Make.com"
+      ],
+      "synonyms": [
+        "spreadsheet automation",
+        "manual data entry",
+        "stock checking",
+        "order confirmation emails"
+      ]
+    },
+    {
+      "id": "manual-order-processing-automation#the-problem-1",
+      "url": "/our-work/manual-order-processing-automation",
+      "title": "The problem",
+      "headingPath": [
+        "Replacing manual stock checks and spreadsheet copy-paste on incoming retail orders.",
+        "The problem"
+      ],
+      "text": "Many small retailers start by taking orders through an online form and tracking inventory in Google Sheets. The tools are familiar, but the glue between them is usually a person. For every order that arrived, someone had to check whether the customer filled in a valid email and quantity, look up the product price, check if enough units were on the shelf, copy the order into a master sheet, subtract the stock count, email the customer a confirmation, and notify the owner. When ten orders arrive at once, mistakes slip through. A typo in a spreadsheet formula or a missed stock update means a customer gets promised an item that is already sold out.",
+      "tags": [
+        "order fulfillment",
+        "inventory automation",
+        "workflow automation",
+        "Google Sheets",
+        "retail operations",
+        "Make.com"
+      ],
+      "synonyms": [
+        "spreadsheet automation",
+        "manual data entry",
+        "stock checking",
+        "order confirmation emails"
+      ]
+    },
+    {
+      "id": "manual-order-processing-automation#the-result-3",
+      "url": "/our-work/manual-order-processing-automation",
+      "title": "The result",
+      "headingPath": [
+        "Replacing manual stock checks and spreadsheet copy-paste on incoming retail orders.",
+        "The result"
+      ],
+      "text": "Routine orders now go from form submission to customer confirmation without anyone copying a single cell across spreadsheets. Stock counts stay accurate as orders arrive, out-of-stock requests are caught at the door, and staff only step in when an order genuinely needs human attention.",
+      "tags": [
+        "order fulfillment",
+        "inventory automation",
+        "workflow automation",
+        "Google Sheets",
+        "retail operations",
+        "Make.com"
+      ],
+      "synonyms": [
+        "spreadsheet automation",
+        "manual data entry",
+        "stock checking",
+        "order confirmation emails"
+      ]
+    },
+    {
+      "id": "manual-order-processing-automation#what-we-did-2",
+      "url": "/our-work/manual-order-processing-automation",
+      "title": "What we did",
+      "headingPath": [
+        "Replacing manual stock checks and spreadsheet copy-paste on incoming retail orders.",
+        "What we did"
+      ],
+      "text": "We kept the tools the team already knew, Google Forms, Google Sheets, Gmail, and Telegram, and built an automated fulfillment pipeline to handle every handoff between them. As soon as an order is submitted, the first gate cleans and checks the details. If a submission is missing an email address or asks for an invalid quantity, the pipeline stops it right there and sends a Telegram alert to the team instead of letting bad data into the order book. Valid orders get a unique order number and check the live product sheet for current pricing and stock. An inventory router then splits the flow: When stock is available: The system calculates the order total, records the order and line items, subtracts the purchased quantity from available stock, emails a formatted confirmation receipt to the customer, and pings the owner on Telegram. When stock is short: The system logs the request to a backorder tab and alerts the owner immediately so they can contact the buyer before payment or packing begins.",
+      "tags": [
+        "order fulfillment",
+        "inventory automation",
+        "workflow automation",
+        "Google Sheets",
+        "retail operations",
+        "Make.com"
+      ],
+      "synonyms": [
+        "spreadsheet automation",
+        "manual data entry",
+        "stock checking",
+        "order confirmation emails"
+      ]
+    },
+    {
       "id": "our-work#empty",
       "url": "/our-work",
       "title": "No case studies are published yet.",
@@ -626,33 +1670,39 @@
         "case studies",
         "client work",
         "results",
-        "portfolio"
+        "portfolio",
+        "automation",
+        "AI assistants"
       ],
       "synonyms": [
         "portfolio",
         "projects",
-        "case studies"
+        "case studies",
+        "examples"
       ]
     },
     {
-      "id": "our-work#how-we-choose-what-to-publish-1",
+      "id": "our-work#how-we-present-our-work-1",
       "url": "/our-work",
-      "title": "How we choose what to publish",
+      "title": "How we present our work",
       "headingPath": [
         "Work you can look at.",
-        "How we choose what to publish"
+        "How we present our work"
       ],
-      "text": "We publish a project only when the client has given written permission to be named or described anonymously. Each case study is framed as the problem, what we built, and the result. We use only results the client or our records support.",
+      "text": "We publish a project only when a client has agreed to be named or described anonymously, alongside reference systems our team has built and tested end to end. Each write-up stays in plain business language: the bottleneck the team faced, the system we put in place, and the measurable difference in daily work.",
       "tags": [
         "case studies",
         "client work",
         "results",
-        "portfolio"
+        "portfolio",
+        "automation",
+        "AI assistants"
       ],
       "synonyms": [
         "portfolio",
         "projects",
-        "case studies"
+        "case studies",
+        "examples"
       ]
     },
     {
@@ -662,17 +1712,20 @@
       "headingPath": [
         "Work you can look at."
       ],
-      "text": "Case studies framed as the problem, what we built, and the result. Our work Case studies framed as the problem, what we built, and the result. We publish only work a client has agreed to share.",
+      "text": "Real automations, AI assistants, and custom business systems framed around the problem, what we built, and what changed. Our work Every build starts with the work slowing a team down: manual order entry, stock guesswork, repetitive support tickets, or training that cannot scale. Each case study lays out the problem, what we built, and what changed in daily work.",
       "tags": [
         "case studies",
         "client work",
         "results",
-        "portfolio"
+        "portfolio",
+        "automation",
+        "AI assistants"
       ],
       "synonyms": [
         "portfolio",
         "projects",
-        "case studies"
+        "case studies",
+        "examples"
       ]
     },
     {
@@ -683,7 +1736,7 @@
         "Privacy",
         "Clara, our AI assistant"
       ],
-      "text": "Clara is an AI assistant. When you chat with her, the messages you send are processed by our AI provider, Groq, so she can reply. Groq receives the conversation text needed to generate a reply. Groq's privacy policy states that it does not retain inputs and outputs by default, and that it may keep them for up to 30 days for reliability and abuse monitoring. We do not store your chat transcript in our lead database. Cloudflare Turnstile checks that you are a person before your first message. If Clara cannot answer from our published content, we log the question with names, email addresses and other personal details removed, so a person can review it and improve our answers. We keep those notes only as long as needed for that purpose. Please do not share passwords, payment details, government identification or other sensitive information in chat. If you are under 18, please do not use the chat or share personal details.",
+      "text": "Clara is an AI assistant. When you chat with her, the messages you send are processed by our AI provider, Groq, so she can reply. Groq receives the conversation text needed to generate a reply. Groq’s privacy policy states that it does not retain inputs and outputs by default, and that it may keep them for up to 30 days for reliability and abuse monitoring. We do not store your chat transcript in our lead database. Cloudflare Turnstile checks that you are a person before your first message. If Clara cannot answer from our published content, we log the question with names, email addresses and other personal details removed, so a person can review it and improve our answers. We keep those notes only as long as needed for that purpose. Please do not share passwords, payment details, government identification or other sensitive information in chat. If you are under 18, please do not use the chat or share personal details.",
       "tags": [
         "privacy",
         "data",
@@ -797,7 +1850,7 @@
         "Privacy",
         "Site analytics"
       ],
-      "text": "We use Cloudflare Web Analytics to count page visits and measure how fast pages load. It does not set cookies, and Cloudflare states that it does not track individual visitors across other websites. When a page loads, your browser sends Cloudflare information about that visit, such as the page address and how long it took to load. We see only totals, not individual visitors.",
+      "text": "We use Cloudflare Web Analytics to count page visits and measure how fast pages load. It does not set cookies, and Cloudflare states that it does not track individual visitors across other websites. When a page loads, your browser sends Cloudflare information about that visit, such as the page address and how long it took to load. We see aggregate page totals rather than individual visitor profiles.",
       "tags": [
         "privacy",
         "data",
@@ -856,6 +1909,341 @@
         "privacy policy",
         "GDPR",
         "data protection"
+      ]
+    },
+    {
+      "id": "sane-private-scam-checker#approachbrief",
+      "url": "/our-work/sane-private-scam-checker",
+      "title": "Approach Brief",
+      "headingPath": [
+        "Checking suspicious texts and screenshots for scams without sending private messages to the cloud.",
+        "Approach Brief"
+      ],
+      "text": "We built an installable web app that reads screenshots and checks message patterns directly inside the phone’s browser, with no server or cloud database behind it.",
+      "tags": [
+        "custom software",
+        "on-device AI",
+        "privacy",
+        "web application",
+        "OCR",
+        "multilingual AI"
+      ],
+      "synonyms": [
+        "scam detector",
+        "local AI",
+        "offline web app",
+        "private AI assistant"
+      ]
+    },
+    {
+      "id": "sane-private-scam-checker#category",
+      "url": "/our-work/sane-private-scam-checker",
+      "title": "Category",
+      "headingPath": [
+        "Checking suspicious texts and screenshots for scams without sending private messages to the cloud.",
+        "Category"
+      ],
+      "text": "software",
+      "tags": [
+        "custom software",
+        "on-device AI",
+        "privacy",
+        "web application",
+        "OCR",
+        "multilingual AI"
+      ],
+      "synonyms": [
+        "scam detector",
+        "local AI",
+        "offline web app",
+        "private AI assistant"
+      ]
+    },
+    {
+      "id": "sane-private-scam-checker#categorylabel",
+      "url": "/our-work/sane-private-scam-checker",
+      "title": "Category Label",
+      "headingPath": [
+        "Checking suspicious texts and screenshots for scams without sending private messages to the cloud.",
+        "Category Label"
+      ],
+      "text": "Private on-device AI",
+      "tags": [
+        "custom software",
+        "on-device AI",
+        "privacy",
+        "web application",
+        "OCR",
+        "multilingual AI"
+      ],
+      "synonyms": [
+        "scam detector",
+        "local AI",
+        "offline web app",
+        "private AI assistant"
+      ]
+    },
+    {
+      "id": "sane-private-scam-checker#client",
+      "url": "/our-work/sane-private-scam-checker",
+      "title": "Client",
+      "headingPath": [
+        "Checking suspicious texts and screenshots for scams without sending private messages to the cloud.",
+        "Client"
+      ],
+      "text": "Sane (AppBuildersPH 2026 Local AI Build)",
+      "tags": [
+        "custom software",
+        "on-device AI",
+        "privacy",
+        "web application",
+        "OCR",
+        "multilingual AI"
+      ],
+      "synonyms": [
+        "scam detector",
+        "local AI",
+        "offline web app",
+        "private AI assistant"
+      ]
+    },
+    {
+      "id": "sane-private-scam-checker#highlights",
+      "url": "/our-work/sane-private-scam-checker",
+      "title": "Highlights",
+      "headingPath": [
+        "Checking suspicious texts and screenshots for scams without sending private messages to the cloud.",
+        "Highlights"
+      ],
+      "text": "Runs 100% on the user’s device after loading, with zero messages or screenshots sent to a server. Reads both pasted text and uploaded chat screenshots in English, Filipino, and Taglish. Caught 15 of 15 scam messages on the test set and 16 of 16 on the evaluation set with zero false alarms.",
+      "tags": [
+        "custom software",
+        "on-device AI",
+        "privacy",
+        "web application",
+        "OCR",
+        "multilingual AI"
+      ],
+      "synonyms": [
+        "scam detector",
+        "local AI",
+        "offline web app",
+        "private AI assistant"
+      ]
+    },
+    {
+      "id": "sane-private-scam-checker#imagealt",
+      "url": "/our-work/sane-private-scam-checker",
+      "title": "Image Alt",
+      "headingPath": [
+        "Checking suspicious texts and screenshots for scams without sending private messages to the cloud.",
+        "Image Alt"
+      ],
+      "text": "Sane private on-device scam checker interface showing the bilingual greeting and one-tap message scan action.",
+      "tags": [
+        "custom software",
+        "on-device AI",
+        "privacy",
+        "web application",
+        "OCR",
+        "multilingual AI"
+      ],
+      "synonyms": [
+        "scam detector",
+        "local AI",
+        "offline web app",
+        "private AI assistant"
+      ]
+    },
+    {
+      "id": "sane-private-scam-checker#outcomebrief",
+      "url": "/our-work/sane-private-scam-checker",
+      "title": "Outcome Brief",
+      "headingPath": [
+        "Checking suspicious texts and screenshots for scams without sending private messages to the cloud.",
+        "Outcome Brief"
+      ],
+      "text": "Users get a clear risk breakdown in English, Filipino, or Taglish even when offline, and their private messages never leave their device.",
+      "tags": [
+        "custom software",
+        "on-device AI",
+        "privacy",
+        "web application",
+        "OCR",
+        "multilingual AI"
+      ],
+      "synonyms": [
+        "scam detector",
+        "local AI",
+        "offline web app",
+        "private AI assistant"
+      ]
+    },
+    {
+      "id": "sane-private-scam-checker#overview",
+      "url": "/our-work/sane-private-scam-checker",
+      "title": "Checking suspicious texts and screenshots for scams without sending private messages to the cloud.",
+      "headingPath": [
+        "Checking suspicious texts and screenshots for scams without sending private messages to the cloud."
+      ],
+      "text": "People want a fast second opinion on suspicious bank, wallet, and delivery texts, but cloud AI tools require uploading messages that contain private account details and one-time passwords. We built an installable web app that scans texts and screenshots in English, Filipino, and Taglish entirely on the user’s phone.",
+      "tags": [
+        "custom software",
+        "on-device AI",
+        "privacy",
+        "web application",
+        "OCR",
+        "multilingual AI"
+      ],
+      "synonyms": [
+        "scam detector",
+        "local AI",
+        "offline web app",
+        "private AI assistant"
+      ]
+    },
+    {
+      "id": "sane-private-scam-checker#permission",
+      "url": "/our-work/sane-private-scam-checker",
+      "title": "Permission",
+      "headingPath": [
+        "Checking suspicious texts and screenshots for scams without sending private messages to the cloud.",
+        "Permission"
+      ],
+      "text": "Approved by team member and developer Aldrei Santua on 2026-11-05",
+      "tags": [
+        "custom software",
+        "on-device AI",
+        "privacy",
+        "web application",
+        "OCR",
+        "multilingual AI"
+      ],
+      "synonyms": [
+        "scam detector",
+        "local AI",
+        "offline web app",
+        "private AI assistant"
+      ]
+    },
+    {
+      "id": "sane-private-scam-checker#problembrief",
+      "url": "/our-work/sane-private-scam-checker",
+      "title": "Problem Brief",
+      "headingPath": [
+        "Checking suspicious texts and screenshots for scams without sending private messages to the cloud.",
+        "Problem Brief"
+      ],
+      "text": "Suspicious texts often sit right next to real bank notices, one-time passwords, and family chats that should never be uploaded to an external AI server.",
+      "tags": [
+        "custom software",
+        "on-device AI",
+        "privacy",
+        "web application",
+        "OCR",
+        "multilingual AI"
+      ],
+      "synonyms": [
+        "scam detector",
+        "local AI",
+        "offline web app",
+        "private AI assistant"
+      ]
+    },
+    {
+      "id": "sane-private-scam-checker#solution-type",
+      "url": "/our-work/sane-private-scam-checker",
+      "title": "Solution type",
+      "headingPath": [
+        "Checking suspicious texts and screenshots for scams without sending private messages to the cloud.",
+        "Solution type"
+      ],
+      "text": "Privacy-first web application with on-device AI and screenshot reading",
+      "tags": [
+        "custom software",
+        "on-device AI",
+        "privacy",
+        "web application",
+        "OCR",
+        "multilingual AI"
+      ],
+      "synonyms": [
+        "scam detector",
+        "local AI",
+        "offline web app",
+        "private AI assistant"
+      ]
+    },
+    {
+      "id": "sane-private-scam-checker#the-problem-1",
+      "url": "/our-work/sane-private-scam-checker",
+      "title": "The problem",
+      "headingPath": [
+        "Checking suspicious texts and screenshots for scams without sending private messages to the cloud.",
+        "The problem"
+      ],
+      "text": "Scam messages in the Philippines closely mimic GCash, Maya, local banks, parcel couriers, job offers, and even messages from relatives. When someone receives an urgent text asking them to click a link or confirm a code, they want a quick, reliable second opinion. The catch is privacy. The very messages people need to check often contain one-time passwords, account balances, or personal family conversations. Uploading those screenshots to a cloud chatbot puts sensitive data on someone else’s server, and most international tools misread Tagalog and Taglish phrasing or stop working without mobile data.",
+      "tags": [
+        "custom software",
+        "on-device AI",
+        "privacy",
+        "web application",
+        "OCR",
+        "multilingual AI"
+      ],
+      "synonyms": [
+        "scam detector",
+        "local AI",
+        "offline web app",
+        "private AI assistant"
+      ]
+    },
+    {
+      "id": "sane-private-scam-checker#the-result-3",
+      "url": "/our-work/sane-private-scam-checker",
+      "title": "The result",
+      "headingPath": [
+        "Checking suspicious texts and screenshots for scams without sending private messages to the cloud.",
+        "The result"
+      ],
+      "text": "Sane is live at sane-ph.vercel.app as an installable web app that works offline after the first visit. Across the project’s evaluation sets, it identified 15 out of 15 scam messages in the primary test set and 16 out of 16 in the secondary set without flagging legitimate bank or personal messages as scams. For businesses handling sensitive client records, medical notes, or financial documents, Sane demonstrates how our team builds practical AI tools where private data stays on the device by design.",
+      "tags": [
+        "custom software",
+        "on-device AI",
+        "privacy",
+        "web application",
+        "OCR",
+        "multilingual AI"
+      ],
+      "synonyms": [
+        "scam detector",
+        "local AI",
+        "offline web app",
+        "private AI assistant"
+      ]
+    },
+    {
+      "id": "sane-private-scam-checker#what-we-did-2",
+      "url": "/our-work/sane-private-scam-checker",
+      "title": "What we did",
+      "headingPath": [
+        "Checking suspicious texts and screenshots for scams without sending private messages to the cloud.",
+        "What we did"
+      ],
+      "text": "Built with team What If I Call for the AppBuildersPH 2026 Local AI challenge, we designed Sane around a strict constraint: the app had to work without a backend server so a user’s message could never leave their phone. Instead of relying on a single AI model that might guess, we layered three checks inside the browser: Rule checks for known traps: Instant checks flag lookalike bank domains, shortened links, and pressure tactics asking for PINs, OTPs, or advance fees. Pattern matching across languages: A compact language model running directly on the device compares the message against common scam scripts in English, Filipino, and Taglish, plus a screenshot reader that extracts text from images. Plain-language explanations: When a device supports on-device AI acceleration, a local model explains why the message was flagged in everyday terms without overriding the safety verdict.",
+      "tags": [
+        "custom software",
+        "on-device AI",
+        "privacy",
+        "web application",
+        "OCR",
+        "multilingual AI"
+      ],
+      "synonyms": [
+        "scam detector",
+        "local AI",
+        "offline web app",
+        "private AI assistant"
       ]
     },
     {
@@ -1239,7 +2627,7 @@
         "Web presence",
         "Visitors cannot find the answer"
       ],
-      "text": "The site describes what you do, but not the problem the visitor is trying to solve. Likely solution: A clearer website",
+      "text": "The site lists services and features while leaving visitors unsure if you solve their specific problem. Likely solution: A clearer website",
       "tags": [
         "solutions",
         "automation",
@@ -1309,6 +2697,380 @@
         "what we do",
         "problems",
         "solutions"
+      ]
+    },
+    {
+      "id": "v-unite-voice-ai-coach#approachbrief",
+      "url": "/our-work/v-unite-voice-ai-coach",
+      "title": "Approach Brief",
+      "headingPath": [
+        "An AI business coach that cites clinic records and operating policies instead of guessing.",
+        "Approach Brief"
+      ],
+      "text": "We built a voice-and-text coaching assistant where an automation workflow checks live customer metrics, searches uploaded clinic policies, or combines both before writing a cited answer.",
+      "tags": [
+        "AI agent",
+        "business intelligence",
+        "knowledge base",
+        "voice assistant",
+        "workflow automation",
+        "operations coaching"
+      ],
+      "synonyms": [
+        "internal AI assistant",
+        "company knowledge bot",
+        "clinic analytics",
+        "SOP assistant",
+        "voice AI"
+      ]
+    },
+    {
+      "id": "v-unite-voice-ai-coach#category",
+      "url": "/our-work/v-unite-voice-ai-coach",
+      "title": "Category",
+      "headingPath": [
+        "An AI business coach that cites clinic records and operating policies instead of guessing.",
+        "Category"
+      ],
+      "text": "conversations",
+      "tags": [
+        "AI agent",
+        "business intelligence",
+        "knowledge base",
+        "voice assistant",
+        "workflow automation",
+        "operations coaching"
+      ],
+      "synonyms": [
+        "internal AI assistant",
+        "company knowledge bot",
+        "clinic analytics",
+        "SOP assistant",
+        "voice AI"
+      ]
+    },
+    {
+      "id": "v-unite-voice-ai-coach#categorylabel",
+      "url": "/our-work/v-unite-voice-ai-coach",
+      "title": "Category Label",
+      "headingPath": [
+        "An AI business coach that cites clinic records and operating policies instead of guessing.",
+        "Category Label"
+      ],
+      "text": "AI agents & knowledge retrieval",
+      "tags": [
+        "AI agent",
+        "business intelligence",
+        "knowledge base",
+        "voice assistant",
+        "workflow automation",
+        "operations coaching"
+      ],
+      "synonyms": [
+        "internal AI assistant",
+        "company knowledge bot",
+        "clinic analytics",
+        "SOP assistant",
+        "voice AI"
+      ]
+    },
+    {
+      "id": "v-unite-voice-ai-coach#client",
+      "url": "/our-work/v-unite-voice-ai-coach",
+      "title": "Client",
+      "headingPath": [
+        "An AI business coach that cites clinic records and operating policies instead of guessing.",
+        "Client"
+      ],
+      "text": "V-Unite Aesthetic Clinic Operations MVP",
+      "tags": [
+        "AI agent",
+        "business intelligence",
+        "knowledge base",
+        "voice assistant",
+        "workflow automation",
+        "operations coaching"
+      ],
+      "synonyms": [
+        "internal AI assistant",
+        "company knowledge bot",
+        "clinic analytics",
+        "SOP assistant",
+        "voice AI"
+      ]
+    },
+    {
+      "id": "v-unite-voice-ai-coach#highlights",
+      "url": "/our-work/v-unite-voice-ai-coach",
+      "title": "Highlights",
+      "headingPath": [
+        "An AI business coach that cites clinic records and operating policies instead of guessing.",
+        "Highlights"
+      ],
+      "text": "Combines live customer conversion numbers with uploaded clinic handbooks in a single question. Works by text or push-to-talk voice using the exact same verified data pipeline. Backed by 88 automated checks, including tests that prove the assistant refuses to invent policies.",
+      "tags": [
+        "AI agent",
+        "business intelligence",
+        "knowledge base",
+        "voice assistant",
+        "workflow automation",
+        "operations coaching"
+      ],
+      "synonyms": [
+        "internal AI assistant",
+        "company knowledge bot",
+        "clinic analytics",
+        "SOP assistant",
+        "voice AI"
+      ]
+    },
+    {
+      "id": "v-unite-voice-ai-coach#imagealt",
+      "url": "/our-work/v-unite-voice-ai-coach",
+      "title": "Image Alt",
+      "headingPath": [
+        "An AI business coach that cites clinic records and operating policies instead of guessing.",
+        "Image Alt"
+      ],
+      "text": "V-Unite Voice AI Coach dashboard showing live clinic conversion metrics, suggested operational questions, and voice input controls.",
+      "tags": [
+        "AI agent",
+        "business intelligence",
+        "knowledge base",
+        "voice assistant",
+        "workflow automation",
+        "operations coaching"
+      ],
+      "synonyms": [
+        "internal AI assistant",
+        "company knowledge bot",
+        "clinic analytics",
+        "SOP assistant",
+        "voice AI"
+      ]
+    },
+    {
+      "id": "v-unite-voice-ai-coach#outcomebrief",
+      "url": "/our-work/v-unite-voice-ai-coach",
+      "title": "Outcome Brief",
+      "headingPath": [
+        "An AI business coach that cites clinic records and operating policies instead of guessing.",
+        "Outcome Brief"
+      ],
+      "text": "Every reply names the exact customer figure or policy passage it used, refuses to guess when a document is missing, and saves a clear action plan after each session.",
+      "tags": [
+        "AI agent",
+        "business intelligence",
+        "knowledge base",
+        "voice assistant",
+        "workflow automation",
+        "operations coaching"
+      ],
+      "synonyms": [
+        "internal AI assistant",
+        "company knowledge bot",
+        "clinic analytics",
+        "SOP assistant",
+        "voice AI"
+      ]
+    },
+    {
+      "id": "v-unite-voice-ai-coach#overview",
+      "url": "/our-work/v-unite-voice-ai-coach",
+      "title": "An AI business coach that cites clinic records and operating policies instead of guessing.",
+      "headingPath": [
+        "An AI business coach that cites clinic records and operating policies instead of guessing."
+      ],
+      "text": "Clinic owners asking why a treatment is underperforming need answers from their own numbers and staff handbooks. We built a voice and text AI coach that checks live clinic metrics and uploaded policies before answering, and shows its source on every reply.",
+      "tags": [
+        "AI agent",
+        "business intelligence",
+        "knowledge base",
+        "voice assistant",
+        "workflow automation",
+        "operations coaching"
+      ],
+      "synonyms": [
+        "internal AI assistant",
+        "company knowledge bot",
+        "clinic analytics",
+        "SOP assistant",
+        "voice AI"
+      ]
+    },
+    {
+      "id": "v-unite-voice-ai-coach#permission",
+      "url": "/our-work/v-unite-voice-ai-coach",
+      "title": "Permission",
+      "headingPath": [
+        "An AI business coach that cites clinic records and operating policies instead of guessing.",
+        "Permission"
+      ],
+      "text": "Approved by lead engineer Aldrei Santua on 2026-11-05",
+      "tags": [
+        "AI agent",
+        "business intelligence",
+        "knowledge base",
+        "voice assistant",
+        "workflow automation",
+        "operations coaching"
+      ],
+      "synonyms": [
+        "internal AI assistant",
+        "company knowledge bot",
+        "clinic analytics",
+        "SOP assistant",
+        "voice AI"
+      ]
+    },
+    {
+      "id": "v-unite-voice-ai-coach#problembrief",
+      "url": "/our-work/v-unite-voice-ai-coach",
+      "title": "Problem Brief",
+      "headingPath": [
+        "An AI business coach that cites clinic records and operating policies instead of guessing.",
+        "Problem Brief"
+      ],
+      "text": "Clinic owners had customer numbers in one database and consultation rules in separate PDF handbooks, and off-the-shelf AI chat tools invented advice when asked how the two connected.",
+      "tags": [
+        "AI agent",
+        "business intelligence",
+        "knowledge base",
+        "voice assistant",
+        "workflow automation",
+        "operations coaching"
+      ],
+      "synonyms": [
+        "internal AI assistant",
+        "company knowledge bot",
+        "clinic analytics",
+        "SOP assistant",
+        "voice AI"
+      ]
+    },
+    {
+      "id": "v-unite-voice-ai-coach#secondaryimagealt",
+      "url": "/our-work/v-unite-voice-ai-coach",
+      "title": "Secondary Image Alt",
+      "headingPath": [
+        "An AI business coach that cites clinic records and operating policies instead of guessing.",
+        "Secondary Image Alt"
+      ],
+      "text": "Automation workflow showing how the AI agent routes clinic questions between customer analytics databases and uploaded policy documents.",
+      "tags": [
+        "AI agent",
+        "business intelligence",
+        "knowledge base",
+        "voice assistant",
+        "workflow automation",
+        "operations coaching"
+      ],
+      "synonyms": [
+        "internal AI assistant",
+        "company knowledge bot",
+        "clinic analytics",
+        "SOP assistant",
+        "voice AI"
+      ]
+    },
+    {
+      "id": "v-unite-voice-ai-coach#solution-type",
+      "url": "/our-work/v-unite-voice-ai-coach",
+      "title": "Solution type",
+      "headingPath": [
+        "An AI business coach that cites clinic records and operating policies instead of guessing.",
+        "Solution type"
+      ],
+      "text": "Voice and text AI agent connected to live metrics and company SOPs",
+      "tags": [
+        "AI agent",
+        "business intelligence",
+        "knowledge base",
+        "voice assistant",
+        "workflow automation",
+        "operations coaching"
+      ],
+      "synonyms": [
+        "internal AI assistant",
+        "company knowledge bot",
+        "clinic analytics",
+        "SOP assistant",
+        "voice AI"
+      ]
+    },
+    {
+      "id": "v-unite-voice-ai-coach#the-problem-1",
+      "url": "/our-work/v-unite-voice-ai-coach",
+      "title": "The problem",
+      "headingPath": [
+        "An AI business coach that cites clinic records and operating policies instead of guessing.",
+        "The problem"
+      ],
+      "text": "Aesthetic clinic owners track rebooking rates, treatment conversions, and lapsed clients in their database, while their consultation scripts and staff policies live in uploaded documents. When a clinic manager asks a practical question like “Why is CoolSculpting down this month, and what does our consultation handbook say we should change?”, a standard AI chatbot cannot help. It has no access to the clinic’s real numbers and will happily invent a policy that sounds plausible. For V-Unite’s clinic coaching challenge, the goal was to build an assistant that clinic owners could talk to by voice or text between appointments and trust enough to act on.",
+      "tags": [
+        "AI agent",
+        "business intelligence",
+        "knowledge base",
+        "voice assistant",
+        "workflow automation",
+        "operations coaching"
+      ],
+      "synonyms": [
+        "internal AI assistant",
+        "company knowledge bot",
+        "clinic analytics",
+        "SOP assistant",
+        "voice AI"
+      ]
+    },
+    {
+      "id": "v-unite-voice-ai-coach#the-result-3",
+      "url": "/our-work/v-unite-voice-ai-coach",
+      "title": "The result",
+      "headingPath": [
+        "An AI business coach that cites clinic records and operating policies instead of guessing.",
+        "The result"
+      ],
+      "text": "The system runs live at v-unite-voice-ai-coach.vercel.app and is protected by 88 automated quality checks. One of those checks specifically tests what happens when an owner asks about a policy the clinic has never uploaded: the assistant states plainly that no matching document exists instead of making up an answer. Each coaching conversation ends by saving a short session summary and a concrete action plan, turning scattered clinic data and static PDFs into a daily decision tool.",
+      "tags": [
+        "AI agent",
+        "business intelligence",
+        "knowledge base",
+        "voice assistant",
+        "workflow automation",
+        "operations coaching"
+      ],
+      "synonyms": [
+        "internal AI assistant",
+        "company knowledge bot",
+        "clinic analytics",
+        "SOP assistant",
+        "voice AI"
+      ]
+    },
+    {
+      "id": "v-unite-voice-ai-coach#what-we-did-2",
+      "url": "/our-work/v-unite-voice-ai-coach",
+      "title": "What we did",
+      "headingPath": [
+        "An AI business coach that cites clinic records and operating policies instead of guessing.",
+        "What we did"
+      ],
+      "text": "We started from the rule that an operational assistant is only useful if the owner can see where every answer came from. We designed a clean coaching workspace paired with an automation workflow that decides what evidence a question needs before generating a word of advice. When an owner asks about sales, retention, or lapsed clients, the assistant queries the clinic’s customer records and KPI calculators directly. When the question is about staff procedures or pricing rules, it searches the clinic’s uploaded SOP documents. When a question touches both, it pulls the numbers and the matching handbook section together so the recommendation connects what is happening in the data to what staff are supposed to do at the front desk. Because clinic managers often check in between appointments, we added push-to-talk voice alongside text chat. Spoken questions go through the exact same verification steps as typed ones, and the assistant speaks back a concise summary while showing the cited records on screen.",
+      "tags": [
+        "AI agent",
+        "business intelligence",
+        "knowledge base",
+        "voice assistant",
+        "workflow automation",
+        "operations coaching"
+      ],
+      "synonyms": [
+        "internal AI assistant",
+        "company knowledge bot",
+        "clinic analytics",
+        "SOP assistant",
+        "voice AI"
       ]
     }
   ]

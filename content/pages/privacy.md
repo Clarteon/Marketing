@@ -40,7 +40,7 @@ We keep project briefs for 12 months from submission, then delete or anonymize t
 
 ## Site analytics
 
-We use Cloudflare Web Analytics to count page visits and measure how fast pages load. It does not set cookies, and Cloudflare states that it does not track individual visitors across other websites. When a page loads, your browser sends Cloudflare information about that visit, such as the page address and how long it took to load. We see only totals, not individual visitors.
+We use Cloudflare Web Analytics to count page visits and measure how fast pages load. It does not set cookies, and Cloudflare states that it does not track individual visitors across other websites. When a page loads, your browser sends Cloudflare information about that visit, such as the page address and how long it took to load. We see aggregate page totals rather than individual visitor profiles.
 
 ## Your choices
 
@@ -48,7 +48,7 @@ You can ask for your information to be removed. Email info@clarteon.tech and a p
 
 ## Clara, our AI assistant
 
-Clara is an AI assistant. When you chat with her, the messages you send are processed by our AI provider, Groq, so she can reply. Groq receives the conversation text needed to generate a reply. Groq's privacy policy states that it does not retain inputs and outputs by default, and that it may keep them for up to 30 days for reliability and abuse monitoring. We do not store your chat transcript in our lead database.
+Clara is an AI assistant. When you chat with her, the messages you send are processed by our AI provider, Groq, so she can reply. Groq receives the conversation text needed to generate a reply. Groq’s privacy policy states that it does not retain inputs and outputs by default, and that it may keep them for up to 30 days for reliability and abuse monitoring. We do not store your chat transcript in our lead database.
 
 Cloudflare Turnstile checks that you are a person before your first message. If Clara cannot answer from our published content, we log the question with names, email addresses and other personal details removed, so a person can review it and improve our answers. We keep those notes only as long as needed for that purpose.
 

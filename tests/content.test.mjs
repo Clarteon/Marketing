@@ -55,6 +55,26 @@ describe("published content", () => {
     }
   });
 
+  it("loads published case studies in priority order with preview images", async () => {
+    const studies = await getPublished("case-study");
+    const slugs = studies.map((study) => study.frontMatter.slug);
+
+    expect(slugs).toEqual([
+      "janelles-satin-bouquet",
+      "v-unite-voice-ai-coach",
+      "ai-customer-support-triager",
+      "manual-order-processing-automation",
+      "sane-private-scam-checker",
+    ]);
+
+    for (const study of studies) {
+      expect(study.frontMatter.image, study.filePath).toMatch(/^\/images\/work\/.+\.webp$/);
+      expect(study.frontMatter.problemBrief, study.filePath).toBeTruthy();
+      expect(study.frontMatter.approachBrief, study.filePath).toBeTruthy();
+      expect(study.frontMatter.outcomeBrief, study.filePath).toBeTruthy();
+    }
+  });
+
   it("returns null for unknown pages", async () => {
     expect(await getPage("does-not-exist")).toBeNull();
     expect(await getPage("../home")).toBeNull();

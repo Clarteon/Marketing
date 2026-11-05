@@ -12,7 +12,7 @@ test("every sitemap page renders with SEO basics, no console errors and no axe v
   page,
 }) => {
   // Axe scans every sitemap page. On a busy parallel runner that can approach the default timeout.
-  test.slow();
+  test.setTimeout(120_000);
   // No real Turnstile calls; the forms spec covers the widget with a stub.
   await page.route("https://challenges.cloudflare.com/**", (route) => route.abort());
   const paths = await sitemapPaths(page);
@@ -62,6 +62,8 @@ test("every sitemap page renders with SEO basics, no console errors and no axe v
 });
 
 test("pages have no horizontal overflow", async ({ page }) => {
+  test.slow();
+  await page.route("https://challenges.cloudflare.com/**", (route) => route.abort());
   for (const path of await sitemapPaths(page)) {
     await page.goto(path);
     const overflow = await page.evaluate(
@@ -72,6 +74,8 @@ test("pages have no horizontal overflow", async ({ page }) => {
 });
 
 test("headlines fit a phone and the booking full stop stays with its word", async ({ page }) => {
+  test.slow();
+  await page.route("https://challenges.cloudflare.com/**", (route) => route.abort());
   await page.setViewportSize({ width: 390, height: 844 });
   for (const path of ["/", "/solutions", "/contact"]) {
     await page.goto(path);

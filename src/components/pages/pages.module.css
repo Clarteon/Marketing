@@ -803,3 +803,443 @@
     transition: none;
   }
 }
+
+.workShowcase {
+  display: grid;
+  gap: clamp(2rem, 3.5vw, 3rem);
+}
+
+.workFilterBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem 1.5rem;
+  padding: 1rem 1.25rem;
+  background: var(--stone);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+
+.workFilterLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: 0.01em;
+}
+
+.workFilterControls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.workFilterButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.2;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    transform 150ms ease;
+}
+
+.workFilterButton:hover {
+  border-color: var(--ink);
+}
+
+.workFilterButton:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.workFilterButtonActive {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+.workFilterCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.35rem;
+  height: 1.35rem;
+  padding-inline: 0.35rem;
+  border-radius: 999px;
+  background: var(--stone);
+  color: var(--ink);
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.workFilterButtonActive .workFilterCount {
+  background: var(--lime);
+  color: var(--ink);
+}
+
+.workLedger {
+  display: grid;
+  gap: clamp(2rem, 4vw, 3.25rem);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.workEntry {
+  min-width: 0;
+}
+
+.workArticle {
+  display: grid;
+  gap: clamp(1.5rem, 2.5vw, 2.25rem);
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow:
+    0 1px 3px rgba(10, 10, 10, 0.03),
+    0 8px 24px rgba(10, 10, 10, 0.03);
+}
+
+.workMetaBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.25rem;
+  padding-bottom: 1.125rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.workMetaLeft {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem 0.875rem;
+}
+
+.workIndex {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  height: 2rem;
+  padding-inline: 0.5rem;
+  border-radius: var(--radius-sm);
+  background: var(--lime);
+  color: var(--ink);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.workCategoryTag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  background: var(--stone);
+  border: 1px solid var(--border);
+  color: var(--ink);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.workClientLabel {
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.workSolutionType {
+  color: var(--ink);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--paper);
+}
+
+.workLeadGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  align-items: start;
+}
+
+.workTitleBlock {
+  display: grid;
+  gap: 1.125rem;
+  min-width: 0;
+}
+
+.workTitle {
+  font-size: clamp(1.625rem, 3vw, 2.25rem);
+  font-weight: 500;
+  line-height: 1.14;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.workTitleLink {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.workTitleLink:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.18em;
+}
+
+.workSummary {
+  color: var(--muted);
+  font-size: clamp(1rem, 1.5vw, 1.125rem);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.workHighlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0.25rem 0 0;
+}
+
+.workHighlightItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: var(--radius-sm);
+  background: var(--stone);
+  border: 1px solid var(--border);
+  color: var(--ink);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.workHighlightItem::before {
+  content: "";
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: var(--ink);
+  flex-shrink: 0;
+}
+
+.workActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.875rem 1.25rem;
+  margin-top: 0.5rem;
+}
+
+.workExternalLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--ink);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.22em;
+  text-decoration-thickness: 1.5px;
+}
+
+.workExternalLink:hover {
+  text-decoration-thickness: 2.5px;
+}
+
+.workPreviewColumn {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.workImageLink {
+  display: block;
+  text-decoration: none;
+  border-radius: var(--radius-card);
+}
+
+.workImageFrame {
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--border);
+  background: var(--stone);
+}
+
+.workImage,
+.workSecondaryImage {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  transition: transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@media (hover: hover) {
+  .workImageLink:hover .workImage {
+    transform: scale(1.015);
+  }
+}
+
+.workSecondaryFrame {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--border);
+  background: var(--stone);
+}
+
+.workSecondaryFrame .workSecondaryImage {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+.workCaption {
+  color: var(--muted);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.workBreakdown {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+
+.workBreakdownCell {
+  display: grid;
+  align-content: start;
+  gap: 0.5rem;
+  padding: clamp(1.125rem, 2vw, 1.5rem);
+  background: var(--stone);
+}
+
+.workBreakdownTerm {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink);
+}
+
+.workBreakdownDetail {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+.caseStudyDossier {
+  display: grid;
+  gap: clamp(1.5rem, 2.5vw, 2rem);
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+
+.caseStudyNavRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.caseStudyBackLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--ink);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.caseStudyBackLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.caseStudyBadges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.caseStudyHeaderRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem 1.5rem;
+}
+
+.caseStudyDossierTitle {
+  font-size: clamp(1.5rem, 2.8vw, 2rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin: 0;
+}
+
+.caseStudyHeaderActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.875rem 1.25rem;
+}
+
+.caseStudyGallery {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.caseStudyFigure {
+  display: grid;
+  gap: 0.625rem;
+  margin: 0;
+}
+
+@media (max-width: 960px) {
+  .workLeadGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .workBreakdown {
+    grid-template-columns: 1fr;
+  }
+}

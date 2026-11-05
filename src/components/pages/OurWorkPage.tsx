@@ -1,14 +1,13 @@
-import Link from "next/link";
 import type { ContentPage } from "@/lib/content";
 import type { ListPageData } from "@/lib/page-schemas";
 import { BookingSection } from "@/components/ui/BookingSection";
 import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
 import { Markdown } from "@/components/ui/Markdown";
 import { Page } from "@/components/ui/Page";
 import { PageHero } from "@/components/ui/PageHero";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { Section } from "@/components/ui/Section";
+import { WorkShowcase } from "./WorkShowcase";
 import styles from "./pages.module.css";
 
 interface OurWorkPageProps {
@@ -24,11 +23,16 @@ export function OurWorkPage({ data, body, items }: OurWorkPageProps) {
 
       <Section aria-labelledby="work-title">
         <ScrollReveal variant="wipe" className={styles.sectionHeader}>
-          <p className={styles.eyebrow}>Case studies</p>
+          <p className={styles.eyebrow}>Case studies & reference builds</p>
           <h2 id="work-title" className={styles.sectionTitle}>
-            {items.length > 0 ? "Work you can look at." : data.empty.title}
+            {items.length > 0 ? "Start with the problem. Inspect the system." : data.empty.title}
           </h2>
-          {items.length === 0 ? (
+          {items.length > 0 ? (
+            <p className={styles.sectionIntro}>
+              Each entry below documents a real operational bottleneck, the automation or custom
+              software we put in place, and how daily work changed afterward.
+            </p>
+          ) : (
             <>
               <p className={styles.sectionIntro}>{data.empty.body}</p>
               <div className={styles.emptyActions}>
@@ -37,25 +41,10 @@ export function OurWorkPage({ data, body, items }: OurWorkPageProps) {
                 </Button>
               </div>
             </>
-          ) : null}
+          )}
         </ScrollReveal>
 
-        {items.length > 0 ? (
-          <ul className={styles.list}>
-            {items.map((item) => (
-              <ScrollReveal as="li" key={item.frontMatter.slug} variant="slide">
-                <Card as="article" className={styles.listItem}>
-                  <h3>
-                    <Link className={styles.listLink} href={`/our-work/${item.frontMatter.slug}`}>
-                      {item.frontMatter.title}
-                    </Link>
-                  </h3>
-                  <p className={styles.listSummary}>{item.frontMatter.summary}</p>
-                </Card>
-              </ScrollReveal>
-            ))}
-          </ul>
-        ) : null}
+        {items.length > 0 ? <WorkShowcase items={items.map((item) => item.frontMatter)} /> : null}
       </Section>
 
       {body.trim() ? (

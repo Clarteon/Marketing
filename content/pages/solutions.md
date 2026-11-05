@@ -69,7 +69,7 @@ themes:
     intro: "A website should answer the question a visitor arrived with."
     problems:
       - title: "Visitors cannot find the answer"
-        body: "The site describes what you do, but not the problem the visitor is trying to solve."
+        body: "The site lists services and features while leaving visitors unsure if you solve their specific problem."
         solution: "A clearer website"
       - title: "Interest does not become a conversation"
         body: "People look around and leave without a clear next step."

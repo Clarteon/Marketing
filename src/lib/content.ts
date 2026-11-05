@@ -40,6 +40,21 @@ export const frontMatterSchema = z
     seoDescription: z.string().trim().min(1).optional(),
     publishedAt: z.iso.date().optional(),
     updatedAt: z.iso.date().optional(),
+    order: z.number().int().positive().optional(),
+    category: z.enum(["operations", "conversations", "software", "web"]).optional(),
+    categoryLabel: z.string().trim().min(1).optional(),
+    client: z.string().trim().min(1).optional(),
+    solution_type: z.string().trim().min(1).optional(),
+    permission: z.string().trim().min(1).optional(),
+    image: z.string().trim().min(1).optional(),
+    imageAlt: z.string().trim().min(1).optional(),
+    secondaryImage: z.string().trim().min(1).optional(),
+    secondaryImageAlt: z.string().trim().min(1).optional(),
+    liveUrl: z.string().trim().min(1).optional(),
+    problemBrief: z.string().trim().min(1).optional(),
+    approachBrief: z.string().trim().min(1).optional(),
+    outcomeBrief: z.string().trim().min(1).optional(),
+    highlights: z.array(z.string().trim().min(1)).optional(),
   })
   .passthrough()
   .superRefine((data, ctx) => {
@@ -134,5 +149,10 @@ export async function getPublished(type: ContentType): Promise<ContentPage[]> {
     if (page.frontMatter.status === "published") pages.push(page);
   }
 
-  return pages.sort((a, b) => a.frontMatter.title.localeCompare(b.frontMatter.title));
+  return pages.sort((a, b) => {
+    const orderA = a.frontMatter.order ?? 999;
+    const orderB = b.frontMatter.order ?? 999;
+    if (orderA !== orderB) return orderA - orderB;
+    return a.frontMatter.title.localeCompare(b.frontMatter.title);
+  });
 }

@@ -49,7 +49,7 @@ problems:
     href: "/solutions#conversations"
 steps:
   - title: "Diagnose"
-    body: "We start with the work that is slowing you down, not with a product to sell. We ask what happens today and where it breaks."
+    body: "We start with the work that is slowing your team down. We ask what happens today, where the handoffs break, and what a good day would look like."
   - title: "Recommend"
     body: "You get a clear recommendation: the likely solution, the trade-offs, and the smallest useful next step."
   - title: "Build"
@@ -58,7 +58,7 @@ steps:
     body: "We stay after launch to fix what surfaces, answer questions, and help the system settle into daily work."
 proof:
   title: "Work you can look at."
-  body: "We publish client work only with permission, named or anonymous. The first case studies are being prepared. In the meantime, tell us what you are working on."
+  body: "Every project here started with a bottleneck: orders buried in chat messages, support queues full of repetitive questions, or manual spreadsheets eating up the week. Explore what we built and what changed."
   linkLabel: "See our work"
   href: "/our-work"
 ---

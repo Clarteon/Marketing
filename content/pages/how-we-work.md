@@ -36,7 +36,7 @@ call:
   intro: "Tell us what’s slowing you down. We’ll talk it through and explore a practical next step."
   points:
     - "We ask what is slowing you down, what you have tried, and what a good outcome looks like."
-    - "We look for the smallest useful next step, not the biggest possible project."
+    - "We look for the smallest useful first step that solves the bottleneck without disrupting your week."
     - "You leave with a clear idea of the likely direction and whether we are a fit."
     - "If we are not the right fit, we say so and point you toward a better option."
     - "No preparation is required beyond a rough description of the problem."
