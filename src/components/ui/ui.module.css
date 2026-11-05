@@ -1286,12 +1286,21 @@
   --booking-highlight-band: var(--lime);
   --booking-highlight-text: var(--ink);
   --booking-highlight-base: var(--paper);
+  --booking-highlight-texture: linear-gradient(
+    90deg,
+    #c9f53c 0%,
+    #d3f65f 6%,
+    #cff651 50%,
+    #d4f765 94%,
+    #c9f53c 100%
+  );
 }
 
 .bookingSectionLime {
   --booking-highlight-band: var(--ink);
   --booking-highlight-text: var(--paper);
   --booking-highlight-base: var(--ink);
+  --booking-highlight-texture: none;
 }
 
 .booking {
@@ -1323,23 +1332,33 @@
 }
 
 .bookingHighlight {
-  --booking-highlight-height: 1.04em;
-  display: inline;
-  padding-inline: 0.1em;
-  margin-inline: -0.1em;
+  position: relative;
+  display: inline-block;
+  vertical-align: baseline;
+  isolation: isolate;
+  padding-inline: 0.12em;
+  margin-inline: -0.02em;
+  line-height: 1.02;
   white-space: nowrap;
-  border-radius: 0.12em 0.4em 0.18em 0.5em / 0.5em 0.2em 0.45em 0.18em;
-  background-image: linear-gradient(
-    var(--booking-highlight-band, var(--lime)),
-    var(--booking-highlight-band, var(--lime))
-  );
-  background-repeat: no-repeat;
-  background-position: 0 100%;
-  background-size: 0% var(--booking-highlight-height);
 }
 
-.bookingHighlight.bookingHighlightOn {
-  animation: booking-highlight-band 380ms cubic-bezier(0.16, 0.86, 0.22, 1) both;
+.bookingHighlight::before {
+  content: "";
+  position: absolute;
+  top: 0.06em;
+  bottom: -0.12em;
+  left: 0;
+  right: 0;
+  background-color: var(--booking-highlight-band, var(--lime));
+  background-image: var(--booking-highlight-texture, none);
+  border-radius: 0.12em 0.4em 0.18em 0.5em / 0.5em 0.2em 0.45em 0.18em;
+  transform: rotate(1.2deg) skewX(-6deg);
+  clip-path: inset(0 100% 0 0);
+  z-index: -1;
+}
+
+.bookingHighlight.bookingHighlightOn::before {
+  animation: clarteon-marker-stroke 380ms cubic-bezier(0.16, 0.86, 0.22, 1) both;
 }
 
 .bookingHighlightText {
@@ -1364,16 +1383,6 @@
     background-position: 100% 0;
     -webkit-background-clip: text;
     background-clip: text;
-  }
-}
-
-@keyframes booking-highlight-band {
-  from {
-    background-size: 0% var(--booking-highlight-height);
-  }
-
-  to {
-    background-size: 100% var(--booking-highlight-height);
   }
 }
 
@@ -2467,9 +2476,14 @@
     transition: none;
   }
 
-  .bookingHighlight.bookingHighlightOn {
+  .bookingHighlight::before,
+  .bookingHighlight.bookingHighlightOn::before {
     animation: none !important;
-    background-size: 100% var(--booking-highlight-height);
+    transition: none !important;
+  }
+
+  .bookingHighlight.bookingHighlightOn::before {
+    clip-path: inset(0 0 0 0);
   }
 
   .bookingHighlightOn .bookingHighlightText {
