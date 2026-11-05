@@ -1282,6 +1282,18 @@
   );
 }
 
+.bookingSectionInk {
+  --booking-highlight-band: var(--lime);
+  --booking-highlight-text: var(--ink);
+  --booking-highlight-base: var(--paper);
+}
+
+.bookingSectionLime {
+  --booking-highlight-band: var(--ink);
+  --booking-highlight-text: var(--paper);
+  --booking-highlight-base: var(--ink);
+}
+
 .booking {
   position: relative;
   display: grid;
@@ -1310,50 +1322,76 @@
   }
 }
 
-.bookingUnderlineWrap {
-  position: relative;
-  display: inline-block;
+.bookingHighlight {
+  --booking-highlight-height: 1.04em;
+  display: inline;
+  padding-inline: 0.1em;
+  margin-inline: -0.1em;
+  white-space: nowrap;
+  border-radius: 0.12em 0.4em 0.18em 0.5em / 0.5em 0.2em 0.45em 0.18em;
+  background-image: linear-gradient(
+    var(--booking-highlight-band, var(--lime)),
+    var(--booking-highlight-band, var(--lime))
+  );
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% var(--booking-highlight-height);
+}
+
+.bookingHighlight.bookingHighlightOn {
+  animation: booking-highlight-band 380ms cubic-bezier(0.16, 0.86, 0.22, 1) both;
+}
+
+.bookingHighlightText {
   white-space: nowrap;
 }
 
-.bookingUnderlineText {
-  position: relative;
-  z-index: 1;
+.bookingHighlightOn .bookingHighlightText {
+  animation: booking-highlight-text 380ms cubic-bezier(0.16, 0.86, 0.22, 1) both;
 }
 
-.bookingUnderlineSvg {
-  position: absolute;
-  left: 0;
-  bottom: -0.22em;
-  width: 100%;
-  height: 0.38em;
-  overflow: visible;
-  pointer-events: none;
-  z-index: 0;
+@supports ((background-clip: text) or (-webkit-background-clip: text)) {
+  .bookingHighlightOn .bookingHighlightText {
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    background-image: linear-gradient(
+      90deg,
+      var(--booking-highlight-text, var(--ink)) 0 50%,
+      var(--booking-highlight-base, var(--paper)) 50% 100%
+    );
+    background-repeat: no-repeat;
+    background-size: 200% 100%;
+    background-position: 100% 0;
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
 }
 
-.bookingUnderlinePath {
-  stroke-dasharray: 480;
-  stroke-dashoffset: 480;
-  transition: stroke-dashoffset 70ms linear;
-  color: var(--fg, var(--ink));
-  will-change: stroke-dashoffset;
-}
-
-@media (max-width: 640px) {
-  .bookingUnderlineWrap {
-    display: inline;
-    white-space: normal;
+@keyframes booking-highlight-band {
+  from {
+    background-size: 0% var(--booking-highlight-height);
   }
 
-  .bookingUnderlineText {
-    text-decoration: underline 3px;
-    text-decoration-skip-ink: none;
-    text-underline-offset: 0.16em;
+  to {
+    background-size: 100% var(--booking-highlight-height);
+  }
+}
+
+@keyframes booking-highlight-text {
+  from {
+    background-position: 100% 0;
   }
 
-  .bookingUnderlineSvg {
-    display: none;
+  to {
+    background-position: 0 0;
+  }
+}
+
+@media (forced-colors: active) {
+  .bookingHighlightOn .bookingHighlightText {
+    color: inherit;
+    -webkit-text-fill-color: inherit;
+    background-image: none;
   }
 }
 
@@ -2429,9 +2467,14 @@
     transition: none;
   }
 
-  .bookingUnderlinePath {
-    stroke-dashoffset: 0 !important;
-    transition: none !important;
+  .bookingHighlight.bookingHighlightOn {
+    animation: none !important;
+    background-size: 100% var(--booking-highlight-height);
+  }
+
+  .bookingHighlightOn .bookingHighlightText {
+    animation: none !important;
+    background-position: 0 0;
   }
 
   .bookingAmbientFlow {

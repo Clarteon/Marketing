@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, type RefObject } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import { usePathname } from "next/navigation";
 import { cx } from "@/lib/cx";
 import { DeferredForm } from "./DeferredForm";
@@ -22,7 +22,11 @@ const defaultBody =
   "A discovery call is a short conversation about what is slowing you down and what a good outcome looks like.";
 const highlightPhrase = "clearest way through";
 
-function renderHighlightedTitle(title: string, underlinePathRef: RefObject<SVGPathElement | null>) {
+function renderHighlightedTitle(
+  title: string,
+  highlightRef: RefObject<HTMLSpanElement | null>,
+  highlightOn: boolean,
+) {
   const phrase = title.includes(highlightPhrase) ? highlightPhrase : "discovery call";
   if (!title.includes(phrase)) {
     return title;
@@ -34,24 +38,14 @@ function renderHighlightedTitle(title: string, underlinePathRef: RefObject<SVGPa
   return (
     <>
       {before}
-      <span className={styles.bookingUnderlineWrap}>
-        <span className={styles.bookingUnderlineText}>{phrase}</span>
-        {trailing}
-        <svg
-          className={styles.bookingUnderlineSvg}
-          viewBox="0 0 340 18"
-          fill="none"
-          aria-hidden="true"
-        >
-          <path
-            ref={underlinePathRef}
-            className={styles.bookingUnderlinePath}
-            d="M 3 11 C 75 4, 185 14, 335 8"
-            stroke="currentColor"
-            strokeWidth="3"
-            strokeLinecap="round"
-          />
-        </svg>
+      <span
+        ref={highlightRef}
+        className={cx(styles.bookingHighlight, highlightOn && styles.bookingHighlightOn)}
+      >
+        <span className={styles.bookingHighlightText}>
+          {phrase}
+          {trailing}
+        </span>
       </span>
       {after.slice(trailing.length)}
     </>
@@ -69,40 +63,31 @@ export function BookingSection({
   const titleId = `${id}-title`;
   const onLime = tone === "lime";
   const sectionRef = useRef<HTMLElement | null>(null);
-  const underlinePathRef = useRef<SVGPathElement | null>(null);
+  const highlightRef = useRef<HTMLSpanElement | null>(null);
+  const [highlightOn, setHighlightOn] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
-    const sectionNode = sectionRef.current;
-    const underlinePath = underlinePathRef.current;
-    if (!sectionNode || !underlinePath) return;
+    const highlightNode = highlightRef.current;
+    if (!highlightNode) return;
 
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      underlinePath.style.strokeDashoffset = "0";
-      return;
+    if (typeof IntersectionObserver === "undefined") {
+      const frame = requestAnimationFrame(() => setHighlightOn(true));
+      return () => cancelAnimationFrame(frame);
     }
 
-    let frame = 0;
-    const updateProgress = () => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => {
-        const { top } = sectionNode.getBoundingClientRect();
-        const start = window.innerHeight * 0.85;
-        const end = window.innerHeight * 0.25;
-        const progress = Math.min(1, Math.max(0, (start - top) / (start - end)));
-        underlinePath.style.strokeDashoffset = String(480 * (1 - progress));
-      });
-    };
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setHighlightOn(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.6, rootMargin: "0px 0px -12% 0px" },
+    );
 
-    updateProgress();
-    window.addEventListener("scroll", updateProgress, { passive: true });
-    window.addEventListener("resize", updateProgress);
-
-    return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", updateProgress);
-      window.removeEventListener("resize", updateProgress);
-    };
+    observer.observe(highlightNode);
+    return () => observer.disconnect();
   }, [pathname, title]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
@@ -141,7 +126,7 @@ export function BookingSection({
         <div className={styles.bookingContent}>
           {onLime ? null : <p className={styles.eyebrow}>Next step</p>}
           <h2 id={titleId} className={styles.bookingTitle}>
-            {renderHighlightedTitle(title, underlinePathRef)}
+            {renderHighlightedTitle(title, highlightRef, highlightOn)}
           </h2>
           {mode === "link" || mode === "form" ? (
             <p className={styles.bookingIntro}>{body}</p>

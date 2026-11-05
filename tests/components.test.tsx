@@ -76,11 +76,11 @@ describe("design system", () => {
     );
   });
 
-  it("keeps the full stop with the underlined phrase so it cannot wrap alone", () => {
+  it("keeps the full stop with the highlighted phrase so it cannot wrap alone", () => {
     render(<BookingSection />);
 
-    const phrase = screen.getByText("clearest way through");
-    expect(phrase.parentElement).toHaveTextContent(/^clearest way through\.$/);
+    const heading = screen.getByRole("heading", { level: 2 });
+    expect(heading.querySelector("span")).toHaveTextContent(/^clearest way through\.$/);
   });
 
   it("renders the highlighted phrase", () => {
