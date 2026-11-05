@@ -20,6 +20,7 @@
 - Say "discovery call" consistently.
 - No unproven claims: no numbers, savings, awards or client names unless real and approved.
 - Match Clara's voice: warm, plain-spoken, like a sharp colleague.
+- Run all website prose, case studies and articles through the `humanizer` skill so text reads naturally without AI writing patterns (no *not-X-but-Y* contrasts, no em-dashes, no forced triads, no stock AI words).
 - Use typographic apostrophes and quotes in all visible text.
 
 ## Approved homepage copy

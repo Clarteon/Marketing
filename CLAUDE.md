@@ -91,6 +91,8 @@ CI and releases call the organization-wide reusable workflows in `Clarteon/.gith
 - `clarteon-site-quality`: e2e and Lighthouse tests, alerts, analytics, backups and restore
 - `clarteon-deploy`: Vercel deploys from GitHub Actions, onboarding, rollback, token rotation
 - `clarteon-launch`: go-live checklist and post-launch review loop
+- `humanizer`: remove AI writing patterns from website copy, case studies, and documentation
+- `commit-conventions`: Conventional Commits format (`<type>(<scope>): <summary>`) for all developers and agents
 
 ## Definition of done
 

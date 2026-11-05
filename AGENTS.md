@@ -107,6 +107,10 @@ Skills are playbooks in `.agents/skills/`, one `SKILL.md` per skill directory. L
 - `clarteon-site-quality` (P6 to P8): e2e and Lighthouse tests, alerts, analytics, backups and restore
 - `clarteon-deploy`: Vercel deploys from GitHub Actions, onboarding, rollback, token rotation
 - `clarteon-launch` (P7 and P8): go-live checklist and post-launch review loop
+- `design-taste-frontend`: art direction, composition, and browser inspection for pages and UI
+- `humanizer`: remove AI writing patterns from website copy, case studies, and documentation
+- `commit-conventions`: Conventional Commits format (`<type>(<scope>): <summary>`) for all developers and agents
+- `safe-change-guard`: approval gate for backend edits and contained, reviewable changes
 
 ## Definition of done
 
