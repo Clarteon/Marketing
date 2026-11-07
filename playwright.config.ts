@@ -30,6 +30,8 @@ export default defineConfig({
       NEXT_PUBLIC_SITE_URL: `http://localhost:${port}`,
       NEXT_PUBLIC_ALLOW_INDEXING: "false",
       NEXT_PUBLIC_TURNSTILE_SITE_KEY: "e2e-site-key",
+      NEXT_PUBLIC_CLARA_DICTATION: "true",
+      NEXT_PUBLIC_CLARA_READ_ALOUD: "true",
       NEXT_PUBLIC_CF_ANALYTICS_TOKEN: "",
       ADMIN_AUTH_SECRET: "e2e-admin-secret-that-is-long-enough-123456",
       DATABASE_URL: "",

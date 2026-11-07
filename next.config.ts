@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const isDev = process.env.NODE_ENV === "development";
+const microphonePolicy = process.env.NEXT_PUBLIC_CLARA_DICTATION === "true" ? "self" : "";
 const turnstileOrigin = "https://challenges.cloudflare.com";
 // Cloudflare Web Analytics origins are allowed only when the site token is set.
 const analyticsEnabled = Boolean(process.env.NEXT_PUBLIC_CF_ANALYTICS_TOKEN);
@@ -30,7 +31,10 @@ const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "DENY" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+  {
+    key: "Permissions-Policy",
+    value: `camera=(), microphone=(${microphonePolicy}), geolocation=()`,
+  },
   { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
 ];
 
@@ -43,6 +47,10 @@ const nextConfig: NextConfig = {
       {
         source: "/:path*",
         headers: securityHeaders,
+      },
+      {
+        source: "/admin/:path*",
+        headers: [{ key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" }],
       },
     ];
   },

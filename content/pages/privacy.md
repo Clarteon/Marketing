@@ -50,6 +50,8 @@ You can ask for your information to be removed. Email info@clarteon.tech and a p
 
 Clara is an AI assistant. When you chat with her, the messages you send are processed by our AI provider, Groq, so she can reply. Groq receives the conversation text needed to generate a reply. Groq’s privacy policy states that it does not retain inputs and outputs by default, and that it may keep them for up to 30 days for reliability and abuse monitoring. We do not store your chat transcript in our lead database.
 
+If you use the microphone, our site sends your recording to Groq to turn it into text. Clarteon does not save the recording. You can edit the text before sending it as a chat message. If you use Read aloud, a voice on your device reads Clara’s reply.
+
 Cloudflare Turnstile checks that you are a person before your first message. If Clara cannot answer from our published content, we log the question with names, email addresses and other personal details removed, so a person can review it and improve our answers. We keep those notes only as long as needed for that purpose.
 
 Please do not share passwords, payment details, government identification or other sensitive information in chat. If you are under 18, please do not use the chat or share personal details.
