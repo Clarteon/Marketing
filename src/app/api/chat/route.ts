@@ -71,7 +71,7 @@ export async function POST(request: Request): Promise<Response> {
     return json({ ok: false, error: "chat_unavailable" }, 503);
   }
 
-  if (!config.GROQ_API_KEY) {
+  if (!config.GROQ_API_KEY && !input.booking && !input.confirmationToken) {
     logServerEvent("chat_not_configured");
     return json({ ok: false, error: "chat_unavailable" }, 503);
   }
@@ -163,6 +163,7 @@ export async function POST(request: Request): Promise<Response> {
           },
           onStatus: (status) => send({ type: "status", status }),
           onConfirmation: (confirmation) => send({ type: "confirmation", ...confirmation }),
+          onBookingOptions: (bookingOptions) => send({ type: "booking_options", bookingOptions }),
         });
 
         if (result.degraded) {

@@ -10,6 +10,7 @@ import {
 } from "@/lib/booking/errors";
 import { formatSlotDateTime, slotDateKey } from "@/lib/booking/format";
 import { bookDiscoveryCall, getAvailability } from "@/lib/booking/service";
+import { BookingStoreNotConfiguredError, SlotTakenError } from "@/lib/booking/store";
 import { getConfig } from "@/lib/config";
 import { sendLeadEmails } from "@/lib/email/send-lead-emails";
 import { sendEmail } from "@/lib/email/resend";
@@ -41,7 +42,7 @@ import {
   searchKnowledgeArgsSchema,
   solutionBriefArgsSchema,
 } from "./schema";
-import type { ToolDefinition } from "./types";
+import type { ChatBookingOptions, ToolDefinition } from "./types";
 
 export interface ChatToolDependencies {
   searchKnowledge?: typeof searchKnowledge;
@@ -183,28 +184,42 @@ function mapSlot(slot: { id: string; start: string; end: string }, timezone: str
   };
 }
 
-async function freshSlots(context: ChatToolContext): Promise<Array<Record<string, string>>> {
-  if (!context.timezone) return [];
+async function freshSlots(
+  context: ChatToolContext,
+  rejectedSlot: string,
+): Promise<ChatBookingOptions["slots"]> {
+  const { timezone } = context;
+  if (!timezone) return [];
   try {
     const availability = await (context.deps?.getAvailability ?? getAvailability)({
-      timezone: context.timezone,
+      timezone,
       now: context.now,
     });
-    return availability.slots.slice(0, 4).map((slot) => mapSlot(slot, context.timezone ?? "UTC"));
+    return availability.slots
+      .filter((slot) => slot.id !== rejectedSlot)
+      .slice(0, 3)
+      .map((slot) => mapSlot(slot, timezone));
   } catch {
     return [];
   }
 }
 
 function bookingError(error: unknown): { code: string; message: string } {
-  if (error instanceof SlotUnavailableError || error instanceof InvalidSlotError) {
+  if (
+    error instanceof SlotUnavailableError ||
+    error instanceof InvalidSlotError ||
+    error instanceof SlotTakenError
+  ) {
     return {
       code: "slot_unavailable",
       message:
         "That time is no longer available. Share the new times with the visitor and ask them to pick one.",
     };
   }
-  if (error instanceof BookingNotConfiguredError) {
+  if (
+    error instanceof BookingNotConfiguredError ||
+    error instanceof BookingStoreNotConfiguredError
+  ) {
     return {
       code: "booking_unavailable",
       message:
@@ -408,6 +423,9 @@ async function checkAvailabilityTool(args: unknown, context: ChatToolContext): P
   }
 
   try {
+    if (!context.deps?.getAvailability && !getConfig().DATABASE_URL) {
+      throw new BookingStoreNotConfiguredError();
+    }
     const availability = await (context.deps?.getAvailability ?? getAvailability)({
       timezone: parsed.data.timezone,
       now: context.now,
@@ -432,6 +450,13 @@ async function checkAvailabilityTool(args: unknown, context: ChatToolContext): P
     };
   } catch (error) {
     logServerEvent("chat_availability_failed", { code: safeErrorCode(error) });
+    if (
+      error instanceof BookingStoreNotConfiguredError ||
+      error instanceof BookingNotConfiguredError
+    ) {
+      const unavailable = bookingError(error);
+      return { ok: false, error: unavailable.code, message: unavailable.message };
+    }
     return {
       ok: false,
       error: "availability_unavailable",
@@ -514,7 +539,7 @@ async function bookCallTool(args: unknown, context: ChatToolContext): Promise<To
       message: mapped.message,
     };
     if (mapped.code === "slot_unavailable") {
-      response.slots = await freshSlots(context);
+      response.slots = await freshSlots(context, input.slot_id);
     }
     return response;
   }

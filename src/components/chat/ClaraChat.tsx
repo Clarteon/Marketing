@@ -13,8 +13,12 @@ import {
 import { MessageMarkdown as ReactMarkdown } from "./MessageMarkdown";
 import { Button } from "@/components/ui/Button";
 import { preloadTurnstile, TurnstileWidget } from "@/components/ui/TurnstileWidget";
+import { BOOKING_DEFAULT_TIMEZONE } from "@/lib/booking/constants";
 import { CHAT_MESSAGE_MAX_CHARS, CHAT_TURNSTILE_ACTION } from "@/lib/chat/constants";
+import type { ChatBookingStep } from "@/lib/chat/schema";
+import type { ChatBookingOptions, ChatEvent } from "@/lib/chat/types";
 import { site } from "@/lib/site";
+import { BookingChoices, type BookingDraft } from "./BookingChoices";
 import styles from "./chat.module.css";
 import { detectedTimezone, TimezoneChoices } from "./TimezoneChoices";
 import { useDictation } from "./useDictation";
@@ -31,17 +35,8 @@ interface ChatMessage {
   readable?: boolean;
 }
 
-interface ChatEvent {
-  type: "text" | "status" | "degraded" | "error" | "done" | "confirmation";
-  token?: string;
-  description?: string;
-  text?: string;
-  status?: string;
-  message?: string;
-  code?: string;
-}
-
 const MAX_CLIENT_MESSAGES = 20;
+const EMPTY_BOOKING_DRAFT: BookingDraft = { name: "", email: "" };
 const DICTATION_ENABLED = process.env.NEXT_PUBLIC_CLARA_DICTATION === "true";
 const READ_ALOUD_ENABLED = process.env.NEXT_PUBLIC_CLARA_READ_ALOUD !== "false";
 const WELCOME = "Hi, I’m Clara, Clarteon’s AI assistant. What is slowing your team down right now?";
@@ -79,6 +74,8 @@ function newSessionId(): string {
 
 function errorMessage(code: string): string {
   switch (code) {
+    case "invalid_input":
+      return "Please check your details and try again.";
     case "rate_limited":
       return "I’m getting a lot of messages right now. Please wait a moment and try again.";
     case "bot_check_required":
@@ -132,13 +129,19 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
   const [botVerified, setBotVerified] = useState(false);
   const [degraded, setDegraded] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [confirmation, setConfirmation] = useState<{ token: string; description: string } | null>(
-    null,
-  );
+  const [confirmation, setConfirmation] = useState<{
+    token: string;
+    description: string;
+    action?: string;
+    retry?: boolean;
+  } | null>(null);
+  const [bookingOptions, setBookingOptions] = useState<ChatBookingOptions | null>(null);
+  const [bookingDraft, setBookingDraft] = useState<BookingDraft>(EMPTY_BOOKING_DRAFT);
 
   const panelRef = useRef<HTMLElement>(null);
   const bubbleRef = useRef<HTMLButtonElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const reviewRef = useRef<HTMLDivElement>(null);
   const micButtonRef = useRef<HTMLButtonElement>(null);
   const discardButtonRef = useRef<HTMLButtonElement>(null);
   const voiceFocus = useRef<"mic" | "draft" | null>(null);
@@ -246,7 +249,9 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
 
     const updateVisibleViewport = () => {
       const keyboardCoversViewport =
-        document.activeElement === inputRef.current &&
+        (document.activeElement === inputRef.current ||
+          (document.activeElement instanceof HTMLInputElement &&
+            panel.contains(document.activeElement))) &&
         visualViewport.offsetTop + visualViewport.height < window.innerHeight - 100;
 
       if (!keyboardCoversViewport) {
@@ -282,6 +287,10 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
     const list = listRef.current;
     if (list) list.scrollTop = list.scrollHeight;
   }, [messages, sending, open, degraded, error]);
+
+  useEffect(() => {
+    if (open && !sending && confirmation?.action === "book_call") reviewRef.current?.focus();
+  }, [confirmation, open, sending]);
 
   useEffect(() => {
     return () => abortRef.current?.abort();
@@ -368,7 +377,11 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
     }
   }
 
-  async function sendMessage(raw: string, confirmationToken?: string, timezoneOverride?: string) {
+  async function sendMessage(
+    raw: string,
+    options: { confirmationToken?: string; timezone?: string; booking?: ChatBookingStep } = {},
+  ) {
+    const { confirmationToken, booking } = options;
     const message = raw.trim();
     if (!message || sendingRef.current || dictation.active() || !privacyAccepted) return;
     if (!chatAvailable) {
@@ -389,7 +402,15 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
       role: item.role,
       content: item.content,
     }));
-    const userMessage: ChatMessage = { id: `user-${Date.now()}`, role: "user", content: message };
+    const bookingConfirmation =
+      confirmation?.action === "book_call" && confirmation.token === confirmationToken
+        ? confirmation
+        : null;
+    const userMessage: ChatMessage = {
+      id: `user-${Date.now()}`,
+      role: "user",
+      content: bookingConfirmation ? "Confirm booking" : message,
+    };
     const assistantId = `assistant-${Date.now()}`;
 
     setMessages((current) => [
@@ -406,6 +427,7 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
 
     const controller = new AbortController();
     abortRef.current = controller;
+    let restoreBookingConfirmation = Boolean(bookingConfirmation);
 
     try {
       const response = await fetch("/api/chat", {
@@ -417,9 +439,10 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
           message,
           history,
           turnstileToken: botVerified ? undefined : token,
-          timezone: timezoneOverride ?? selectedTimezone ?? detectedTimezone(),
+          timezone: options.timezone ?? selectedTimezone ?? detectedTimezone(),
           pageUrl: window.location.pathname,
           confirmationToken,
+          booking,
         }),
       });
 
@@ -442,6 +465,9 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
       let completed = false;
       let failed = false;
       let degradedMessage: string | null = null;
+      let receivedOptions = false;
+      let retryBooking = false;
+      let invalidConfirmation = false;
 
       await readEvents(response, (event) => {
         if (event.type === "text" && event.text) {
@@ -452,7 +478,19 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
             ),
           );
         } else if (event.type === "confirmation" && event.token && event.description) {
-          setConfirmation({ token: event.token, description: event.description });
+          setConfirmation({
+            token: event.token,
+            description: event.description,
+            action: event.action,
+          });
+        } else if (event.type === "booking_options" && event.bookingOptions) {
+          receivedOptions = true;
+          setBookingOptions(event.bookingOptions);
+          setBookingDraft((current) => ({ ...current, slotId: undefined }));
+        } else if (event.type === "status" && event.status === "retry_booking") {
+          retryBooking = true;
+        } else if (event.type === "status" && event.status === "confirmation_invalid") {
+          invalidConfirmation = true;
         } else if (event.type === "degraded") {
           failed = true;
           degradedMessage = event.message ?? errorMessage("chat_unavailable");
@@ -466,6 +504,13 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
       });
 
       if (receivedText && completed && !failed && !controller.signal.aborted) {
+        if (bookingConfirmation && !retryBooking) {
+          restoreBookingConfirmation = false;
+          if (!receivedOptions && !invalidConfirmation) {
+            setBookingOptions(null);
+            setBookingDraft(EMPTY_BOOKING_DRAFT);
+          }
+        }
         setMessages((current) =>
           current.map((item) => (item.id === assistantId ? { ...item, readable: true } : item)),
         );
@@ -479,6 +524,9 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
         setError("I couldn’t reach the server. Please try again, or send a project brief.");
       }
     } finally {
+      if (restoreBookingConfirmation && bookingConfirmation) {
+        setConfirmation({ ...bookingConfirmation, retry: true });
+      }
       setMessages((current) =>
         current.filter((item) => !(item.id === assistantId && item.content.length === 0)),
       );
@@ -486,6 +534,17 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
       sendingRef.current = false;
       setSending(false);
     }
+  }
+
+  function showBookingTimes(timezone: string, from?: string) {
+    setSelectedTimezone(timezone);
+    void sendMessage(
+      from ? "Show more discovery call times." : "I’d like to see discovery call times.",
+      {
+        timezone,
+        booking: { step: "times", from },
+      },
+    );
   }
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -700,27 +759,52 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
                       <TimezoneChoices
                         onChoose={(zone, label) => {
                           setSelectedTimezone(zone);
-                          void sendMessage(
-                            `Show discovery call times in ${label} (${zone}).`,
-                            undefined,
-                            zone,
-                          );
+                          void sendMessage(`Show discovery call times in ${label} (${zone}).`, {
+                            timezone: zone,
+                          });
                         }}
                       />
                     ) : null}
                   </div>
                 ))}
 
+                {bookingOptions && !confirmation && !sending && !activeDegraded ? (
+                  <BookingChoices
+                    options={bookingOptions}
+                    draft={bookingDraft}
+                    disabled={voiceBusy}
+                    onDraft={setBookingDraft}
+                    onTimes={showBookingTimes}
+                    onReview={(booking, timezone) =>
+                      void sendMessage("Review my booking.", { booking, timezone })
+                    }
+                  />
+                ) : null}
+
                 {confirmation ? (
-                  <div className={styles.degraded} role="group" aria-label="Review action details">
+                  <div
+                    ref={reviewRef}
+                    className={styles.degraded}
+                    role="group"
+                    tabIndex={-1}
+                    aria-label="Review action details"
+                  >
                     <p className={styles.messageText}>{confirmation.description}</p>
                     <div className={styles.degradedActions}>
                       <Button
                         type="button"
                         disabled={sending || voiceBusy}
-                        onClick={() => void sendMessage("Confirm this action.", confirmation.token)}
+                        onClick={() =>
+                          void sendMessage("Confirm this action.", {
+                            confirmationToken: confirmation.token,
+                          })
+                        }
                       >
-                        Confirm
+                        {confirmation.action === "book_call"
+                          ? confirmation.retry
+                            ? "Retry booking"
+                            : "Confirm booking"
+                          : "Confirm"}
                       </Button>
                       <Button
                         type="button"
@@ -731,9 +815,12 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
                         Cancel
                       </Button>
                     </div>
-                    <p>
-                      Only confirm if these details are correct. You can cancel or ask for changes.
-                    </p>
+                    {confirmation.action !== "book_call" ? (
+                      <p>
+                        Only confirm if these details are correct. You can cancel or ask for
+                        changes.
+                      </p>
+                    ) : null}
                   </div>
                 ) : null}
 
@@ -781,8 +868,12 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
                     </button>
                     <button
                       type="button"
-                      disabled={voiceBusy}
-                      onClick={() => void sendMessage("I’d like to book a discovery call.")}
+                      disabled={voiceBusy || (!botVerified && !token)}
+                      onClick={() =>
+                        showBookingTimes(
+                          selectedTimezone ?? detectedTimezone() ?? BOOKING_DEFAULT_TIMEZONE,
+                        )
+                      }
                     >
                       Book a call
                     </button>
