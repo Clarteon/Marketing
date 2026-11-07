@@ -7,6 +7,7 @@ vi.mock("next/navigation", () => ({
 }));
 
 vi.mock("@/components/ui/TurnstileWidget", () => ({
+  preloadTurnstile: vi.fn(),
   TurnstileWidget: ({ onToken }: { onToken: (token: string) => void }) => (
     <button type="button" onClick={() => onToken("test-token")}>
       Complete verification

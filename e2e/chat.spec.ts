@@ -69,6 +69,61 @@ test.describe("Clara chat", () => {
     await stubTurnstile(page);
   });
 
+  test("preloads verification on open and retries a failed download without losing the draft", async ({
+    page,
+  }) => {
+    let attempts = 0;
+    let failFirstDownload = () => {};
+    const firstDownload = new Promise<void>((resolve) => {
+      failFirstDownload = resolve;
+    });
+    const isTurnstileScript = (url: URL) =>
+      url.hostname === "challenges.cloudflare.com" && url.pathname === "/turnstile/v0/api.js";
+    await page.route(isTurnstileScript, async (route) => {
+      attempts += 1;
+      if (attempts === 1) {
+        await firstDownload;
+        await route.abort();
+        return;
+      }
+      await route.fulfill({
+        contentType: "text/javascript",
+        body: `window.turnstile = {
+          render: (el, options) => {
+            if (options.appearance === "interaction-only") options.callback("e2e-token");
+            return "w1";
+          },
+          remove: () => {},
+        };`,
+      });
+    });
+
+    await page.goto("/");
+    expect(attempts).toBe(0);
+    const preload = page.waitForRequest((request) => isTurnstileScript(new URL(request.url())));
+    await page.getByRole("button", { name: "Chat with Clara" }).click();
+    await preload;
+    const panel = page.locator("#clara-chat-panel");
+    const input = panel.getByLabel("Your message to Clara");
+    const send = panel.getByRole("button", { name: "Send message" });
+    try {
+      await expect(panel.getByRole("heading", { name: "Before we start" })).toBeVisible();
+      await expect(panel.getByText("Verifying your browser…")).toHaveCount(0);
+      await panel.getByRole("button", { name: "I understand" }).click();
+      await expect(panel.getByRole("status")).toHaveText("Verifying your browser…");
+      await input.fill("Can you help with weekly reporting?");
+      await expect(send).toBeDisabled();
+    } finally {
+      failFirstDownload();
+    }
+
+    await expect(panel.getByRole("status")).toHaveText("Verification couldn’t load.");
+    await panel.getByRole("button", { name: "Retry verification" }).click();
+    await expect(send).toBeEnabled();
+    await expect(input).toHaveValue("Can you help with weekly reporting?");
+    expect(attempts).toBe(2);
+  });
+
   test("passes the privacy gate, sends the bot token once and renders the reply as text", async ({
     page,
   }) => {
@@ -191,6 +246,185 @@ test.describe("Clara chat", () => {
       message: "Confirm this action.",
       confirmationToken: "e2e-signed-proposal",
     });
+  });
+
+  test("dictates a first message into the existing draft and keeps booking confirmation explicit", async ({
+    page,
+  }) => {
+    await page.addInitScript(() => {
+      Object.defineProperty(navigator.mediaDevices, "getUserMedia", {
+        value: async () => {
+          const context = new AudioContext();
+          const output = context.createMediaStreamDestination();
+          const tone = context.createOscillator();
+          tone.connect(output);
+          tone.start();
+          await context.resume();
+          const track = output.stream.getAudioTracks()[0];
+          const stop = track.stop.bind(track);
+          track.stop = () => {
+            stop();
+            document.body.dataset.micReleased = "true";
+            void context.close();
+          };
+          document.body.dataset.micReleased = "false";
+          return output.stream;
+        },
+      });
+    });
+    const voiceRequests: Array<Record<string, string>> = [];
+    const messages: Array<Record<string, unknown>> = [];
+    let resolveTranscription = () => {};
+    const transcriptionReady = new Promise<void>((resolve) => {
+      resolveTranscription = resolve;
+    });
+    await page.route("/api/chat/transcribe", async (route) => {
+      voiceRequests.push(route.request().headers());
+      const body = route.request().postDataBuffer();
+      expect(body?.subarray(0, 4).toString()).toBe("RIFF");
+      expect(body?.length).toBeLessThanOrEqual(640_044);
+      await transcriptionReady;
+      await route.fulfill({
+        headers: { "X-Chat-Session-Verified": "1" },
+        json: { text: "Book a call." },
+      });
+    });
+    await page.route("/api/chat", async (route) => {
+      messages.push(route.request().postDataJSON() as Record<string, unknown>);
+      await route.fulfill({
+        contentType: "application/x-ndjson",
+        body: ndjson([
+          { type: "text", text: "Please review the details below." },
+          { type: "confirmation", token: "booking-proposal", description: "Book a discovery call" },
+          { type: "done" },
+        ]),
+      });
+    });
+
+    const response = await page.goto("/");
+    expect(response?.headers()["permissions-policy"]).toContain("microphone=(self)");
+    const admin = await page.request.get("/admin/login");
+    expect(admin.headers()["permissions-policy"]).toContain("microphone=()");
+    await openChat(page);
+    const panel = page.locator("#clara-chat-panel");
+    const input = panel.getByLabel("Your message to Clara");
+    const mic = panel.getByRole("button", { name: "Record a message" });
+    const send = panel.getByRole("button", { name: "Send message" });
+    const composer = panel.locator("form");
+    const stop = composer.getByRole("button", { name: "Stop recording" });
+    const discard = composer.getByRole("button", { name: "Discard recording" });
+    await expect(panel.getByLabel("Dictation language")).toHaveCount(0);
+    await expect(input).toBeFocused();
+    await expect(send).toBeDisabled();
+    await expect(mic).toBeEnabled();
+    await composer.screenshot({ path: test.info().outputPath("composer-empty.png") });
+    await input.fill("Hi Clara.");
+    await mic.click();
+    await expect(composer.getByRole("status")).toHaveText("Recording");
+    await expect(stop).toBeFocused();
+    await expect(send).toHaveCount(0);
+    await composer.screenshot({ path: test.info().outputPath("composer-recording.png") });
+    await discard.click();
+    await expect(page.locator("body")).toHaveAttribute("data-mic-released", "true");
+    await expect(input).toHaveValue("Hi Clara.");
+    await expect(mic).toBeFocused();
+    expect(voiceRequests).toHaveLength(0);
+
+    await mic.press("Enter");
+    await expect(composer.getByText("0:01", { exact: true })).toBeVisible();
+    await stop.press("Enter");
+    try {
+      await expect(composer.getByRole("status")).toHaveText("Turning speech into text…");
+      await expect(composer.getByRole("button", { name: "Cancel dictation" })).toBeFocused();
+      await composer.screenshot({ path: test.info().outputPath("composer-transcribing.png") });
+    } finally {
+      resolveTranscription();
+    }
+    await expect(input).toHaveValue("Hi Clara. Book a call.");
+    await expect(input).toBeFocused();
+    await expect(page.locator("body")).toHaveAttribute("data-mic-released", "true");
+    expect(voiceRequests).toHaveLength(1);
+    expect(voiceRequests[0]["x-turnstile-token"]).toBe("e2e-token");
+    expect(voiceRequests[0]).not.toHaveProperty("x-dictation-language");
+    expect(messages).toHaveLength(0);
+    expect(await panel.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(
+      true,
+    );
+
+    await input.press("Tab");
+    await expect(mic).toBeFocused();
+    await page.keyboard.press("Tab");
+    await expect(send).toBeFocused();
+    await composer.screenshot({ path: test.info().outputPath("composer-ready.png") });
+    await send.press("Enter");
+    await expect(panel.getByRole("group", { name: "Review action details" })).toBeVisible();
+    expect(messages).toHaveLength(1);
+    expect(messages[0]).toMatchObject({
+      message: "Hi Clara. Book a call.",
+      sessionId: voiceRequests[0]["x-chat-session"],
+    });
+    expect(messages[0]).not.toHaveProperty("turnstileToken");
+    expect(messages[0]).not.toHaveProperty("confirmationToken");
+  });
+
+  test("reads a completed reply with a feminine local voice and stops when chat closes", async ({
+    page,
+  }) => {
+    await page.addInitScript(() => {
+      Object.defineProperty(window, "SpeechSynthesisUtterance", {
+        value: class {
+          constructor(public text: string) {}
+        },
+      });
+      Object.defineProperty(window, "speechSynthesis", {
+        value: Object.assign(new EventTarget(), {
+          getVoices: () => [
+            {
+              name: "Microsoft David - English (United States)",
+              localService: true,
+              lang: "en-US",
+            },
+            { name: "Microsoft Aria (Natural)", localService: false, lang: "en-US" },
+            { name: "Microsoft Zira - English (United States)", localService: true, lang: "en-US" },
+          ],
+          speak: (utterance: { text: string; voice: { name: string }; rate: number }) => {
+            document.body.dataset.spoken = utterance.text;
+            document.body.dataset.speechVoice = utterance.voice.name;
+            document.body.dataset.speechRate = String(utterance.rate);
+          },
+          cancel: () => {
+            document.body.dataset.speechStopped = "true";
+          },
+        }),
+      });
+    });
+    await page.route("/api/chat", (route) =>
+      route.fulfill({
+        contentType: "application/x-ndjson",
+        body: ndjson([
+          { type: "text", text: "[Book a discovery call](/contact#book)." },
+          { type: "done" },
+        ]),
+      }),
+    );
+    await page.goto("/");
+    await openChat(page);
+    const panel = page.locator("#clara-chat-panel");
+    await panel.getByLabel("Your message to Clara").fill("How do I start?");
+    await panel.getByRole("button", { name: "Send message" }).click();
+    await expect(panel.getByRole("link", { name: "Book a discovery call" })).toBeVisible();
+    await expect(page.locator("body")).not.toHaveAttribute("data-spoken", /.+/);
+    await expect(panel.getByLabel("Read-aloud language")).toHaveCount(0);
+    await panel.getByRole("button", { name: "Read aloud" }).click();
+    await expect(page.locator("body")).toHaveAttribute("data-spoken", "Book a discovery call.");
+    await expect(page.locator("body")).toHaveAttribute(
+      "data-speech-voice",
+      "Microsoft Zira - English (United States)",
+    );
+    await expect(page.locator("body")).toHaveAttribute("data-speech-rate", "0.95");
+    await expect(panel.getByRole("button", { name: "Stop reading" })).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(page.locator("body")).toHaveAttribute("data-speech-stopped", "true");
   });
 
   test("never renders model text as HTML", async ({ page }) => {
