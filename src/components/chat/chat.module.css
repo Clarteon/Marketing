@@ -642,6 +642,26 @@
   gap: 0.5rem;
 }
 
+.bookingDetails,
+.bookingDetails label,
+.bookingTimes {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.bookingDetails {
+  gap: 0.8rem;
+}
+
+.bookingDetails label {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.bookingTime {
+  font-weight: 600;
+}
+
 .degradedActions a {
   min-height: 44px;
   padding: 0.55rem 0.9rem;

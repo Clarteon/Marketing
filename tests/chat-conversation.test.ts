@@ -6,7 +6,9 @@ import type { ChatToolDependencies } from "@/lib/chat/tools";
 import { resetChatUsageForTests } from "@/lib/chat/usage";
 import { resetRateLimitsForTests } from "@/lib/guardrails/rate-limit";
 import { encodeSlotId } from "@/lib/booking/slots";
-import type { ActionConfirmation } from "@/lib/chat/confirmation";
+import { type ActionConfirmation } from "@/lib/chat/confirmation";
+import { BookingFailedError, SlotUnavailableError } from "@/lib/booking/errors";
+import type { ChatBookingOptions } from "@/lib/chat/types";
 
 const config = {
   GROQ_API_KEY: "test-key",
@@ -183,5 +185,131 @@ describe("Clara end-to-end conversation", () => {
       {},
     );
     expect(streamModel).toHaveBeenCalledTimes(4);
+  });
+
+  it("requires a current, session-bound slot offer and confirms only its reviewed details", async () => {
+    const now = new Date("2026-11-07T08:00:00.000Z");
+    const sid = crypto.randomUUID();
+    const timezone = "Asia/Manila";
+    const slots = ["02", "03"].map((hour) => {
+      const start = `2026-11-09T${hour}:00:00.000Z`;
+      const end = `2026-11-09T${hour}:30:00.000Z`;
+      return { start, end, id: encodeSlotId(new Date(start), new Date(end)) };
+    });
+    const getAvailability = vi.fn().mockResolvedValue({ timezone, slots });
+    const bookDiscoveryCall = vi
+      .fn()
+      .mockRejectedValueOnce(new SlotUnavailableError())
+      .mockRejectedValueOnce(new BookingFailedError("store_confirm"))
+      .mockResolvedValue({
+        booking: {
+          requestId: "booking-1",
+          slotStart: new Date(slots[1].start),
+          slotEnd: new Date(slots[1].end),
+          timezone,
+          meetLink: "https://meet.google.com/abc-defg-hij",
+          calendarLink: null,
+        },
+        confirmationEmailSent: true,
+        teamEmailSent: true,
+      });
+    const streamModel = vi.fn();
+    async function turn(overrides: Partial<ChatRequest>, time = now) {
+      const onBookingOptions = vi.fn<(options: ChatBookingOptions) => void>();
+      const onConfirmation = vi.fn<(proposal: ActionConfirmation) => void>();
+      const onText = vi.fn();
+      const onStatus = vi.fn();
+      const request = {
+        sessionId: sid,
+        message: "Review my booking.",
+        history: [],
+        timezone,
+        ...overrides,
+      };
+      await runChatTurn({
+        request,
+        sessionId: request.sessionId,
+        ip: "203.0.113.7",
+        pageUrl: "/",
+        onBookingOptions,
+        onConfirmation,
+        onText,
+        onStatus,
+        deps: {
+          config: { ...config, GROQ_API_KEY: "" },
+          streamModel,
+          confirmationSecret: "test-confirmation-secret",
+          now: time,
+          toolDependencies: { getAvailability, bookDiscoveryCall },
+        },
+      });
+      return { onBookingOptions, onConfirmation, onText, onStatus };
+    }
+
+    const start = await turn({ booking: { step: "times" } });
+    const offer = start.onBookingOptions.mock.lastCall![0].offer;
+    const review = {
+      step: "review" as const,
+      slot_id: slots[0].id,
+      offer,
+      name: "Test Visitor",
+      email: "visitor@example.com",
+    };
+    const tamperedOffer = `${offer}.`;
+    for (const [change, time] of [
+      [{ booking: { ...review, offer: tamperedOffer } }, now],
+      [{ booking: { ...review, slot_id: "unoffered-slot" } }, now],
+      [{ booking: review, sessionId: crypto.randomUUID() }, now],
+      [{ booking: review, timezone: "America/New_York" }, now],
+      [{ booking: review }, new Date(now.getTime() + 10 * 60_000)],
+    ] as const) {
+      const rejected = await turn(change, time);
+      expect(rejected.onConfirmation).not.toHaveBeenCalled();
+      expect(rejected.onBookingOptions).toHaveBeenCalledOnce();
+    }
+    const minor = await turn({ booking: review, history: [{ role: "user", content: "I am 16." }] });
+    expect(minor.onConfirmation).not.toHaveBeenCalled();
+    const sensitive = await turn({ booking: { ...review, name: "password: test-secret" } });
+    expect(sensitive.onConfirmation).not.toHaveBeenCalled();
+    const first = await turn({ booking: review });
+    const proposal = first.onConfirmation.mock.lastCall![0];
+    expect(proposal.description).toContain("visitor@example.com");
+    for (const rejected of [
+      { confirmationToken: proposal.token, message: "Do not confirm." },
+      { confirmationToken: proposal.token, sessionId: crypto.randomUUID() },
+      { confirmationToken: `${proposal.token}.`, message: "Confirm this action." },
+    ])
+      await turn({ message: "Confirm this action.", ...rejected });
+    expect(bookDiscoveryCall).not.toHaveBeenCalled();
+
+    const conflict = await turn({
+      message: "Confirm this action.",
+      confirmationToken: proposal.token,
+    });
+    expect(conflict.onText).toHaveBeenCalledWith(
+      "That time is no longer available. Pick another time below.",
+    );
+    const fresh = conflict.onBookingOptions.mock.lastCall![0];
+    expect(fresh.slots.map((slot) => slot.id)).toEqual([slots[1].id]);
+
+    const alternate = await turn({
+      booking: { ...review, slot_id: slots[1].id, offer: fresh.offer },
+    });
+    const confirmationToken = alternate.onConfirmation.mock.lastCall![0].token;
+    const confirm = { message: "Confirm this action.", confirmationToken };
+    const failure = await turn(confirm);
+    expect(failure.onStatus).toHaveBeenCalledWith("retry_booking");
+    expect(failure.onText.mock.lastCall![0]).not.toContain("Your discovery call is confirmed");
+    const success = await turn(confirm);
+    expect(success.onText.mock.lastCall![0]).toContain("https://meet.google.com/abc-defg-hij");
+    expect(bookDiscoveryCall).toHaveBeenCalledTimes(3);
+    expect(bookDiscoveryCall.mock.calls[1][0]).toEqual(bookDiscoveryCall.mock.calls[2][0]);
+    expect(bookDiscoveryCall.mock.calls[2][0]).toMatchObject({
+      slotId: slots[1].id,
+      email: review.email,
+      name: review.name,
+      timezone,
+    });
+    expect(streamModel).not.toHaveBeenCalled();
   });
 });

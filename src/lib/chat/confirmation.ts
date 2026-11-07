@@ -1,7 +1,7 @@
 import "server-only";
 import { createHmac } from "node:crypto";
 import { z } from "zod";
-import { decodeSlotId } from "@/lib/booking/slots";
+import { decodeSlotId, validateSlot } from "@/lib/booking/slots";
 import { formatSlotDateTime } from "@/lib/booking/format";
 import { secretsMatch } from "@/lib/security/secrets";
 import {
@@ -36,16 +36,80 @@ const payloadSchema = z.object({
   args: z.record(z.string(), z.unknown()),
   timezone: availabilityArgsSchema.shape.timezone.optional(),
 });
+const bookingOfferSchema = z.object({
+  sid: z.uuid(),
+  exp: z.number(),
+  timezone: availabilityArgsSchema.shape.timezone,
+  slots: z.array(bookCallArgsSchema.shape.slot_id).max(3),
+});
+const CONFIRMATION_TTL_MS = 10 * 60_000;
 export type ConfirmedAction = z.infer<typeof payloadSchema>;
 export interface ActionConfirmation {
   token: string;
   description: string;
+  action: ActionName;
 }
 
-function signature(payload: string, secret: string): string {
-  return createHmac("sha256", secret)
-    .update(`clara:confirmation:v1:${payload}`)
-    .digest("base64url");
+type TokenPurpose = "confirmation" | "booking-offer";
+
+function signature(payload: string, secret: string, purpose: TokenPurpose): string {
+  return createHmac("sha256", secret).update(`clara:${purpose}:v1:${payload}`).digest("base64url");
+}
+
+function signPayload(value: object, secret: string, purpose: TokenPurpose): string {
+  const payload = Buffer.from(JSON.stringify(value)).toString("base64url");
+  return `${payload}.${signature(payload, secret, purpose)}`;
+}
+
+function readPayload(token: string, secret: string, purpose: TokenPurpose): unknown {
+  const [payload, signed, extra] = token.split(".");
+  if (
+    !payload ||
+    !signed ||
+    extra !== undefined ||
+    !secretsMatch(signed, signature(payload, secret, purpose))
+  )
+    return;
+  try {
+    return JSON.parse(Buffer.from(payload, "base64url").toString());
+  } catch {
+    return;
+  }
+}
+
+function isCurrentToken(value: { sid: string; exp: number }, sid: string, now: number): boolean {
+  return value.sid === sid && value.exp > now && value.exp <= now + CONFIRMATION_TTL_MS;
+}
+
+export function signBookingOffer(
+  sid: string,
+  timezone: string,
+  slots: string[],
+  secret: string,
+  now: number,
+): string {
+  return signPayload(
+    { sid, timezone, slots, exp: now + CONFIRMATION_TTL_MS },
+    secret,
+    "booking-offer",
+  );
+}
+
+export function matchesBookingOffer(
+  token: string,
+  sid: string,
+  timezone: string,
+  slotId: string,
+  secret: string,
+  now: number,
+): boolean {
+  const offer = bookingOfferSchema.safeParse(readPayload(token, secret, "booking-offer"));
+  return (
+    offer.success &&
+    isCurrentToken(offer.data, sid, now) &&
+    offer.data.timezone === timezone &&
+    offer.data.slots.includes(slotId)
+  );
 }
 
 export function proposeAction(
@@ -61,7 +125,8 @@ export function proposeAction(
     case "book_call": {
       if (!input.timezone) throw new Error("timezone_required");
       const slot = decodeSlotId(String(args.slot_id));
-      description = `Book a discovery call\n${formatSlotDateTime(slot.start.toISOString(), input.timezone)} (${input.timezone})\nName: ${args.name}\nEmail: ${args.email}\nNotes: ${args.notes || "None"}`;
+      validateSlot(slot, new Date(now));
+      description = `Book a discovery call\n${formatSlotDateTime(slot.start.toISOString(), input.timezone)} (${input.timezone})\nName: ${args.name}\nEmail: ${args.email}${args.notes ? `\nNotes: ${args.notes}` : ""}`;
       break;
     }
     case "save_lead":
@@ -74,10 +139,12 @@ export function proposeAction(
       description = `Send this request to the Clarteon team\nContact: ${args.contact || "Not provided"}\n\n${args.reason}`;
       break;
   }
-  const payload = Buffer.from(JSON.stringify({ ...input, args, exp: now + 10 * 60_000 })).toString(
-    "base64url",
+  const token = signPayload(
+    { ...input, args, exp: now + CONFIRMATION_TTL_MS },
+    secret,
+    "confirmation",
   );
-  return { token: `${payload}.${signature(payload, secret)}`, description };
+  return { token, description, action: input.action };
 }
 
 export function readConfirmedAction(
@@ -86,11 +153,9 @@ export function readConfirmedAction(
   secret: string,
   now = Date.now(),
 ): ConfirmedAction | undefined {
-  const [payload, signed, extra] = token.split(".");
-  if (!payload || !signed || extra || !secretsMatch(signed, signature(payload, secret))) return;
   try {
-    const result = payloadSchema.parse(JSON.parse(Buffer.from(payload, "base64url").toString()));
-    if (result.sid !== sid || result.exp <= now || result.exp > now + 10 * 60_000) return;
+    const result = payloadSchema.parse(readPayload(token, secret, "confirmation"));
+    if (!isCurrentToken(result, sid, now)) return;
     result.args = actionSchemas[result.action].parse(result.args) as Record<string, unknown>;
     return result;
   } catch {
@@ -99,10 +164,20 @@ export function readConfirmedAction(
 }
 
 export function actionReply(action: ActionName, result: Record<string, unknown>): string {
-  if (!result.ok)
-    return result.error === "slot_unavailable"
-      ? "That time is no longer available. Please ask me to check fresh times; nothing was confirmed."
-      : "That action did not complete. Please try again or contact info@clarteon.tech.";
+  if (!result.ok) {
+    if (action !== "book_call") {
+      return "That action did not complete. Please try again or contact info@clarteon.tech.";
+    }
+    if (result.error === "slot_unavailable") {
+      return Array.isArray(result.slots) && result.slots.length
+        ? "That time is no longer available. Pick another time below."
+        : "That time is no longer available. [See more times](/contact#book) or [email the team](mailto:info@clarteon.tech).";
+    }
+    if (result.error === "booking_failed" || result.error === "calendar_unavailable") {
+      return "I couldn’t confirm your call. You can retry this booking or [email the team](mailto:info@clarteon.tech).";
+    }
+    return "I couldn’t confirm your call. [Email the team](mailto:info@clarteon.tech) to arrange a time.";
+  }
   switch (action) {
     case "book_call":
       return `Your discovery call is confirmed${result.label ? ` for **${result.label}**` : ""}.${typeof result.meet_link === "string" && result.meet_link.startsWith("https://meet.google.com/") ? `\n\n[Join with Google Meet](${result.meet_link})` : ""}\n\n${result.confirmation_email_sent ? "The confirmation email was sent." : "The confirmation email was not sent; please keep these meeting details."}`;

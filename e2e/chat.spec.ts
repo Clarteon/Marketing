@@ -69,6 +69,112 @@ test.describe("Clara chat", () => {
     await stubTurnstile(page);
   });
 
+  test("books from tappable times and keeps the details when a time is taken", async ({ page }) => {
+    const requests: Array<Record<string, unknown>> = [];
+    const timezone = "Asia/Manila";
+    const first = {
+      id: "slot-1",
+      label: "Monday, November 9 at 10:00 AM GMT+8",
+      start: "2026-11-09T02:00:00.000Z",
+      end: "2026-11-09T02:30:00.000Z",
+    };
+    const second = {
+      id: "slot-2",
+      label: "Monday, November 9 at 11:00 AM GMT+8",
+      start: "2026-11-09T03:00:00.000Z",
+      end: "2026-11-09T03:30:00.000Z",
+    };
+    await page.route("/api/chat", (route) => {
+      const body = route.request().postDataJSON() as Record<string, unknown>;
+      requests.push(body);
+      const booking = body.booking as { step: string; slot_id?: string } | undefined;
+      const options = (slots: (typeof first)[], offer: string) => ({
+        type: "booking_options",
+        bookingOptions: { timezone, slots, offer },
+      });
+      const events =
+        booking?.step === "times"
+          ? [
+              options([first, second], "offer-1"),
+              { type: "text", text: "Pick a time for your discovery call." },
+            ]
+          : booking?.step === "review"
+            ? [
+                {
+                  type: "confirmation",
+                  action: "book_call",
+                  token: `signed-${booking.slot_id}`,
+                  description:
+                    "Book a discovery call\nName: Test Visitor\nEmail: visitor@example.com",
+                },
+                { type: "text", text: "Review your details, then confirm the booking." },
+              ]
+            : body.confirmationToken === "signed-slot-1"
+              ? [
+                  options([second], "offer-2"),
+                  {
+                    type: "text",
+                    text: "That time is no longer available. Pick another time below.",
+                  },
+                ]
+              : [
+                  {
+                    type: "text",
+                    text: "Your discovery call is confirmed. [Join with Google Meet](https://meet.google.com/abc-defg-hij)",
+                  },
+                ];
+      return route.fulfill({
+        contentType: "application/x-ndjson",
+        body: ndjson([...events, { type: "done" }]),
+      });
+    });
+    await page.goto("/");
+    await openChat(page);
+    const panel = page.locator("#clara-chat-panel");
+    await panel.getByRole("button", { name: "Book a call", exact: true }).click();
+    const card = panel.getByRole("group", { name: "Book a discovery call" });
+    await card.getByRole("button", { name: first.label }).click();
+    await expect(card.getByLabel("Name", { exact: true })).toBeFocused();
+    await card.getByLabel("Name", { exact: true }).fill("Test Visitor");
+    await card.getByLabel("Email for the calendar invite").fill("visitor@example.com");
+    expect(await panel.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(
+      true,
+    );
+    expect(requests).toHaveLength(1);
+    await card.getByRole("button", { name: "Review booking" }).click();
+    await expect(panel.getByRole("group", { name: "Review action details" })).toContainText(
+      "visitor@example.com",
+    );
+    expect(requests[1]).toMatchObject({
+      booking: { step: "review", slot_id: first.id, offer: "offer-1" },
+    });
+    expect(requests[1]).not.toHaveProperty("confirmationToken");
+    await panel.getByRole("button", { name: "Confirm booking" }).click();
+    await expect(
+      panel.getByText("That time is no longer available. Pick another time below."),
+    ).toBeVisible();
+    await expect(card.getByRole("button", { name: first.label })).toHaveCount(0);
+    await card.getByRole("button", { name: second.label }).click();
+    await expect(card.getByLabel("Email for the calendar invite")).toHaveValue(
+      "visitor@example.com",
+    );
+    await card.getByRole("button", { name: "Review booking" }).click();
+    await panel.getByRole("button", { name: "Confirm booking" }).click();
+    await expect(panel.getByRole("link", { name: "Join with Google Meet" })).toBeVisible();
+    expect(requests).toHaveLength(5);
+    expect(requests[4]).toMatchObject({
+      message: "Confirm this action.",
+      confirmationToken: "signed-slot-2",
+    });
+    expect(JSON.stringify(requests[4].history)).not.toContain("visitor@example.com");
+  });
+
+  test("exposes no delete method on the public booking routes", async ({ request }) => {
+    for (const path of ["/api/chat", "/api/booking", "/api/booking/availability"]) {
+      expect((await request.delete(path)).status()).toBe(405);
+    }
+  });
+
   test("preloads verification on open and retries a failed download without losing the draft", async ({
     page,
   }) => {
