@@ -117,7 +117,7 @@ export const solutionBriefArgsSchema = z.object({
 
 export const handoffArgsSchema = z.object({
   reason: z.string().trim().min(3).max(1_000),
-  contact: optionalTrimmedString(300),
+  contact: emailField,
 });
 
 export type SearchKnowledgeArgs = z.infer<typeof searchKnowledgeArgsSchema>;

@@ -385,12 +385,17 @@ describe("Clara tools", () => {
 
     const result = await executeChatTool(
       "handoff_to_team",
-      { reason: "The visitor needs a person to discuss a contract.", contact: "ada@example.com" },
+      { reason: "Do you work with Shopify?", contact: "ada@example.com" },
       context({ deps: { sendEmail } }),
     );
 
     expect(result).toMatchObject({ ok: true });
     expect(sendEmail).toHaveBeenCalledOnce();
-    expect(sendEmail.mock.calls[0][0]).toMatchObject({ to: "team@clarteon.test" });
+    expect(sendEmail.mock.calls[0][0]).toMatchObject({
+      to: "team@clarteon.test",
+      subject: "Clara handoff request",
+      text: expect.stringContaining("Question or problem: Do you work with Shopify?"),
+    });
+    expect(sendEmail.mock.calls[0][0].text).toContain("Visitor’s reply email: ada@example.com");
   });
 });

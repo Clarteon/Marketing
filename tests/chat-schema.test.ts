@@ -112,7 +112,12 @@ describe("tool argument schemas", () => {
     ).toBe(false);
   });
 
-  it("allows a handoff without contact details", () => {
-    expect(handoffArgsSchema.safeParse({ reason: "Needs a person" }).success).toBe(true);
+  it("requires a valid reply email for a handoff", () => {
+    const reason = "Do you work with Shopify?";
+    expect(handoffArgsSchema.safeParse({ reason }).success).toBe(false);
+    expect(handoffArgsSchema.safeParse({ reason, contact: "not-an-email" }).success).toBe(false);
+    expect(handoffArgsSchema.parse({ reason, contact: " ADA@example.com " }).contact).toBe(
+      "ada@example.com",
+    );
   });
 });

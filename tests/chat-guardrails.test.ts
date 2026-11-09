@@ -1,6 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { runChatTurn } from "@/lib/chat/run";
-import { proposeAction, readConfirmedAction } from "@/lib/chat/confirmation";
+import {
+  proposeAction,
+  readConfirmedAction,
+  type ActionConfirmation,
+} from "@/lib/chat/confirmation";
 import { executeChatTool } from "@/lib/chat/tools";
 import { hasPriceIntent } from "@/lib/chat/prompt";
 import { resetChatUsageForTests } from "@/lib/chat/usage";
@@ -296,5 +300,79 @@ describe("Action authorization", () => {
       { name: "Ada", email: "ada@example.com" },
       expect.objectContaining({ actionConfirmed: true }),
     );
+  });
+});
+
+describe("Clara email handoffs", () => {
+  const reason = "Do you work with Shopify?";
+  const contact = "ada@example.com";
+
+  function handoff(args: { reason: string; contact?: string }, message = `Please use ${contact}.`) {
+    const input = fixture(message);
+    Object.assign(input.request, {
+      history: [
+        { role: "user", content: reason },
+        { role: "user", content: "Can you hand off my message to the team?" },
+      ],
+    });
+    input.deps.streamModel.mockResolvedValueOnce({
+      model: "test",
+      content: "",
+      toolCalls: [
+        {
+          id: "handoff",
+          type: "function",
+          function: { name: "handoff_to_team", arguments: JSON.stringify(args) },
+        },
+      ],
+    });
+    return { ...input, onConfirmation: vi.fn<(value: ActionConfirmation) => void>() };
+  }
+
+  it.each([
+    { reason },
+    { reason, contact: "guessed@example.com" },
+    { reason: "User requests handoff to the team", contact },
+  ])("rejects missing or ungrounded handoff details", async (args) => {
+    const input = handoff(args);
+    await runChatTurn(input);
+    expect(input.onConfirmation).not.toHaveBeenCalled();
+    expect(input.deps.executeTool).not.toHaveBeenCalled();
+    expect(input.deps.streamModel.mock.lastCall?.[0].messages.at(-1).content).toContain(
+      "handoff_details_required",
+    );
+  });
+
+  it("rejects a reply address introduced by the scope classifier", async () => {
+    const input = handoff({ reason, contact }, "Please send my question to the team.");
+    input.deps.classifyScope.mockResolvedValue({
+      kind: "mixed",
+      businessMessage: `Please use ${contact}.`,
+      language: "en",
+    });
+    await runChatTurn(input);
+    expect(input.onConfirmation).not.toHaveBeenCalled();
+    expect(input.deps.executeTool).not.toHaveBeenCalled();
+  });
+
+  it("confirms the original question and reply address before handing off", async () => {
+    const input = handoff({ reason, contact }, "Please use Ada@example.com.");
+    await runChatTurn(input);
+    expect(input.deps.executeTool).not.toHaveBeenCalled();
+    expect(input.onConfirmation).toHaveBeenCalledOnce();
+    const { description, token } = input.onConfirmation.mock.lastCall![0];
+    expect(description).toContain(`Reply email: ${contact}`);
+    expect(description).toContain(`Question or problem: ${reason}`);
+
+    await runChatTurn({
+      ...input,
+      request: { ...input.request, message: "Confirm this action.", confirmationToken: token },
+    });
+    expect(input.deps.executeTool).toHaveBeenCalledExactlyOnceWith(
+      "handoff_to_team",
+      { reason, contact },
+      expect.objectContaining({ actionConfirmed: true }),
+    );
+    expect(input.onText).toHaveBeenCalledWith(expect.stringContaining("follow up by email"));
   });
 });

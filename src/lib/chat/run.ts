@@ -6,7 +6,7 @@ import { logServerEvent } from "@/lib/log";
 import { CHAT_MAX_TOOL_CALLS, CHAT_MAX_TOOL_ROUNDS } from "./constants";
 import { ChatUnavailableError, configuredModels, streamModelCompletion } from "./model";
 import { buildModelMessages, buildSystemPrompt, hasPriceIntent } from "./prompt";
-import type { ChatRequest } from "./schema";
+import { handoffArgsSchema, type ChatRequest } from "./schema";
 import {
   executeChatTool,
   chatTools,
@@ -397,6 +397,40 @@ export async function runChatTurn({
           return complete("We can keep discussing it here. I won’t book, save or send anything.");
         }
         const args = parseArguments(call.function.arguments);
+        if (call.function.name === "handoff_to_team") {
+          const handoff = handoffArgsSchema.safeParse(args);
+          const visitorMessages = [
+            ...safeHistory.filter((item) => item.role === "user").map((item) => item.content),
+            request.message,
+          ];
+          const hasReplyAddress =
+            handoff.success &&
+            visitorMessages.some((message) =>
+              message
+                .toLowerCase()
+                .match(/[\w.+-]+@[\w.-]+\.[a-z]{2,}/g)
+                ?.includes(handoff.data.contact),
+            );
+          const hasQuestion =
+            handoff.success &&
+            visitorMessages.some(
+              (message) =>
+                message !== "Sensitive message omitted." && message.includes(handoff.data.reason),
+            );
+          if (!hasReplyAddress || !hasQuestion) {
+            messages.push({
+              role: "tool",
+              tool_call_id: call.id,
+              content: toolMessage({
+                ok: false,
+                error: "handoff_details_required",
+                message:
+                  "Use the visitor’s reply email and quote their actual question or business problem. If either is missing, ask one question to get it. If the visitor prefers direct email, give them info@clarteon.tech.",
+              }),
+            });
+            continue;
+          }
+        }
         const secret = getConfirmationSecret();
         if (!secret || !onConfirmation)
           return complete(

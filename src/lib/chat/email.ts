@@ -60,7 +60,7 @@ export function buildSolutionBriefTeamEmail({
 
 export interface HandoffEmailInput {
   reason: string;
-  contact?: string;
+  contact: string;
   reference: string;
 }
 
@@ -72,19 +72,19 @@ export function buildHandoffTeamEmail({
   const text = [
     "Clara is asking for a person",
     "",
-    `Reason: ${reason}`,
-    `Contact: ${contact?.trim() || "Not provided in chat"}`,
+    `Question or problem: ${reason}`,
+    `Visitor’s reply email: ${contact}`,
     `Reference: ${reference}`,
     "",
-    "Reply using only the contact details the visitor chose to share.",
+    "Compose a new email to the visitor’s reply address and sign it with your name and role.",
   ].join("\n");
 
   const html = [
     "<p>Clara is asking for a person</p>",
-    `<p><strong>Reason</strong><br />${escapeHtml(reason).replaceAll("\n", "<br />")}</p>`,
-    `<p><strong>Contact</strong><br />${escapeHtml(contact?.trim() || "Not provided in chat")}</p>`,
+    `<p><strong>Question or problem</strong><br />${escapeHtml(reason).replaceAll("\n", "<br />")}</p>`,
+    `<p><strong>Visitor’s reply email</strong><br />${escapeHtml(contact)}</p>`,
     `<p>Reference: ${escapeHtml(reference)}</p>`,
-    "<p>Reply using only the contact details the visitor chose to share.</p>",
+    "<p>Compose a new email to the visitor’s reply address and sign it with your name and role.</p>",
   ].join("");
 
   return { subject: "Clara handoff request", text, html };

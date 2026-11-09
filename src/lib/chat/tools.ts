@@ -701,9 +701,9 @@ async function handoffTool(args: unknown, context: ChatToolContext): Promise<Too
     "clara-handoff",
     context.sessionId,
     parsed.data.reason,
-    parsed.data.contact ?? "",
+    parsed.data.contact,
   );
-  const reference = referenceFor(context, parsed.data.contact ?? "no-contact");
+  const reference = referenceFor(context, parsed.data.contact);
 
   try {
     await (context.deps?.sendEmail ?? sendEmail)({
@@ -724,7 +724,7 @@ async function handoffTool(args: unknown, context: ChatToolContext): Promise<Too
     };
   }
 
-  if (parsed.data.contact) context.visitorEmail = parsed.data.contact;
+  context.visitorEmail = parsed.data.contact;
   return {
     ok: true,
     handoff_id: handoffId,
@@ -862,14 +862,21 @@ export const chatTools: ToolDefinition[] = [
     function: {
       name: "handoff_to_team",
       description:
-        "Propose contacting the team only about a relevant Clarteon question that needs a person, or an explicit relevant contact request. Never use for unrelated trivia or homework. Requires visitor confirmation.",
+        "Propose a human follow-up by email for a relevant Clarteon question or business project. Copy the actual issue from the visitor’s messages and use the reply email they provided. Requires visitor confirmation.",
       parameters: {
         type: "object",
         properties: {
-          reason: { type: "string" },
-          contact: { type: "string" },
+          reason: {
+            type: "string",
+            description:
+              "A short, exact excerpt of the visitor’s actual question or business problem, without contact details.",
+          },
+          contact: {
+            type: "string",
+            description: "The visitor’s email address for the team’s reply.",
+          },
         },
-        required: ["reason"],
+        required: ["reason", "contact"],
         additionalProperties: false,
       },
     },
