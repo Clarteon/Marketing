@@ -39,7 +39,7 @@ export function LoginForm() {
         return;
       }
 
-      router.replace("/admin/review");
+      router.replace("/admin");
       router.refresh();
     } catch {
       setError("Could not reach the server. Try again.");

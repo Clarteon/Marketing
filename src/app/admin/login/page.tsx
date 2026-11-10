@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminLoginPage() {
-  if (await isAdminPageAuthenticated()) redirect("/admin/review");
+  if (await isAdminPageAuthenticated()) redirect("/admin");
 
   let configured = false;
   try {
@@ -26,10 +26,9 @@ export default async function AdminLoginPage() {
     <main className={styles.page} id="main">
       <div className={styles.panel}>
         <p className={styles.eyebrow}>Clarteon admin</p>
-        <h1 className={styles.title}>Review queue sign-in</h1>
+        <h1 className={styles.title}>Admin sign-in</h1>
         <p className={styles.intro}>
-          Sign in to review questions Clara could not answer. Only the team should have this
-          password.
+          Sign in to the Clarteon admin dashboard. Only the team should have this password.
         </p>
 
         {configured ? (
