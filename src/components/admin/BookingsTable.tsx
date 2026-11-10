@@ -51,12 +51,25 @@ export function BookingsTable({ rows }: BookingsTableProps) {
               <td>
                 {row.meetLink ? (
                   <a
-                    className={styles.tableLink}
+                    className={styles.meetButton}
                     href={row.meetLink}
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label="Join Meet"
+                    title="Join Meet"
                   >
-                    Join Meet
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="m22 8-6 4 6 4V8Z" />
+                      <rect x="2" y="6" width="14" height="12" rx="2" />
+                    </svg>
                   </a>
                 ) : row.calendarLink ? (
                   <a

@@ -572,6 +572,35 @@
   overflow-wrap: anywhere;
 }
 
+.meetButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--lime);
+  color: var(--ink);
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.meetButton svg {
+  width: 20px;
+  height: 20px;
+}
+
+.meetButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(198, 244, 50, 0.5);
+}
+
+.meetButton:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
 .tableMuted {
   color: var(--graphite);
 }
