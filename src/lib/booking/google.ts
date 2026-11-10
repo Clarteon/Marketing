@@ -7,6 +7,7 @@ import type {
   CalendarEvent,
   CalendarProvider,
   CreateCalendarEventInput,
+  UpdateCalendarEventInput,
 } from "./types";
 
 const TOKEN_URL = "https://oauth2.googleapis.com/token";
@@ -366,6 +367,30 @@ export function createGoogleCalendarProvider(): CalendarProvider {
       }
 
       return waitForMeetLink(config, payload);
+    },
+
+    async updateEvent(input: UpdateCalendarEventInput): Promise<void> {
+      const config = getGoogleBookingConfig();
+      const params = new URLSearchParams({ sendUpdates: "all" });
+      const eventId = eventIdForRequestId(input.requestId);
+
+      await googleFetch<GoogleEvent>(
+        `${calendarUrl(config, `/events/${encodeURIComponent(eventId)}`)}?${params.toString()}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            start: {
+              dateTime: input.start.toISOString(),
+              timeZone: bookingRules.timezone,
+            },
+            end: {
+              dateTime: input.end.toISOString(),
+              timeZone: bookingRules.timezone,
+            },
+          }),
+        },
+      );
     },
   };
 }

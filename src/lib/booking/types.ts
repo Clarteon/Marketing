@@ -44,6 +44,19 @@ export interface CreateCalendarEventInput {
   notes?: string;
 }
 
+export interface UpdateCalendarEventInput {
+  requestId: string;
+  start: Date;
+  end: Date;
+}
+
+export interface BookingDetailsPatch {
+  name?: string;
+  email?: string;
+  timezone?: string;
+  notes?: string | null;
+}
+
 export interface CalendarEvent {
   id: string;
   meetLink: string;
@@ -54,6 +67,7 @@ export interface CalendarProvider {
   getBusyIntervals(timeMin: Date, timeMax: Date): Promise<BusyInterval[]>;
   findEventByRequestId(requestId: string, around: Date): Promise<CalendarEvent | undefined>;
   createEvent(input: CreateCalendarEventInput): Promise<CalendarEvent>;
+  updateEvent(input: UpdateCalendarEventInput): Promise<void>;
 }
 
 export interface Availability {
