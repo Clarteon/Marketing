@@ -14,10 +14,9 @@ interface DropdownProps {
   value: string;
   options: DropdownOption[];
   onChange: (value: string) => void;
-  className?: string;
 }
 
-export function Dropdown({ label, value, options, onChange, className }: DropdownProps) {
+export function Dropdown({ label, value, options, onChange }: DropdownProps) {
   const [open, setOpen] = useState(false);
   const [highlighted, setHighlighted] = useState(-1);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -98,7 +97,7 @@ export function Dropdown({ label, value, options, onChange, className }: Dropdow
   );
 
   return (
-    <div className={cx(styles.dropdown, className)}>
+    <div className={styles.dropdown}>
       <button
         ref={triggerRef}
         className={cx(styles.trigger, open && styles.triggerOpen)}

@@ -1,15 +1,14 @@
 .dropdown {
   display: inline-block;
-  position: relative;
 }
 
 .trigger {
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
-  min-width: 12rem;
-  min-height: 44px;
-  padding: 0.55rem 0.9rem;
+  min-width: 11rem;
+  height: 44px;
+  padding: 0 1rem;
   border: 1px solid var(--line);
   border-radius: var(--radius-pill);
   background: var(--paper);
@@ -26,13 +25,13 @@
 }
 
 .trigger:hover:not([aria-expanded="true"]) {
-  border-color: var(--ink);
+  border-color: var(--graphite);
 }
 
 .triggerOpen {
-  border-color: var(--ink);
+  border-color: var(--lime);
   background: var(--stone);
-  box-shadow: 0 0 0 3px var(--lime);
+  box-shadow: 0 0 0 3px rgba(198, 244, 50, 0.15);
   z-index: 40;
 }
 
@@ -45,7 +44,7 @@
   height: 1rem;
   flex-shrink: 0;
   color: var(--graphite);
-  transition: transform 120ms ease;
+  transition: transform 150ms ease;
 }
 
 .triggerOpen .triggerIcon {
@@ -55,17 +54,17 @@
 
 .menu {
   position: absolute;
-  top: calc(100% + 0.4rem);
+  top: calc(100% + 0.5rem);
   left: 0;
   right: 0;
-  min-width: 12rem;
-  max-height: 22rem;
+  min-width: 11rem;
+  max-height: 20rem;
   overflow-y: auto;
   background: var(--paper);
   border: 1px solid var(--line);
   border-radius: var(--radius-card);
-  box-shadow: 0 8px 24px rgba(10, 10, 10, 0.12);
-  padding: 0.3rem 0;
+  box-shadow: 0 12px 32px rgba(10, 10, 10, 0.12);
+  padding: 0.25rem 0;
   list-style: none;
   margin: 0;
   z-index: 45;
@@ -75,7 +74,7 @@
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  padding: 0.55rem 0.9rem;
+  padding: 0.5rem 0.9rem;
   color: var(--graphite);
   font-size: 0.92rem;
   cursor: pointer;
