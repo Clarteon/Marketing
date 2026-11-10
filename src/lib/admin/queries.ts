@@ -4,6 +4,7 @@ import { BookingStoreNotConfiguredError } from "@/lib/booking/store";
 import { getConfig } from "@/lib/config";
 import type { BookingsListQuery } from "./schema";
 
+export type { BookingsListQuery } from "./schema";
 export const BOOKINGS_PAGE_SIZE = 50;
 
 export interface AdminBookingRow {
