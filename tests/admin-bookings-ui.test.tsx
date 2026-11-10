@@ -50,6 +50,10 @@ describe("admin bookings table", () => {
       "rel",
       "noopener noreferrer",
     );
+    expect(screen.getByRole("link", { name: "Edit booking for Juan Dela Cruz" })).toHaveAttribute(
+      "href",
+      "/admin/bookings/request-1",
+    );
     expect(screen.getByText("Confirmed")).toBeInTheDocument();
     expect(screen.getByText("Pending")).toBeInTheDocument();
     expect(screen.getByText("Wants to automate the weekly report.")).toBeInTheDocument();

@@ -26,6 +26,8 @@ test("admin sub-pages redirect to sign-in", async ({ page }) => {
   await expect(page).toHaveURL(/\/admin\/login$/);
   await page.goto("/admin/review");
   await expect(page).toHaveURL(/\/admin\/login$/);
+  await page.goto("/admin/bookings/00000000-0000-4000-8000-000000000001");
+  await expect(page).toHaveURL(/\/admin\/login$/);
 });
 
 test("the team can sign in and open the bookings view", async ({ page }) => {
@@ -46,4 +48,18 @@ test("the team can sign in and open the bookings view", async ({ page }) => {
 
   await page.getByRole("button", { name: "Sign out" }).click();
   await expect(page).toHaveURL(/\/admin\/login$/);
+});
+
+test("the booking detail page opens and explains missing storage", async ({ page }) => {
+  await page.goto("/admin/login");
+  await page.getByLabel("Admin password").fill("e2e-admin-secret-that-is-long-enough-123456");
+  await page.getByRole("button", { name: "Sign in" }).click();
+  await expect(page).toHaveURL(/\/admin$/);
+
+  await page.goto("/admin/bookings/00000000-0000-4000-8000-000000000001");
+  await expect(page).toHaveURL(/\/admin\/bookings\/00000000-0000-4000-8000-000000000001$/);
+  await expect(page.getByRole("heading", { name: "Booking", exact: true })).toBeVisible();
+  await expect(page.getByText(/booking storage is not configured/i)).toBeVisible();
+  await expect(page.getByRole("link", { name: /Back to bookings/i })).toBeVisible();
+  expect(await axeViolations(page)).toEqual([]);
 });
