@@ -44,3 +44,11 @@ export const adminReviewSchema = z.discriminatedUnion("action", [
     questionId: z.uuid(),
   }),
 ]);
+
+export const bookingsListSchema = z.object({
+  status: z.enum(["all", "pending", "confirmed"]).default("all"),
+  timing: z.enum(["all", "upcoming", "past"]).default("all"),
+  page: z.coerce.number().int().min(1).max(100_000).default(1),
+});
+
+export type BookingsListQuery = z.output<typeof bookingsListSchema>;
