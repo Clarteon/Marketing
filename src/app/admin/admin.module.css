@@ -527,20 +527,23 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.25rem 0.9rem;
-  border-radius: 2rem;
+  padding: 0.3rem 1rem;
+  border-radius: 999px;
   font-size: 0.85rem;
   font-weight: 700;
+  line-height: 1.3;
   white-space: nowrap;
+  background: rgba(198, 244, 50, 0.28);
+  color: var(--ink);
 }
 
 .badgePending {
-  background: rgba(244, 244, 242, 0.55);
+  background: rgba(244, 244, 242, 1);
   color: var(--graphite);
 }
 
 .badgeConfirmed {
-  background: rgba(198, 244, 50, 0.16);
+  background: rgba(198, 244, 50, 0.28);
   color: var(--ink);
 }
 
