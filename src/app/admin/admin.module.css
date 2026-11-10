@@ -525,22 +525,26 @@
 
 .badge {
   display: inline-flex;
-  padding: 0.15rem 0.6rem;
+  align-items: center;
+  padding: 0.2rem 0.65rem;
   border-radius: var(--radius-pill);
   font-size: 0.78rem;
   font-weight: 600;
   white-space: nowrap;
+  border: 1px solid transparent;
 }
 
 .badgePending {
   background: var(--stone);
-  border: 1px solid var(--line);
+  border-color: var(--line);
   color: var(--graphite);
+  box-shadow: 0 0 0 1px rgba(10, 10, 10, 0.04);
 }
 
 .badgeConfirmed {
   background: var(--lime);
   color: var(--ink);
+  box-shadow: 0 0 0 1px rgba(198, 244, 50, 0.3);
 }
 
 .tableLink {
