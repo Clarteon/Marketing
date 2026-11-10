@@ -1,4 +1,5 @@
 import { dateLabel } from "@/lib/admin/format";
+import { cx } from "@/lib/cx";
 import type { AdminBookingRow } from "@/lib/admin/queries";
 import styles from "@/app/admin/admin.module.css";
 
@@ -39,9 +40,10 @@ export function BookingsTable({ rows }: BookingsTableProps) {
               </td>
               <td>
                 <span
-                  className={
-                    row.status === "confirmed" ? styles.badgeConfirmed : styles.badgePending
-                  }
+                  className={cx(
+                    styles.badge,
+                    row.status === "confirmed" ? styles.badgeConfirmed : styles.badgePending,
+                  )}
                 >
                   {row.status === "confirmed" ? "Confirmed" : "Pending"}
                 </span>
