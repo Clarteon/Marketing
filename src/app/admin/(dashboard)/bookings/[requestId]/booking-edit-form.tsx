@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { SelectField } from "@/components/ui/SelectField";
 import { useToast } from "@/components/ui/ToastProvider";
 import { COMMON_TIMEZONES } from "@/lib/booking/timezones";
@@ -34,9 +34,18 @@ export function BookingEditForm({ booking }: BookingEditFormProps) {
   const [email, setEmail] = useState(booking.email);
   const [timezone, setTimezone] = useState(booking.timezone);
   const [notes, setNotes] = useState(booking.notes ?? "");
+  const notesRef = useRef<HTMLTextAreaElement>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
+
+  // Grow the notes box to fit the whole guest note, so nothing is hidden in a scroll area.
+  useEffect(() => {
+    const field = notesRef.current;
+    if (!field) return;
+    field.style.height = "auto";
+    field.style.height = `${field.scrollHeight}px`;
+  }, [notes]);
 
   const savedNotes = booking.notes ?? "";
   const dirty =
@@ -146,6 +155,7 @@ export function BookingEditForm({ booking }: BookingEditFormProps) {
         <textarea
           className={styles.textarea}
           id="booking-guest-notes"
+          ref={notesRef}
           value={notes}
           onChange={(event) => {
             setNotes(event.target.value);
