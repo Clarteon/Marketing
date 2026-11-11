@@ -54,6 +54,13 @@ export const bookingsListSchema = z.object({
 
 export type BookingsListQuery = z.output<typeof bookingsListSchema>;
 
+export const leadsListSchema = z.object({
+  source: z.enum(["all", "website-form", "clara-chat"]).default("all"),
+  page: z.coerce.number().int().min(1).max(100_000).default(1),
+});
+
+export type LeadsListQuery = z.output<typeof leadsListSchema>;
+
 const adminEmailField = z.preprocess(
   (value) => (typeof value === "string" ? value.trim() : value),
   z
