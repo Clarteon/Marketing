@@ -5,7 +5,7 @@
 }
 
 .panel {
-  background: var(--stone);
+  background: var(--paper);
   border: 1px solid var(--line);
   border-radius: var(--radius-card);
   padding: clamp(1.5rem, 4vw, 2.5rem);
@@ -636,6 +636,15 @@
 .detailStack {
   display: grid;
   gap: var(--space-3);
+}
+
+.panel.detailPanel {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.panel.detailPanel > * {
+  margin-block: 0;
 }
 
 .notice {

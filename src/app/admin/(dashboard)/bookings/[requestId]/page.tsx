@@ -112,7 +112,10 @@ export default async function AdminBookingDetailPage({ params }: BookingDetailPa
           </div>
 
           <div className={styles.detailStack}>
-            <section className={styles.panel} aria-labelledby="guest-details-title">
+            <section
+              className={cx(styles.panel, styles.detailPanel)}
+              aria-labelledby="guest-details-title"
+            >
               <h2 className={styles.sectionTitle} id="guest-details-title">
                 Guest details
               </h2>
@@ -131,7 +134,10 @@ export default async function AdminBookingDetailPage({ params }: BookingDetailPa
               />
             </section>
 
-            <section className={styles.panel} aria-labelledby="reschedule-title">
+            <section
+              className={cx(styles.panel, styles.detailPanel)}
+              aria-labelledby="reschedule-title"
+            >
               <h2 className={styles.sectionTitle} id="reschedule-title">
                 Reschedule
               </h2>
@@ -145,7 +151,10 @@ export default async function AdminBookingDetailPage({ params }: BookingDetailPa
               />
             </section>
 
-            <section className={styles.panel} aria-labelledby="meeting-title">
+            <section
+              className={cx(styles.panel, styles.detailPanel)}
+              aria-labelledby="meeting-title"
+            >
               <h2 className={styles.sectionTitle} id="meeting-title">
                 Meeting
               </h2>
