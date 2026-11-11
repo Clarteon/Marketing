@@ -1,8 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { rescheduleBooking, updateBookingDetails } from "@/lib/booking/admin-service";
+import {
+  cancelBooking,
+  rescheduleBooking,
+  updateBookingDetails,
+} from "@/lib/booking/admin-service";
 import { BookingFailedError, InvalidSlotError, SlotUnavailableError } from "@/lib/booking/errors";
 import { generateSlots } from "@/lib/booking/slots";
-import { BookingNotFoundError, SlotTakenError } from "@/lib/booking/store";
+import {
+  BookingNotCancellableError,
+  BookingNotFoundError,
+  SlotTakenError,
+} from "@/lib/booking/store";
 import type { BookingRecord, CalendarProvider } from "@/lib/booking/types";
 
 const NOW = new Date("2026-10-19T00:00:00.000Z");
@@ -48,6 +56,17 @@ function createFakeStore(record: BookingRecord | undefined) {
       current = { ...current, slotStart: start, slotEnd: end };
       return current;
     }),
+    cancelBooking: vi.fn(async () => {
+      if (!current) throw new BookingNotFoundError();
+      if (current.status !== "confirmed") throw new BookingNotCancellableError(current.status);
+      current = { ...current, status: "cancelled", cancelledAt: new Date() };
+      return current;
+    }),
+    restoreConfirmed: vi.fn(async () => {
+      if (!current) throw new BookingNotFoundError();
+      current = { ...current, status: "confirmed", cancelledAt: undefined };
+      return current;
+    }),
     current: () => current,
   };
 }
@@ -61,6 +80,7 @@ function createFakeCalendar(overrides: Partial<CalendarProvider> = {}) {
       meetLink: "https://meet.google.com/abc-defg-hij",
     })),
     updateEvent: vi.fn(async () => {}),
+    deleteEvent: vi.fn(async () => {}),
     ...overrides,
   } as CalendarProvider;
 }
@@ -224,5 +244,116 @@ describe("rescheduleBooking", () => {
     await expect(
       rescheduleBooking(REQUEST_ID, SECOND_SLOT.id, { store, calendar, now: NOW }),
     ).rejects.toBeInstanceOf(BookingNotFoundError);
+  });
+});
+
+describe("cancelBooking", () => {
+  it("marks the row cancelled and removes the calendar invite", async () => {
+    const store = createFakeStore(confirmedBooking());
+    const calendar = createFakeCalendar();
+
+    const cancelled = await cancelBooking(REQUEST_ID, { store, calendar });
+
+    expect(cancelled.status).toBe("cancelled");
+    expect(store.cancelBooking).toHaveBeenCalledWith(REQUEST_ID);
+    expect(calendar.deleteEvent).toHaveBeenCalledWith(REQUEST_ID);
+  });
+
+  it("frees the slot without calling Google when the booking has no event", async () => {
+    const store = createFakeStore(confirmedBooking({ googleEventId: undefined }));
+    const calendar = createFakeCalendar();
+
+    const cancelled = await cancelBooking(REQUEST_ID, { store, calendar });
+
+    expect(cancelled.status).toBe("cancelled");
+    expect(calendar.deleteEvent).not.toHaveBeenCalled();
+  });
+
+  it("refuses a booking that is already cancelled", async () => {
+    const store = createFakeStore(confirmedBooking({ status: "cancelled" }));
+    const calendar = createFakeCalendar();
+
+    await expect(cancelBooking(REQUEST_ID, { store, calendar })).rejects.toBeInstanceOf(
+      BookingNotCancellableError,
+    );
+    expect(store.cancelBooking).not.toHaveBeenCalled();
+    expect(calendar.deleteEvent).not.toHaveBeenCalled();
+  });
+
+  it("refuses a pending hold", async () => {
+    const store = createFakeStore(
+      confirmedBooking({ status: "pending", googleEventId: undefined }),
+    );
+    const calendar = createFakeCalendar();
+
+    await expect(cancelBooking(REQUEST_ID, { store, calendar })).rejects.toBeInstanceOf(
+      BookingNotCancellableError,
+    );
+    expect(store.cancelBooking).not.toHaveBeenCalled();
+  });
+
+  it("fails when the booking does not exist", async () => {
+    const store = createFakeStore(undefined);
+    const calendar = createFakeCalendar();
+
+    await expect(cancelBooking(REQUEST_ID, { store, calendar })).rejects.toBeInstanceOf(
+      BookingNotFoundError,
+    );
+  });
+
+  it("puts the row back when the invitation cannot be removed", async () => {
+    const store = createFakeStore(confirmedBooking());
+    const calendar = createFakeCalendar({
+      deleteEvent: vi.fn(async () => {
+        throw new Error("google down");
+      }),
+    });
+
+    await expect(cancelBooking(REQUEST_ID, { store, calendar })).rejects.toMatchObject({
+      name: "BookingFailedError",
+      code: "calendar_delete",
+    });
+
+    expect(store.restoreConfirmed).toHaveBeenCalledWith(REQUEST_ID);
+    expect(store.current()?.status).toBe("confirmed");
+    expect(alertTeam).not.toHaveBeenCalled();
+  });
+
+  it("alerts the team when even the row cannot be put back", async () => {
+    const store = createFakeStore(confirmedBooking());
+    store.restoreConfirmed.mockRejectedValueOnce(new Error("db down"));
+    const calendar = createFakeCalendar({
+      deleteEvent: vi.fn(async () => {
+        throw new Error("google down");
+      }),
+    });
+
+    await expect(cancelBooking(REQUEST_ID, { store, calendar })).rejects.toMatchObject({
+      name: "BookingFailedError",
+      code: "calendar_delete",
+    });
+    expect(alertTeam).toHaveBeenCalledWith("booking_failed", { code: "cancel_drift" });
+  });
+});
+
+describe("a cancelled booking is read-only", () => {
+  it("refuses guest detail edits", async () => {
+    const store = createFakeStore(confirmedBooking({ status: "cancelled" }));
+
+    await expect(
+      updateBookingDetails(REQUEST_ID, { name: "Grace Hopper" }, { store }),
+    ).rejects.toBeInstanceOf(BookingNotCancellableError);
+    expect(store.updateBookingDetails).not.toHaveBeenCalled();
+  });
+
+  it("refuses a reschedule", async () => {
+    const store = createFakeStore(confirmedBooking({ status: "cancelled" }));
+    const calendar = createFakeCalendar();
+
+    await expect(
+      rescheduleBooking(REQUEST_ID, SECOND_SLOT.id, { store, calendar, now: NOW }),
+    ).rejects.toBeInstanceOf(BookingNotCancellableError);
+    expect(store.rescheduleBooking).not.toHaveBeenCalled();
+    expect(calendar.updateEvent).not.toHaveBeenCalled();
   });
 });

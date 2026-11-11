@@ -1,7 +1,12 @@
 import { alertTeam } from "@/lib/alerts";
-import { rescheduleBooking, updateBookingDetails } from "@/lib/booking/admin-service";
+import {
+  cancelBooking,
+  rescheduleBooking,
+  updateBookingDetails,
+} from "@/lib/booking/admin-service";
 import { BookingFailedError, InvalidSlotError, SlotUnavailableError } from "@/lib/booking/errors";
 import {
+  BookingNotCancellableError,
   BookingNotFoundError,
   BookingStoreNotConfiguredError,
   SlotTakenError,
@@ -42,6 +47,7 @@ function serialize(booking: BookingRecord) {
     calendarLink: booking.calendarLink ?? null,
     createdAt: booking.createdAt.toISOString(),
     confirmedAt: booking.confirmedAt?.toISOString() ?? null,
+    cancelledAt: booking.cancelledAt?.toISOString() ?? null,
   };
 }
 
@@ -86,6 +92,12 @@ export async function PATCH(
   }
 
   try {
+    if (parsed.data.cancel) {
+      const booking = await cancelBooking(requestId);
+      logServerEvent("admin_booking_cancelled", { actor: ADMIN_ACTOR, bookingId: requestId });
+      return json({ ok: true, booking: serialize(booking) });
+    }
+
     if (parsed.data.slotId) {
       const booking = await rescheduleBooking(requestId, parsed.data.slotId);
       logServerEvent("admin_booking_rescheduled", { actor: ADMIN_ACTOR, bookingId: requestId });
@@ -107,6 +119,9 @@ export async function PATCH(
     }
     if (error instanceof BookingStoreNotConfiguredError) {
       return json({ ok: false, error: "booking_store_unavailable" }, 503);
+    }
+    if (error instanceof BookingNotCancellableError) {
+      return json({ ok: false, error: "booking_not_cancellable" }, 409);
     }
     if (error instanceof InvalidSlotError) {
       return json({ ok: false, error: "invalid_slot" }, 400);

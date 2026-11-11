@@ -5,13 +5,24 @@ import { bookingRules } from "./config";
 import { BookingFailedError, InvalidSlotError, SlotUnavailableError } from "./errors";
 import { createGoogleCalendarProvider } from "./google";
 import { decodeSlotId, slotOverlapsBusy, validateSlot } from "./slots";
-import { BookingNotFoundError, SlotTakenError, getBookingStore, type BookingStore } from "./store";
+import {
+  BookingNotCancellableError,
+  BookingNotFoundError,
+  SlotTakenError,
+  getBookingStore,
+  type BookingStore,
+} from "./store";
 import type { BookingDetailsPatch, BookingRecord, CalendarProvider } from "./types";
 
 export interface AdminBookingDependencies {
   store?: Pick<
     BookingStore,
-    "getByRequestId" | "getActiveBySlotStart" | "updateBookingDetails" | "rescheduleBooking"
+    | "getByRequestId"
+    | "getActiveBySlotStart"
+    | "updateBookingDetails"
+    | "rescheduleBooking"
+    | "cancelBooking"
+    | "restoreConfirmed"
   >;
   calendar?: CalendarProvider;
   now?: Date;
@@ -33,6 +44,11 @@ export async function updateBookingDetails(
   dependencies: AdminBookingDependencies = {},
 ): Promise<BookingRecord> {
   const store = getStore(dependencies);
+
+  const booking = await store.getByRequestId(requestId);
+  if (!booking) throw new BookingNotFoundError();
+  if (booking.status === "cancelled") throw new BookingNotCancellableError(booking.status);
+
   return store.updateBookingDetails(requestId, patch);
 }
 
@@ -47,6 +63,7 @@ export async function rescheduleBooking(
 
   const booking = await store.getByRequestId(requestId);
   if (!booking) throw new BookingNotFoundError();
+  if (booking.status === "cancelled") throw new BookingNotCancellableError(booking.status);
 
   const slot = decodeSlotId(slotId);
   try {
@@ -105,4 +122,48 @@ export async function rescheduleBooking(
   }
 
   return updated;
+}
+
+export async function cancelBooking(
+  requestId: string,
+  dependencies: AdminBookingDependencies = {},
+): Promise<BookingRecord> {
+  const store = getStore(dependencies);
+  const calendar = getCalendar(dependencies);
+
+  const booking = await store.getByRequestId(requestId);
+  if (!booking) throw new BookingNotFoundError();
+  if (booking.status !== "confirmed") throw new BookingNotCancellableError(booking.status);
+
+  const cancelled = await store.cancelBooking(requestId);
+
+  // Free the record first: the partial unique index only covers live rows, so
+  // the slot is bookable again the moment the status changes. Then remove the
+  // invitation and let Google tell the guest.
+  if (!booking.googleEventId) return cancelled;
+
+  try {
+    await calendar.deleteEvent(requestId);
+  } catch (error) {
+    logServerEvent("admin_cancel_event_delete_failed", {
+      bookingId: requestId,
+      code: error instanceof Error ? error.name : "unknown",
+    });
+
+    // The invite is still on the guest's calendar, so put the record back and
+    // let the team try again rather than leaving the two states apart.
+    try {
+      await store.restoreConfirmed(requestId);
+    } catch (rollbackError) {
+      logServerEvent("admin_cancel_rollback_failed", {
+        bookingId: requestId,
+        code: rollbackError instanceof Error ? rollbackError.name : "unknown",
+      });
+      await alertTeam("booking_failed", { code: "cancel_drift" });
+    }
+
+    throw new BookingFailedError("calendar_delete");
+  }
+
+  return cancelled;
 }

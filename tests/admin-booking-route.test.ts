@@ -8,6 +8,7 @@ const mocks = vi.hoisted(() => ({
   },
   rescheduleBooking: vi.fn(),
   updateBookingDetails: vi.fn(),
+  cancelBooking: vi.fn(),
   alertTeam: vi.fn(async () => {}),
 }));
 
@@ -20,13 +21,18 @@ vi.mock("@/lib/config", () => ({
 vi.mock("@/lib/booking/admin-service", () => ({
   rescheduleBooking: mocks.rescheduleBooking,
   updateBookingDetails: mocks.updateBookingDetails,
+  cancelBooking: mocks.cancelBooking,
 }));
 
 vi.mock("@/lib/alerts", () => ({ alertTeam: mocks.alertTeam }));
 
 import { PATCH } from "@/app/api/admin/bookings/[requestId]/route";
 import { BookingFailedError } from "@/lib/booking/errors";
-import { BookingNotFoundError, SlotTakenError } from "@/lib/booking/store";
+import {
+  BookingNotCancellableError,
+  BookingNotFoundError,
+  SlotTakenError,
+} from "@/lib/booking/store";
 import type { BookingRecord } from "@/lib/booking/types";
 
 const REQUEST_ID = "00000000-0000-4000-8000-000000000001";
@@ -70,6 +76,7 @@ beforeEach(() => {
   resetRateLimitsForTests();
   mocks.rescheduleBooking.mockReset();
   mocks.updateBookingDetails.mockReset();
+  mocks.cancelBooking.mockReset();
   mocks.alertTeam.mockReset();
 });
 
@@ -186,5 +193,54 @@ describe("PATCH /api/admin/bookings/[requestId]", () => {
     expect(response.status).toBe(500);
     const text = await response.text();
     expect(text).not.toContain("secret internal message");
+  });
+
+  it("cancels a booking for a signed-in admin", async () => {
+    mocks.cancelBooking.mockResolvedValue({
+      ...savedBooking(),
+      status: "cancelled",
+      cancelledAt: new Date("2026-11-11T04:00:00.000Z"),
+    });
+
+    const response = await PATCH(signedIn({ cancel: true }), PARAMS);
+
+    expect(response.status).toBe(200);
+    const body = await response.json();
+    expect(body.ok).toBe(true);
+    expect(body.booking.status).toBe("cancelled");
+    expect(body.booking.cancelledAt).toBe("2026-11-11T04:00:00.000Z");
+    expect(mocks.cancelBooking).toHaveBeenCalledWith(REQUEST_ID);
+    expect(mocks.updateBookingDetails).not.toHaveBeenCalled();
+    expect(mocks.rescheduleBooking).not.toHaveBeenCalled();
+  });
+
+  it("rejects a cancellation mixed with other changes", async () => {
+    const response = await PATCH(signedIn({ cancel: true, name: "Grace Hopper" }), PARAMS);
+
+    expect(response.status).toBe(400);
+    expect(mocks.cancelBooking).not.toHaveBeenCalled();
+  });
+
+  it("answers 409 when the booking cannot be cancelled", async () => {
+    mocks.cancelBooking.mockRejectedValue(new BookingNotCancellableError("cancelled"));
+
+    const response = await PATCH(signedIn({ cancel: true }), PARAMS);
+
+    expect(response.status).toBe(409);
+    const body = await response.json();
+    expect(body.error).toBe("booking_not_cancellable");
+  });
+
+  it("answers 503 and alerts the team when the invitation cannot be removed", async () => {
+    mocks.cancelBooking.mockRejectedValue(new BookingFailedError("calendar_delete"));
+
+    const response = await PATCH(signedIn({ cancel: true }), PARAMS);
+
+    expect(response.status).toBe(503);
+    const body = await response.json();
+    expect(body.error).toBe("booking_edit_failed");
+    expect(mocks.alertTeam).toHaveBeenCalledWith("booking_failed", {
+      code: "calendar_delete",
+    });
   });
 });

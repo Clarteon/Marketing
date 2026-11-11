@@ -47,7 +47,7 @@ export const adminReviewSchema = z.discriminatedUnion("action", [
 ]);
 
 export const bookingsListSchema = z.object({
-  status: z.enum(["all", "pending", "confirmed"]).default("all"),
+  status: z.enum(["all", "pending", "confirmed", "cancelled"]).default("all"),
   timing: z.enum(["all", "upcoming", "past"]).default("all"),
   page: z.coerce.number().int().min(1).max(100_000).default(1),
 });
@@ -87,6 +87,7 @@ export const adminBookingUpdateSchema = z
       .max(240)
       .regex(/^[A-Za-z0-9_-]+$/)
       .optional(),
+    cancel: z.literal(true).optional(),
   })
   .refine(
     (value) => Object.values(value).some((field) => field !== undefined),
@@ -97,6 +98,12 @@ export const adminBookingUpdateSchema = z
       (field) => field !== undefined,
     );
     return value.slotId === undefined || !hasDetails;
-  }, "Send guest details or a new slot, not both.");
+  }, "Send guest details or a new slot, not both.")
+  .refine((value) => {
+    const hasDetails = [value.name, value.email, value.timezone, value.notes].some(
+      (field) => field !== undefined,
+    );
+    return value.cancel === undefined || (value.slotId === undefined && !hasDetails);
+  }, "Send a cancellation on its own.");
 
 export type AdminBookingUpdate = z.output<typeof adminBookingUpdateSchema>;
