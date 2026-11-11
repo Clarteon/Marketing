@@ -301,6 +301,19 @@
   white-space: nowrap;
 }
 
+.topBarMark {
+  display: block;
+  flex: none;
+  width: 26px;
+  height: 26px;
+}
+
+.topBarWordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
 .topBarBadge {
   padding: 0.12rem 0.55rem;
   border-radius: var(--radius-pill);
@@ -348,20 +361,61 @@
   outline-offset: 2px;
 }
 
-.topBar .secondaryButton {
-  border-color: var(--stone);
-  color: var(--paper);
+.logoutButton {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 32px;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid rgba(244, 244, 242, 0.28);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--stone);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.2;
   white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    color 120ms ease;
 }
 
-.topBar .secondaryButton:hover:not(:disabled) {
+.logoutButton svg {
+  width: 14px;
+  height: 14px;
+}
+
+.logoutButton::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: var(--radius-pill);
+}
+
+.logoutButton:hover:not(:disabled) {
   background: var(--paper);
   border-color: var(--paper);
   color: var(--ink);
 }
 
-.topBar .secondaryButton:focus-visible {
-  outline-color: var(--lime);
+.logoutButton:focus-visible {
+  outline: 2px solid var(--lime);
+  outline-offset: 2px;
+}
+
+.logoutButton:disabled {
+  cursor: progress;
+  opacity: 0.65;
+}
+
+@media (max-width: 45rem) {
+  .topBarWordmark {
+    display: none;
+  }
 }
 
 .filterBar {
@@ -815,9 +869,15 @@
     order: 3;
     flex-basis: 100%;
     margin-left: 0;
+    gap: 0.15rem;
   }
 
-  .topBar .secondaryButton {
+  .topNavLink {
+    padding: 0.4rem 0.5rem;
+    font-size: 0.84rem;
+  }
+
+  .logoutButton {
     margin-left: auto;
   }
 

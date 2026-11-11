@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { LogoSymbol } from "@/components/ui/Logo";
 import { cx } from "@/lib/cx";
 import { LogoutButton } from "./LogoutButton";
 import styles from "@/app/admin/admin.module.css";
@@ -19,8 +20,11 @@ export function AdminTopBar() {
   return (
     <header className={styles.topBar}>
       <div className={styles.topBarInner}>
-        <Link href="/admin" className={styles.topBarBrand}>
-          Clarteon <span className={styles.topBarBadge}>admin</span>
+        <Link href="/admin" className={styles.topBarBrand} aria-label="Clarteon admin">
+          <LogoSymbol className={styles.topBarMark} />
+          <span className={styles.topBarWordmark}>
+            Clarteon <span className={styles.topBarBadge}>admin</span>
+          </span>
         </Link>
         <nav className={styles.topBarNav} aria-label="Admin">
           {tabs.map((tab) => {
