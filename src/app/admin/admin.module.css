@@ -517,6 +517,10 @@
   min-width: 10rem;
 }
 
+.cellStackTight {
+  min-width: 0;
+}
+
 .cellSub {
   color: var(--graphite);
   font-size: 0.82rem;
@@ -742,6 +746,42 @@
   outline: 2px solid var(--ink);
   outline-offset: 2px;
   border-radius: 2px;
+}
+
+.leadsTable {
+  table-layout: fixed;
+  min-width: 51.5rem;
+}
+
+.receivedCol {
+  width: 8.5rem;
+}
+
+.leadCol {
+  width: 12.5rem;
+}
+
+.needCol {
+  width: 15rem;
+}
+
+.sourceCol {
+  width: 6.5rem;
+}
+
+.emailsCol {
+  width: 9rem;
+}
+
+.needCell {
+  color: var(--graphite);
+  overflow-wrap: anywhere;
+}
+
+.needCell:hover .notesPreview,
+.needCell:focus-within .notesPreview {
+  display: block;
+  overflow: visible;
 }
 
 .pagination {

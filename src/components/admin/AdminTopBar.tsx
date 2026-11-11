@@ -9,6 +9,7 @@ import styles from "@/app/admin/admin.module.css";
 const tabs = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/bookings", label: "Bookings" },
+  { href: "/admin/leads", label: "Leads" },
   { href: "/admin/review", label: "Review queue" },
 ];
 
