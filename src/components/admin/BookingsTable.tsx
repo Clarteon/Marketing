@@ -88,7 +88,13 @@ export function BookingsTable({ rows }: BookingsTableProps) {
               </td>
               <td>{dateLabel(row.createdAt)}</td>
               <td className={styles.notesCell}>
-                {row.notes ?? <span className={styles.tableMuted}>None</span>}
+                {row.notes ? (
+                  <span className={styles.notesPreview} tabIndex={0}>
+                    {row.notes}
+                  </span>
+                ) : (
+                  <span className={styles.tableMuted}>None</span>
+                )}
               </td>
               <td>
                 <Link
