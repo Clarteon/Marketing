@@ -13,6 +13,7 @@ const STATUS_OPTIONS: { value: string; label: string }[] = [
   { value: "all", label: "All statuses" },
   { value: "pending", label: "Pending" },
   { value: "confirmed", label: "Confirmed" },
+  { value: "cancelled", label: "Cancelled" },
 ];
 
 const TIMING_OPTIONS: { value: string; label: string }[] = [

@@ -1,6 +1,7 @@
 import "server-only";
 import { neon } from "@neondatabase/serverless";
 import { BookingStoreNotConfiguredError } from "@/lib/booking/store";
+import type { BookingStatus } from "@/lib/booking/types";
 import { getConfig } from "@/lib/config";
 import type { BookingsListQuery } from "./schema";
 
@@ -15,11 +16,12 @@ export interface AdminBookingRow {
   email: string;
   notes?: string;
   timezone: string;
-  status: "pending" | "confirmed";
+  status: BookingStatus;
   meetLink?: string;
   calendarLink?: string;
   createdAt: Date;
   confirmedAt?: Date;
+  cancelledAt?: Date;
 }
 
 export interface BookingsListResult {
@@ -32,6 +34,7 @@ export interface BookingsListResult {
 export interface BookingStats {
   pending: number;
   confirmed: number;
+  cancelled: number;
   upcoming: number;
 }
 
@@ -48,11 +51,13 @@ interface BookingListRow {
   calendar_link: string | null;
   created_at: string | Date;
   confirmed_at: string | Date | null;
+  cancelled_at: string | Date | null;
 }
 
 interface BookingStatsRow {
   pending: number | string;
   confirmed: number | string;
+  cancelled: number | string;
   upcoming: number | string;
 }
 
@@ -60,6 +65,12 @@ function getSql() {
   const { DATABASE_URL } = getConfig();
   if (!DATABASE_URL) throw new BookingStoreNotConfiguredError();
   return neon(DATABASE_URL);
+}
+
+function statusFromRow(status: string): BookingStatus {
+  if (status === "confirmed") return "confirmed";
+  if (status === "cancelled") return "cancelled";
+  return "pending";
 }
 
 function mapRow(row: BookingListRow): AdminBookingRow {
@@ -71,11 +82,12 @@ function mapRow(row: BookingListRow): AdminBookingRow {
     email: row.email,
     notes: row.notes ?? undefined,
     timezone: row.timezone,
-    status: row.status === "confirmed" ? "confirmed" : "pending",
+    status: statusFromRow(row.status),
     meetLink: row.meet_link ?? undefined,
     calendarLink: row.calendar_link ?? undefined,
     createdAt: new Date(row.created_at),
     confirmedAt: row.confirmed_at ? new Date(row.confirmed_at) : undefined,
+    cancelledAt: row.cancelled_at ? new Date(row.cancelled_at) : undefined,
   };
 }
 
@@ -88,7 +100,7 @@ export async function listBookings(query: BookingsListQuery): Promise<BookingsLi
   const rows = (await sql`
     SELECT
       request_id, slot_start, slot_end, name, email, notes, timezone, status,
-      meet_link, calendar_link, created_at, confirmed_at
+      meet_link, calendar_link, created_at, confirmed_at, cancelled_at
     FROM bookings
     WHERE (${status} = 'all' OR status = ${status})
       AND (
@@ -126,6 +138,7 @@ export async function getBookingStats(): Promise<BookingStats> {
     SELECT
       (count(*) FILTER (WHERE status = 'pending'))::int AS pending,
       (count(*) FILTER (WHERE status = 'confirmed'))::int AS confirmed,
+      (count(*) FILTER (WHERE status = 'cancelled'))::int AS cancelled,
       (count(*) FILTER (WHERE status IN ('pending', 'confirmed') AND slot_start > now()))::int
         AS upcoming
     FROM bookings
@@ -135,6 +148,7 @@ export async function getBookingStats(): Promise<BookingStats> {
   return {
     pending: Number(row?.pending ?? 0),
     confirmed: Number(row?.confirmed ?? 0),
+    cancelled: Number(row?.cancelled ?? 0),
     upcoming: Number(row?.upcoming ?? 0),
   };
 }

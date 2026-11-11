@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import axe from "axe-core";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { BookingEditForm } from "@/app/admin/(dashboard)/bookings/[requestId]/booking-edit-form";
+import { CancelBooking } from "@/app/admin/(dashboard)/bookings/[requestId]/cancel-booking";
 import { RescheduleCalendar } from "@/app/admin/(dashboard)/bookings/[requestId]/reschedule-calendar";
 import { ToastProvider } from "@/components/ui/ToastProvider";
 import { formatSlotDate, formatSlotDateTime, formatSlotTime } from "@/lib/booking/format";
@@ -225,5 +226,69 @@ describe("RescheduleCalendar", () => {
 
     expect(await screen.findByText(/Open times could not be loaded right now/)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Retry" })).toBeInTheDocument();
+  });
+});
+
+describe("CancelBooking", () => {
+  it("asks before cancelling, then cancels the booking", async () => {
+    const fetchMock = stubFetch();
+    renderInMain(<CancelBooking requestId={REQUEST_ID} guestName="Ada Lovelace" />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Cancel booking" }));
+
+    expect(screen.getByText(/The invitation disappears from their calendar/)).toBeInTheDocument();
+    expect(fetchMock).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole("button", { name: "Yes, cancel booking" }));
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledOnce());
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(String(url)).toBe(`/api/admin/bookings/${REQUEST_ID}`);
+    expect(String(init?.method)).toBe("PATCH");
+    expect(JSON.parse(String(init?.body))).toEqual({ cancel: true });
+
+    const expected = "Booking cancelled. The guest was emailed and the time is open again.";
+    expect(await screen.findByRole("status", { name: `Success: ${expected}` })).toBeInTheDocument();
+    expect(navigation.refresh).toHaveBeenCalled();
+    await expectNoA11yViolations(document.body);
+  });
+
+  it("leaves the booking alone when the admin keeps it", async () => {
+    const fetchMock = stubFetch();
+    renderInMain(<CancelBooking requestId={REQUEST_ID} guestName="Ada Lovelace" />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Cancel booking" }));
+    fireEvent.click(screen.getByRole("button", { name: "Keep booking" }));
+
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(screen.getByRole("button", { name: "Cancel booking" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Yes, cancel booking" })).not.toBeInTheDocument();
+    expect(navigation.refresh).not.toHaveBeenCalled();
+  });
+
+  it("explains an already cancelled booking", async () => {
+    stubFetch(async () => jsonResponse({ ok: false, error: "booking_not_cancellable" }, 409));
+    renderInMain(<CancelBooking requestId={REQUEST_ID} guestName="Ada Lovelace" />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Cancel booking" }));
+    fireEvent.click(screen.getByRole("button", { name: "Yes, cancel booking" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "This booking is already cancelled.",
+    );
+    expect(navigation.refresh).not.toHaveBeenCalled();
+  });
+
+  it("says the cancellation did not finish when the server fails", async () => {
+    stubFetch(async () => jsonResponse({ ok: false, error: "booking_edit_failed" }, 503));
+    renderInMain(<CancelBooking requestId={REQUEST_ID} guestName="Ada Lovelace" />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Cancel booking" }));
+    fireEvent.click(screen.getByRole("button", { name: "Yes, cancel booking" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "The cancellation did not finish. Check the status before trying again.",
+    );
+    expect(navigation.refresh).not.toHaveBeenCalled();
   });
 });

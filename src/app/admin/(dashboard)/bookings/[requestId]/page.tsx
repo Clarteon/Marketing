@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { BookingEditForm } from "./booking-edit-form";
+import { CancelBooking } from "./cancel-booking";
 import { RescheduleCalendar } from "./reschedule-calendar";
+import { BookingStatusBadge } from "@/components/admin/BookingStatusBadge";
 import { isAdminPageAuthenticated } from "@/lib/admin/auth";
 import { dateLabel } from "@/lib/admin/format";
 import { formatSlotDateTime } from "@/lib/booking/format";
@@ -65,7 +67,8 @@ export default async function AdminBookingDetailPage({ params }: BookingDetailPa
           <h1 className={styles.title}>Booking</h1>
           <p className={styles.intro}>
             Guest details, notes and the discovery-call time. Rescheduling moves the Google Calendar
-            event and emails the guest an updated invite.
+            event and emails the guest an updated invite. Cancelling removes the invitation and
+            opens the time again.
           </p>
         </div>
       </div>
@@ -97,59 +100,75 @@ export default async function AdminBookingDetailPage({ params }: BookingDetailPa
         <>
           <div className={styles.statusBar}>
             <span>
-              <span
-                className={cx(
-                  styles.badge,
-                  booking.status === "confirmed" ? styles.badgeConfirmed : styles.badgePending,
-                )}
-              >
-                {booking.status === "confirmed" ? "Confirmed" : "Pending"}
-              </span>
+              <BookingStatusBadge status={booking.status} />
             </span>
             <span>{formatSlotDateTime(booking.slotStart.toISOString(), booking.timezone)}</span>
             <span>Guest timezone {booking.timezone}</span>
             <span>Booked {dateLabel(booking.createdAt)}</span>
+            {booking.cancelledAt ? <span>Cancelled {dateLabel(booking.cancelledAt)}</span> : null}
           </div>
 
           <div className={styles.detailStack}>
-            <section
-              className={cx(styles.panel, styles.detailPanel)}
-              aria-labelledby="guest-details-title"
-            >
-              <h2 className={styles.sectionTitle} id="guest-details-title">
-                Guest details
-              </h2>
-              <p className={styles.sectionIntro}>
-                Name, email and notes as the visitor sent them. Changes save to the booking record
-                only.
-              </p>
-              <BookingEditForm
-                booking={{
-                  requestId: booking.requestId,
-                  name: booking.name,
-                  email: booking.email,
-                  timezone: booking.timezone,
-                  notes: booking.notes ?? null,
-                }}
-              />
-            </section>
+            {booking.status === "cancelled" ? (
+              <section
+                className={cx(styles.panel, styles.detailPanel)}
+                aria-labelledby="cancelled-title"
+              >
+                <h2 className={styles.sectionTitle} id="cancelled-title">
+                  Cancelled booking
+                </h2>
+                <p className={styles.sectionIntro}>
+                  The Google Calendar invitation was removed, so the guest no longer has the call in
+                  their calendar, and the time is open for someone else. The record stays here with
+                  the guest details for follow-up.
+                </p>
+                <p className={styles.meta}>
+                  {booking.name} · {booking.email}
+                </p>
+                <p className={styles.meta}>Notes: {booking.notes ?? "None"}</p>
+              </section>
+            ) : (
+              <>
+                <section
+                  className={cx(styles.panel, styles.detailPanel)}
+                  aria-labelledby="guest-details-title"
+                >
+                  <h2 className={styles.sectionTitle} id="guest-details-title">
+                    Guest details
+                  </h2>
+                  <p className={styles.sectionIntro}>
+                    Name, email and notes as the visitor sent them. Changes save to the booking
+                    record only.
+                  </p>
+                  <BookingEditForm
+                    booking={{
+                      requestId: booking.requestId,
+                      name: booking.name,
+                      email: booking.email,
+                      timezone: booking.timezone,
+                      notes: booking.notes ?? null,
+                    }}
+                  />
+                </section>
 
-            <section
-              className={cx(styles.panel, styles.detailPanel)}
-              aria-labelledby="reschedule-title"
-            >
-              <h2 className={styles.sectionTitle} id="reschedule-title">
-                Reschedule
-              </h2>
-              <p className={styles.sectionIntro}>
-                Pick a new date and time. Times are shown in the guest&rsquo;s timezone.
-              </p>
-              <RescheduleCalendar
-                requestId={booking.requestId}
-                timezone={booking.timezone}
-                currentSlotStart={booking.slotStart.toISOString()}
-              />
-            </section>
+                <section
+                  className={cx(styles.panel, styles.detailPanel)}
+                  aria-labelledby="reschedule-title"
+                >
+                  <h2 className={styles.sectionTitle} id="reschedule-title">
+                    Reschedule
+                  </h2>
+                  <p className={styles.sectionIntro}>
+                    Pick a new date and time. Times are shown in the guest&rsquo;s timezone.
+                  </p>
+                  <RescheduleCalendar
+                    requestId={booking.requestId}
+                    timezone={booking.timezone}
+                    currentSlotStart={booking.slotStart.toISOString()}
+                  />
+                </section>
+              </>
+            )}
 
             <section
               className={cx(styles.panel, styles.detailPanel)}
@@ -159,7 +178,9 @@ export default async function AdminBookingDetailPage({ params }: BookingDetailPa
                 Meeting
               </h2>
               <div className={styles.meetingRow}>
-                {booking.meetLink ? (
+                {booking.status === "cancelled" ? (
+                  <span className={styles.tableMuted}>Invite removed</span>
+                ) : booking.meetLink ? (
                   <a
                     className={styles.meetButton}
                     href={booking.meetLink}
@@ -184,7 +205,7 @@ export default async function AdminBookingDetailPage({ params }: BookingDetailPa
                 ) : (
                   <span className={styles.tableMuted}>No meeting link yet</span>
                 )}
-                {booking.calendarLink ? (
+                {booking.status !== "cancelled" && booking.calendarLink ? (
                   <a
                     className={styles.tableLink}
                     href={booking.calendarLink}
@@ -199,6 +220,22 @@ export default async function AdminBookingDetailPage({ params }: BookingDetailPa
                 Request id <code>{booking.requestId}</code>
               </p>
             </section>
+
+            {booking.status !== "cancelled" ? (
+              <section
+                className={cx(styles.panel, styles.detailPanel)}
+                aria-labelledby="cancel-title"
+              >
+                <h2 className={styles.sectionTitle} id="cancel-title">
+                  Cancel
+                </h2>
+                <p className={styles.sectionIntro}>
+                  Cancelling removes the Google Calendar invitation, emails the guest that the call
+                  is off, and opens the time for someone else.
+                </p>
+                <CancelBooking requestId={booking.requestId} guestName={booking.name} />
+              </section>
+            ) : null}
           </div>
         </>
       )}

@@ -70,6 +70,10 @@ export default async function AdminDashboardPage() {
             <p className={styles.statLabel}>Confirmed calls</p>
           </div>
           <div className={styles.statCard}>
+            <span className={styles.statValue}>{stats?.cancelled ?? 0}</span>
+            <p className={styles.statLabel}>Cancelled</p>
+          </div>
+          <div className={styles.statCard}>
             <span className={styles.statValue}>{stats?.upcoming ?? 0}</span>
             <p className={styles.statLabel}>Upcoming</p>
           </div>

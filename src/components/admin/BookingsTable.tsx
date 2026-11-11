@@ -1,6 +1,6 @@
 import Link from "next/link";
+import { BookingStatusBadge } from "@/components/admin/BookingStatusBadge";
 import { dateLabel } from "@/lib/admin/format";
-import { cx } from "@/lib/cx";
 import type { AdminBookingRow } from "@/lib/admin/queries";
 import styles from "@/app/admin/admin.module.css";
 
@@ -41,17 +41,12 @@ export function BookingsTable({ rows }: BookingsTableProps) {
                 </div>
               </td>
               <td>
-                <span
-                  className={cx(
-                    styles.badge,
-                    row.status === "confirmed" ? styles.badgeConfirmed : styles.badgePending,
-                  )}
-                >
-                  {row.status === "confirmed" ? "Confirmed" : "Pending"}
-                </span>
+                <BookingStatusBadge status={row.status} />
               </td>
               <td>
-                {row.meetLink ? (
+                {row.status === "cancelled" ? (
+                  <span className={styles.tableMuted}>Invite removed</span>
+                ) : row.meetLink ? (
                   <a
                     className={styles.meetButton}
                     href={row.meetLink}
@@ -100,7 +95,11 @@ export function BookingsTable({ rows }: BookingsTableProps) {
                 <Link
                   href={`/admin/bookings/${row.requestId}`}
                   className={styles.editButton}
-                  aria-label={`Edit booking for ${row.name}`}
+                  aria-label={
+                    row.status === "cancelled"
+                      ? `View booking for ${row.name}`
+                      : `Edit booking for ${row.name}`
+                  }
                 >
                   <svg
                     viewBox="0 0 24 24"

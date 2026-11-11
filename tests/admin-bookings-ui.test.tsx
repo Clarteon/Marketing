@@ -36,6 +36,20 @@ const pendingRow: AdminBookingRow = {
   createdAt: new Date("2026-11-09T05:00:00.000Z"),
 };
 
+const cancelledRow: AdminBookingRow = {
+  requestId: "request-3",
+  slotStart: new Date("2026-11-26T08:00:00.000Z"),
+  slotEnd: new Date("2026-11-26T08:30:00.000Z"),
+  name: "Mia Reyes",
+  email: "mia@example.com",
+  timezone: "Asia/Manila",
+  status: "cancelled",
+  meetLink: "https://meet.google.com/xyz-abcd-efg",
+  createdAt: new Date("2026-11-08T05:00:00.000Z"),
+  confirmedAt: new Date("2026-11-08T05:01:00.000Z"),
+  cancelledAt: new Date("2026-11-10T05:00:00.000Z"),
+};
+
 describe("admin bookings table", () => {
   it("shows guest details, status and the meeting link", async () => {
     const { container } = render(<BookingsTable rows={[confirmedRow, pendingRow]} />);
@@ -66,5 +80,18 @@ describe("admin bookings table", () => {
 
     expect(screen.queryByRole("link", { name: "Join Meet" })).not.toBeInTheDocument();
     expect(screen.getByText("None")).toBeInTheDocument();
+  });
+
+  it("shows a cancelled booking as cancelled and hides its dead invite", async () => {
+    const { container } = render(<BookingsTable rows={[cancelledRow]} />);
+
+    expect(screen.getByText("Cancelled")).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Join Meet" })).not.toBeInTheDocument();
+    expect(screen.getByText("Invite removed")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "View booking for Mia Reyes" })).toHaveAttribute(
+      "href",
+      "/admin/bookings/request-3",
+    );
+    await expectNoA11yViolations(container);
   });
 });

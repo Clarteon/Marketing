@@ -36,6 +36,7 @@ function listRow(overrides: Record<string, unknown> = {}) {
     calendar_link: null,
     created_at: "2026-11-10T02:30:00.000Z",
     confirmed_at: "2026-11-10T02:31:00.000Z",
+    cancelled_at: null,
     ...overrides,
   };
 }
@@ -101,13 +102,26 @@ describe("admin booking queries", () => {
   });
 
   it("summarises booking counts as numbers", async () => {
-    mocks.query.mockResolvedValueOnce([{ pending: 1, confirmed: "2", upcoming: 0 }]);
+    mocks.query.mockResolvedValueOnce([{ pending: 1, confirmed: "2", cancelled: 0, upcoming: 0 }]);
 
     const stats = await getBookingStats();
 
-    expect(stats).toEqual({ pending: 1, confirmed: 2, upcoming: 0 });
+    expect(stats).toEqual({ pending: 1, confirmed: 2, cancelled: 0, upcoming: 0 });
     const sql = (mocks.query.mock.calls[0][0] as TemplateStringsArray).join(" ");
     expect(sql).toContain("FILTER (WHERE status = 'pending')");
+    expect(sql).toContain("FILTER (WHERE status = 'cancelled')");
     expect(sql).toContain("slot_start > now()");
+  });
+
+  it("keeps a cancelled row's status and cancellation time", async () => {
+    mocks.query.mockResolvedValueOnce([
+      listRow({ status: "cancelled", cancelled_at: "2026-11-10T05:00:00.000Z" }),
+    ]);
+    mocks.query.mockResolvedValueOnce([{ total: 1 }]);
+
+    const result = await listBookings(bookingsListSchema.parse({ status: "cancelled" }));
+
+    expect(result.rows[0].status).toBe("cancelled");
+    expect(result.rows[0].cancelledAt).toBeInstanceOf(Date);
   });
 });
