@@ -9,6 +9,8 @@ export interface BusyInterval {
   end: Date;
 }
 
+export type BookingStatus = "pending" | "confirmed" | "cancelled";
+
 export interface BookingRecord {
   requestId: string;
   slotStart: Date;
@@ -17,12 +19,13 @@ export interface BookingRecord {
   email: string;
   notes?: string;
   timezone: string;
-  status: "pending" | "confirmed";
+  status: BookingStatus;
   googleEventId?: string;
   meetLink?: string;
   calendarLink?: string;
   createdAt: Date;
   confirmedAt?: Date;
+  cancelledAt?: Date;
 }
 
 export interface NewBooking {
@@ -68,6 +71,7 @@ export interface CalendarProvider {
   findEventByRequestId(requestId: string, around: Date): Promise<CalendarEvent | undefined>;
   createEvent(input: CreateCalendarEventInput): Promise<CalendarEvent>;
   updateEvent(input: UpdateCalendarEventInput): Promise<void>;
+  deleteEvent(requestId: string): Promise<void>;
 }
 
 export interface Availability {

@@ -17,6 +17,8 @@ export interface BookingStore {
   deletePending(requestId: string): Promise<void>;
   updateBookingDetails(requestId: string, patch: BookingDetailsPatch): Promise<BookingRecord>;
   rescheduleBooking(requestId: string, slotStart: Date, slotEnd: Date): Promise<BookingRecord>;
+  cancelBooking(requestId: string): Promise<BookingRecord>;
+  restoreConfirmed(requestId: string): Promise<BookingRecord>;
 }
 
 export class BookingStoreNotConfiguredError extends Error {
@@ -40,6 +42,16 @@ export class SlotTakenError extends Error {
     super("The selected booking slot is already held.");
     this.name = "SlotTakenError";
     this.existing = existing;
+  }
+}
+
+export class BookingNotCancellableError extends Error {
+  readonly status: string;
+
+  constructor(status: string) {
+    super("Only a confirmed booking can be cancelled.");
+    this.name = "BookingNotCancellableError";
+    this.status = status;
   }
 }
 

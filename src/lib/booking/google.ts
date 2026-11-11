@@ -122,6 +122,20 @@ async function googleFetch<T>(
   init: RequestInit,
   options: { maxAttempts?: number } = {},
 ): Promise<T> {
+  const response = await googleRequest(url, init, options);
+
+  try {
+    return (await response.json()) as T;
+  } catch {
+    throw new GoogleCalendarError("invalid_response");
+  }
+}
+
+async function googleRequest(
+  url: string,
+  init: RequestInit,
+  options: { maxAttempts?: number } = {},
+): Promise<Response> {
   const maxAttempts = options.maxAttempts ?? 2;
   let refreshed = false;
 
@@ -154,13 +168,7 @@ async function googleFetch<T>(
       continue;
     }
 
-    if (response.ok) {
-      try {
-        return (await response.json()) as T;
-      } catch {
-        throw new GoogleCalendarError("invalid_response");
-      }
-    }
+    if (response.ok) return response;
 
     const retryable = response.status === 429 || response.status >= 500;
     if (retryable && attempt < maxAttempts) {
@@ -391,6 +399,29 @@ export function createGoogleCalendarProvider(): CalendarProvider {
           }),
         },
       );
+    },
+
+    async deleteEvent(requestId: string): Promise<void> {
+      const config = getGoogleBookingConfig();
+      const params = new URLSearchParams({ sendUpdates: "all" });
+      const eventId = eventIdForRequestId(requestId);
+
+      try {
+        await googleRequest(
+          `${calendarUrl(config, `/events/${encodeURIComponent(eventId)}`)}?${params.toString()}`,
+          { method: "DELETE" },
+        );
+      } catch (error) {
+        // A missing event means the invitation is already gone, which is what
+        // cancelling asks for. Do not fail a cancellation over it.
+        if (
+          error instanceof GoogleCalendarError &&
+          (error.code === "http_404" || error.code === "http_410")
+        ) {
+          return;
+        }
+        throw error;
+      }
     },
   };
 }
