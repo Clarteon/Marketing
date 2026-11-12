@@ -1,5 +1,6 @@
 import { join } from "node:path";
 import { expect, test, type Page } from "@playwright/test";
+import { ADMIN_PASSWORD, ADMIN_STATE } from "./support/admin";
 
 const axePath = join(process.cwd(), "node_modules", "axe-core", "axe.min.js");
 
@@ -36,7 +37,7 @@ test("admin sub-pages redirect to sign-in", async ({ page }) => {
 
 test("the team can sign in and open the bookings view", async ({ page }) => {
   await page.goto("/admin/login");
-  await page.getByLabel("Admin password").fill("e2e-admin-secret-that-is-long-enough-123456");
+  await page.getByLabel("Admin password").fill(ADMIN_PASSWORD);
   await page.getByRole("button", { name: "Sign in" }).click();
 
   await expect(page).toHaveURL(/\/admin$/);
@@ -56,27 +57,28 @@ test("the team can sign in and open the bookings view", async ({ page }) => {
   await expect(page.getByText(/lead storage is not configured/i)).toBeVisible();
   expect(await axeViolations(page)).toEqual([]);
 
-  await page.goto("/admin/leads/00000000-0000-4000-8000-000000000001");
-  await expect(page).toHaveURL(/\/admin\/leads\/00000000-0000-4000-8000-000000000001$/);
-  await expect(page.getByRole("heading", { name: "Lead", exact: true })).toBeVisible();
-  await expect(page.getByText(/lead storage is not configured/i)).toBeVisible();
-  await expect(page.getByRole("link", { name: /Back to leads/i })).toBeVisible();
-  expect(await axeViolations(page)).toEqual([]);
-
   await page.getByRole("button", { name: "Sign out" }).click();
   await expect(page).toHaveURL(/\/admin\/login$/);
 });
 
-test("the booking detail page opens and explains missing storage", async ({ page }) => {
-  await page.goto("/admin/login");
-  await page.getByLabel("Admin password").fill("e2e-admin-secret-that-is-long-enough-123456");
-  await page.getByRole("button", { name: "Sign in" }).click();
-  await expect(page).toHaveURL(/\/admin$/);
+test.describe("signed in", () => {
+  test.use({ storageState: ADMIN_STATE });
 
-  await page.goto("/admin/bookings/00000000-0000-4000-8000-000000000001");
-  await expect(page).toHaveURL(/\/admin\/bookings\/00000000-0000-4000-8000-000000000001$/);
-  await expect(page.getByRole("heading", { name: "Booking", exact: true })).toBeVisible();
-  await expect(page.getByText(/booking storage is not configured/i)).toBeVisible();
-  await expect(page.getByRole("link", { name: /Back to bookings/i })).toBeVisible();
-  expect(await axeViolations(page)).toEqual([]);
+  test("the booking detail page opens and explains missing storage", async ({ page }) => {
+    await page.goto("/admin/bookings/00000000-0000-4000-8000-000000000001");
+    await expect(page).toHaveURL(/\/admin\/bookings\/00000000-0000-4000-8000-000000000001$/);
+    await expect(page.getByRole("heading", { name: "Booking", exact: true })).toBeVisible();
+    await expect(page.getByText(/booking storage is not configured/i)).toBeVisible();
+    await expect(page.getByRole("link", { name: /Back to bookings/i })).toBeVisible();
+    expect(await axeViolations(page)).toEqual([]);
+  });
+
+  test("the lead detail page opens and explains missing storage", async ({ page }) => {
+    await page.goto("/admin/leads/00000000-0000-4000-8000-000000000001");
+    await expect(page).toHaveURL(/\/admin\/leads\/00000000-0000-4000-8000-000000000001$/);
+    await expect(page.getByRole("heading", { name: "Lead", exact: true })).toBeVisible();
+    await expect(page.getByText(/lead storage is not configured/i)).toBeVisible();
+    await expect(page.getByRole("link", { name: /Back to leads/i })).toBeVisible();
+    expect(await axeViolations(page)).toEqual([]);
+  });
 });
