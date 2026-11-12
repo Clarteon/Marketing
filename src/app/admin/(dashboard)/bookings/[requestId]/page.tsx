@@ -205,16 +205,6 @@ export default async function AdminBookingDetailPage({ params }: BookingDetailPa
                 ) : (
                   <span className={styles.tableMuted}>No meeting link yet</span>
                 )}
-                {booking.status !== "cancelled" && booking.calendarLink ? (
-                  <a
-                    className={styles.tableLink}
-                    href={booking.calendarLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Open calendar event
-                  </a>
-                ) : null}
               </div>
               <p className={styles.meta}>
                 Request id <code>{booking.requestId}</code>

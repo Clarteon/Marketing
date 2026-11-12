@@ -68,17 +68,8 @@ export function BookingsTable({ rows }: BookingsTableProps) {
                       <rect x="2" y="6" width="14" height="12" rx="2" />
                     </svg>
                   </a>
-                ) : row.calendarLink ? (
-                  <a
-                    className={styles.tableLink}
-                    href={row.calendarLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Open calendar
-                  </a>
                 ) : (
-                  <span className={styles.tableMuted}>Not created yet</span>
+                  <span className={styles.tableMuted}>No meeting link yet</span>
                 )}
               </td>
               <td>{dateLabel(row.createdAt)}</td>

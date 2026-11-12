@@ -71,7 +71,7 @@ describe("admin bookings table", () => {
     expect(screen.getByText("Confirmed")).toBeInTheDocument();
     expect(screen.getByText("Pending")).toBeInTheDocument();
     expect(screen.getByText("Wants to automate the weekly report.")).toBeInTheDocument();
-    expect(screen.getByText("Not created yet")).toBeInTheDocument();
+    expect(screen.getByText("No meeting link yet")).toBeInTheDocument();
     await expectNoA11yViolations(container);
   });
 
