@@ -54,7 +54,9 @@ export default async function AdminDashboardPage() {
       attempt("admin_dashboard_upcoming_failed", () =>
         listBookings({ status: "all", timing: "upcoming", page: 1 }),
       ),
-      attempt("admin_dashboard_leads_failed", () => listLeads({ source: "all", page: 1 })),
+      attempt("admin_dashboard_leads_failed", () =>
+        listLeads({ source: "all", status: "all", page: 1 }),
+      ),
       attempt("admin_dashboard_review_failed", () => getReviewQueue(50)),
     ]);
 

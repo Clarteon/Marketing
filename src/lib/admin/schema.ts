@@ -57,6 +57,7 @@ export type BookingsListQuery = z.output<typeof bookingsListSchema>;
 
 export const leadsListSchema = z.object({
   source: z.enum(["all", "website-form", "clara-chat"]).default("all"),
+  status: z.enum(["all", "new", "contacted", "booked", "closed"]).default("all"),
   page: z.coerce.number().int().min(1).max(100_000).default(1),
 });
 

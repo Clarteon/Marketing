@@ -196,9 +196,27 @@ describe("admin lead queries", () => {
     ).rejects.toBeInstanceOf(LeadNotFoundError);
   });
 
+  it("filters by follow-up status", async () => {
+    mocks.query.mockResolvedValueOnce([]).mockResolvedValueOnce([{ total: 0 }]);
+
+    await listLeads(leadsListSchema.parse({ status: "booked" }));
+
+    const listCall = mocks.query.mock.calls[0];
+    const listSql = (listCall[0] as TemplateStringsArray).join(" ");
+    expect(listSql).toContain("status =");
+    expect(listCall).toContain("booked");
+
+    const countCall = mocks.query.mock.calls[1];
+    const countSql = (countCall[0] as TemplateStringsArray).join(" ");
+    expect(countSql).toContain("status =");
+    expect(countCall).toContain("booked");
+  });
+
   it("treats an unknown source as invalid and defaults the empty query", () => {
     expect(leadsListSchema.safeParse({ source: "newsletter" }).success).toBe(false);
+    expect(leadsListSchema.safeParse({ status: "won" }).success).toBe(false);
     expect(leadsListSchema.parse({}).source).toBe("all");
+    expect(leadsListSchema.parse({}).status).toBe("all");
     expect(leadsListSchema.parse({}).page).toBe(1);
   });
 });

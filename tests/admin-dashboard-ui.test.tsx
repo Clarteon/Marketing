@@ -75,6 +75,10 @@ describe("DashboardOverview", () => {
       "href",
       "/admin/bookings?status=pending",
     );
+    expect(screen.getByRole("link", { name: /New leads waiting for a reply/ })).toHaveAttribute(
+      "href",
+      "/admin/leads?status=new",
+    );
 
     expect(screen.getByRole("link", { name: "Grace Hopper" })).toHaveAttribute(
       "href",

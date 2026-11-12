@@ -29,6 +29,7 @@ export const metadata: Metadata = {
 function pageLink(current: LeadsListQuery, page: number): string {
   const params = new URLSearchParams();
   if (current.source !== "all") params.set("source", current.source);
+  if (current.status !== "all") params.set("status", current.status);
   if (page > 1) params.set("page", String(page));
   const qs = params.toString();
   return qs ? `/admin/leads?${qs}` : "/admin/leads";
@@ -40,6 +41,7 @@ export default async function AdminLeadsPage({ searchParams }: LeadsPageProps) {
   const raw = await searchParams;
   const parsed = leadsListSchema.safeParse({
     source: first(raw.source),
+    status: first(raw.status),
     page: first(raw.page),
   });
   const query = parsed.success ? parsed.data : leadsListSchema.parse({});
@@ -64,6 +66,7 @@ export default async function AdminLeadsPage({ searchParams }: LeadsPageProps) {
   const total = list?.total ?? 0;
   const rows = list?.rows ?? [];
   const totalPages = Math.max(1, Math.ceil(total / LEADS_PAGE_SIZE));
+  const hasFilters = query.source !== "all" || query.status !== "all";
 
   return (
     <main className={styles.page} id="main">
@@ -93,7 +96,7 @@ export default async function AdminLeadsPage({ searchParams }: LeadsPageProps) {
         </div>
       ) : (
         <>
-          <FilterBar source={query.source} />
+          <FilterBar source={query.source} status={query.status} />
 
           <div className={styles.statusBar}>
             <span>
@@ -108,16 +111,14 @@ export default async function AdminLeadsPage({ searchParams }: LeadsPageProps) {
             <div className={styles.empty}>
               {total === 0 ? (
                 <>
+                  <p>{hasFilters ? "No leads match these filters." : "No leads yet."}</p>
                   <p>
-                    {query.source === "all" ? "No leads yet." : "No leads from this source yet."}
-                  </p>
-                  <p>
-                    {query.source === "all" ? (
-                      "When someone sends a project brief, or Clara saves one, it appears here."
-                    ) : (
+                    {hasFilters ? (
                       <>
-                        <Link href="/admin/leads">Clear the filter</Link> to see every lead.
+                        <Link href="/admin/leads">Clear the filters</Link> to see every lead.
                       </>
+                    ) : (
+                      "When someone sends a project brief, or Clara saves one, it appears here."
                     )}
                   </p>
                 </>

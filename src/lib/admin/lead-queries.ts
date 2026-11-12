@@ -118,7 +118,7 @@ function mapRow(row: LeadListRow): AdminLeadRow {
 
 export async function listLeads(query: LeadsListQuery): Promise<LeadsListResult> {
   const sql = getSql();
-  const { source, page } = query;
+  const { source, status, page } = query;
   const offset = (page - 1) * LEADS_PAGE_SIZE;
 
   const rows = (await sql`
@@ -127,6 +127,7 @@ export async function listLeads(query: LeadsListQuery): Promise<LeadsListResult>
       team_email_sent_at, receipt_email_sent_at, last_error
     FROM leads
     WHERE (${source} = 'all' OR source = ${source})
+      AND (${status} = 'all' OR status = ${status})
     ORDER BY created_at DESC
     LIMIT ${LEADS_PAGE_SIZE}
     OFFSET ${offset}
@@ -136,6 +137,7 @@ export async function listLeads(query: LeadsListQuery): Promise<LeadsListResult>
     SELECT count(*)::int AS total
     FROM leads
     WHERE (${source} = 'all' OR source = ${source})
+      AND (${status} = 'all' OR status = ${status})
   `) as unknown as { total: number | string }[];
 
   return {

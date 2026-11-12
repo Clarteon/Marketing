@@ -78,7 +78,7 @@ export function DashboardOverview({
         </div>
         <ul className={styles.attentionList}>
           <li className={styles.attentionRow}>
-            <Link className={styles.attentionLink} href="/admin/leads">
+            <Link className={styles.attentionLink} href="/admin/leads?status=new">
               <span>New leads waiting for a reply</span>
               <span className={styles.attentionCount}>{count(leads?.new)}</span>
             </Link>
