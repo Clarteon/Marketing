@@ -1,13 +1,11 @@
+import Link from "next/link";
+import { LeadSourceBadge } from "@/components/admin/LeadSourceBadge";
+import { LeadStatusBadge } from "@/components/admin/LeadStatusBadge";
 import { dateLabel } from "@/lib/admin/format";
 import type { AdminLeadRow } from "@/lib/admin/lead-queries";
 import { cx } from "@/lib/cx";
 import { teamSizeLabels, type TeamSize } from "@/lib/leads/constants";
 import styles from "@/app/admin/admin.module.css";
-
-const SOURCE_LABELS: Record<AdminLeadRow["source"], string> = {
-  "website-form": "Form",
-  "clara-chat": "Clara",
-};
 
 function teamSizeLabel(value?: string): string | undefined {
   if (!value) return undefined;
@@ -22,7 +20,7 @@ function leadDetail(row: AdminLeadRow): string {
 interface EmailState {
   label: string;
   detail?: string;
-  variant: "sent" | "failed" | "pending";
+  variant: "sent" | "failed" | "partial" | "idle";
 }
 
 function emailState(row: AdminLeadRow): EmailState {
@@ -37,11 +35,11 @@ function emailState(row: AdminLeadRow): EmailState {
     return {
       label: "Partial",
       detail: teamSent ? "Team alert only" : "Guest receipt only",
-      variant: "pending",
+      variant: "partial",
     };
   }
 
-  return { label: "Not sent", detail: "No send recorded", variant: "pending" };
+  return { label: "Not sent", detail: "No send recorded", variant: "idle" };
 }
 
 interface LeadsTableProps {
@@ -60,7 +58,9 @@ export function LeadsTable({ rows }: LeadsTableProps) {
           <col className={styles.leadCol} />
           <col className={styles.needCol} />
           <col className={styles.sourceCol} />
+          <col className={styles.statusCol} />
           <col className={styles.emailsCol} />
+          <col className={styles.editCol} />
         </colgroup>
         <thead>
           <tr>
@@ -68,7 +68,9 @@ export function LeadsTable({ rows }: LeadsTableProps) {
             <th scope="col">Lead</th>
             <th scope="col">Need</th>
             <th scope="col">Source</th>
+            <th scope="col">Status</th>
             <th scope="col">Emails</th>
+            <th scope="col">Edit</th>
           </tr>
         </thead>
         <tbody>
@@ -79,8 +81,10 @@ export function LeadsTable({ rows }: LeadsTableProps) {
               <tr key={row.id}>
                 <td>{dateLabel(row.createdAt)}</td>
                 <td>
-                  <div className={styles.cellStack}>
-                    <span>{row.name}</span>
+                  <div className={cx(styles.cellStack, styles.leadCellStack)}>
+                    <Link className={styles.leadName} href={`/admin/leads/${row.id}`}>
+                      {row.name}
+                    </Link>
                     <a className={styles.cellSub} href={`mailto:${row.email}`}>
                       {row.email}
                     </a>
@@ -93,7 +97,10 @@ export function LeadsTable({ rows }: LeadsTableProps) {
                   </span>
                 </td>
                 <td>
-                  <span className={styles.badge}>{SOURCE_LABELS[row.source]}</span>
+                  <LeadSourceBadge source={row.source} />
+                </td>
+                <td>
+                  <LeadStatusBadge status={row.status} />
                 </td>
                 <td>
                   <div className={cx(styles.cellStack, styles.cellStackTight)}>
@@ -101,8 +108,10 @@ export function LeadsTable({ rows }: LeadsTableProps) {
                       <span
                         className={cx(
                           styles.badge,
-                          email.variant === "sent" && styles.badgeConfirmed,
+                          email.variant === "sent" && styles.badgeSent,
                           email.variant === "failed" && styles.badgeCancelled,
+                          email.variant === "partial" && styles.badgePartial,
+                          email.variant === "idle" && styles.badgeIdle,
                         )}
                       >
                         {email.label}
@@ -110,6 +119,26 @@ export function LeadsTable({ rows }: LeadsTableProps) {
                     </span>
                     {email.detail ? <span className={styles.cellSub}>{email.detail}</span> : null}
                   </div>
+                </td>
+                <td>
+                  <Link
+                    href={`/admin/leads/${row.id}`}
+                    className={styles.editButton}
+                    aria-label={`Edit lead from ${row.name}`}
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M12 20h9" />
+                      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" />
+                    </svg>
+                  </Link>
                 </td>
               </tr>
             );

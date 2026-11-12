@@ -483,6 +483,78 @@
   line-height: 1.1;
 }
 
+.statCard.statPending {
+  background: #f7f1de;
+  border-color: #e3d5ad;
+}
+
+.statPending .statValue {
+  color: #6a5513;
+}
+
+.statCard.statConfirmed {
+  background: #f3fad4;
+  border-color: #d8e7a0;
+}
+
+.statConfirmed .statValue {
+  color: #3f6b00;
+}
+
+.statCard.statCancelled {
+  background: #fbeceb;
+  border-color: #e7c4c0;
+}
+
+.statCancelled .statValue {
+  color: #7a1d1d;
+}
+
+.statCard.statUpcoming {
+  background: #edf3dc;
+  border-color: #cfdda9;
+}
+
+.statUpcoming .statValue {
+  color: #4b5c16;
+}
+
+.statCard.statTotal {
+  background: var(--stone);
+  border-color: var(--line);
+}
+
+.statTotal .statValue {
+  color: var(--ink);
+}
+
+.statCard.statNew {
+  background: #f7f1de;
+  border-color: #e3d5ad;
+}
+
+.statNew .statValue {
+  color: #6a5513;
+}
+
+.statCard.statRecent {
+  background: #edf3dc;
+  border-color: #cfdda9;
+}
+
+.statRecent .statValue {
+  color: #4b5c16;
+}
+
+.statCard.statFailed {
+  background: #fbeceb;
+  border-color: #e7c4c0;
+}
+
+.statFailed .statValue {
+  color: #7a1d1d;
+}
+
 .statLabel {
   margin: 0;
   color: var(--graphite);
@@ -494,6 +566,136 @@
   flex-wrap: wrap;
   gap: var(--space-2);
   margin-top: var(--space-4);
+}
+
+.dashboardSection {
+  display: grid;
+  align-content: start;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.sectionHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+}
+
+.sectionLink {
+  color: var(--graphite);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.sectionLink:hover {
+  color: var(--ink);
+}
+
+.dashboardColumns {
+  display: grid;
+  align-items: start;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.dashboardColumns .dashboardSection {
+  margin-top: 0;
+}
+
+.dashboardList,
+.attentionList {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+
+.dashboardRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: 0.85rem 1rem;
+}
+
+.dashboardRow + .dashboardRow,
+.attentionRow + .attentionRow {
+  border-top: 1px solid var(--line);
+}
+
+.rowMain {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.rowTitle {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.rowTitle:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.rowMeta {
+  color: var(--graphite);
+  font-size: 0.82rem;
+  overflow-wrap: anywhere;
+}
+
+.rowTags {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+  gap: 0.35rem;
+}
+
+.attentionRow {
+  display: flex;
+}
+
+.attentionLink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  width: 100%;
+  padding: 0.85rem 1rem;
+}
+
+.attentionLink:hover {
+  background: var(--stone);
+}
+
+.attentionCount {
+  font-family: var(--font-fraunces);
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.emptyState {
+  margin: 0;
+  padding: 1rem;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-card);
+  color: var(--graphite);
+  font-size: 0.95rem;
 }
 
 .filterBar {
@@ -584,15 +786,16 @@
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.2rem 0.65rem;
+  gap: 0.35rem;
+  padding: 0.2rem 0.55rem;
   border-radius: 999px;
   font-size: 0.72rem;
   font-weight: 600;
   line-height: 1.4;
   letter-spacing: 0.01em;
   white-space: nowrap;
-  background: rgba(92, 92, 88, 0.07);
+  border: 1px solid var(--line);
+  background: var(--stone);
   color: var(--graphite);
 }
 
@@ -605,31 +808,109 @@
 }
 
 .badgePending {
-  background: rgba(92, 92, 88, 0.07);
-  color: var(--graphite);
+  border-color: #e3d5ad;
+  background: #f7f1de;
+  color: #6a5513;
 }
 
 .badgePending::before {
-  box-shadow: 0 0 0 3px rgba(92, 92, 88, 0.14);
+  box-shadow: 0 0 0 3px #efe3c2;
 }
 
-.badgeConfirmed {
-  background: rgba(198, 244, 50, 0.22);
-  color: #4c7a00;
+.badgeConfirmed,
+.badgeSent,
+.badgeBooked {
+  border-color: #d8e7a0;
+  background: #f3fad4;
+  color: #3f6b00;
 }
 
-.badgeConfirmed::before {
-  box-shadow: 0 0 0 3px rgba(198, 244, 50, 0.4);
+.badgeConfirmed::before,
+.badgeSent::before,
+.badgeBooked::before {
+  box-shadow: 0 0 0 3px #e6f2b8;
 }
 
 .badgeCancelled {
-  background: rgba(122, 29, 29, 0.08);
+  border-color: #e7c4c0;
+  background: #fbeceb;
   color: #7a1d1d;
 }
 
 .badgeCancelled::before {
   background: transparent;
   box-shadow: inset 0 0 0 2px currentColor;
+}
+
+.badgeNew {
+  border-color: #e3d5ad;
+  background: #f7f1de;
+  color: #6a5513;
+}
+
+.badgeNew::before {
+  box-shadow: 0 0 0 3px #efe3c2;
+}
+
+.badgeContacted {
+  border-color: #bcdcea;
+  background: #e6f4fa;
+  color: #0e6a86;
+}
+
+.badgeContacted::before {
+  box-shadow: 0 0 0 3px #d3ebf5;
+}
+
+.badgePartial {
+  border-color: #e3d5ad;
+  background: #f7f1de;
+  color: #6a5513;
+}
+
+.badgePartial::before {
+  box-shadow: 0 0 0 3px #efe3c2;
+}
+
+.badgeClosed {
+  border-color: #dcdcd6;
+  background: var(--stone);
+  color: var(--graphite);
+}
+
+.badgeClosed::before {
+  box-shadow: 0 0 0 3px #e9e9e4;
+}
+
+.badgeIdle {
+  border-color: var(--line);
+  background: var(--stone);
+  color: var(--graphite);
+}
+
+.badgeIdle::before {
+  background: transparent;
+  box-shadow: inset 0 0 0 2px currentColor;
+}
+
+.sourceForm {
+  border-color: #c9d8fc;
+  background: #e9efff;
+  color: #1d4ed8;
+}
+
+.sourceForm::before {
+  box-shadow: 0 0 0 3px #dbe6fd;
+}
+
+.sourceClara {
+  border-color: #ddccf9;
+  background: #f2eafe;
+  color: #6d28d9;
+}
+
+.sourceClara::before {
+  box-shadow: 0 0 0 3px #e9dcfc;
 }
 
 .tableLink {
@@ -804,27 +1085,64 @@
 
 .leadsTable {
   table-layout: fixed;
-  min-width: 51.5rem;
+  min-width: 54.5rem;
+}
+
+.leadsTable th,
+.leadsTable td {
+  padding-inline: 0.6rem;
 }
 
 .receivedCol {
-  width: 8.5rem;
+  width: 7.75rem;
 }
 
 .leadCol {
-  width: 12.5rem;
+  width: 12.25rem;
 }
 
 .needCol {
-  width: 15rem;
+  width: 9.75rem;
 }
 
 .sourceCol {
-  width: 6.5rem;
+  width: 6rem;
+}
+
+.statusCol {
+  width: 7.25rem;
 }
 
 .emailsCol {
-  width: 9rem;
+  width: 7.25rem;
+}
+
+.editCol {
+  width: 4.25rem;
+}
+
+.leadCellStack {
+  min-width: 0;
+}
+
+.leadName {
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: rgba(10, 10, 10, 0.3);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+}
+
+.leadName:hover {
+  text-decoration-color: currentColor;
+}
+
+.leadName:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
 .needCell {

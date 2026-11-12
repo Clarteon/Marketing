@@ -30,6 +30,8 @@ test("admin sub-pages redirect to sign-in", async ({ page }) => {
   await expect(page).toHaveURL(/\/admin\/login$/);
   await page.goto("/admin/bookings/00000000-0000-4000-8000-000000000001");
   await expect(page).toHaveURL(/\/admin\/login$/);
+  await page.goto("/admin/leads/00000000-0000-4000-8000-000000000001");
+  await expect(page).toHaveURL(/\/admin\/login$/);
 });
 
 test("the team can sign in and open the bookings view", async ({ page }) => {
@@ -52,6 +54,13 @@ test("the team can sign in and open the bookings view", async ({ page }) => {
   await expect(page).toHaveURL(/\/admin\/leads$/);
   await expect(page.getByRole("heading", { name: "Leads" })).toBeVisible();
   await expect(page.getByText(/lead storage is not configured/i)).toBeVisible();
+  expect(await axeViolations(page)).toEqual([]);
+
+  await page.goto("/admin/leads/00000000-0000-4000-8000-000000000001");
+  await expect(page).toHaveURL(/\/admin\/leads\/00000000-0000-4000-8000-000000000001$/);
+  await expect(page.getByRole("heading", { name: "Lead", exact: true })).toBeVisible();
+  await expect(page.getByText(/lead storage is not configured/i)).toBeVisible();
+  await expect(page.getByRole("link", { name: /Back to leads/i })).toBeVisible();
   expect(await axeViolations(page)).toEqual([]);
 
   await page.getByRole("button", { name: "Sign out" }).click();

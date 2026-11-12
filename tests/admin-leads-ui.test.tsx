@@ -19,7 +19,9 @@ const formLead: AdminLeadRow = {
   need: "The weekly report takes a whole day to put together.",
   teamSize: "11-50",
   source: "website-form",
+  status: "new",
   createdAt: new Date("2026-11-10T02:30:00.000Z"),
+  updatedAt: new Date("2026-11-10T02:30:00.000Z"),
   teamEmailSentAt: new Date("2026-11-10T02:30:05.000Z"),
   receiptEmailSentAt: new Date("2026-11-10T02:30:06.000Z"),
 };
@@ -30,7 +32,9 @@ const chatLead: AdminLeadRow = {
   email: "ana@example.com",
   need: "We lose track of customer questions across three inboxes.",
   source: "clara-chat",
+  status: "contacted",
   createdAt: new Date("2026-11-09T05:00:00.000Z"),
+  updatedAt: new Date("2026-11-09T05:00:00.000Z"),
   teamEmailSentAt: new Date("2026-11-09T05:00:02.000Z"),
 };
 
@@ -42,7 +46,9 @@ const failedLead: AdminLeadRow = {
   need: "Orders arrive by email and get typed in twice.",
   teamSize: "2-10",
   source: "website-form",
+  status: "closed",
   createdAt: new Date("2026-11-08T05:00:00.000Z"),
+  updatedAt: new Date("2026-11-10T05:00:00.000Z"),
   lastError: "team_timeout",
 };
 
@@ -61,6 +67,15 @@ describe("LeadsTable", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("Form")).toBeInTheDocument();
     expect(screen.getByText("Sent")).toBeInTheDocument();
+    expect(screen.getByText("New")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Juan Dela Cruz" })).toHaveAttribute(
+      "href",
+      "/admin/leads/lead-1",
+    );
+    expect(screen.getByRole("link", { name: "Edit lead from Juan Dela Cruz" })).toHaveAttribute(
+      "href",
+      "/admin/leads/lead-1",
+    );
 
     await expectNoA11yViolations(container);
   });
@@ -72,6 +87,7 @@ describe("LeadsTable", () => {
     expect(screen.getByText("Partial")).toBeInTheDocument();
     expect(screen.getByText("Team alert only")).toBeInTheDocument();
     expect(screen.getByText("No company or team size")).toBeInTheDocument();
+    expect(screen.getByText("Contacted")).toBeInTheDocument();
 
     await expectNoA11yViolations(container);
   });
