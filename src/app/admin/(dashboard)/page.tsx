@@ -1,9 +1,22 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { DashboardOverview } from "@/components/admin/DashboardOverview";
 import { Button } from "@/components/ui/Button";
 import { isAdminPageAuthenticated } from "@/lib/admin/auth";
-import { getBookingStats, type BookingStats } from "@/lib/admin/queries";
-import { BookingStoreNotConfiguredError } from "@/lib/booking/store";
+import {
+  getLeadStats,
+  listLeads,
+  type AdminLeadRow,
+  type LeadStats,
+} from "@/lib/admin/lead-queries";
+import {
+  getBookingStats,
+  listBookings,
+  type AdminBookingRow,
+  type BookingStats,
+} from "@/lib/admin/queries";
+import { getConfig } from "@/lib/config";
+import { getReviewQueue } from "@/lib/knowledge/service";
 import { logServerEvent } from "@/lib/log";
 import styles from "@/app/admin/admin.module.css";
 
@@ -14,25 +27,46 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+async function attempt<T>(event: string, run: () => Promise<T>): Promise<T | undefined> {
+  try {
+    return await run();
+  } catch (error) {
+    logServerEvent(event, { code: error instanceof Error ? error.name : "unknown" });
+    return undefined;
+  }
+}
+
 export default async function AdminDashboardPage() {
   if (!(await isAdminPageAuthenticated())) redirect("/admin/login");
 
-  let stats: BookingStats | undefined;
-  let configured = true;
-  let unavailable = false;
+  const configured = Boolean(getConfig().DATABASE_URL);
 
-  try {
-    stats = await getBookingStats();
-  } catch (error) {
-    if (error instanceof BookingStoreNotConfiguredError) {
-      configured = false;
-    } else {
-      unavailable = true;
-      logServerEvent("admin_dashboard_stats_failed", {
-        code: error instanceof Error ? error.name : "unknown",
-      });
-    }
+  let stats: BookingStats | undefined;
+  let leadStats: LeadStats | undefined;
+  let upcoming: AdminBookingRow[] = [];
+  let recentLeads: AdminLeadRow[] = [];
+  let openQuestions: number | undefined;
+
+  if (configured) {
+    const [bookings, leads, nextCalls, latestLeads, queue] = await Promise.all([
+      attempt("admin_dashboard_stats_failed", getBookingStats),
+      attempt("admin_dashboard_lead_stats_failed", getLeadStats),
+      attempt("admin_dashboard_upcoming_failed", () =>
+        listBookings({ status: "all", timing: "upcoming", page: 1 }),
+      ),
+      attempt("admin_dashboard_leads_failed", () => listLeads({ source: "all", page: 1 })),
+      attempt("admin_dashboard_review_failed", () => getReviewQueue(50)),
+    ]);
+
+    stats = bookings;
+    leadStats = leads;
+    upcoming = nextCalls?.rows.slice(0, 3) ?? [];
+    recentLeads = latestLeads?.rows.slice(0, 3) ?? [];
+    openQuestions = queue?.length;
   }
+
+  const unavailable =
+    configured && (stats === undefined || leadStats === undefined || openQuestions === undefined);
 
   return (
     <main className={styles.page} id="main">
@@ -41,7 +75,7 @@ export default async function AdminDashboardPage() {
           <p className={styles.eyebrow}>Clarteon admin</p>
           <h1 className={styles.title}>Dashboard</h1>
           <p className={styles.intro}>
-            Discovery-call bookings at a glance, with the full list one click away.
+            Calls, leads and the review queue at a glance, with the full lists one click away.
           </p>
         </div>
       </div>
@@ -49,35 +83,19 @@ export default async function AdminDashboardPage() {
       {!configured ? (
         <div className={styles.panel}>
           <p className={styles.notice} role="status">
-            Booking storage is not configured. Add <code>DATABASE_URL</code> in the server
-            environment and run <code>npm run db:init</code>.
-          </p>
-        </div>
-      ) : unavailable ? (
-        <div className={styles.panel}>
-          <p className={styles.notice} role="status">
-            Booking numbers are temporarily unavailable. Try again in a moment.
+            Admin storage is not configured. Add <code>DATABASE_URL</code> in the server environment
+            and run <code>npm run db:init</code>.
           </p>
         </div>
       ) : (
-        <div className={styles.statGrid}>
-          <div className={styles.statCard}>
-            <span className={styles.statValue}>{stats?.pending ?? 0}</span>
-            <p className={styles.statLabel}>Pending holds</p>
-          </div>
-          <div className={styles.statCard}>
-            <span className={styles.statValue}>{stats?.confirmed ?? 0}</span>
-            <p className={styles.statLabel}>Confirmed calls</p>
-          </div>
-          <div className={styles.statCard}>
-            <span className={styles.statValue}>{stats?.cancelled ?? 0}</span>
-            <p className={styles.statLabel}>Cancelled</p>
-          </div>
-          <div className={styles.statCard}>
-            <span className={styles.statValue}>{stats?.upcoming ?? 0}</span>
-            <p className={styles.statLabel}>Upcoming</p>
-          </div>
-        </div>
+        <DashboardOverview
+          bookings={stats}
+          leads={leadStats}
+          upcoming={upcoming}
+          recentLeads={recentLeads}
+          openQuestions={openQuestions}
+          unavailable={unavailable}
+        />
       )}
 
       <div className={styles.dashboardActions}>
