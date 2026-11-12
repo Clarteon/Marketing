@@ -1,11 +1,11 @@
 .viewport {
   position: fixed;
   z-index: 120;
-  top: max(1rem, env(safe-area-inset-top));
   right: max(1rem, env(safe-area-inset-right));
+  bottom: max(1rem, env(safe-area-inset-bottom));
   display: grid;
   gap: 0.75rem;
-  width: min(26rem, calc(100vw - 2rem));
+  width: min(24rem, calc(100vw - 2rem));
   max-height: calc(100dvh - 2rem);
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -13,45 +13,41 @@
 }
 
 .toast {
-  --accent: #1457b8;
-  --tint: #eff5ff;
+  --accent: #3f6b00;
+  --tint: var(--stone);
   display: flex;
   align-items: flex-start;
   gap: 0.75rem;
   min-width: 0;
-  padding: 1rem;
-  border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--line));
+  padding: 0.9rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--line));
+  border-left: 3px solid var(--accent);
   border-radius: var(--radius-card);
   background: var(--paper);
   color: var(--ink);
-  box-shadow: 0 8px 28px rgb(10 10 10 / 14%);
+  box-shadow: 0 12px 32px rgb(10 10 10 / 12%);
   pointer-events: auto;
   animation: enter 220ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 .success {
-  --accent: #1f7a45;
-  --tint: #eef8f1;
+  --accent: #3f6b00;
 }
 
 .error {
-  --accent: #a4231c;
-  --tint: #fdf0ef;
+  --accent: #7a1d1d;
 }
 
 .warning {
-  --accent: #9a5700;
-  --tint: #fff7e8;
+  --accent: #7c4a03;
 }
 
 .info {
-  --accent: #1457b8;
-  --tint: #eff5ff;
+  --accent: #1d4ed8;
 }
 
 .loading {
   --accent: var(--graphite);
-  --tint: var(--stone);
 }
 
 .icon,
@@ -84,9 +80,10 @@
 
 .label {
   margin: 0;
-  color: var(--accent);
-  font-size: 0.875rem;
+  color: var(--graphite);
+  font-size: 0.8rem;
   font-weight: 600;
+  letter-spacing: 0.01em;
   line-height: 1.3;
 }
 
@@ -126,7 +123,7 @@
 
 .close:hover,
 .action:hover {
-  background: var(--tint);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
 }
 
 .close:focus-visible,
@@ -153,7 +150,7 @@
 @keyframes enter {
   from {
     opacity: 0;
-    transform: translateY(-0.5rem);
+    transform: translateY(0.5rem);
   }
   to {
     opacity: 1;
@@ -164,7 +161,7 @@
 @keyframes exit {
   to {
     opacity: 0;
-    transform: translateY(-0.35rem);
+    transform: translateY(0.35rem);
   }
 }
 
@@ -176,8 +173,8 @@
 
 @media (max-width: 640px) {
   .viewport {
-    top: max(0.75rem, env(safe-area-inset-top));
     right: max(0.75rem, env(safe-area-inset-right));
+    bottom: max(0.75rem, env(safe-area-inset-bottom));
     left: max(0.75rem, env(safe-area-inset-left));
     width: auto;
   }
