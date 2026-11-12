@@ -1,0 +1,115 @@
+import Link from "next/link";
+import { BookingStatusBadge } from "@/components/admin/BookingStatusBadge";
+import { dateLabel } from "@/lib/admin/format";
+import type { AdminBookingRow } from "@/lib/admin/queries";
+import styles from "@/app/admin/admin.module.css";
+
+interface BookingsTableProps {
+  rows: AdminBookingRow[];
+}
+
+export function BookingsTable({ rows }: BookingsTableProps) {
+  return (
+    <div className={styles.tableWrap}>
+      <table className={styles.table} aria-label="Discovery-call bookings">
+        <thead>
+          <tr>
+            <th scope="col">Slot</th>
+            <th scope="col">Guest</th>
+            <th scope="col">Status</th>
+            <th scope="col">Meeting</th>
+            <th scope="col">Booked</th>
+            <th scope="col">Notes</th>
+            <th scope="col">Edit</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => (
+            <tr key={row.requestId}>
+              <td>
+                <div className={styles.cellStack}>
+                  <span>{dateLabel(row.slotStart)}</span>
+                  <span className={styles.cellSub}>{row.timezone}</span>
+                </div>
+              </td>
+              <td>
+                <div className={styles.cellStack}>
+                  <span>{row.name}</span>
+                  <a className={styles.cellSub} href={`mailto:${row.email}`}>
+                    {row.email}
+                  </a>
+                </div>
+              </td>
+              <td>
+                <BookingStatusBadge status={row.status} />
+              </td>
+              <td>
+                {row.status === "cancelled" ? (
+                  <span className={styles.tableMuted}>Invite removed</span>
+                ) : row.meetLink ? (
+                  <a
+                    className={styles.meetButton}
+                    href={row.meetLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Join Meet"
+                    title="Join Meet"
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="m22 8-6 4 6 4V8Z" />
+                      <rect x="2" y="6" width="14" height="12" rx="2" />
+                    </svg>
+                  </a>
+                ) : (
+                  <span className={styles.tableMuted}>No meeting link yet</span>
+                )}
+              </td>
+              <td>{dateLabel(row.createdAt)}</td>
+              <td className={styles.notesCell}>
+                {row.notes ? (
+                  <span className={styles.notesPreview} tabIndex={0}>
+                    {row.notes}
+                  </span>
+                ) : (
+                  <span className={styles.tableMuted}>None</span>
+                )}
+              </td>
+              <td>
+                <Link
+                  href={`/admin/bookings/${row.requestId}`}
+                  className={styles.editButton}
+                  aria-label={
+                    row.status === "cancelled"
+                      ? `View booking for ${row.name}`
+                      : `Edit booking for ${row.name}`
+                  }
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M12 20h9" />
+                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" />
+                  </svg>
+                </Link>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}

@@ -79,3 +79,72 @@ describe("Google Calendar event creation", () => {
     expect(fetchMock).toHaveBeenCalledTimes(3);
   });
 });
+
+describe("Google Calendar event deletion", () => {
+  beforeEach(() => {
+    process.env.GOOGLE_CLIENT_ID = "client-id";
+    process.env.GOOGLE_CLIENT_SECRET = "client-secret";
+    process.env.GOOGLE_REFRESH_TOKEN = "refresh-token";
+    process.env.GOOGLE_CALENDAR_ID = "team@example.com";
+    resetConfigForTests();
+    resetGoogleTokenForTests();
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it("removes the event, tolerates an empty body and an already deleted event", async () => {
+    const calls: string[] = [];
+    let deletes = 0;
+
+    const fetchMock = vi.fn(async (url: string, init?: RequestInit) => {
+      if (url === "https://oauth2.googleapis.com/token") {
+        return response({ access_token: "access-token", expires_in: 3_600 });
+      }
+
+      deletes += 1;
+      calls.push(`${init?.method} ${url}`);
+
+      if (deletes === 1) {
+        return {
+          ok: true,
+          status: 204,
+          json: async () => {
+            throw new Error("204 has no body");
+          },
+        } as unknown as Response;
+      }
+
+      return response({ error: { message: "not found" } }, 404);
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const calendar = createGoogleCalendarProvider();
+
+    await expect(calendar.deleteEvent(requestId)).resolves.toBeUndefined();
+    await expect(calendar.deleteEvent(requestId)).resolves.toBeUndefined();
+
+    expect(calls[0]).toBe(
+      `DELETE https://www.googleapis.com/calendar/v3/calendars/team%40example.com/events/${eventId}?sendUpdates=all`,
+    );
+  });
+
+  it("fails when Google refuses the delete", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string) => {
+        if (url === "https://oauth2.googleapis.com/token") {
+          return response({ access_token: "access-token", expires_in: 3_600 });
+        }
+        return response({ error: { message: "forbidden" } }, 403);
+      }),
+    );
+
+    await expect(createGoogleCalendarProvider().deleteEvent(requestId)).rejects.toMatchObject({
+      name: "GoogleCalendarError",
+      code: "http_403",
+    });
+  });
+});

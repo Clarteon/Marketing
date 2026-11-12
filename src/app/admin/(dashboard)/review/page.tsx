@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { LogoutButton } from "@/components/admin/LogoutButton";
 import { ReviewQueue } from "@/components/admin/ReviewQueue";
 import { isAdminPageAuthenticated } from "@/lib/admin/auth";
+import { dateLabel } from "@/lib/admin/format";
 import { getKnowledgeStatus, getReviewQueue } from "@/lib/knowledge/service";
 import { KnowledgeStoreNotConfiguredError } from "@/lib/knowledge/store";
 import type { KnowledgeIndexStatus, ReviewQuestion } from "@/lib/knowledge/types";
 import { logServerEvent } from "@/lib/log";
-import styles from "../admin.module.css";
+import styles from "@/app/admin/admin.module.css";
 
 export const dynamic = "force-dynamic";
 
@@ -15,18 +15,6 @@ export const metadata: Metadata = {
   title: "Review queue",
   robots: { index: false, follow: false },
 };
-
-function dateLabel(value: string): string {
-  try {
-    return new Intl.DateTimeFormat("en-PH", {
-      dateStyle: "medium",
-      timeStyle: "short",
-      timeZone: "Asia/Manila",
-    }).format(new Date(value));
-  } catch {
-    return value;
-  }
-}
 
 export default async function AdminReviewPage() {
   if (!(await isAdminPageAuthenticated())) redirect("/admin/login");
@@ -72,7 +60,6 @@ export default async function AdminReviewPage() {
             names or claims the team cannot support.
           </p>
         </div>
-        <LogoutButton />
       </div>
 
       {!configured ? (

@@ -1,0 +1,15 @@
+export const COMMON_TIMEZONES = [
+  "Asia/Manila",
+  "Asia/Singapore",
+  "Asia/Tokyo",
+  "Asia/Dubai",
+  "Europe/London",
+  "Europe/Berlin",
+  "Europe/Paris",
+  "America/New_York",
+  "America/Chicago",
+  "America/Denver",
+  "America/Los_Angeles",
+  "Australia/Sydney",
+  "UTC",
+] as const;

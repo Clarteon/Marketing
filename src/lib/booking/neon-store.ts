@@ -1,7 +1,13 @@
 import "server-only";
 import { neon } from "@neondatabase/serverless";
-import { SlotTakenError, type BookingStore, type SaveBookingResult } from "./store";
-import type { BookingRecord, CalendarEvent, NewBooking } from "./types";
+import {
+  BookingNotCancellableError,
+  BookingNotFoundError,
+  SlotTakenError,
+  type BookingStore,
+  type SaveBookingResult,
+} from "./store";
+import type { BookingDetailsPatch, BookingRecord, CalendarEvent, NewBooking } from "./types";
 
 interface BookingRow {
   request_id: string;
@@ -17,6 +23,7 @@ interface BookingRow {
   calendar_link: string | null;
   created_at: string | Date;
   confirmed_at: string | Date | null;
+  cancelled_at: string | Date | null;
 }
 
 type Sql = ReturnType<typeof neon>;
@@ -36,6 +43,7 @@ function mapRow(row: BookingRow): BookingRecord {
     calendarLink: row.calendar_link ?? undefined,
     createdAt: new Date(row.created_at),
     confirmedAt: row.confirmed_at ? new Date(row.confirmed_at) : undefined,
+    cancelledAt: row.cancelled_at ? new Date(row.cancelled_at) : undefined,
   };
 }
 
@@ -85,7 +93,8 @@ export class NeonBookingStore implements BookingStore {
         ON CONFLICT (request_id) DO NOTHING
         RETURNING
           request_id, slot_start, slot_end, name, email, notes, timezone, status,
-          google_event_id, meet_link, calendar_link, created_at, confirmed_at
+          google_event_id, meet_link, calendar_link, created_at, confirmed_at,
+          cancelled_at
       `) as unknown as BookingRow[];
     } catch (error) {
       if (!isUniqueViolation(error)) throw error;
@@ -111,7 +120,7 @@ export class NeonBookingStore implements BookingStore {
     const rows = (await this.sql`
       SELECT
         request_id, slot_start, slot_end, name, email, notes, timezone, status,
-        google_event_id, meet_link, calendar_link, created_at, confirmed_at
+        google_event_id, meet_link, calendar_link, created_at, confirmed_at, cancelled_at
       FROM bookings
       WHERE request_id = ${requestId}
       LIMIT 1
@@ -124,7 +133,7 @@ export class NeonBookingStore implements BookingStore {
     const rows = (await this.sql`
       SELECT
         request_id, slot_start, slot_end, name, email, notes, timezone, status,
-        google_event_id, meet_link, calendar_link, created_at, confirmed_at
+        google_event_id, meet_link, calendar_link, created_at, confirmed_at, cancelled_at
       FROM bookings
       WHERE slot_start = ${slotStart.toISOString()}
         AND status IN ('pending', 'confirmed')
@@ -157,7 +166,7 @@ export class NeonBookingStore implements BookingStore {
       WHERE request_id = ${requestId} AND status = 'pending'
       RETURNING
         request_id, slot_start, slot_end, name, email, notes, timezone, status,
-        google_event_id, meet_link, calendar_link, created_at, confirmed_at
+        google_event_id, meet_link, calendar_link, created_at, confirmed_at, cancelled_at
     `) as unknown as BookingRow[];
 
     if (rows.length > 0) return mapRow(rows[0]);
@@ -172,5 +181,111 @@ export class NeonBookingStore implements BookingStore {
       DELETE FROM bookings
       WHERE request_id = ${requestId} AND status = 'pending'
     `;
+  }
+
+  async updateBookingDetails(
+    requestId: string,
+    patch: BookingDetailsPatch,
+  ): Promise<BookingRecord> {
+    // Column names come from this fixed list, never from user input; every
+    // value is a bound parameter.
+    const assignments: string[] = [];
+    const values: (string | null)[] = [];
+
+    const assign = (column: string, value: string | null) => {
+      values.push(value);
+      assignments.push(`${column} = $${values.length}`);
+    };
+
+    if (patch.name !== undefined) assign("name", patch.name);
+    if (patch.email !== undefined) assign("email", patch.email);
+    if (patch.timezone !== undefined) assign("timezone", patch.timezone);
+    if (patch.notes !== undefined) assign("notes", patch.notes);
+    if (assignments.length === 0) throw new Error("No booking details to update.");
+
+    values.push(requestId);
+    const rows = (await this.sql.query(
+      `
+        UPDATE bookings
+        SET ${assignments.join(", ")}
+        WHERE request_id = $${values.length} AND status <> 'cancelled'
+        RETURNING
+          request_id, slot_start, slot_end, name, email, notes, timezone, status,
+          google_event_id, meet_link, calendar_link, created_at, confirmed_at,
+          cancelled_at
+      `,
+      values,
+    )) as unknown as BookingRow[];
+
+    if (rows.length > 0) return mapRow(rows[0]);
+
+    const existing = await this.getByRequestId(requestId);
+    if (existing?.status === "cancelled") throw new BookingNotCancellableError(existing.status);
+    throw new BookingNotFoundError();
+  }
+
+  async rescheduleBooking(
+    requestId: string,
+    slotStart: Date,
+    slotEnd: Date,
+  ): Promise<BookingRecord> {
+    // The conflict check runs inside the UPDATE so two concurrent edits cannot
+    // both claim the same slot.
+    const rows = (await this.sql`
+      UPDATE bookings
+      SET slot_start = ${slotStart.toISOString()}, slot_end = ${slotEnd.toISOString()}
+      WHERE request_id = ${requestId}
+        AND status <> 'cancelled'
+        AND NOT EXISTS (
+          SELECT 1 FROM bookings other
+          WHERE other.slot_start = ${slotStart.toISOString()}
+            AND other.status IN ('pending', 'confirmed')
+            AND other.request_id <> ${requestId}
+        )
+      RETURNING
+        request_id, slot_start, slot_end, name, email, notes, timezone, status,
+        google_event_id, meet_link, calendar_link, created_at, confirmed_at, cancelled_at
+    `) as unknown as BookingRow[];
+
+    if (rows.length > 0) return mapRow(rows[0]);
+
+    const existing = await this.getByRequestId(requestId);
+    if (!existing) throw new BookingNotFoundError();
+    if (existing.status === "cancelled") throw new BookingNotCancellableError(existing.status);
+    throw new SlotTakenError(existing);
+  }
+
+  async cancelBooking(requestId: string): Promise<BookingRecord> {
+    const rows = (await this.sql`
+      UPDATE bookings
+      SET status = 'cancelled', cancelled_at = now()
+      WHERE request_id = ${requestId} AND status = 'confirmed'
+      RETURNING
+        request_id, slot_start, slot_end, name, email, notes, timezone, status,
+        google_event_id, meet_link, calendar_link, created_at, confirmed_at, cancelled_at
+    `) as unknown as BookingRow[];
+
+    if (rows.length > 0) return mapRow(rows[0]);
+
+    const existing = await this.getByRequestId(requestId);
+    if (!existing) throw new BookingNotFoundError();
+    throw new BookingNotCancellableError(existing.status);
+  }
+
+  async restoreConfirmed(requestId: string): Promise<BookingRecord> {
+    const rows = (await this.sql`
+      UPDATE bookings
+      SET status = 'confirmed', cancelled_at = null
+      WHERE request_id = ${requestId} AND status = 'cancelled'
+      RETURNING
+        request_id, slot_start, slot_end, name, email, notes, timezone, status,
+        google_event_id, meet_link, calendar_link, created_at, confirmed_at, cancelled_at
+    `) as unknown as BookingRow[];
+
+    if (rows.length > 0) return mapRow(rows[0]);
+
+    const existing = await this.getByRequestId(requestId);
+    if (!existing) throw new BookingNotFoundError();
+    throw new Error("The cancelled booking could not be restored.");
   }
 }
