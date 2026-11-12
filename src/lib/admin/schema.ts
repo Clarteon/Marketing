@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { isValidTimeZone } from "@/lib/booking/time";
+import { leadStatuses, teamSizes } from "@/lib/leads/constants";
 
 export const adminLoginSchema = z.object({
   password: z.string().min(1).max(200),
@@ -114,3 +115,25 @@ export const adminBookingUpdateSchema = z
   }, "Send a cancellation on its own.");
 
 export type AdminBookingUpdate = z.output<typeof adminBookingUpdateSchema>;
+
+export const adminLeadUpdateSchema = z
+  .object({
+    name: z
+      .string()
+      .trim()
+      .min(1)
+      .max(120)
+      .regex(/^[^\r\n]+$/, "Keep the name on one line.")
+      .optional(),
+    email: adminEmailField.optional(),
+    company: z.string().trim().max(200).nullable().optional(),
+    need: z.string().trim().min(10).max(2_000).optional(),
+    teamSize: z.enum(teamSizes).nullable().optional(),
+    status: z.enum(leadStatuses).optional(),
+  })
+  .refine(
+    (value) => Object.values(value).some((field) => field !== undefined),
+    "Send at least one field to update.",
+  );
+
+export type AdminLeadUpdate = z.output<typeof adminLeadUpdateSchema>;

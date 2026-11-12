@@ -19,7 +19,14 @@ vi.mock("@neondatabase/serverless", () => ({
   }),
 }));
 
-import { LEADS_PAGE_SIZE, listLeads } from "@/lib/admin/lead-queries";
+import {
+  getLead,
+  getLeadStats,
+  LEADS_PAGE_SIZE,
+  LeadNotFoundError,
+  listLeads,
+  updateLead,
+} from "@/lib/admin/lead-queries";
 import { leadsListSchema } from "@/lib/admin/schema";
 
 function leadRow(overrides: Record<string, unknown> = {}) {
@@ -31,7 +38,9 @@ function leadRow(overrides: Record<string, unknown> = {}) {
     need: "Our weekly report takes a whole day to put together.",
     team_size: "11-50",
     source: "website-form",
+    status: "new",
     created_at: "2026-11-10T02:30:00.000Z",
+    updated_at: "2026-11-10T02:30:00.000Z",
     team_email_sent_at: "2026-11-10T02:30:05.000Z",
     receipt_email_sent_at: "2026-11-10T02:30:06.000Z",
     last_error: null,
@@ -113,6 +122,78 @@ describe("admin lead queries", () => {
     expect(result.rows[0].lastError).toBe("team_timeout");
     expect(result.rows[0].teamEmailSentAt).toBeUndefined();
     expect(result.rows[0].receiptEmailSentAt).toBeUndefined();
+  });
+
+  it("counts leads by follow-up state for the dashboard", async () => {
+    mocks.query.mockResolvedValueOnce([
+      {
+        total: "9",
+        new: "4",
+        contacted: "2",
+        booked: "2",
+        closed: "1",
+        last_seven_days: "3",
+        with_error: "1",
+      },
+    ]);
+
+    const stats = await getLeadStats();
+
+    expect(stats).toEqual({
+      total: 9,
+      new: 4,
+      contacted: 2,
+      booked: 2,
+      closed: 1,
+      lastSevenDays: 3,
+      withError: 1,
+    });
+
+    const statsSql = (mocks.query.mock.calls[0][0] as TemplateStringsArray).join(" ");
+    expect(statsSql).toContain("FROM leads");
+    expect(statsSql).toContain("last_error IS NOT NULL");
+    expect(statsSql).toContain("interval '7 days'");
+  });
+
+  it("loads one lead with its follow-up status", async () => {
+    mocks.query.mockResolvedValueOnce([leadRow({ status: "contacted" })]);
+
+    const lead = await getLead("11111111-1111-4111-8111-111111111111");
+
+    expect(lead?.status).toBe("contacted");
+    expect(lead?.updatedAt).toBeInstanceOf(Date);
+    const detailSql = (mocks.query.mock.calls[0][0] as TemplateStringsArray).join(" ");
+    expect(detailSql).toContain("WHERE id =");
+    expect(detailSql).toContain("status");
+  });
+
+  it("saves a follow-up status and stamps the update", async () => {
+    mocks.query
+      .mockResolvedValueOnce([leadRow()])
+      .mockResolvedValueOnce([leadRow({ status: "booked", name: "Grace Hopper" })]);
+
+    const lead = await updateLead("11111111-1111-4111-8111-111111111111", {
+      status: "booked",
+      name: "Grace Hopper",
+    });
+
+    expect(lead.status).toBe("booked");
+    expect(lead.name).toBe("Grace Hopper");
+
+    const updateCall = mocks.query.mock.calls[1];
+    const updateSql = (updateCall[0] as TemplateStringsArray).join(" ");
+    expect(updateSql).toContain("UPDATE leads");
+    expect(updateSql).toContain("updated_at = now()");
+    expect(updateCall).toContain("booked");
+    expect(updateCall).toContain("Grace Hopper");
+  });
+
+  it("refuses to edit a lead that is gone", async () => {
+    mocks.query.mockResolvedValueOnce([]);
+
+    await expect(
+      updateLead("11111111-1111-4111-8111-111111111111", { status: "closed" }),
+    ).rejects.toBeInstanceOf(LeadNotFoundError);
   });
 
   it("treats an unknown source as invalid and defaults the empty query", () => {

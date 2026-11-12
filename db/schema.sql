@@ -25,6 +25,16 @@ create table if not exists leads (
 alter table leads drop constraint if exists leads_source_check;
 alter table leads add constraint leads_source_check check (source in ('website-form', 'clara-chat'));
 
+-- Follow-up tracking for the admin list. Status is the team's own label for where
+-- a lead stands; it never changes what the public form or Clara store.
+alter table leads add column if not exists status text not null default 'new';
+alter table leads add column if not exists updated_at timestamptz not null default now();
+
+alter table leads drop constraint if exists leads_status_check;
+alter table leads add constraint leads_status_check check (
+  status in ('new', 'contacted', 'booked', 'closed')
+);
+
 create index if not exists leads_created_at_idx on leads (created_at);
 create index if not exists leads_email_idx on leads (email);
 
