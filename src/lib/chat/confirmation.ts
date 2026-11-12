@@ -136,7 +136,7 @@ export function proposeAction(
       description = `Email this summary to ${args.email} and notify the Clarteon team\n\n${args.summary}`;
       break;
     case "handoff_to_team":
-      description = `Send this request to the Clarteon team\nContact: ${args.contact || "Not provided"}\n\n${args.reason}`;
+      description = `Send this question to the Clarteon team for an email reply\nReply email: ${args.contact}\nQuestion or problem: ${args.reason}`;
       break;
   }
   const token = signPayload(
@@ -186,6 +186,6 @@ export function actionReply(action: ActionName, result: Record<string, unknown>)
     case "send_solution_brief":
       return `Your summary email was sent.${result.team_notified ? " The team was notified." : " The team notification did not send."}`;
     case "handoff_to_team":
-      return "Your request was sent to the Clarteon team.";
+      return "I’ve sent your question to the Clarteon team. A team member will follow up by email.";
   }
 }
