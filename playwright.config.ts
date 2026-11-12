@@ -12,6 +12,7 @@ export default defineConfig({
   // that only need a session reuse it through storageState.
   globalSetup: "./e2e/support/admin-state.ts",
   fullyParallel: true,
+  workers: process.env.CI ? undefined : 1,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? [["list"], ["html", { open: "never" }]] : "list",
