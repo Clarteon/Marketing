@@ -11,7 +11,7 @@ interface ProcessConduitProps {
   className?: string;
 }
 
-const STEP_THRESHOLDS = [0.05, 0.28, 0.52, 0.74];
+const STEP_THRESHOLDS = [0.04, 0.3, 0.58, 0.84];
 
 const toneClasses: Record<"paper" | "stone" | "ink", string> = {
   ink: "",
@@ -62,7 +62,7 @@ export function ProcessConduit({ steps, tone = "ink", className }: ProcessCondui
 
     const container = containerRef.current;
     if (!container) return;
-    const section = container.closest("section");
+    const runway = container.closest("[data-conduit-runway]") ?? container.closest("section");
 
     let rafId: number | null = null;
     let inView = !("IntersectionObserver" in window);
@@ -72,19 +72,19 @@ export function ProcessConduit({ steps, tone = "ink", className }: ProcessCondui
     function handleScroll() {
       if (!container) return;
       const rect = container.getBoundingClientRect();
-      const sectionRect = section ? section.getBoundingClientRect() : rect;
+      const runwayRect = runway ? runway.getBoundingClientRect() : rect;
       const viewportHeight = window.innerHeight;
 
       let progress = 0;
-      if (sectionRect.height > rect.height * 1.25) {
-        const startTop = viewportHeight * 0.65;
-        const endTop = viewportHeight * 0.96 - sectionRect.height;
+      if (runwayRect.height > rect.height * 1.4) {
+        const startTop = viewportHeight * 0.42;
+        const endTop = viewportHeight * 0.94 - runwayRect.height;
         const travel = Math.max(1, startTop - endTop);
-        progress = Math.min(1, Math.max(0, (startTop - sectionRect.top) / travel));
+        progress = Math.min(1, Math.max(0, (startTop - runwayRect.top) / travel));
       } else {
-        const startTrigger = viewportHeight * 0.82;
-        const endTrigger = viewportHeight * 0.28;
-        const totalSpan = Math.max(1, startTrigger - endTrigger + rect.height * 0.35);
+        const startTrigger = viewportHeight * 0.72;
+        const endTrigger = viewportHeight * 0.38;
+        const totalSpan = Math.max(1, startTrigger - endTrigger + rect.height * 0.78);
         const currentSpan = startTrigger - rect.top;
         progress = Math.min(1, Math.max(0, currentSpan / totalSpan));
       }
@@ -131,7 +131,7 @@ export function ProcessConduit({ steps, tone = "ink", className }: ProcessCondui
             handleScroll();
           })
         : null;
-    observer?.observe(section ?? container);
+    observer?.observe(runway ?? container);
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll, { passive: true });
     rafId = window.requestAnimationFrame(() => {

@@ -88,10 +88,10 @@
   align-items: center;
   justify-content: center;
   transition:
-    border-color 300ms ease,
-    background-color 300ms ease,
-    box-shadow 300ms ease,
-    transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+    border-color 480ms ease,
+    background-color 480ms ease,
+    box-shadow 480ms ease,
+    transform 480ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .milestoneDot {
@@ -132,10 +132,10 @@
   background: rgba(255, 255, 255, 0.025);
   transform: translateY(6px);
   transition:
-    transform 400ms cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 300ms ease,
-    background-color 300ms ease,
-    box-shadow 300ms ease;
+    transform 520ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 460ms ease,
+    background-color 460ms ease,
+    box-shadow 460ms ease;
   will-change: transform;
 }
 

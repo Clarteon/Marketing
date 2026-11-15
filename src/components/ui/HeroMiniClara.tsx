@@ -168,6 +168,7 @@ export function HeroMiniClara({
     null,
   );
   const [botVerified, setBotVerified] = useState(false);
+  const [engaged, setEngaged] = useState(false);
   const [turnstileKey, setTurnstileKey] = useState(0);
   const tokenRef = useRef("");
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -213,6 +214,7 @@ export function HeroMiniClara({
     const activeTz = timezoneOverride ?? selectedTimezone ?? detectedTimezone();
 
     setStarted(true);
+    setEngaged(true);
     setDraft("");
     setConfirmation(null);
     setSending(true);
@@ -464,7 +466,7 @@ export function HeroMiniClara({
           ) : null}
         </div>
 
-        {Boolean(turnstileSiteKey) && !botVerified ? (
+        {engaged && Boolean(turnstileSiteKey) && !botVerified ? (
           <div className={styles.hiddenTurnstile} aria-hidden="true">
             <TurnstileWidget
               key={turnstileKey}
@@ -484,7 +486,11 @@ export function HeroMiniClara({
           <input
             type="text"
             value={draft}
-            onChange={(event) => setDraft(event.target.value)}
+            onFocus={() => setEngaged(true)}
+            onChange={(event) => {
+              setEngaged(true);
+              setDraft(event.target.value);
+            }}
             placeholder="Type your message"
             aria-label="Message Clara in hero"
             disabled={sending}

@@ -15,11 +15,15 @@ export function Header() {
   const [gliding, setGliding] = useState(false);
   const [gliderStyle, setGliderStyle] = useState<{
     left: number;
+    top: number;
     width: number;
+    height: number;
     opacity: number;
   }>({
     left: 0,
+    top: 0,
     width: 0,
+    height: 0,
     opacity: 0,
   });
 
@@ -35,6 +39,8 @@ export function Header() {
       if (scrolledRef.current !== next) {
         scrolledRef.current = next;
         setScrolled(next);
+        setGliderStyle((prev) => (prev.opacity === 0 ? prev : { ...prev, opacity: 0 }));
+        setGliding(false);
       }
     };
     onScroll();
@@ -73,14 +79,24 @@ export function Header() {
     };
   }, [open]);
 
-  // Magnetic glider hover & focus tracking
-  const handleItemHover = (target: HTMLAnchorElement) => {
-    const navEl = navRef.current;
-    if (!navEl) return;
-    const navRect = navEl.getBoundingClientRect();
-    const linkRect = target.getBoundingClientRect();
+  const handleItemHover = (target: HTMLAnchorElement, isActive: boolean) => {
+    const left = target.offsetLeft;
+    const top = target.offsetTop;
+    const width = target.offsetWidth;
+    const height = target.offsetHeight;
 
     setGliderStyle((prev) => {
+      if (isActive) {
+        setGliding(false);
+        return {
+          left,
+          top,
+          width,
+          height,
+          opacity: 0,
+        };
+      }
+
       const isFirstAppear = prev.opacity === 0;
       if (isFirstAppear) {
         setGliding(false);
@@ -92,8 +108,10 @@ export function Header() {
       }
 
       return {
-        left: linkRect.left - navRect.left,
-        width: linkRect.width,
+        left,
+        top,
+        width,
+        height,
         opacity: 1,
       };
     });
@@ -136,8 +154,9 @@ export function Header() {
           <div
             className={cx(styles.navGlider, gliding && styles.navGliderActive)}
             style={{
-              transform: `translateX(${gliderStyle.left}px)`,
+              transform: `translate3d(${gliderStyle.left}px, ${gliderStyle.top}px, 0)`,
               width: `${gliderStyle.width}px`,
+              height: `${gliderStyle.height}px`,
               opacity: gliderStyle.opacity,
             }}
             aria-hidden="true"
@@ -153,8 +172,9 @@ export function Header() {
                 href={item.href}
                 className={cx(styles.navLink, isActive && styles.navLinkActive)}
                 aria-current={isActive ? "page" : undefined}
-                onMouseEnter={(e) => handleItemHover(e.currentTarget)}
-                onFocus={(e) => handleItemHover(e.currentTarget)}
+                onMouseEnter={(e) => handleItemHover(e.currentTarget, isActive)}
+                onFocus={(e) => handleItemHover(e.currentTarget, isActive)}
+                onClick={handleNavLeave}
               >
                 <span>{item.label}</span>
               </Link>

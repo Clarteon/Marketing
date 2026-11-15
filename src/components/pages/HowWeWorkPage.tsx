@@ -69,7 +69,11 @@ export function HowWeWorkPage({ data }: { data: HowWeWorkData }) {
           </div>
         </ScrollReveal>
 
-        <ProcessConduit steps={data.steps} tone="paper" />
+        <div className={styles.conduitRunway} data-conduit-runway="true">
+          <div className={styles.conduitStickyStage}>
+            <ProcessConduit steps={data.steps} tone="paper" />
+          </div>
+        </div>
       </Section>
 
       <Section tone="stone" aria-labelledby="call-title">
