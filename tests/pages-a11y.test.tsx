@@ -140,6 +140,10 @@ describe("page accessibility", { timeout: 60_000 }, () => {
     );
 
     expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
+    expect(screen.getByRole("heading", { name: "Mission" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Vision" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Organizational structure" })).toBeInTheDocument();
+    expect(screen.queryByText("Team & structure")).not.toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Hsisan Angel Romero" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Aldrei Justin S. Santua" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Michelle Eunice H. Opeña" })).toBeInTheDocument();

@@ -109,7 +109,13 @@ export function DeferredForm({
     <div
       ref={container}
       data-deferred-form={kind}
-      className={cx(styles.frame, kind === "brief" && styles.brief, !Form && styles.placeholder)}
+      data-loaded={Form ? "true" : "false"}
+      className={cx(
+        styles.frame,
+        kind === "booking" && styles.booking,
+        kind === "brief" && styles.brief,
+        !Form && styles.placeholder,
+      )}
       aria-busy={Boolean(attempt) && !Form && !failed}
     >
       {Form ? (

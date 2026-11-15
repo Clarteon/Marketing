@@ -110,6 +110,13 @@ export function BookingSection({
           {mode === "link" || mode === "form" ? (
             <p className={styles.bookingIntro}>{body}</p>
           ) : null}
+          {mode === "form" ? (
+            <ul className={styles.bookingExpectations} aria-label="What happens on the call">
+              <li>Walk through where daily work or handoffs are getting stuck</li>
+              <li>Identify whether automation, AI, or custom software fits best</li>
+              <li>Speak directly with us on Google Meet and leave with a clear next step</li>
+            </ul>
+          ) : null}
         </div>
 
         <div className={styles.bookingActions}>

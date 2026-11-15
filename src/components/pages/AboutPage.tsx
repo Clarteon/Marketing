@@ -4,6 +4,7 @@ import type { SimplePageData } from "@/lib/page-schemas";
 import { cx } from "@/lib/cx";
 import { DEFAULT_TEAM_MEMBERS, type TeamMember } from "@/lib/team";
 import { BookingSection } from "@/components/ui/BookingSection";
+import { HeroDirectory } from "@/components/ui/HeroDirectory";
 import { Markdown } from "@/components/ui/Markdown";
 import { Page } from "@/components/ui/Page";
 import { PageHero } from "@/components/ui/PageHero";
@@ -100,12 +101,63 @@ export function AboutPage({
   const executiveTier = team.filter((member) => member.tier === 1);
   const leadershipTier = team.filter((member) => member.tier === 2);
   const deliveryTier = team.filter((member) => member.tier === 3);
+  const tier2IdsWithReports = new Set(
+    deliveryTier
+      .map((member) => member.reportsTo)
+      .filter((id): id is string =>
+        Boolean(id && leadershipTier.some((leader) => leader.id === id)),
+      ),
+  );
   const isLocalPhoto = aboutClarityPhoto.startsWith("/");
 
   return (
     <Page>
-      <PageHero tone="paper" title={data.hero.title} intro={data.hero.intro} />
-      <Section>
+      <PageHero
+        tone="paper"
+        title={data.hero.title}
+        intro={data.hero.intro}
+        visual={
+          <HeroDirectory
+            heading="Clarté — meaning clarity"
+            note="Founded by a five-person technology team in the Republic of the Philippines."
+            items={[
+              {
+                label: "Mission and vision",
+                meta: "What guides every engagement",
+                href: "#mission-vision",
+              },
+              {
+                label: "Why Clarteon exists",
+                meta: "Starting from daily operations, not hype",
+                href: "#why-clarteon-exists",
+              },
+              ...(showOrgChart
+                ? [
+                    {
+                      label: orgTitle,
+                      meta: `${team.length}-person founding structure`,
+                      href: "#org-structure-heading",
+                    },
+                  ]
+                : []),
+            ]}
+          />
+        }
+      />
+      <Section id="mission-vision">
+        {data.preamble ? (
+          <div className={styles.aboutPreambleBand} aria-label="Mission and vision">
+            <article className={styles.aboutPreambleBlock}>
+              <h2 className={styles.aboutPreambleTitle}>Mission</h2>
+              <p className={styles.aboutPreambleBody}>{data.preamble.mission}</p>
+            </article>
+            <article className={styles.aboutPreambleBlock}>
+              <h2 className={styles.aboutPreambleTitle}>Vision</h2>
+              <p className={styles.aboutPreambleBody}>{data.preamble.vision}</p>
+            </article>
+          </div>
+        ) : null}
+
         <div className={styles.aboutEditorialGrid}>
           <div className={styles.aboutSideRail}>
             <figure className={styles.aboutFigure}>
@@ -136,7 +188,7 @@ export function AboutPage({
             <ul className={styles.editorialLinkList} aria-label="Further reading">
               <li>
                 <Link href="/solutions" className={styles.editorialTextLink}>
-                  Common bottlenecks and solutions
+                  Common pain points and solutions
                 </Link>
               </li>
               <li>
@@ -166,12 +218,9 @@ export function AboutPage({
       {showOrgChart ? (
         <Section tone="stone" aria-labelledby="org-structure-heading">
           <ScrollReveal className={styles.orgHeader} variant="rise">
-            <div>
-              <p className={styles.orgEyebrow}>Team &amp; structure</p>
-              <h2 id="org-structure-heading" className={styles.orgHeading}>
-                {orgTitle}
-              </h2>
-            </div>
+            <h2 id="org-structure-heading" className={styles.orgHeading}>
+              {orgTitle}
+            </h2>
             <p className={styles.orgLead}>
               Every engagement moves from executive alignment directly to the product lead and
               engineers building your system, with zero handoff bloat.
@@ -189,33 +238,66 @@ export function AboutPage({
               ))}
             </div>
 
-            <div className={styles.orgBranchTrunk} aria-hidden="true">
-              <span className={styles.orgSpineVertical} />
-              <span className={styles.orgBranchHorizontal} />
-            </div>
-
-            <div className={styles.orgTierPair}>
-              {leadershipTier.map((member) => (
-                <div key={member.id} className={styles.orgBranchColumn}>
-                  <span className={styles.orgDropConnector} aria-hidden="true" />
-                  <OrgNodeCard member={member} />
+            {leadershipTier.length > 0 ? (
+              <div className={styles.orgTierGroup}>
+                <span className={styles.orgStemDown} aria-hidden="true" />
+                <div className={styles.orgTierPair}>
+                  {leadershipTier.map((member, index) => {
+                    const hasReports =
+                      deliveryTier.length > 0 && tier2IdsWithReports.has(member.id);
+                    return (
+                      <div
+                        key={member.id}
+                        className={cx(
+                          styles.orgBranchColumn,
+                          index === 0 && leadershipTier.length > 1 && styles.orgBranchFirst,
+                          index === leadershipTier.length - 1 &&
+                            leadershipTier.length > 1 &&
+                            styles.orgBranchLast,
+                          deliveryTier.length > 0 && styles.orgTierLeaderRow,
+                          hasReports && styles.orgBranchHasChildren,
+                        )}
+                      >
+                        <span className={styles.orgDropConnector} aria-hidden="true" />
+                        <div className={styles.orgCardSlot}>
+                          <OrgNodeCard member={member} />
+                        </div>
+                        {hasReports ? (
+                          <span className={styles.orgParentDropStem} aria-hidden="true" />
+                        ) : null}
+                      </div>
+                    );
+                  })}
                 </div>
-              ))}
-            </div>
+              </div>
+            ) : null}
 
-            <div className={styles.orgBranchTrunk} aria-hidden="true">
-              <span className={styles.orgSpineVertical} />
-              <span className={styles.orgBranchHorizontal} />
-            </div>
-
-            <div className={styles.orgTierPair}>
-              {deliveryTier.map((member) => (
-                <div key={member.id} className={styles.orgBranchColumn}>
-                  <span className={styles.orgDropConnector} aria-hidden="true" />
-                  <OrgNodeCard member={member} />
+            {deliveryTier.length > 0 ? (
+              <div className={styles.orgTierGroup}>
+                {tier2IdsWithReports.size === 0 ? (
+                  <span className={styles.orgStemDown} aria-hidden="true" />
+                ) : null}
+                <div className={styles.orgTierPair}>
+                  {deliveryTier.map((member, index) => (
+                    <div
+                      key={member.id}
+                      className={cx(
+                        styles.orgBranchColumn,
+                        index === 0 && deliveryTier.length > 1 && styles.orgBranchFirst,
+                        index === deliveryTier.length - 1 &&
+                          deliveryTier.length > 1 &&
+                          styles.orgBranchLast,
+                      )}
+                    >
+                      <span className={styles.orgDropConnector} aria-hidden="true" />
+                      <div className={styles.orgCardSlot}>
+                        <OrgNodeCard member={member} />
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            ) : null}
           </div>
         </Section>
       ) : null}

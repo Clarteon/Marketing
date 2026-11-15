@@ -31,6 +31,7 @@ import {
   calendarMonthLabel,
 } from "@/lib/booking/calendar";
 import { COMMON_TIMEZONES } from "@/lib/booking/timezones";
+import { AnimatedCheckbox } from "./AnimatedCheckbox";
 import { Button } from "./Button";
 import { SelectField } from "./SelectField";
 import { TurnstileWidget } from "./TurnstileWidget";
@@ -853,17 +854,10 @@ export function BookingForm({ turnstileSiteKey }: BookingFormProps) {
               </div>
 
               <div className={styles.checkboxField}>
-                <input
-                  className={styles.checkbox}
-                  id="booking-consent"
-                  name="consent"
-                  type="checkbox"
-                  required
-                />
-                <label className={styles.checkboxLabel} htmlFor="booking-consent">
+                <AnimatedCheckbox id="booking-consent" name="consent" required>
                   I agree that Clarteon may use these details to arrange the call. See the{" "}
                   <Link href="/privacy">Privacy page</Link>.
-                </label>
+                </AnimatedCheckbox>
               </div>
 
               {step === "details" ? (

@@ -2,6 +2,7 @@ import Image from "next/image";
 import type { HowWeWorkData } from "@/lib/page-schemas";
 import { BookingSection } from "@/components/ui/BookingSection";
 import { Button } from "@/components/ui/Button";
+import { HeroDirectory } from "@/components/ui/HeroDirectory";
 import { Page } from "@/components/ui/Page";
 import { PageHero } from "@/components/ui/PageHero";
 import { ProcessConduit } from "@/components/ui/ProcessConduit";
@@ -43,6 +44,29 @@ export function HowWeWorkPage({ data }: { data: HowWeWorkData }) {
           <Button href="/contact#book" size="large">
             Book a free discovery call
           </Button>
+        }
+        visual={
+          <HeroDirectory
+            heading="From problem to system"
+            note="Clear deliverables before each step starts."
+            items={[
+              {
+                label: "The four-step process",
+                meta: "Diagnose, Recommend, Build, Support",
+                href: "#steps-title",
+              },
+              {
+                label: "What happens on a discovery call",
+                meta: "30 minutes on Google Meet",
+                href: "#call-title",
+              },
+              {
+                label: "Pick an open slot",
+                meta: "Schedule directly online",
+                href: "#book",
+              },
+            ]}
+          />
         }
       />
 

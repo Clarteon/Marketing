@@ -241,8 +241,8 @@ export function HomePage({
               See how your problems find the right fix.
             </h2>
             <p className={styles.visualizationIntro}>
-              Select any bottleneck on the left or capability on the right to trace how Clarteon
-              connects daily friction to a working system.
+              Select any workflow pain point on the left or capability on the right to trace how
+              Clarteon connects daily friction to a working system.
             </p>
           </ScrollReveal>
 

@@ -4,10 +4,12 @@ import type { ContentPage } from "@/lib/content";
 import type { ListPageData } from "@/lib/page-schemas";
 import { BookingSection } from "@/components/ui/BookingSection";
 import { Button } from "@/components/ui/Button";
+import { HeroDirectory } from "@/components/ui/HeroDirectory";
 import { Page } from "@/components/ui/Page";
 import { PageHero } from "@/components/ui/PageHero";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { Section } from "@/components/ui/Section";
+import { InsightsCatalog } from "./InsightsCatalog";
 import styles from "./pages.module.css";
 
 interface InsightsPageProps {
@@ -15,22 +17,40 @@ interface InsightsPageProps {
   items: ContentPage[];
 }
 
-function formatPublishDate(dateIso?: string): string | null {
-  if (!dateIso) return null;
-  const parsed = new Date(`${dateIso}T00:00:00Z`);
-  if (Number.isNaN(parsed.getTime())) return dateIso;
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "UTC",
-  }).format(parsed);
-}
-
 export function InsightsPage({ data, items }: InsightsPageProps) {
   return (
     <Page>
-      <PageHero title={data.hero.title} intro={data.hero.intro} />
+      <PageHero
+        title={data.hero.title}
+        intro={data.hero.intro}
+        visual={
+          <HeroDirectory
+            heading="In these notes"
+            note={
+              items.length > 0
+                ? `${items.length} field guides from the team`
+                : "Practical guides on operations and systems"
+            }
+            items={[
+              {
+                label: items.length > 0 ? "Browse team articles" : "See topic areas",
+                meta: "Operations, AI agents, workflow scoping",
+                href: "#insights-title",
+              },
+              {
+                label: "Match a problem to a solution",
+                meta: "Automation, custom tools, integrations",
+                href: "/solutions",
+              },
+              {
+                label: "Talk through your situation",
+                meta: "Book a 30-minute discovery call",
+                href: "/contact#book",
+              },
+            ]}
+          />
+        }
+      />
 
       <Section aria-labelledby="insights-title">
         {items.length === 0 ? (
@@ -90,55 +110,12 @@ export function InsightsPage({ data, items }: InsightsPageProps) {
                 Articles from the team
               </h2>
               <p className={styles.sectionIntro}>
-                Practical notes on spotting operational bottlenecks, scoping reliable builds, and
+                Practical notes on spotting operational pain points, scoping reliable builds, and
                 choosing technology that fits how your business runs.
               </p>
             </ScrollReveal>
 
-            <ul className={styles.editorialArticleList}>
-              {items.map((item) => {
-                const formattedDate = formatPublishDate(item.frontMatter.publishedAt);
-                return (
-                  <ScrollReveal as="li" key={item.frontMatter.slug} variant="settle">
-                    <article className={styles.editorialArticleEntry}>
-                      <div className={styles.insightCardMeta}>
-                        {item.frontMatter.author ? (
-                          <span className={styles.insightAuthorName}>
-                            {item.frontMatter.author}
-                            {item.frontMatter.authorRole ? ` · ${item.frontMatter.authorRole}` : ""}
-                          </span>
-                        ) : null}
-                        {formattedDate ? (
-                          <time
-                            className={styles.insightPublishDate}
-                            dateTime={item.frontMatter.publishedAt}
-                          >
-                            {formattedDate}
-                          </time>
-                        ) : null}
-                      </div>
-                      <h3>
-                        <Link
-                          className={styles.listLink}
-                          href={`/insights/${item.frontMatter.slug}`}
-                        >
-                          {item.frontMatter.title}
-                        </Link>
-                      </h3>
-                      <p className={styles.listSummary}>{item.frontMatter.summary}</p>
-                      <div>
-                        <Link
-                          href={`/insights/${item.frontMatter.slug}`}
-                          className={styles.editorialTextLink}
-                        >
-                          Read article
-                        </Link>
-                      </div>
-                    </article>
-                  </ScrollReveal>
-                );
-              })}
-            </ul>
+            <InsightsCatalog items={items} />
           </>
         )}
       </Section>

@@ -2,6 +2,7 @@ import type { ContentPage } from "@/lib/content";
 import type { ListPageData } from "@/lib/page-schemas";
 import { BookingSection } from "@/components/ui/BookingSection";
 import { Button } from "@/components/ui/Button";
+import { HeroDirectory } from "@/components/ui/HeroDirectory";
 import { Markdown } from "@/components/ui/Markdown";
 import { Page } from "@/components/ui/Page";
 import { PageHero } from "@/components/ui/PageHero";
@@ -19,7 +20,30 @@ interface OurWorkPageProps {
 export function OurWorkPage({ data, body, items }: OurWorkPageProps) {
   return (
     <Page>
-      <PageHero title={data.hero.title} intro={data.hero.intro} />
+      <PageHero
+        title={data.hero.title}
+        intro={data.hero.intro}
+        actions={
+          items.length > 0 ? (
+            <Button href="#work-title" variant="secondary" size="large">
+              Inspect the systems
+            </Button>
+          ) : undefined
+        }
+        visual={
+          items.length > 0 ? (
+            <HeroDirectory
+              heading="Systems in this index"
+              note={`${items.length} verified case studies`}
+              items={items.slice(0, 4).map((item) => ({
+                label: item.frontMatter.client ?? item.frontMatter.title,
+                meta: item.frontMatter.categoryLabel ?? item.frontMatter.solution_type,
+                href: `#work-${item.frontMatter.slug}`,
+              }))}
+            />
+          ) : undefined
+        }
+      />
 
       <Section aria-labelledby="work-title">
         <ScrollReveal variant="wipe" className={styles.sectionHeader}>
@@ -28,7 +52,7 @@ export function OurWorkPage({ data, body, items }: OurWorkPageProps) {
           </h2>
           {items.length > 0 ? (
             <p className={styles.sectionIntro}>
-              Each entry below documents a real operational bottleneck, the automation or custom
+              Each entry below documents a real operational pain point, the automation or custom
               software we put in place, and how daily work changed afterward.
             </p>
           ) : (
@@ -43,7 +67,7 @@ export function OurWorkPage({ data, body, items }: OurWorkPageProps) {
           )}
         </ScrollReveal>
 
-        {items.length > 0 ? <WorkShowcase items={items.map((item) => item.frontMatter)} /> : null}
+        {items.length > 0 ? <WorkShowcase items={items} /> : null}
       </Section>
 
       {body.trim() ? (

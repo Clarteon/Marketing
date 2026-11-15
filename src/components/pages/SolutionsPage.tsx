@@ -3,6 +3,7 @@ import type { SolutionsData } from "@/lib/page-schemas";
 import { cx } from "@/lib/cx";
 import { BookingSection } from "@/components/ui/BookingSection";
 import { Button } from "@/components/ui/Button";
+import { HeroDirectory } from "@/components/ui/HeroDirectory";
 import { Page } from "@/components/ui/Page";
 import { PageHero } from "@/components/ui/PageHero";
 import { ScrollReveal, type ScrollRevealVariant } from "@/components/ui/ScrollReveal";
@@ -88,6 +89,29 @@ export function SolutionsPage({ data }: { data: SolutionsData }) {
             Book a free discovery call
           </Button>
         }
+        visual={
+          <HeroDirectory
+            heading="Where to start"
+            note="Three quick paths depending on how ready your scope is."
+            items={[
+              {
+                label: "Browse problems by team area",
+                meta: "Operations, conversations, software, or web",
+                href: "#operations",
+              },
+              {
+                label: "See how our four-step process works",
+                meta: "Diagnose before writing code",
+                href: "/how-we-work",
+              },
+              {
+                label: "Inspect real systems we built",
+                meta: "Working deployments and architectures",
+                href: "/our-work",
+              },
+            ]}
+          />
+        }
         bottomBand={<SolutionMarquee />}
       />
 
@@ -106,7 +130,10 @@ export function SolutionsPage({ data }: { data: SolutionsData }) {
               <nav aria-label="Problem areas" className={styles.solutionsJumpBar}>
                 {data.themes.map((item) => (
                   <a key={item.id} href={`#${item.id}`} className={styles.solutionsJumpLink}>
-                    {item.title}
+                    <span>{item.title}</span>
+                    <span className={styles.solutionsJumpArrow} aria-hidden="true">
+                      ↓
+                    </span>
                   </a>
                 ))}
               </nav>

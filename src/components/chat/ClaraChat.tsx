@@ -118,6 +118,7 @@ async function readEvents(response: Response, onEvent: (event: ChatEvent) => voi
 export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [panelClosing, setPanelClosing] = useState(false);
   const [inHeroSection, setInHeroSection] = useState(false);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -149,10 +150,12 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
   const sessionIdRef = useRef<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const sendingRef = useRef(false);
+  const exitTimerRef = useRef<number | null>(null);
 
+  const panelActive = open && !panelClosing;
   const chatAvailable = Boolean(turnstileSiteKey);
   const dictation = useDictation();
-  const readAloud = useReadAloud(open && privacyAccepted && READ_ALOUD_ENABLED);
+  const readAloud = useReadAloud(panelActive && privacyAccepted && READ_ALOUD_ENABLED);
   const cancelDictation = dictation.cancel;
   const stopReadAloud = readAloud.stop;
   const voicePhase = dictation.phase;
@@ -161,12 +164,21 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
   const micLabel = recording ? "Stop recording" : "Record a message";
   const discardLabel = recording ? "Discard recording" : "Cancel dictation";
   const showMic =
-    open &&
+    panelActive &&
     DICTATION_ENABLED &&
     chatAvailable &&
     Boolean(navigator.mediaDevices?.getUserMedia) &&
     typeof MediaRecorder !== "undefined" &&
     typeof OfflineAudioContext !== "undefined";
+
+  const openChat = useCallback(() => {
+    if (exitTimerRef.current !== null) {
+      window.clearTimeout(exitTimerRef.current);
+      exitTimerRef.current = null;
+    }
+    setPanelClosing(false);
+    setOpen(true);
+  }, []);
 
   const closeChat = useCallback(() => {
     abortRef.current?.abort();
@@ -176,9 +188,36 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
     voiceFocus.current = null;
     cancelDictation();
     stopReadAloud();
-    setOpen(false);
     bubbleRef.current?.focus();
+
+    if (
+      typeof window === "undefined" ||
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
+    ) {
+      setPanelClosing(false);
+      setOpen(false);
+      return;
+    }
+
+    setPanelClosing(true);
+    if (exitTimerRef.current !== null) {
+      window.clearTimeout(exitTimerRef.current);
+    }
+    exitTimerRef.current = window.setTimeout(() => {
+      exitTimerRef.current = null;
+      setPanelClosing(false);
+      setOpen(false);
+    }, 180);
   }, [cancelDictation, stopReadAloud]);
+
+  useEffect(
+    () => () => {
+      if (exitTimerRef.current !== null) {
+        window.clearTimeout(exitTimerRef.current);
+      }
+    },
+    [],
+  );
 
   useEffect(() => {
     let rafId: number | null = null;
@@ -214,7 +253,7 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
   }, [pathname]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!panelActive) return;
 
     if (!privacyAccepted) {
       const initialFocus =
@@ -253,7 +292,7 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
 
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [closeChat, open, privacyAccepted]);
+  }, [closeChat, open, panelActive, privacyAccepted]);
 
   useEffect(() => {
     if (!open || !voiceFocus.current) return;
@@ -274,7 +313,7 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
   }, [open, voicePhase]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!panelActive) return;
 
     const panel = panelRef.current;
     const visualViewport = window.visualViewport;
@@ -313,13 +352,13 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
       panel.style.removeProperty("--clara-visible-top");
       panel.style.removeProperty("--clara-visible-bottom");
     };
-  }, [open]);
+  }, [open, panelActive]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!panelActive) return;
     const list = listRef.current;
     if (list) list.scrollTop = list.scrollHeight;
-  }, [messages, sending, open, degraded, error]);
+  }, [messages, sending, open, panelActive, degraded, error]);
 
   useEffect(() => {
     if (open && !sending && confirmation?.action === "book_call") reviewRef.current?.focus();
@@ -633,19 +672,19 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
       <button
         ref={bubbleRef}
         type="button"
-        className={`${styles.bubble} ${open ? styles.bubbleOpen : ""} ${
-          inHeroSection && !open ? styles.bubbleHeroHidden : ""
+        className={`${styles.bubble} ${panelActive ? styles.bubbleOpen : ""} ${
+          inHeroSection && !panelActive ? styles.bubbleHeroHidden : ""
         }`}
         aria-label="Chat with Clara"
-        aria-expanded={open}
+        aria-expanded={panelActive}
         aria-controls="clara-chat-panel"
         onClick={() => {
-          if (open) {
+          if (panelActive) {
             closeChat();
             return;
           }
           if (chatAvailable && !botVerified) preloadTurnstile();
-          setOpen(true);
+          openChat();
         }}
       >
         <span className={styles.pulseRing} aria-hidden="true" />
@@ -657,7 +696,7 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
         </span>
 
         <span className={styles.tooltip} role="tooltip" aria-hidden="true">
-          {open ? "Close chat" : "Chat with Clara"}
+          {panelActive ? "Close chat" : "Chat with Clara"}
         </span>
 
         <span className={styles.srOnly}>Chat with Clara</span>
@@ -703,10 +742,12 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
           ref={panelRef}
           id="clara-chat-panel"
           className={styles.panel}
+          data-state={panelClosing ? "closed" : "open"}
           data-stage={privacyAccepted ? "chat" : "consent"}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="clara-chat-title"
+          role={panelClosing ? undefined : "dialog"}
+          aria-modal={panelClosing ? undefined : "true"}
+          aria-labelledby={panelClosing ? undefined : "clara-chat-title"}
+          aria-hidden={panelClosing ? "true" : undefined}
         >
           <header className={styles.header}>
             <div className={styles.headerIdentity}>
@@ -775,7 +816,7 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
                     </p>
                   ) : null}
                   <ul className={styles.privacyHighlights} aria-label="What Clara can help with">
-                    <li>Diagnose workflow bottlenecks and manual admin</li>
+                    <li>Pinpoint manual admin and slow handoffs</li>
                     <li>Check live availability and book a Google Meet call</li>
                     <li>Send a project brief to the Clarteon team</li>
                   </ul>

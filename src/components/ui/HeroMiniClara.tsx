@@ -137,7 +137,7 @@ async function buildFallbackReply(userText: string, timezone?: string): Promise<
   ) {
     return "An AI assistant grounded in your approved knowledge can handle common questions and route complex ones to your team. Want me to look up open times for a 30-minute [discovery call](/contact#book)?";
   }
-  return "Thanks for sharing that. We start by diagnosing where the bottleneck costs your team the most time, then recommend the smallest practical fix. Would you like me to find a time for a [discovery call](/contact#book) or [send a project brief](/contact#brief)?";
+  return "Thanks for sharing that. We start by diagnosing which manual step costs your team the most time, then recommend the smallest practical fix. Would you like me to find a time for a [discovery call](/contact#book) or [send a project brief](/contact#brief)?";
 }
 
 export function openClaraChatPanel() {

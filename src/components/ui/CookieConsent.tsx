@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import {
   COOKIE_CONSENT_CHANGED_EVENT,
   COOKIE_CONSENT_NAME,
@@ -12,6 +12,7 @@ import {
   saveCookieConsent,
   type CookieConsentChoice,
 } from "@/lib/cookies";
+import { AnimatedCheckbox } from "./AnimatedCheckbox";
 import styles from "./ui.module.css";
 
 type ConsentSnapshot = CookieConsentChoice | "unset" | "ssr";
@@ -47,28 +48,71 @@ export function CookieConsent() {
     getServerConsentSnapshot,
   );
   const [modalOpen, setModalOpen] = useState(false);
+  const [modalClosing, setModalClosing] = useState(false);
   const [allowPreferences, setAllowPreferences] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
+  const modalExitTimerRef = useRef<number | null>(null);
+  const modalActiveRef = useRef(false);
+
+  const openModal = useCallback(() => {
+    if (modalExitTimerRef.current !== null) {
+      window.clearTimeout(modalExitTimerRef.current);
+      modalExitTimerRef.current = null;
+    }
+    modalActiveRef.current = true;
+    setAllowPreferences(readCookieConsent() === "all");
+    setModalClosing(false);
+    setModalOpen(true);
+  }, []);
+
+  const closeModal = useCallback(() => {
+    modalActiveRef.current = false;
+    if (
+      typeof window === "undefined" ||
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
+    ) {
+      setModalClosing(false);
+      setModalOpen(false);
+      return;
+    }
+    setModalClosing(true);
+    if (modalExitTimerRef.current !== null) {
+      window.clearTimeout(modalExitTimerRef.current);
+    }
+    modalExitTimerRef.current = window.setTimeout(() => {
+      modalExitTimerRef.current = null;
+      setModalClosing(false);
+      setModalOpen(false);
+    }, 170);
+  }, []);
+
+  useEffect(
+    () => () => {
+      if (modalExitTimerRef.current !== null) {
+        window.clearTimeout(modalExitTimerRef.current);
+      }
+    },
+    [],
+  );
 
   useEffect(() => {
-    function handleOpen() {
-      setAllowPreferences(readCookieConsent() === "all");
-      setModalOpen(true);
-    }
-
-    window.addEventListener(OPEN_COOKIE_PREFS_EVENT, handleOpen);
+    window.addEventListener(OPEN_COOKIE_PREFS_EVENT, openModal);
     return () => {
-      window.removeEventListener(OPEN_COOKIE_PREFS_EVENT, handleOpen);
+      window.removeEventListener(OPEN_COOKIE_PREFS_EVENT, openModal);
     };
-  }, []);
+  }, [openModal]);
+
+  useEffect(() => {
+    if (!modalOpen || modalClosing) return;
+    dialogRef.current?.focus();
+  }, [modalOpen, modalClosing]);
 
   useEffect(() => {
     if (!modalOpen) return;
-    dialogRef.current?.focus();
 
     function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        setModalOpen(false);
+      if (event.key === "Escape" && modalActiveRef.current) {
+        closeModal();
       }
     }
 
@@ -76,19 +120,18 @@ export function CookieConsent() {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [modalOpen]);
+  }, [modalOpen, closeModal]);
 
   function openSettings() {
-    setAllowPreferences(readCookieConsent() === "all");
-    setModalOpen(true);
+    openModal();
   }
 
   function applyChoice(choice: CookieConsentChoice) {
     saveCookieConsent(choice);
-    setModalOpen(false);
+    closeModal();
   }
 
-  const showBanner = consent === "unset" && !modalOpen;
+  const showBanner = consent === "unset" && (!modalOpen || modalClosing);
 
   return (
     <>
@@ -130,115 +173,117 @@ export function CookieConsent() {
       {modalOpen ? (
         <div
           className={styles.cookieModalBackdrop}
+          data-state={modalClosing ? "closed" : "open"}
+          aria-hidden={modalClosing ? "true" : undefined}
           onClick={(event) => {
-            if (event.target === event.currentTarget) {
-              setModalOpen(false);
+            if (!modalClosing && event.target === event.currentTarget) {
+              closeModal();
             }
           }}
         >
           <div
             ref={dialogRef}
             className={styles.cookieModal}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="cookie-preferences-title"
+            data-state={modalClosing ? "closed" : "open"}
+            role={modalClosing ? undefined : "dialog"}
+            aria-modal={modalClosing ? undefined : "true"}
+            aria-labelledby={modalClosing ? undefined : "cookie-preferences-title"}
             tabIndex={-1}
           >
             <div className={styles.cookieModalHeader}>
-              <div>
-                <p className={styles.cookieModalEyebrow}>Privacy &amp; cookies</p>
-                <h2 id="cookie-preferences-title" className={styles.cookieModalTitle}>
-                  Cookie preferences
-                </h2>
-              </div>
+              <h2 id="cookie-preferences-title" className={styles.cookieModalTitle}>
+                Cookie preferences
+              </h2>
               <button
                 type="button"
                 className={styles.cookieCloseButton}
                 aria-label="Close cookie preferences"
-                onClick={() => setModalOpen(false)}
+                onClick={closeModal}
               >
                 <span aria-hidden="true">×</span>
               </button>
             </div>
 
-            <p className={styles.cookieModalIntro}>
-              Manage how Clarteon stores cookies in your browser. We do not use advertising,
-              retargeting, or cross-site tracking cookies. See our{" "}
-              <Link href="/privacy" onClick={() => setModalOpen(false)}>
-                Privacy Policy &amp; Cookies
-              </Link>{" "}
-              for retention and subprocessor details.
-            </p>
+            <div className={styles.cookieModalBody}>
+              <p className={styles.cookieModalIntro}>
+                Manage how Clarteon stores cookies in your browser. We do not use advertising,
+                retargeting, or cross-site tracking cookies. See our{" "}
+                <Link href="/privacy" onClick={closeModal}>
+                  Privacy Policy &amp; Cookies
+                </Link>{" "}
+                for retention and subprocessor details.
+              </p>
 
-            <div className={styles.cookieCategoryList}>
-              <section className={styles.cookieCategory}>
-                <div className={styles.cookieCategoryTop}>
-                  <div>
-                    <h3 className={styles.cookieCategoryTitle}>Strictly essential cookies</h3>
-                    <p className={styles.cookieCategoryDesc}>
-                      Required for security verification, chat rate limits, administrative login,
-                      and recording your consent selection. These remain active automatically.
-                    </p>
+              <div className={styles.cookieCategoryList}>
+                <section className={styles.cookieCategory}>
+                  <div className={styles.cookieCategoryTop}>
+                    <div>
+                      <h3 className={styles.cookieCategoryTitle}>Strictly essential cookies</h3>
+                      <p className={styles.cookieCategoryDesc}>
+                        Required for security verification, chat rate limits, administrative login,
+                        and recording your consent selection. These remain active automatically.
+                      </p>
+                    </div>
+                    <span className={styles.cookieBadgeRequired}>Always active</span>
                   </div>
-                  <span className={styles.cookieBadgeRequired}>Always active</span>
-                </div>
-                <ul className={styles.cookieDetailList}>
-                  <li>
-                    <code>{COOKIE_CONSENT_NAME}</code>: saves your cookie preference for 180 days.
-                  </li>
-                  <li>
-                    <code>clarteon_chat</code>: signed session cookie scoped to{" "}
-                    <code>/api/chat</code> for chat continuity and fair-use rate limits.
-                  </li>
-                  <li>
-                    <code>clarteon_admin</code>: administrator authentication cookie used only on{" "}
-                    <code>/admin</code>.
-                  </li>
-                  <li>
-                    Cloudflare Turnstile: ephemeral anti-abuse verification on forms and chat.
-                  </li>
-                </ul>
-              </section>
+                  <ul className={styles.cookieDetailList}>
+                    <li>
+                      <code>{COOKIE_CONSENT_NAME}</code>: saves your cookie preference for 180 days.
+                    </li>
+                    <li>
+                      <code>clarteon_chat</code>: signed session cookie scoped to{" "}
+                      <code>/api/chat</code> for chat continuity and fair-use rate limits.
+                    </li>
+                    <li>
+                      <code>clarteon_admin</code>: administrator authentication cookie used only on{" "}
+                      <code>/admin</code>.
+                    </li>
+                    <li>
+                      Cloudflare Turnstile: ephemeral anti-abuse verification on forms and chat.
+                    </li>
+                  </ul>
+                </section>
 
-              <section className={styles.cookieCategory}>
-                <div className={styles.cookieCategoryTop}>
-                  <div>
-                    <h3 className={styles.cookieCategoryTitle}>Visitor preference cookies</h3>
-                    <p className={styles.cookieCategoryDesc}>
-                      Optional functionality that remembers your selected display timezone across
-                      discovery-call scheduling visits.
-                    </p>
-                  </div>
-                  <label className={styles.cookieToggleLabel}>
-                    <input
-                      type="checkbox"
-                      className={styles.cookieToggleInput}
+                <section className={styles.cookieCategory}>
+                  <div className={styles.cookieCategoryTop}>
+                    <div>
+                      <h3 className={styles.cookieCategoryTitle}>Visitor preference cookies</h3>
+                      <p className={styles.cookieCategoryDesc}>
+                        Optional functionality that remembers your selected display timezone across
+                        discovery-call scheduling visits.
+                      </p>
+                    </div>
+                    <AnimatedCheckbox
+                      id="cookie-preferences-toggle"
+                      compact
+                      className={styles.cookieToggleLabel}
                       checked={allowPreferences}
                       onChange={(event) => setAllowPreferences(event.target.checked)}
-                    />
-                    <span>{allowPreferences ? "Enabled" : "Disabled"}</span>
-                  </label>
-                </div>
-                <ul className={styles.cookieDetailList}>
-                  <li>
-                    <code>{TIMEZONE_COOKIE_NAME}</code>: stores your selected booking scheduler
-                    timezone for 180 days when enabled. Disabling deletes any saved value.
-                  </li>
-                </ul>
-              </section>
-
-              <section className={styles.cookieCategory}>
-                <div className={styles.cookieCategoryTop}>
-                  <div>
-                    <h3 className={styles.cookieCategoryTitle}>Cookieless analytics</h3>
-                    <p className={styles.cookieCategoryDesc}>
-                      Cloudflare Web Analytics records aggregate page counts and performance metrics
-                      without storing cookies or tracking individuals across websites.
-                    </p>
+                    >
+                      {allowPreferences ? "Enabled" : "Disabled"}
+                    </AnimatedCheckbox>
                   </div>
-                  <span className={styles.cookieBadgeNeutral}>Cookieless</span>
-                </div>
-              </section>
+                  <ul className={styles.cookieDetailList}>
+                    <li>
+                      <code>{TIMEZONE_COOKIE_NAME}</code>: stores your selected booking scheduler
+                      timezone for 180 days when enabled. Disabling deletes any saved value.
+                    </li>
+                  </ul>
+                </section>
+
+                <section className={styles.cookieCategory}>
+                  <div className={styles.cookieCategoryTop}>
+                    <div>
+                      <h3 className={styles.cookieCategoryTitle}>Cookieless analytics</h3>
+                      <p className={styles.cookieCategoryDesc}>
+                        Cloudflare Web Analytics records aggregate page counts and performance
+                        metrics without storing cookies or tracking individuals across websites.
+                      </p>
+                    </div>
+                    <span className={styles.cookieBadgeNeutral}>Cookieless</span>
+                  </div>
+                </section>
+              </div>
             </div>
 
             <div className={styles.cookieModalFooter}>

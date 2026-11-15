@@ -3,9 +3,10 @@ import type { ContactData } from "@/lib/page-schemas";
 import { cx } from "@/lib/cx";
 import { BookingSection } from "@/components/ui/BookingSection";
 import { Button } from "@/components/ui/Button";
+import { DeferredForm } from "@/components/ui/DeferredForm";
+import { HeroDirectory } from "@/components/ui/HeroDirectory";
 import { Page } from "@/components/ui/Page";
 import { PageHero } from "@/components/ui/PageHero";
-import { DeferredForm } from "@/components/ui/DeferredForm";
 import { ReticleFrame } from "@/components/ui/ReticleFrame";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { Section } from "@/components/ui/Section";
@@ -32,6 +33,29 @@ export function ContactPage({
               Book a discovery call
             </Button>
           </>
+        }
+        visual={
+          <HeroDirectory
+            heading="Ways to reach us"
+            note="30-minute discovery calls run via Google Meet."
+            items={[
+              {
+                label: "Book a free discovery call",
+                meta: "Choose an open time slot",
+                href: "#book",
+              },
+              {
+                label: "Send a project brief",
+                meta: "Describe what needs fixing",
+                href: "#brief",
+              },
+              {
+                label: "Write to us directly",
+                meta: "Send a message by email",
+                href: "#message",
+              },
+            ]}
+          />
         }
       />
 
