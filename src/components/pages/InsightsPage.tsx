@@ -15,6 +15,18 @@ interface InsightsPageProps {
   items: ContentPage[];
 }
 
+function formatPublishDate(dateIso?: string): string | null {
+  if (!dateIso) return null;
+  const parsed = new Date(`${dateIso}T00:00:00Z`);
+  if (Number.isNaN(parsed.getTime())) return dateIso;
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(parsed);
+}
+
 export function InsightsPage({ data, items }: InsightsPageProps) {
   return (
     <Page>
@@ -75,23 +87,57 @@ export function InsightsPage({ data, items }: InsightsPageProps) {
           <>
             <ScrollReveal variant="settle" className={styles.sectionHeader}>
               <h2 id="insights-title" className={styles.sectionTitle}>
-                Insights
+                Articles from the team
               </h2>
+              <p className={styles.sectionIntro}>
+                Practical notes on spotting operational bottlenecks, scoping reliable builds, and
+                choosing technology that fits how your business runs.
+              </p>
             </ScrollReveal>
 
             <ul className={styles.editorialArticleList}>
-              {items.map((item) => (
-                <ScrollReveal as="li" key={item.frontMatter.slug} variant="settle">
-                  <article className={styles.editorialArticleEntry}>
-                    <h3>
-                      <Link className={styles.listLink} href={`/insights/${item.frontMatter.slug}`}>
-                        {item.frontMatter.title}
-                      </Link>
-                    </h3>
-                    <p className={styles.listSummary}>{item.frontMatter.summary}</p>
-                  </article>
-                </ScrollReveal>
-              ))}
+              {items.map((item) => {
+                const formattedDate = formatPublishDate(item.frontMatter.publishedAt);
+                return (
+                  <ScrollReveal as="li" key={item.frontMatter.slug} variant="settle">
+                    <article className={styles.editorialArticleEntry}>
+                      <div className={styles.insightCardMeta}>
+                        {item.frontMatter.author ? (
+                          <span className={styles.insightAuthorName}>
+                            {item.frontMatter.author}
+                            {item.frontMatter.authorRole ? ` · ${item.frontMatter.authorRole}` : ""}
+                          </span>
+                        ) : null}
+                        {formattedDate ? (
+                          <time
+                            className={styles.insightPublishDate}
+                            dateTime={item.frontMatter.publishedAt}
+                          >
+                            {formattedDate}
+                          </time>
+                        ) : null}
+                      </div>
+                      <h3>
+                        <Link
+                          className={styles.listLink}
+                          href={`/insights/${item.frontMatter.slug}`}
+                        >
+                          {item.frontMatter.title}
+                        </Link>
+                      </h3>
+                      <p className={styles.listSummary}>{item.frontMatter.summary}</p>
+                      <div>
+                        <Link
+                          href={`/insights/${item.frontMatter.slug}`}
+                          className={styles.editorialTextLink}
+                        >
+                          Read article
+                        </Link>
+                      </div>
+                    </article>
+                  </ScrollReveal>
+                );
+              })}
             </ul>
           </>
         )}

@@ -14,9 +14,22 @@ interface ArticlePageProps {
   page: ContentPage;
 }
 
+function formatPublishDate(dateIso?: string): string | null {
+  if (!dateIso) return null;
+  const parsed = new Date(`${dateIso}T00:00:00Z`);
+  if (Number.isNaN(parsed.getTime())) return dateIso;
+  return new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(parsed);
+}
+
 export function ArticlePage({ page }: ArticlePageProps) {
   const { frontMatter } = page;
   const isCaseStudy = frontMatter.type === "case-study";
+  const formattedDate = formatPublishDate(frontMatter.publishedAt);
 
   return (
     <Page>
@@ -100,15 +113,24 @@ export function ArticlePage({ page }: ArticlePageProps) {
               <div className={styles.caseStudyGallery}>
                 <figure className={styles.caseStudyFigure}>
                   <div className={styles.workImageFrame}>
-                    <Image
-                      src={frontMatter.image}
-                      alt={frontMatter.imageAlt ?? frontMatter.title}
-                      width={1440}
-                      height={750}
-                      priority
-                      sizes="(max-width: 1100px) 100vw, 1024px"
-                      className={styles.workImage}
-                    />
+                    {frontMatter.image.startsWith("/") ? (
+                      <Image
+                        src={frontMatter.image}
+                        alt={frontMatter.imageAlt ?? frontMatter.title}
+                        width={1440}
+                        height={750}
+                        priority
+                        sizes="(max-width: 1100px) 100vw, 1024px"
+                        className={styles.workImage}
+                      />
+                    ) : (
+                      <img
+                        src={frontMatter.image}
+                        alt={frontMatter.imageAlt ?? frontMatter.title}
+                        loading="lazy"
+                        className={styles.workImage}
+                      />
+                    )}
                   </div>
                   {frontMatter.imageAlt ? (
                     <figcaption className={styles.workCaption}>{frontMatter.imageAlt}</figcaption>
@@ -118,17 +140,29 @@ export function ArticlePage({ page }: ArticlePageProps) {
                 {frontMatter.secondaryImage ? (
                   <figure className={styles.caseStudyFigure}>
                     <div className={styles.workImageFrame}>
-                      <Image
-                        src={frontMatter.secondaryImage}
-                        alt={
-                          frontMatter.secondaryImageAlt ??
-                          `${frontMatter.title} automation workflow`
-                        }
-                        width={1440}
-                        height={688}
-                        sizes="(max-width: 1100px) 100vw, 1024px"
-                        className={styles.workImage}
-                      />
+                      {frontMatter.secondaryImage.startsWith("/") ? (
+                        <Image
+                          src={frontMatter.secondaryImage}
+                          alt={
+                            frontMatter.secondaryImageAlt ??
+                            `${frontMatter.title} automation workflow`
+                          }
+                          width={1440}
+                          height={688}
+                          sizes="(max-width: 1100px) 100vw, 1024px"
+                          className={styles.workImage}
+                        />
+                      ) : (
+                        <img
+                          src={frontMatter.secondaryImage}
+                          alt={
+                            frontMatter.secondaryImageAlt ??
+                            `${frontMatter.title} automation workflow`
+                          }
+                          loading="lazy"
+                          className={styles.workImage}
+                        />
+                      )}
                     </div>
                     {frontMatter.secondaryImageAlt ? (
                       <figcaption className={styles.workCaption}>
@@ -144,6 +178,27 @@ export function ArticlePage({ page }: ArticlePageProps) {
       ) : null}
 
       <Section width="narrow">
+        {!isCaseStudy && (frontMatter.author || formattedDate) ? (
+          <div className={styles.articleMetaBar}>
+            <Link href="/insights" className={styles.caseStudyBackLink}>
+              Back to Insights
+            </Link>
+            <div className={styles.articleAuthorBlock}>
+              {frontMatter.author ? (
+                <span className={styles.articleAuthorName}>
+                  {frontMatter.author}
+                  {frontMatter.authorRole ? ` · ${frontMatter.authorRole}` : ""}
+                </span>
+              ) : null}
+              {formattedDate ? (
+                <time className={styles.articleDateLabel} dateTime={frontMatter.publishedAt}>
+                  Published {formattedDate}
+                </time>
+              ) : null}
+            </div>
+          </div>
+        ) : null}
+
         <ReadingProgress>
           <Markdown className={styles.legalProse}>{page.body}</Markdown>
         </ReadingProgress>

@@ -40,6 +40,8 @@ export const frontMatterSchema = z
     seoDescription: z.string().trim().min(1).optional(),
     publishedAt: z.iso.date().optional(),
     updatedAt: z.iso.date().optional(),
+    author: z.string().trim().min(1).optional(),
+    authorRole: z.string().trim().min(1).optional(),
     order: z.number().int().positive().optional(),
     category: z.enum(["operations", "conversations", "software", "web"]).optional(),
     categoryLabel: z.string().trim().min(1).optional(),
@@ -153,6 +155,9 @@ export async function getPublished(type: ContentType): Promise<ContentPage[]> {
     const orderA = a.frontMatter.order ?? 999;
     const orderB = b.frontMatter.order ?? 999;
     if (orderA !== orderB) return orderA - orderB;
+    if (type === "insight" && a.frontMatter.publishedAt && b.frontMatter.publishedAt) {
+      return b.frontMatter.publishedAt.localeCompare(a.frontMatter.publishedAt);
+    }
     return a.frontMatter.title.localeCompare(b.frontMatter.title);
   });
 }

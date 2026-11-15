@@ -37,7 +37,13 @@ export function articleJsonLd(page: ContentPage, baseUrl: string) {
     url: `${baseUrl}${pathForPage(page)}`,
     datePublished: frontMatter.publishedAt,
     dateModified: frontMatter.updatedAt ?? frontMatter.publishedAt,
-    author: { "@id": `${baseUrl}/#organization` },
+    author: frontMatter.author
+      ? {
+          "@type": "Person",
+          name: frontMatter.author,
+          ...(frontMatter.authorRole ? { jobTitle: frontMatter.authorRole } : {}),
+        }
+      : { "@id": `${baseUrl}/#organization` },
     publisher: { "@id": `${baseUrl}/#organization` },
   };
 }
