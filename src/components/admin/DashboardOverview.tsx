@@ -14,6 +14,7 @@ interface DashboardOverviewProps {
   upcoming: AdminBookingRow[];
   recentLeads: AdminLeadRow[];
   openQuestions?: number;
+  projectStats?: { published: number; drafts: number; featured: number };
   unavailable: boolean;
 }
 
@@ -27,6 +28,7 @@ export function DashboardOverview({
   upcoming,
   recentLeads,
   openQuestions,
+  projectStats,
   unavailable,
 }: DashboardOverviewProps) {
   return (
@@ -101,6 +103,17 @@ export function DashboardOverview({
               <span className={styles.attentionCount}>{count(leads?.withError)}</span>
             </Link>
           </li>
+          {projectStats ? (
+            <li className={styles.attentionRow}>
+              <Link className={styles.attentionLink} href="/admin/projects">
+                <span>
+                  Published case studies &amp; projects ({projectStats.featured} featured on home,{" "}
+                  {projectStats.drafts} drafts)
+                </span>
+                <span className={styles.attentionCount}>{projectStats.published}</span>
+              </Link>
+            </li>
+          ) : null}
         </ul>
       </section>
 

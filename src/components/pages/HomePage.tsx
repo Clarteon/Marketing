@@ -1,4 +1,6 @@
 import Link from "next/link";
+import type { FeaturedHomeProject } from "@/lib/admin/projects";
+import { DEFAULT_SITE_CONFIG, type SiteConfig } from "@/lib/admin/site-config-defaults";
 import type { HomeData } from "@/lib/page-schemas";
 import { BookingSection } from "@/components/ui/BookingSection";
 import { Button } from "@/components/ui/Button";
@@ -71,7 +73,36 @@ const featuredCaseStudies = [
   },
 ];
 
-export function HomePage({ data }: { data: HomeData }) {
+export function HomePage({
+  data,
+  siteConfig = DEFAULT_SITE_CONFIG,
+  featuredProjects,
+}: {
+  data: HomeData;
+  siteConfig?: SiteConfig;
+  featuredProjects?: FeaturedHomeProject[];
+}) {
+  const servicePhotos = [
+    {
+      ...problemServicePhotos[0],
+      src: siteConfig.media.serviceWorkflow || problemServicePhotos[0].src,
+    },
+    {
+      ...problemServicePhotos[1],
+      src: siteConfig.media.serviceDiscovery || problemServicePhotos[1].src,
+    },
+    {
+      ...problemServicePhotos[2],
+      src: siteConfig.media.serviceApiCode || problemServicePhotos[2].src,
+    },
+    {
+      ...problemServicePhotos[3],
+      src: siteConfig.media.serviceSoftwareBuild || problemServicePhotos[3].src,
+    },
+  ];
+  const visibleCaseStudies =
+    featuredProjects && featuredProjects.length > 0 ? featuredProjects : featuredCaseStudies;
+
   return (
     <Page>
       <PageHero
@@ -80,7 +111,11 @@ export function HomePage({ data }: { data: HomeData }) {
         title={data.hero.title}
         highlight={data.hero.highlight}
         intro={data.hero.intro}
-        visual={<HeroMiniClara turnstileSiteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} />}
+        visual={
+          siteConfig.sections.showHomeClara ? (
+            <HeroMiniClara turnstileSiteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} />
+          ) : undefined
+        }
         actions={data.hero.actions.map((action) => (
           <Button
             key={`${action.label}-${action.href}`}
@@ -140,152 +175,165 @@ export function HomePage({ data }: { data: HomeData }) {
         </ul>
       </PageHero>
 
-      <Section tone="stone" aria-labelledby="problems-title">
-        <ScrollReveal className={styles.sectionHeader}>
-          <h2 id="problems-title" className={styles.sectionTitle}>
-            Tell us what is slowing you down.
-          </h2>
-          <p className={styles.sectionIntro}>
-            We look at how work moves through your team today and fix the part that costs you the
-            most time.
-          </p>
-        </ScrollReveal>
-
-        <ScrollReveal stagger className={styles.problemGrid}>
-          {data.problems.map((problem, index) => {
-            const photo = problemServicePhotos[index % problemServicePhotos.length];
-            return (
-              <Card
-                as="article"
-                key={problem.title}
-                className={cx(
-                  styles.problemCard,
-                  styles.problemPosterCard,
-                  problem.href ? styles.interactiveCard : undefined,
-                )}
-              >
-                <div className={styles.problemPosterBg} aria-hidden="true">
-                  <img
-                    src={photo.src}
-                    alt=""
-                    width={960}
-                    height={640}
-                    loading="lazy"
-                    decoding="async"
-                    className={styles.problemPosterImage}
-                  />
-                  <div className={styles.problemPosterOverlay} />
-                </div>
-                <span className={styles.problemPhotoBadge}>{photo.badge}</span>
-                <div className={styles.problemPosterContent}>
-                  <h3 className={styles.problemTitle}>{problem.title}</h3>
-                  <p className={styles.problemBody}>{problem.body}</p>
-                  <p className={styles.solution}>
-                    <span className={styles.solutionPrefix}>Often solved with:</span>
-                    {problem.href ? (
-                      <Link href={problem.href} className={styles.solutionLink}>
-                        {problem.solution}
-                      </Link>
-                    ) : (
-                      <span className={styles.solutionStatic}>{problem.solution}</span>
-                    )}
-                  </p>
-                </div>
-              </Card>
-            );
-          })}
-        </ScrollReveal>
-      </Section>
-
-      <Section tone="paper" className={styles.flowSection} aria-labelledby="fix-flow-title">
-        <ScrollReveal className={styles.visualizationHeader}>
-          <h2 id="fix-flow-title" className={styles.visualizationTitle}>
-            See how your problems find the right fix.
-          </h2>
-          <p className={styles.visualizationIntro}>
-            Select any bottleneck on the left or capability on the right to trace how Clarteon
-            connects daily friction to a working system.
-          </p>
-        </ScrollReveal>
-
-        <ScrollReveal>
-          <HeroFlowVisualization />
-        </ScrollReveal>
-      </Section>
-
-      <Section tone="ink" className={styles.processSection} aria-labelledby="process-title">
-        <ScrollReveal className={styles.sectionHeader}>
-          <h2 id="process-title" className={styles.sectionTitle}>
-            Four steps. Clear and simple.
-          </h2>
-          <p className={styles.sectionIntro}>
-            You always know what we are doing, why we are doing it, and what comes next.
-          </p>
-        </ScrollReveal>
-
-        <ProcessConduit steps={data.steps} />
-      </Section>
-
-      <Section tone="stone" aria-labelledby="proof-title">
-        <ScrollReveal className={styles.proofSectionHeader}>
-          <div className={styles.sectionHeader}>
-            <h2 id="proof-title" className={styles.sectionTitle}>
-              {data.proof.title}
+      {siteConfig.sections.showHomeProblems ? (
+        <Section tone="stone" aria-labelledby="problems-title">
+          <ScrollReveal className={styles.sectionHeader}>
+            <h2 id="problems-title" className={styles.sectionTitle}>
+              {siteConfig.sections.homeProblemsTitle || "Tell us what is slowing you down."}
             </h2>
-            <p className={styles.sectionIntro}>{data.proof.body}</p>
-          </div>
-          <div className={styles.proofHeaderActions}>
-            <Button href={data.proof.href} variant="secondary">
-              {data.proof.linkLabel}
-            </Button>
-          </div>
-        </ScrollReveal>
+            <p className={styles.sectionIntro}>
+              We look at how work moves through your team today and fix the part that costs you the
+              most time.
+            </p>
+          </ScrollReveal>
 
-        <ScrollReveal stagger className={styles.proofLedger}>
-          {featuredCaseStudies.map((study) => (
-            <article key={study.slug} className={styles.proofRow}>
-              <div className={styles.proofRowMeta}>
-                <span className={styles.proofRowNumber}>{study.number}</span>
-                <span className={styles.proofRowCategory}>{study.category}</span>
-              </div>
-
-              <div className={styles.proofRowMain}>
-                <h3 className={styles.proofRowTitle}>
-                  <Link href={`/our-work/${study.slug}`} className={styles.proofRowTitleLink}>
-                    {study.title}
-                  </Link>
-                </h3>
-
-                <dl className={styles.proofRowComparison}>
-                  <div className={styles.proofRowCell}>
-                    <dt className={styles.proofRowTerm}>The problem</dt>
-                    <dd className={styles.proofRowDetail}>{study.problem}</dd>
-                  </div>
-                  <div className={styles.proofRowCell}>
-                    <dt className={styles.proofRowTerm}>What changed</dt>
-                    <dd className={styles.proofRowDetail}>{study.outcome}</dd>
-                  </div>
-                </dl>
-              </div>
-
-              <div className={styles.proofRowAction}>
-                <Link
-                  href={`/our-work/${study.slug}`}
-                  className={styles.proofRowCta}
-                  aria-label={`Read case study: ${study.title}`}
+          <ScrollReveal stagger className={styles.problemGrid}>
+            {data.problems.map((problem, index) => {
+              const photo = servicePhotos[index % servicePhotos.length];
+              return (
+                <Card
+                  as="article"
+                  key={problem.title}
+                  className={cx(
+                    styles.problemCard,
+                    styles.problemPosterCard,
+                    problem.href ? styles.interactiveCard : undefined,
+                  )}
                 >
-                  <span>Read case study</span>
-                  <span className={styles.proofRowArrow} aria-hidden="true">
-                    →
-                  </span>
-                </Link>
-              </div>
-            </article>
-          ))}
-        </ScrollReveal>
-      </Section>
+                  <div className={styles.problemPosterBg} aria-hidden="true">
+                    <img
+                      src={photo.src}
+                      alt=""
+                      width={960}
+                      height={640}
+                      loading="lazy"
+                      decoding="async"
+                      className={styles.problemPosterImage}
+                    />
+                    <div className={styles.problemPosterOverlay} />
+                  </div>
+                  <span className={styles.problemPhotoBadge}>{photo.badge}</span>
+                  <div className={styles.problemPosterContent}>
+                    <h3 className={styles.problemTitle}>{problem.title}</h3>
+                    <p className={styles.problemBody}>{problem.body}</p>
+                    <p className={styles.solution}>
+                      <span className={styles.solutionPrefix}>Often solved with:</span>
+                      {problem.href ? (
+                        <Link href={problem.href} className={styles.solutionLink}>
+                          {problem.solution}
+                        </Link>
+                      ) : (
+                        <span className={styles.solutionStatic}>{problem.solution}</span>
+                      )}
+                    </p>
+                  </div>
+                </Card>
+              );
+            })}
+          </ScrollReveal>
+        </Section>
+      ) : null}
 
-      <BookingSection tone="lime" />
+      {siteConfig.sections.showHomeFlow ? (
+        <Section tone="paper" className={styles.flowSection} aria-labelledby="fix-flow-title">
+          <ScrollReveal className={styles.visualizationHeader}>
+            <h2 id="fix-flow-title" className={styles.visualizationTitle}>
+              See how your problems find the right fix.
+            </h2>
+            <p className={styles.visualizationIntro}>
+              Select any bottleneck on the left or capability on the right to trace how Clarteon
+              connects daily friction to a working system.
+            </p>
+          </ScrollReveal>
+
+          <ScrollReveal>
+            <HeroFlowVisualization />
+          </ScrollReveal>
+        </Section>
+      ) : null}
+
+      {siteConfig.sections.showHomeProcess ? (
+        <Section
+          tone="ink"
+          className={styles.processSection}
+          data-conduit-runway="true"
+          aria-labelledby="process-title"
+        >
+          <ScrollReveal className={styles.sectionHeader}>
+            <h2 id="process-title" className={styles.sectionTitle}>
+              Four steps. Clear and simple.
+            </h2>
+            <p className={styles.sectionIntro}>
+              You always know what we are doing, why we are doing it, and what comes next.
+            </p>
+          </ScrollReveal>
+
+          <ProcessConduit steps={data.steps} />
+        </Section>
+      ) : null}
+
+      {siteConfig.sections.showHomeFeaturedWork ? (
+        <Section tone="stone" aria-labelledby="proof-title">
+          <ScrollReveal className={styles.proofSectionHeader}>
+            <div className={styles.sectionHeader}>
+              <h2 id="proof-title" className={styles.sectionTitle}>
+                {siteConfig.sections.homeFeaturedWorkTitle || data.proof.title}
+              </h2>
+              <p className={styles.sectionIntro}>{data.proof.body}</p>
+            </div>
+            <div className={styles.proofHeaderActions}>
+              <Button href={data.proof.href} variant="secondary">
+                {data.proof.linkLabel}
+              </Button>
+            </div>
+          </ScrollReveal>
+
+          <ScrollReveal stagger className={styles.proofLedger}>
+            {visibleCaseStudies.map((study) => (
+              <article key={study.slug} className={styles.proofRow}>
+                <div className={styles.proofRowMeta}>
+                  <span className={styles.proofRowNumber}>{study.number}</span>
+                  <span className={styles.proofRowCategory}>{study.category}</span>
+                </div>
+
+                <div className={styles.proofRowMain}>
+                  <h3 className={styles.proofRowTitle}>
+                    <Link href={`/our-work/${study.slug}`} className={styles.proofRowTitleLink}>
+                      {study.title}
+                    </Link>
+                  </h3>
+
+                  <dl className={styles.proofRowComparison}>
+                    <div className={styles.proofRowCell}>
+                      <dt className={styles.proofRowTerm}>The problem</dt>
+                      <dd className={styles.proofRowDetail}>{study.problem}</dd>
+                    </div>
+                    <div className={styles.proofRowCell}>
+                      <dt className={styles.proofRowTerm}>What changed</dt>
+                      <dd className={styles.proofRowDetail}>{study.outcome}</dd>
+                    </div>
+                  </dl>
+                </div>
+
+                <div className={styles.proofRowAction}>
+                  <Link
+                    href={`/our-work/${study.slug}`}
+                    className={styles.proofRowCta}
+                    aria-label={`Read case study: ${study.title}`}
+                  >
+                    <span>Read case study</span>
+                    <span className={styles.proofRowArrow} aria-hidden="true">
+                      →
+                    </span>
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </ScrollReveal>
+        </Section>
+      ) : null}
+
+      {siteConfig.sections.showBookingSection ? <BookingSection tone="lime" /> : null}
     </Page>
   );
 }

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { HomePage } from "@/components/pages/HomePage";
 import { JsonLd } from "@/components/ui/JsonLd";
+import { listFeaturedHomeProjects } from "@/lib/admin/projects";
+import { getSiteConfig } from "@/lib/admin/site-config";
 import { getPage } from "@/lib/content";
 import { metadataForPage } from "@/lib/metadata";
 import { getPageWithData } from "@/lib/page-loader";
@@ -14,11 +16,20 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
-  const { data } = await getPageWithData("home", homeSchema);
+  const [{ data }, siteConfig, featuredProjects] = await Promise.all([
+    getPageWithData("home", homeSchema),
+    getSiteConfig(),
+    listFeaturedHomeProjects(),
+  ]);
+
   return (
     <>
       <JsonLd data={siteJsonLd(getSiteUrl())} />
-      <HomePage data={data} />
+      <HomePage
+        data={data}
+        siteConfig={siteConfig}
+        featuredProjects={featuredProjects ?? undefined}
+      />
     </>
   );
 }

@@ -11,17 +11,21 @@ interface WorkShowcaseProps {
   items: FrontMatter[];
 }
 
-const filters = [
+const baseFilters = [
   { id: "all", label: "All systems" },
   { id: "operations", label: "Orders, stock & payments" },
   { id: "conversations", label: "Customer support & AI coaching" },
   { id: "software", label: "Private on-device tools" },
 ] as const;
 
-type FilterId = (typeof filters)[number]["id"];
+type FilterId = "all" | "operations" | "conversations" | "software" | "web";
 
 export function WorkShowcase({ items }: WorkShowcaseProps) {
   const [activeFilter, setActiveFilter] = useState<FilterId>("all");
+  const hasWebProjects = items.some((item) => item.category === "web");
+  const filters: readonly { id: FilterId; label: string }[] = hasWebProjects
+    ? [...baseFilters, { id: "web", label: "Websites & web apps" }]
+    : baseFilters;
 
   const visibleItems =
     activeFilter === "all" ? items : items.filter((item) => item.category === activeFilter);
@@ -123,29 +127,47 @@ export function WorkShowcase({ items }: WorkShowcaseProps) {
                       aria-label={`View full case study for ${item.title}`}
                     >
                       <div className={styles.workImageFrame}>
-                        <Image
-                          src={item.image}
-                          alt={item.imageAlt ?? item.title}
-                          width={1440}
-                          height={750}
-                          priority={index < 2}
-                          loading="eager"
-                          sizes="(max-width: 960px) 100vw, 52vw"
-                          className={styles.workImage}
-                        />
+                        {item.image.startsWith("/") ? (
+                          <Image
+                            src={item.image}
+                            alt={item.imageAlt ?? item.title}
+                            width={1440}
+                            height={750}
+                            priority={index < 2}
+                            loading="eager"
+                            sizes="(max-width: 960px) 100vw, 52vw"
+                            className={styles.workImage}
+                          />
+                        ) : (
+                          <img
+                            src={item.image}
+                            alt={item.imageAlt ?? item.title}
+                            loading="lazy"
+                            className={styles.workImage}
+                          />
+                        )}
                       </div>
                     </Link>
                     {item.secondaryImage ? (
                       <div className={styles.workSecondaryFrame}>
-                        <Image
-                          src={item.secondaryImage}
-                          alt={item.secondaryImageAlt ?? `${item.title} automation workflow`}
-                          width={1440}
-                          height={688}
-                          loading="eager"
-                          sizes="(max-width: 960px) 100vw, 52vw"
-                          className={styles.workSecondaryImage}
-                        />
+                        {item.secondaryImage.startsWith("/") ? (
+                          <Image
+                            src={item.secondaryImage}
+                            alt={item.secondaryImageAlt ?? `${item.title} automation workflow`}
+                            width={1440}
+                            height={688}
+                            loading="eager"
+                            sizes="(max-width: 960px) 100vw, 52vw"
+                            className={styles.workSecondaryImage}
+                          />
+                        ) : (
+                          <img
+                            src={item.secondaryImage}
+                            alt={item.secondaryImageAlt ?? `${item.title} automation workflow`}
+                            loading="lazy"
+                            className={styles.workSecondaryImage}
+                          />
+                        )}
                         <p className={styles.workCaption}>
                           Automated coaching report pipeline connected behind the voice session
                         </p>

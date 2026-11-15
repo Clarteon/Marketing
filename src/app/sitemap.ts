@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { listPublicProjects } from "@/lib/admin/projects";
 import { getPublished, type ContentPage } from "@/lib/content";
 import { pathForPage } from "@/lib/metadata";
 import { getSiteUrl } from "@/lib/site";
@@ -16,9 +17,11 @@ function entry(page: ContentPage, base: string, priority: number): MetadataRoute
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = getSiteUrl();
-  const pages = await getPublished("page");
-  const insights = await getPublished("insight");
-  const caseStudies = await getPublished("case-study");
+  const [pages, insights, caseStudies] = await Promise.all([
+    getPublished("page"),
+    getPublished("insight"),
+    listPublicProjects(),
+  ]);
 
   return [
     ...pages.map((page) => entry(page, base, page.frontMatter.slug === "home" ? 1 : 0.7)),

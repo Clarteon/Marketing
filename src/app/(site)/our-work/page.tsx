@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { OurWorkPage } from "@/components/pages/OurWorkPage";
-import { getPage, getPublished } from "@/lib/content";
+import { listPublicProjects } from "@/lib/admin/projects";
+import { getPage } from "@/lib/content";
 import { metadataForPage } from "@/lib/metadata";
 import { getPageWithData } from "@/lib/page-loader";
 import { listPageSchema } from "@/lib/page-schemas";
@@ -11,7 +12,9 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function OurWork() {
-  const { page, data } = await getPageWithData("our-work", listPageSchema);
-  const items = await getPublished("case-study");
+  const [{ page, data }, items] = await Promise.all([
+    getPageWithData("our-work", listPageSchema),
+    listPublicProjects(),
+  ]);
   return <OurWorkPage data={data} body={page.body} items={items} />;
 }
