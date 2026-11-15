@@ -32,4 +32,4 @@ We keep the first step small: a discovery call to understand the problem, then a
 
 ## The team
 
-Clarteon is a young company. The founding team’s bios and certifications will be published here when they are ready. We do not publish credentials we cannot support.
+Clarteon is led by a five-person founding technology team based in the Republic of the Philippines, uniting executive direction, technical architecture, product delivery, AI automation, and full-stack software engineering. Individual portraits will be added alongside our published roles, and we only publish client claims or credentials that are directly verified.
