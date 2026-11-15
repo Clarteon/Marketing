@@ -21,6 +21,9 @@ hero:
   eyebrow: "About Clarteon"
   title: "Clarity first."
   intro: "Clarteon is a technology partner. The name comes from the French clarté, meaning clarity, and that is the standard we hold the work to."
+preamble:
+  mission: "Start with the friction slowing a business down, then design or connect software and automation that removes it cleanly."
+  vision: "Small and growing teams running dependable systems they actually understand, free from manual copy-paste work and bloated tools."
 ---
 ## Why Clarteon exists
 

@@ -28,4 +28,4 @@ empty:
 ---
 ## How we present our work
 
-We publish a project only when a client has agreed to be named or described anonymously, alongside reference systems our team has built and tested end to end. Each write-up stays in plain business language: the bottleneck the team faced, the system we put in place, and the measurable difference in daily work.
+We publish a project only when a client has agreed to be named or described anonymously, alongside reference systems our team has built and tested end to end. Each write-up stays in plain business language: the operational pain point the team faced, the system we put in place, and the measurable difference in daily work.

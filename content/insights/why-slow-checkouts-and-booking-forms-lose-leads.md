@@ -21,14 +21,23 @@ synonyms:
   - web engineering
 seoTitle: "Fix slow booking forms that lose leads"
 seoDescription: "How unclear next steps, broken mobile layouts, and slow email scheduling cause service businesses to lose serious client leads every week."
+image: "/images/insights/intake-booking-desk.webp"
+imageAlt: "Person working at a laptop desk beside a phone and notebook during client scheduling"
 ---
 A prospect opens your website on a phone between meetings, reads two sections, and decides to get in touch. What happens over the next minute shapes whether that inquiry lands in your pipeline. When layout blocks jump around during load, mobile menus collide, or the only option is an email address with no response expectation, busy buyers close the tab and move to the next search result.
 
 Fast, intentional web engineering fixes an acquisition leak long before a sales call takes place. Effective websites skip noisy popups and countdown banners in favor of clear explanations, fast page transitions on mobile connections, and immediate paths for qualified visitors to book a time or submit structured context.
 
+> Most lost leads never leave angry feedback; they simply close a frustrating mobile form and never come back.
+
 ## Small interface failures that add up
 
-During website reviews, the same friction points appear across service firms and growing shops. Visitors give up when booking widgets force manual timezone math or make them wait days through email ping-pong just to receive a meeting link. Long intake forms asking twelve mandatory questions push away busy founders, while an unguided contact box forces staff to spend days chasing basic context afterward. Silent failures on patchy mobile connections, or portfolio pages buried behind stale PDFs, erode buyer confidence right when someone is ready to act.
+During website reviews, the same friction points appear across service firms and growing shops:
+
+- Booking widgets that force manual timezone math or trap visitors in multi-day email ping-pong before a calendar link arrives.
+- Long intake forms demanding twelve mandatory fields upfront, alongside unguided boxes that force staff to chase basic details afterward.
+- Mobile layout shifts, broken tap targets, and silent network errors on cellular connections right when someone hits Submit.
+- Case studies buried in stale downloadable PDFs instead of readable, scannable web pages.
 
 When we shipped the ordering flow for [Janelle's Satin Bouquet](/our-work/janelles-satin-bouquet) and the local-first interface for [Sane](/our-work/sane-private-scam-checker), keeping primary actions clear on every viewport width stayed front and center. On Clarteon's own website, visitors can inspect past systems and check real open discovery slots in their local timezone without leaving the page.
 

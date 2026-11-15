@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-11-15T11:53:01.688Z",
+  "generatedAt": "2026-11-15T17:25:02.182Z",
   "chunks": [
     {
       "id": "about#how-we-work-with-clients-2",
@@ -33,6 +33,29 @@
         "Clarity first."
       ],
       "text": "Why Clarteon exists, what the name means, and how we work with clients. About Clarteon Clarteon is a technology partner. The name comes from the French clarté, meaning clarity, and that is the standard we hold the work to.",
+      "tags": [
+        "about",
+        "clarteon",
+        "team",
+        "clarity",
+        "technology partner"
+      ],
+      "synonyms": [
+        "company",
+        "founders",
+        "team",
+        "about us"
+      ]
+    },
+    {
+      "id": "about#preamble",
+      "url": "/about",
+      "title": "Preamble",
+      "headingPath": [
+        "Clarity first.",
+        "Preamble"
+      ],
+      "text": "Start with the friction slowing a business down, then design or connect software and automation that removes it cleanly. Small and growing teams running dependable systems they actually understand, free from manual copy-paste work and bloated tools.",
       "tags": [
         "about",
         "clarteon",
@@ -498,6 +521,29 @@
       ]
     },
     {
+      "id": "connect-your-tools-before-replacing-them#imagealt",
+      "url": "/insights/connect-your-tools-before-replacing-them",
+      "title": "Image Alt",
+      "headingPath": [
+        "When to connect your existing tools instead of rebuilding",
+        "Image Alt"
+      ],
+      "text": "Ethernet cables wired through a network switch linking separate systems together",
+      "tags": [
+        "api integrations",
+        "system architecture",
+        "crm",
+        "custom software",
+        "data sync"
+      ],
+      "synonyms": [
+        "software integration",
+        "replace spreadsheets",
+        "legacy system",
+        "workflow bridge"
+      ]
+    },
+    {
       "id": "connect-your-tools-before-replacing-them#overview",
       "url": "/insights/connect-your-tools-before-replacing-them",
       "title": "When to connect your existing tools instead of rebuilding",
@@ -527,7 +573,7 @@
         "When to connect your existing tools instead of rebuilding",
         "Signs an integration fits better than a rebuild"
       ],
-      "text": "An integration makes immediate sense when one database already holds your trusted records, such as a billing tool that sends compliant invoices or a storefront that tracks inventory accurately. Often errors only creep in afterward because someone copied numbers by hand or missed a cancelled item in another tab. When the only missing piece is an exception queue or an approval dashboard, building a focused bridge beats throwing away years of working data. Our order processing automation architecture shows that pattern clearly. Incoming web forms, staff review sheets, and dispatch alerts stay familiar to the team, while server-side validation and clean API sync move every confirmed line item without duplicate typing.",
+      "text": "An integration makes immediate sense when one database already holds your trusted records, such as a billing tool that sends compliant invoices or a storefront that tracks inventory accurately. Often errors only creep in afterward because someone copied numbers by hand or missed a cancelled item in another tab. When the only missing piece is an exception queue or an approval dashboard, building a focused bridge beats throwing away years of working data. Our order processing automation architecture shows that pattern clearly. Incoming web forms, staff review sheets, and dispatch alerts stay familiar to the team, while server-side validation and clean API sync move every confirmed line item without duplicate typing. Keep the tools your staff already trust; build the clean bridge where copy-and-paste errors happen today.",
       "tags": [
         "api integrations",
         "system architecture",
@@ -550,7 +596,7 @@
         "When to connect your existing tools instead of rebuilding",
         "What solid integration engineering requires"
       ],
-      "text": "Quick no-code connections often break silently whenever a field name changes or a third-party webhook fires twice in one second. Production integrations need idempotency keys so repeat events never generate duplicate invoices, strict schema validation at every boundary, explicit network timeouts, and clear alerts for your team if an external token expires. That engineering discipline keeps automated workflows dependable month after month. If a legacy vendor blocks your business completely behind closed exports or hard account limits, custom software earns its keep. Otherwise, keeping proven tools intact while building the bridge between them lowers risk and puts time back into your week sooner. Review our software and integration options or send a project brief listing the tools you want wired together.",
+      "text": "Quick no-code connections often break silently whenever a field name changes or a third-party webhook fires twice in one second. Production integrations need explicit engineering safeguards at every boundary: Idempotency keys so duplicate webhooks never generate double invoices or repeat records. Strict schema checks to catch renamed or missing payload fields before corrupt data reaches storage. Explicit network timeouts paired with retry queues for flaky third-party APIs. Clear team alerts whenever an authentication token expires or a manual override is needed. That engineering discipline keeps automated workflows dependable month after month. If a legacy vendor blocks your business completely behind closed exports or hard account limits, custom software earns its keep. Otherwise, keeping proven tools intact while building the bridge between them lowers risk and puts time back into your week sooner. Review our software and integration options or send a project brief listing the tools you want wired together.",
       "tags": [
         "api integrations",
         "system architecture",
@@ -903,7 +949,7 @@
         "Four steps. Clear and simple.",
         "What to expect on a discovery call"
       ],
-      "text": "Tell us what’s slowing you down. We’ll talk it through and explore a practical next step. We ask what is slowing you down, what you have tried, and what a good outcome looks like. We look for the smallest useful first step that solves the bottleneck without disrupting your week. You leave with a clear idea of the likely direction and whether we are a fit. If we are not the right fit, we say so and point you toward a better option. No preparation is required beyond a rough description of the problem.",
+      "text": "Tell us what’s slowing you down. We’ll talk it through and explore a practical next step. We ask what is slowing you down, what you have tried, and what a good outcome looks like. We look for the smallest useful first step that resolves the pain point without disrupting your week. You leave with a clear idea of the likely direction and whether we are a fit. If we are not the right fit, we say so and point you toward a better option. No preparation is required beyond a rough description of the problem.",
       "tags": [
         "how we work",
         "process",
@@ -1826,7 +1872,7 @@
         "Work you can look at.",
         "How we present our work"
       ],
-      "text": "We publish a project only when a client has agreed to be named or described anonymously, alongside reference systems our team has built and tested end to end. Each write-up stays in plain business language: the bottleneck the team faced, the system we put in place, and the measurable difference in daily work.",
+      "text": "We publish a project only when a client has agreed to be named or described anonymously, alongside reference systems our team has built and tested end to end. Each write-up stays in plain business language: the operational pain point the team faced, the system we put in place, and the measurable difference in daily work.",
       "tags": [
         "case studies",
         "client work",
@@ -3155,7 +3201,7 @@
         "Stop buying software before you map the bottleneck",
         "Details"
       ],
-      "text": "Most businesses do not run into trouble because they lack software. A growing team usually already pays for a CRM, group chat apps, shared spreadsheets, an invoicing tool, and folders of exported reports. When delivery slows down or leads slip away, buying one more platform feels like the fastest way out. Weeks later, staff still copy numbers from one browser tab into another because the new platform covered the tidy ten percent of the job and left the messy middle untouched. When we talk with operators during a discovery call, we ask them to walk through the last order, ticket, or client inquiry that went sideways. Almost every delay sits between existing tools. Someone caught an email on a phone, pasted details into a group chat, updated a spreadsheet at the end of a shift, and forgot to tell billing when a detail changed. Putting a fresh interface on top of that sequence adds one more inbox for someone to forget to check.",
+      "text": "Most businesses do not run into trouble because they lack software. A growing team usually already pays for a CRM, group chat apps, shared spreadsheets, an invoicing tool, and folders of exported reports. When delivery slows down or leads slip away, buying one more platform feels like the fastest way out. Weeks later, staff still copy numbers from one browser tab into another because the new platform covered the tidy ten percent of the job and left the messy middle untouched. When we talk with operators during a discovery call, we ask them to walk through the last order, ticket, or client inquiry that went sideways. Almost every delay sits between existing tools. Someone caught an email on a phone, pasted details into a group chat, updated a spreadsheet at the end of a shift, and forgot to tell billing when a detail changed. Putting a fresh interface on top of that sequence adds one more inbox for someone to forget to check. Software only saves hours when it removes a handoff your team actually drops today.",
       "tags": [
         "operations",
         "workflow audit",
@@ -3178,7 +3224,30 @@
         "Stop buying software before you map the bottleneck",
         "Follow one piece of work from arrival to close"
       ],
-      "text": "Before you commit budget to custom development or automation, three questions clear out guesswork. Ask first where your team types the same detail more than once in a normal week. Look next at which handoff stalls whenever one key person steps out for the afternoon. Check how staff find out when something goes off script, such as a missing attachment or a changed delivery window. Answering those questions takes an hour with the people handling daily work. Out of twenty annoying chores in a department, two usually account for most wasted time and client frustration. One company needs order rows moved straight from web forms into invoicing and fulfillment queues, as shown in our manual order processing workflow architecture. Another team loses warm inquiries simply because nobody answers off-hours questions or offers an open calendar slot right away.",
+      "text": "Before you commit budget to custom development or automation, three questions clear out guesswork: Where does your team type the same detail more than once in an ordinary week? Which handoff stalls the moment one key person steps out for the afternoon? How do staff notice when something goes off script, such as a missing file or a changed delivery window? Answering those questions takes an hour with the people handling daily work. Out of twenty annoying chores in a department, two usually account for most wasted time and client frustration. One company needs order rows moved straight from web forms into invoicing and fulfillment queues, as shown in our manual order processing workflow architecture. Another team loses warm inquiries simply because nobody answers off-hours questions or offers an open calendar slot right away.",
+      "tags": [
+        "operations",
+        "workflow audit",
+        "business automation",
+        "software strategy",
+        "client discovery"
+      ],
+      "synonyms": [
+        "tool sprawl",
+        "process bottleneck",
+        "automation readiness",
+        "discovery call"
+      ]
+    },
+    {
+      "id": "stop-buying-tools-start-with-the-bottleneck#imagealt",
+      "url": "/insights/stop-buying-tools-start-with-the-bottleneck",
+      "title": "Image Alt",
+      "headingPath": [
+        "Stop buying software before you map the bottleneck",
+        "Image Alt"
+      ],
+      "text": "Color-coded sticky notes and markers laid across a whiteboard to map team handoffs",
       "tags": [
         "operations",
         "workflow audit",
@@ -4001,7 +4070,7 @@
         "What a clear software scope includes before work starts",
         "Details"
       ],
-      "text": "Many founders sign a build proposal after scanning a neat list of page names or feature headlines. Short labels such as \"custom admin dashboard\" or \"automated booking flow\" look straightforward at kickoff. Delays start midway through the build when both sides realize they pictured different workflows for cancellations, staff approvals, timezone shifts, or missing client details. Those surprises turn a focused build into rounds of rework. A dependable technology partner settles the unglamorous questions while changes only cost a paragraph of text. Before engineering begins, a written scope should show how real visitors, customers, and staff move through every state of the system, including moments when a connection drops or an input fails checks.",
+      "text": "Many founders sign a build proposal after scanning a neat list of page names or feature headlines. Short labels such as \"custom admin dashboard\" or \"automated booking flow\" look straightforward at kickoff. Delays start midway through the build when both sides realize they pictured different workflows for cancellations, staff approvals, timezone shifts, or missing client details. Those surprises turn a focused build into rounds of rework. A dependable technology partner settles the unglamorous questions while changes only cost a paragraph of text. Before engineering begins, a written scope should show how real visitors, customers, and staff move through every state of the system, including moments when a connection drops or an input fails checks. Changes cost almost nothing in a written paragraph; they cost weeks once three integrations depend on the old assumption.",
       "tags": [
         "product delivery",
         "project scope",
@@ -4024,7 +4093,30 @@
         "What a clear software scope includes before work starts",
         "Four pieces every delivery plan needs"
       ],
-      "text": "When you review a scope from Clarteon or any other build team, check that it spells out concrete behaviors you can test on a preview link. Every form, checkout, and scheduler needs explicit rules for invalid fields, accidental double clicks, slow connections, and third-party downtime. Whenever a submission or booking triggers an email or calendar invitation, the record also needs to save to the database first so a temporary mail outage never loses an inquiry silently. On the internal side, staff need one clean place to check incoming records, update statuses, retry failed notifications, or adjust published content without calling a developer to edit source code. Each milestone should close with plain acceptance checks you can click through yourself, such as submitting an order option, checking mobile layout behavior, and reading actual confirmation receipts. We follow this discipline whether shipping a storefront such as Janelle's Satin Bouquet or wiring internal scheduling rules. Short milestones keep working software visible early, while adjustments stay inexpensive.",
+      "text": "When you review a scope from Clarteon or any other build team, check that it spells out concrete behaviors you can test on a preview link: Input validation and recovery rules: How every form, checkout, and scheduler handles invalid fields, accidental double clicks, slow connections, and third-party downtime. Database-first persistence: Guaranteeing records save locally before emails or calendar invites fire, so a temporary provider blip never drops a lead silently. Operator visibility: Giving staff one clean workspace to inspect incoming records, update statuses, retry failed notices, or edit published copy without touching code. Testable acceptance checks: Closing each milestone with actions you can click through yourself, from mobile screen behavior to real confirmation receipts. We follow this discipline whether shipping a storefront such as Janelle's Satin Bouquet or wiring internal scheduling rules. Short milestones keep working software visible early, while adjustments stay inexpensive.",
+      "tags": [
+        "product delivery",
+        "project scope",
+        "custom software",
+        "client deliverables",
+        "planning"
+      ],
+      "synonyms": [
+        "software specification",
+        "project requirements",
+        "delivery checklist",
+        "scope creep"
+      ]
+    },
+    {
+      "id": "what-a-clear-software-scope-includes#imagealt",
+      "url": "/insights/what-a-clear-software-scope-includes",
+      "title": "Image Alt",
+      "headingPath": [
+        "What a clear software scope includes before work starts",
+        "Image Alt"
+      ],
+      "text": "Written specifications and milestone notes beside an open laptop on a work desk",
       "tags": [
         "product delivery",
         "project scope",
@@ -4161,7 +4253,7 @@
         "Where AI agents earn their keep, and where plain rules win",
         "Details"
       ],
-      "text": "Businesses bring two opposite worries to AI conversations. Some teams ask a language model to run an entire multi-step process without supervision, while others steer clear completely after watching a public chatbot invent policies or guess availability. Both reactions come from treating language models as an all-or-nothing substitute for ordinary software engineering. Language models read messy human messages well. They summarize customer complaints, pick requested dates or SKU details out of cluttered email threads, and route questions toward the right documented answer. Standard server code handles arithmetic, database permissions, live calendar checks, and state updates identically every time. Dependable AI systems keep those two responsibilities sharply divided.",
+      "text": "Businesses bring two opposite worries to AI conversations. Some teams ask a language model to run an entire multi-step process without supervision, while others steer clear completely after watching a public chatbot invent policies or guess availability. Both reactions come from treating language models as an all-or-nothing substitute for ordinary software engineering. Language models read messy human messages well. They summarize customer complaints, pick requested dates or SKU details out of cluttered email threads, and route questions toward the right documented answer. Standard server code handles arithmetic, database permissions, live calendar checks, and state updates identically every time. Dependable AI systems keep those two responsibilities sharply divided. Let language models interpret messy human intent; keep arithmetic, calendar rules, and database writes inside deterministic server code.",
       "tags": [
         "ai agents",
         "chatbots",
@@ -4184,7 +4276,30 @@
         "Where AI agents earn their keep, and where plain rules win",
         "Give rules the strict checks and let models read intent"
       ],
-      "text": "Look at customer triage or spoken practice feedback, similar to the workflows behind our customer support triager architecture and V-Unite voice AI coach. When a visitor writes a broad question in plain English, the model searches curated knowledge entries and explains the relevant service or process. When that same visitor picks a meeting time or leaves contact details, deterministic server tools query live availability, enforce schema validation, check anti-spam tokens, and write verified records to the database. Even inside chat interactions, clear technical guardrails keep replies trustworthy. Published knowledge lookup anchors responses to reviewed documents with an honest handoff whenever a detail is absent. Automated assistants never improvise prices, legal promises, or final project deadlines, leaving commercial quotes strictly in human hands. Every action that writes data or notifies staff passes through typed tool validation and rate limits.",
+      "text": "Look at customer triage or spoken practice feedback, similar to the workflows behind our customer support triager architecture and V-Unite voice AI coach. When a visitor writes a broad question in plain English, the model searches curated knowledge entries and explains the relevant service or process. When that same visitor picks a meeting time or leaves contact details, deterministic server tools query live availability, enforce schema validation, check anti-spam tokens, and write verified records to the database. Even inside chat interactions, clear technical guardrails keep replies trustworthy: Ground every factual claim in reviewed knowledge documents, with an honest handoff whenever a detail is missing. Keep pricing, custom quotes, legal commitments, and deadlines strictly in human hands. Route every database write or staff notification through typed tool validation and rate limits.",
+      "tags": [
+        "ai agents",
+        "chatbots",
+        "automation",
+        "reliability",
+        "triage"
+      ],
+      "synonyms": [
+        "LLM integration",
+        "AI guardrails",
+        "deterministic workflows",
+        "support triage"
+      ]
+    },
+    {
+      "id": "where-ai-agents-help-and-where-rules-win#imagealt",
+      "url": "/insights/where-ai-agents-help-and-where-rules-win",
+      "title": "Image Alt",
+      "headingPath": [
+        "Where AI agents earn their keep, and where plain rules win",
+        "Image Alt"
+      ],
+      "text": "Brass mechanical watch gears illustrating deterministic workflow rules clicking in strict sequence",
       "tags": [
         "ai agents",
         "chatbots",
@@ -4275,7 +4390,30 @@
         "Why clunky intake forms and slow booking pages quietly lose leads",
         "Details"
       ],
-      "text": "A prospect opens your website on a phone between meetings, reads two sections, and decides to get in touch. What happens over the next minute shapes whether that inquiry lands in your pipeline. When layout blocks jump around during load, mobile menus collide, or the only option is an email address with no response expectation, busy buyers close the tab and move to the next search result. Fast, intentional web engineering fixes an acquisition leak long before a sales call takes place. Effective websites skip noisy popups and countdown banners in favor of clear explanations, fast page transitions on mobile connections, and immediate paths for qualified visitors to book a time or submit structured context.",
+      "text": "A prospect opens your website on a phone between meetings, reads two sections, and decides to get in touch. What happens over the next minute shapes whether that inquiry lands in your pipeline. When layout blocks jump around during load, mobile menus collide, or the only option is an email address with no response expectation, busy buyers close the tab and move to the next search result. Fast, intentional web engineering fixes an acquisition leak long before a sales call takes place. Effective websites skip noisy popups and countdown banners in favor of clear explanations, fast page transitions on mobile connections, and immediate paths for qualified visitors to book a time or submit structured context. Most lost leads never leave angry feedback; they simply close a frustrating mobile form and never come back.",
+      "tags": [
+        "websites",
+        "booking systems",
+        "conversion",
+        "performance",
+        "mobile ux"
+      ],
+      "synonyms": [
+        "lead capture",
+        "discovery call scheduler",
+        "landing page UX",
+        "web engineering"
+      ]
+    },
+    {
+      "id": "why-slow-checkouts-and-booking-forms-lose-leads#imagealt",
+      "url": "/insights/why-slow-checkouts-and-booking-forms-lose-leads",
+      "title": "Image Alt",
+      "headingPath": [
+        "Why clunky intake forms and slow booking pages quietly lose leads",
+        "Image Alt"
+      ],
+      "text": "Person working at a laptop desk beside a phone and notebook during client scheduling",
       "tags": [
         "websites",
         "booking systems",
@@ -4343,7 +4481,7 @@
         "Why clunky intake forms and slow booking pages quietly lose leads",
         "Small interface failures that add up"
       ],
-      "text": "During website reviews, the same friction points appear across service firms and growing shops. Visitors give up when booking widgets force manual timezone math or make them wait days through email ping-pong just to receive a meeting link. Long intake forms asking twelve mandatory questions push away busy founders, while an unguided contact box forces staff to spend days chasing basic context afterward. Silent failures on patchy mobile connections, or portfolio pages buried behind stale PDFs, erode buyer confidence right when someone is ready to act. When we shipped the ordering flow for Janelle's Satin Bouquet and the local-first interface for Sane, keeping primary actions clear on every viewport width stayed front and center. On Clarteon's own website, visitors can inspect past systems and check real open discovery slots in their local timezone without leaving the page.",
+      "text": "During website reviews, the same friction points appear across service firms and growing shops: Booking widgets that force manual timezone math or trap visitors in multi-day email ping-pong before a calendar link arrives. Long intake forms demanding twelve mandatory fields upfront, alongside unguided boxes that force staff to chase basic details afterward. Mobile layout shifts, broken tap targets, and silent network errors on cellular connections right when someone hits Submit. Case studies buried in stale downloadable PDFs instead of readable, scannable web pages. When we shipped the ordering flow for Janelle's Satin Bouquet and the local-first interface for Sane, keeping primary actions clear on every viewport width stayed front and center. On Clarteon's own website, visitors can inspect past systems and check real open discovery slots in their local timezone without leaving the page.",
       "tags": [
         "websites",
         "booking systems",

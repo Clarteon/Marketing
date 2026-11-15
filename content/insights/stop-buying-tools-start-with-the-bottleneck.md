@@ -21,16 +21,22 @@ synonyms:
   - discovery call
 seoTitle: "Map the bottleneck before buying tools"
 seoDescription: "Why adding another subscription often leaves slow work intact, and how mapping manual handoffs shows you what should be built or automated first."
+image: "/images/insights/bottleneck-mapping.webp"
+imageAlt: "Color-coded sticky notes and markers laid across a whiteboard to map team handoffs"
 ---
 Most businesses do not run into trouble because they lack software. A growing team usually already pays for a CRM, group chat apps, shared spreadsheets, an invoicing tool, and folders of exported reports. When delivery slows down or leads slip away, buying one more platform feels like the fastest way out. Weeks later, staff still copy numbers from one browser tab into another because the new platform covered the tidy ten percent of the job and left the messy middle untouched.
 
 When we talk with operators during a discovery call, we ask them to walk through the last order, ticket, or client inquiry that went sideways. Almost every delay sits between existing tools. Someone caught an email on a phone, pasted details into a group chat, updated a spreadsheet at the end of a shift, and forgot to tell billing when a detail changed. Putting a fresh interface on top of that sequence adds one more inbox for someone to forget to check.
 
+> Software only saves hours when it removes a handoff your team actually drops today.
+
 ## Follow one piece of work from arrival to close
 
-Before you commit budget to custom development or automation, three questions clear out guesswork.
+Before you commit budget to custom development or automation, three questions clear out guesswork:
 
-Ask first where your team types the same detail more than once in a normal week. Look next at which handoff stalls whenever one key person steps out for the afternoon. Check how staff find out when something goes off script, such as a missing attachment or a changed delivery window.
+- Where does your team type the same detail more than once in an ordinary week?
+- Which handoff stalls the moment one key person steps out for the afternoon?
+- How do staff notice when something goes off script, such as a missing file or a changed delivery window?
 
 Answering those questions takes an hour with the people handling daily work. Out of twenty annoying chores in a department, two usually account for most wasted time and client frustration. One company needs order rows moved straight from web forms into invoicing and fulfillment queues, as shown in our [manual order processing workflow architecture](/our-work/manual-order-processing-automation). Another team loses warm inquiries simply because nobody answers off-hours questions or offers an open calendar slot right away.
 
