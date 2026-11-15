@@ -11,38 +11,6 @@ const historyMessageSchema = z.object({
   content: z.string().trim().min(1).max(CHAT_MESSAGE_MAX_CHARS),
 });
 
-export const chatRequestSchema = z.object({
-  sessionId: z.uuid(),
-  message: z.string().trim().min(1).max(CHAT_MESSAGE_MAX_CHARS),
-  history: z.array(historyMessageSchema).max(CHAT_HISTORY_MAX_MESSAGES).default([]),
-  confirmationToken: z.string().min(1).max(16_384).optional(),
-  turnstileToken: z.preprocess(
-    (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
-    z.string().trim().max(4_096).optional(),
-  ),
-  timezone: z.preprocess(
-    (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
-    z
-      .string()
-      .trim()
-      .max(100)
-      .refine((value) => isValidTimeZone(value), "Use a valid timezone name.")
-      .optional(),
-  ),
-  pageUrl: z.preprocess(
-    (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
-    z
-      .string()
-      .trim()
-      .max(200)
-      .regex(/^\/(?!\/)[A-Za-z0-9\-._~!$&'()*+,;=:@%/?#]*$/, "Use a local page path.")
-      .optional(),
-  ),
-});
-
-export type ChatRequest = z.infer<typeof chatRequestSchema>;
-export type ChatHistoryMessage = z.infer<typeof historyMessageSchema>;
-
 const singleLineString = (max: number) =>
   z
     .string()
@@ -105,6 +73,43 @@ export const bookCallArgsSchema = z.object({
   notes: optionalTrimmedString(1_000),
 });
 
+const bookingStepSchema = z.discriminatedUnion("step", [
+  z.object({ step: z.literal("times"), from: z.iso.datetime().optional() }),
+  bookCallArgsSchema
+    .omit({ notes: true })
+    .extend({ step: z.literal("review"), offer: z.string().min(1).max(2_048) }),
+]);
+
+export const chatRequestSchema = z
+  .object({
+    sessionId: z.uuid(),
+    message: z.string().trim().min(1).max(CHAT_MESSAGE_MAX_CHARS),
+    history: z.array(historyMessageSchema).max(CHAT_HISTORY_MAX_MESSAGES).default([]),
+    booking: bookingStepSchema.optional(),
+    confirmationToken: z.string().min(1).max(16_384).optional(),
+    turnstileToken: optionalTrimmedString(4_096),
+    timezone: z.preprocess(
+      (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
+      availabilityArgsSchema.shape.timezone.optional(),
+    ),
+    pageUrl: z.preprocess(
+      (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
+      z
+        .string()
+        .trim()
+        .max(200)
+        .regex(/^\/(?!\/)[A-Za-z0-9\-._~!$&'()*+,;=:@%/?#]*$/, "Use a local page path.")
+        .optional(),
+    ),
+  })
+  .refine(
+    ({ booking, confirmationToken, timezone }) => !booking || (!confirmationToken && timezone),
+  );
+
+export type ChatRequest = z.infer<typeof chatRequestSchema>;
+export type ChatHistoryMessage = z.infer<typeof historyMessageSchema>;
+export type ChatBookingStep = z.input<typeof bookingStepSchema>;
+
 export const solutionBriefArgsSchema = z.object({
   email: emailField,
   summary: z.string().trim().min(20).max(2_000),
@@ -112,7 +117,7 @@ export const solutionBriefArgsSchema = z.object({
 
 export const handoffArgsSchema = z.object({
   reason: z.string().trim().min(3).max(1_000),
-  contact: optionalTrimmedString(300),
+  contact: emailField,
 });
 
 export type SearchKnowledgeArgs = z.infer<typeof searchKnowledgeArgsSchema>;

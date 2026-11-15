@@ -7,6 +7,7 @@ import type {
   CalendarEvent,
   CalendarProvider,
   CreateCalendarEventInput,
+  UpdateCalendarEventInput,
 } from "./types";
 
 const TOKEN_URL = "https://oauth2.googleapis.com/token";
@@ -121,6 +122,20 @@ async function googleFetch<T>(
   init: RequestInit,
   options: { maxAttempts?: number } = {},
 ): Promise<T> {
+  const response = await googleRequest(url, init, options);
+
+  try {
+    return (await response.json()) as T;
+  } catch {
+    throw new GoogleCalendarError("invalid_response");
+  }
+}
+
+async function googleRequest(
+  url: string,
+  init: RequestInit,
+  options: { maxAttempts?: number } = {},
+): Promise<Response> {
   const maxAttempts = options.maxAttempts ?? 2;
   let refreshed = false;
 
@@ -153,13 +168,7 @@ async function googleFetch<T>(
       continue;
     }
 
-    if (response.ok) {
-      try {
-        return (await response.json()) as T;
-      } catch {
-        throw new GoogleCalendarError("invalid_response");
-      }
-    }
+    if (response.ok) return response;
 
     const retryable = response.status === 429 || response.status >= 500;
     if (retryable && attempt < maxAttempts) {
@@ -366,6 +375,53 @@ export function createGoogleCalendarProvider(): CalendarProvider {
       }
 
       return waitForMeetLink(config, payload);
+    },
+
+    async updateEvent(input: UpdateCalendarEventInput): Promise<void> {
+      const config = getGoogleBookingConfig();
+      const params = new URLSearchParams({ sendUpdates: "all" });
+      const eventId = eventIdForRequestId(input.requestId);
+
+      await googleFetch<GoogleEvent>(
+        `${calendarUrl(config, `/events/${encodeURIComponent(eventId)}`)}?${params.toString()}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            start: {
+              dateTime: input.start.toISOString(),
+              timeZone: bookingRules.timezone,
+            },
+            end: {
+              dateTime: input.end.toISOString(),
+              timeZone: bookingRules.timezone,
+            },
+          }),
+        },
+      );
+    },
+
+    async deleteEvent(requestId: string): Promise<void> {
+      const config = getGoogleBookingConfig();
+      const params = new URLSearchParams({ sendUpdates: "all" });
+      const eventId = eventIdForRequestId(requestId);
+
+      try {
+        await googleRequest(
+          `${calendarUrl(config, `/events/${encodeURIComponent(eventId)}`)}?${params.toString()}`,
+          { method: "DELETE" },
+        );
+      } catch (error) {
+        // A missing event means the invitation is already gone, which is what
+        // cancelling asks for. Do not fail a cancellation over it.
+        if (
+          error instanceof GoogleCalendarError &&
+          (error.code === "http_404" || error.code === "http_410")
+        ) {
+          return;
+        }
+        throw error;
+      }
     },
   };
 }

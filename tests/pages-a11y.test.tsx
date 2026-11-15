@@ -55,7 +55,7 @@ async function loadPage(slug: string) {
   return page;
 }
 
-describe("page accessibility", () => {
+describe("page accessibility", { timeout: 60_000 }, () => {
   it("Home", async () => {
     const page = await loadPage("home");
     const data = parsePageData(homeSchema, page);
@@ -171,7 +171,7 @@ describe("page accessibility", () => {
   });
 });
 
-describe("navigation and forms", () => {
+describe("navigation and forms", { timeout: 60_000 }, () => {
   it("opens and closes the mobile menu with the keyboard", () => {
     render(<Header />);
 

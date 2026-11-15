@@ -37,8 +37,16 @@ export interface ChatModelResult {
   finishReason?: string;
 }
 
+export interface ChatBookingOptions {
+  timezone: string;
+  slots: { id: string; label: string; start: string; end: string }[];
+  offer: string;
+}
+
 export interface ChatEvent {
-  type: "text" | "status" | "degraded" | "error" | "done" | "confirmation";
+  type: "text" | "status" | "degraded" | "error" | "done" | "confirmation" | "booking_options";
+  bookingOptions?: ChatBookingOptions;
+  action?: string;
   token?: string;
   description?: string;
   text?: string;

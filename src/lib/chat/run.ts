@@ -1,11 +1,12 @@
 import "server-only";
+import { bookingRules } from "@/lib/booking/config";
 import { getConfig } from "@/lib/config";
 import type { Env } from "@/lib/env-schema";
 import { logServerEvent } from "@/lib/log";
 import { CHAT_MAX_TOOL_CALLS, CHAT_MAX_TOOL_ROUNDS } from "./constants";
 import { ChatUnavailableError, configuredModels, streamModelCompletion } from "./model";
 import { buildModelMessages, buildSystemPrompt, hasPriceIntent } from "./prompt";
-import type { ChatRequest } from "./schema";
+import { handoffArgsSchema, type ChatRequest } from "./schema";
 import {
   executeChatTool,
   chatTools,
@@ -13,15 +14,17 @@ import {
   type ChatToolDependencies,
 } from "./tools";
 import { estimateTokens } from "./tokens";
-import type { ModelMessage, ModelToolCall } from "./types";
+import type { ChatBookingOptions, ModelMessage, ModelToolCall } from "./types";
 import { chatBudgetAvailable, recordChatTokens } from "./usage";
 import { classifyChatScope, scopeReply } from "./scope";
 import {
   actionReply,
   hasSensitiveContent,
   isAction,
+  matchesBookingOffer,
   proposeAction,
   readConfirmedAction,
+  signBookingOffer,
   type ActionConfirmation,
 } from "./confirmation";
 import { chatSessionSecret } from "./session";
@@ -46,6 +49,7 @@ export interface RunChatInput {
   onText: (text: string) => void;
   onStatus?: (status: string) => void;
   onConfirmation?: (confirmation: ActionConfirmation) => void;
+  onBookingOptions?: (options: ChatBookingOptions) => void;
   deps?: RunChatDependencies;
 }
 
@@ -85,7 +89,7 @@ async function runTool(
   call: ModelToolCall,
   executeTool: typeof executeChatTool,
   context: ChatToolContext,
-): Promise<unknown> {
+): Promise<Record<string, unknown>> {
   const args = parseArguments(call.function.arguments);
   if (args === undefined) {
     return {
@@ -110,21 +114,9 @@ export async function runChatTurn({
   onText,
   onStatus,
   onConfirmation,
+  onBookingOptions,
   deps = {},
 }: RunChatInput): Promise<RunChatResult> {
-  const deadline = Date.now() + 50_000;
-  let config: Pick<Env, "GROQ_API_KEY" | "LLM_MODEL_PRIMARY" | "LLM_MODEL_FALLBACKS">;
-  try {
-    config = deps.config ?? getConfig();
-  } catch {
-    throw new ChatUnavailableError("config_invalid");
-  }
-
-  if (!config.GROQ_API_KEY) throw new ChatUnavailableError("not_configured");
-
-  const models = deps.models ?? configuredModels(config);
-  if (models.length === 0) throw new ChatUnavailableError("not_configured");
-
   const now = deps.now ?? new Date();
   const complete = (text: string): RunChatResult => {
     onText(text);
@@ -148,14 +140,31 @@ export async function runChatTurn({
     );
 
   const executeTool = deps.executeTool ?? executeChatTool;
+  const bookingFallback =
+    "I can’t arrange a call right now. [Email the team](mailto:info@clarteon.tech) to find a time.";
+  const getConfirmationSecret = () => deps.confirmationSecret ?? chatSessionSecret();
+  const publishBookingOptions = (timezone: string, result: Record<string, unknown>) => {
+    if (!onBookingOptions || !Array.isArray(result.slots)) return;
+    const secret = getConfirmationSecret();
+    if (!secret) return;
+    const slots = result.slots.slice(0, 3) as ChatBookingOptions["slots"];
+    const offer = signBookingOffer(
+      sessionId,
+      timezone,
+      slots.map((slot) => slot.id),
+      secret,
+      now.getTime(),
+    );
+    onBookingOptions({ timezone, slots, offer });
+  };
   if (request.confirmationToken) {
-    const secret = deps.confirmationSecret ?? chatSessionSecret();
+    const secret = getConfirmationSecret();
     const confirmed =
       secret && readConfirmedAction(request.confirmationToken, sessionId, secret, now.getTime());
-    if (!confirmed || request.message !== "Confirm this action.")
-      return complete(
-        "That confirmation is invalid or expired. Please ask me to prepare the details again.",
-      );
+    if (!confirmed || request.message !== "Confirm this action.") {
+      onStatus?.("confirmation_invalid");
+      return complete("That review expired or changed. Please review the details again.");
+    }
     const result = await executeTool(confirmed.action, confirmed.args, {
       sessionId,
       ip,
@@ -167,8 +176,96 @@ export async function runChatTurn({
       actionConfirmed: true,
       deps: deps.toolDependencies,
     });
+    if (confirmed.action === "book_call") {
+      if (confirmed.timezone && result.error === "slot_unavailable") {
+        publishBookingOptions(confirmed.timezone, result);
+      }
+      if (result.error === "booking_failed" || result.error === "calendar_unavailable") {
+        onStatus?.("retry_booking");
+      }
+    }
     return complete(actionReply(confirmed.action, result));
   }
+
+  if (request.booking && request.timezone) {
+    const { booking, timezone } = request;
+    const secret = getConfirmationSecret();
+    if (!secret || !onConfirmation || !onBookingOptions) return complete(bookingFallback);
+    const showTimes = async (from?: string, refreshed = false) => {
+      const result = await executeTool(
+        "check_availability",
+        { timezone, from },
+        {
+          sessionId,
+          ip,
+          pageUrl,
+          latestMessage: request.message,
+          priceIntent: false,
+          now,
+          timezone,
+          deps: deps.toolDependencies,
+        },
+      );
+      if (!result.ok) {
+        return complete(
+          result.error === "rate_limited"
+            ? "Please wait a moment before checking more times."
+            : bookingFallback,
+        );
+      }
+      publishBookingOptions(timezone, result);
+      return complete(
+        Array.isArray(result.slots) && result.slots.length
+          ? refreshed
+            ? "Those times expired. Pick a time from the refreshed list below."
+            : `Pick a time for your ${bookingRules.slotMinutes}-minute discovery call.`
+          : "I couldn’t find any more times. Try the first available times or [email the team](mailto:info@clarteon.tech).",
+      );
+    };
+    if (booking.step === "times") return showTimes(booking.from);
+    if (
+      !matchesBookingOffer(
+        booking.offer,
+        sessionId,
+        timezone,
+        booking.slot_id,
+        secret,
+        now.getTime(),
+      )
+    ) {
+      return showTimes(undefined, true);
+    }
+    const { slot_id, name, email } = booking;
+    if (hasSensitiveContent({ name, email })) {
+      return complete(
+        "Please enter your name and email only. Leave out passwords, payment details or identification.",
+      );
+    }
+    try {
+      onConfirmation(
+        proposeAction(
+          { sid: sessionId, action: "book_call", args: { slot_id, name, email }, timezone },
+          secret,
+          now.getTime(),
+        ),
+      );
+    } catch {
+      return showTimes(undefined, true);
+    }
+    return complete("Review your details, then confirm the booking.");
+  }
+
+  const deadline = Date.now() + 50_000;
+  let config: Pick<Env, "GROQ_API_KEY" | "LLM_MODEL_PRIMARY" | "LLM_MODEL_FALLBACKS">;
+  try {
+    config = deps.config ?? getConfig();
+  } catch {
+    throw new ChatUnavailableError("config_invalid");
+  }
+
+  if (!config.GROQ_API_KEY) throw new ChatUnavailableError("not_configured");
+  const models = deps.models ?? configuredModels(config);
+  if (models.length === 0) throw new ChatUnavailableError("not_configured");
   if (!chatBudgetAvailable(now.getTime())) return { degraded: true, toolRounds: 0 };
   const safeHistory = request.history.map((item) =>
     hasSensitiveContent(item.content) ? { ...item, content: "Sensitive message omitted." } : item,
@@ -300,7 +397,41 @@ export async function runChatTurn({
           return complete("We can keep discussing it here. I won’t book, save or send anything.");
         }
         const args = parseArguments(call.function.arguments);
-        const secret = deps.confirmationSecret ?? chatSessionSecret();
+        if (call.function.name === "handoff_to_team") {
+          const handoff = handoffArgsSchema.safeParse(args);
+          const visitorMessages = [
+            ...safeHistory.filter((item) => item.role === "user").map((item) => item.content),
+            request.message,
+          ];
+          const hasReplyAddress =
+            handoff.success &&
+            visitorMessages.some((message) =>
+              message
+                .toLowerCase()
+                .match(/[\w.+-]+@[\w.-]+\.[a-z]{2,}/g)
+                ?.includes(handoff.data.contact),
+            );
+          const hasQuestion =
+            handoff.success &&
+            visitorMessages.some(
+              (message) =>
+                message !== "Sensitive message omitted." && message.includes(handoff.data.reason),
+            );
+          if (!hasReplyAddress || !hasQuestion) {
+            messages.push({
+              role: "tool",
+              tool_call_id: call.id,
+              content: toolMessage({
+                ok: false,
+                error: "handoff_details_required",
+                message:
+                  "Use the visitor’s reply email and quote their actual question or business problem. If either is missing, ask one question to get it. If the visitor prefers direct email, give them info@clarteon.tech.",
+              }),
+            });
+            continue;
+          }
+        }
+        const secret = getConfirmationSecret();
         if (!secret || !onConfirmation)
           return complete(
             "I can discuss the next step here, but action confirmation is unavailable. Nothing was booked, saved or sent.",
@@ -320,7 +451,9 @@ export async function runChatTurn({
           );
           onConfirmation(confirmation);
           onText(
-            "Please review the details below. Use **Confirm** only if they are correct; nothing has been booked, saved or sent yet.",
+            call.function.name === "book_call"
+              ? "Review your details, then confirm the booking."
+              : "Please review the details below. Use **Confirm** only if they are correct; nothing has been booked, saved or sent yet.",
           );
           return { degraded: false, model, toolRounds };
         } catch {
@@ -345,6 +478,13 @@ export async function runChatTurn({
               error: "too_many_tool_calls",
               message: "Use at most four tools in one turn. Ask the visitor a question.",
             };
+      if (
+        call.function.name === "check_availability" &&
+        toolResult.ok &&
+        typeof toolResult.timezone === "string"
+      ) {
+        publishBookingOptions(toolResult.timezone, toolResult);
+      }
       messages.push({
         role: "tool",
         tool_call_id: call.id,

@@ -57,7 +57,7 @@
 }
 
 .bubble:focus-visible,
-.send:focus-visible,
+.voiceButton:focus-visible,
 .quickStarts button:focus-visible,
 .inlineLink:focus-visible {
   outline: 3px solid var(--ink);
@@ -793,6 +793,26 @@
   gap: 0.5rem;
 }
 
+.bookingDetails,
+.bookingDetails label,
+.bookingTimes {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.bookingDetails {
+  gap: 0.8rem;
+}
+
+.bookingDetails label {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.bookingTime {
+  font-weight: 600;
+}
+
 .degradedActions a {
   min-height: 44px;
   padding: 0.55rem 0.9rem;
@@ -867,22 +887,37 @@
 
 .form {
   display: flex;
-  gap: 0.45rem;
+  gap: 0.25rem;
   align-items: flex-end;
+  padding: 0.375rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--paper);
+}
+
+.form:focus-within {
+  border-color: var(--ink);
+  outline: 1px solid var(--ink);
+}
+
+.form:has(button:focus-visible) {
+  border-color: var(--line);
+  outline: none;
 }
 
 .input {
   flex: 1;
-  min-height: 48px;
+  min-width: 0;
+  min-height: 44px;
   max-height: 8rem;
-  padding: 0.65rem 0.8rem;
-  border: 1px solid rgba(10, 10, 10, 0.16);
-  border-radius: 14px;
-  background: var(--stone);
+  padding: 0.625rem 0.5rem;
+  border: 0;
+  background: transparent;
   color: var(--ink);
   font: inherit;
-  font-size: 0.92rem;
-  line-height: 1.4;
+  font-size: 1rem;
+  line-height: 1.5;
+  field-sizing: content;
   resize: none;
   transition:
     border-color 160ms ease,
@@ -890,31 +925,42 @@
 }
 
 .input:focus {
-  border-color: var(--ink);
-  background: var(--paper);
   outline: none;
 }
 
+.input::placeholder,
 .input:disabled {
-  background: var(--stone);
   color: var(--graphite);
+  opacity: 1;
 }
 
-.send {
-  min-width: 68px;
-  min-height: 48px;
-  padding: 0.55rem 0.95rem;
-  border: 1.5px solid var(--ink);
+.send,
+.microphone,
+.discard {
+  display: grid;
+  flex: 0 0 44px;
+  place-items: center;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
   border-radius: var(--radius-pill);
-  background: var(--lime);
   color: var(--ink);
-  font: inherit;
-  font-size: 0.875rem;
-  font-weight: 600;
   cursor: pointer;
   transition:
     background-color 160ms ease,
     transform 160ms ease;
+}
+
+.send:focus-visible,
+.microphone:focus-visible,
+.discard:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.send,
+.microphone[data-recording="true"] {
+  background: var(--lime);
 }
 
 .send:hover:not(:disabled) {
@@ -931,9 +977,76 @@
   -webkit-text-fill-color: var(--lime);
 }
 
-.send:disabled {
+.send:disabled,
+.microphone:disabled {
+  color: var(--graphite);
+  cursor: not-allowed;
+}
+
+.send:disabled,
+.discard:hover,
+.microphone:hover:not(:disabled):not([data-recording="true"]) {
+  background: var(--stone);
+}
+
+.microphone,
+.discard {
+  background: transparent;
+}
+
+.discard {
+  color: var(--graphite);
+}
+
+.microphone[data-recording="true"]:hover:not(:disabled) {
+  background: var(--lime-dark);
+}
+
+.voiceButton {
+  min-height: 44px;
+  padding: 0.4rem 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.voiceButton:hover:not(:disabled) {
+  border-color: var(--ink);
+}
+
+.voiceButton:disabled {
   cursor: not-allowed;
   opacity: 0.5;
+}
+
+.voiceStatus {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  align-items: center;
+  gap: 0.5rem;
+  padding-inline: 0.5rem;
+  color: var(--ink);
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.recordingDot {
+  flex: 0 0 8px;
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: #b42318;
+}
+
+.voiceTimer {
+  color: var(--graphite);
+  font-variant-numeric: tabular-nums;
 }
 
 .footnote {
@@ -1026,9 +1139,7 @@
   }
 
   .input {
-    min-height: 44px;
     max-height: 5rem;
-    padding: 0.5rem 0.65rem;
   }
 }
 

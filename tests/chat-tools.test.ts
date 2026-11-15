@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { SlotUnavailableError } from "@/lib/booking/errors";
+import { BookingStoreNotConfiguredError, SlotTakenError } from "@/lib/booking/store";
+import type { BookingRecord } from "@/lib/booking/types";
 import { resetConfigForTests } from "@/lib/config";
 import { resetRateLimitsForTests } from "@/lib/guardrails/rate-limit";
 import { executeChatTool, type ChatToolContext, type ChatToolDependencies } from "@/lib/chat/tools";
@@ -280,7 +281,7 @@ describe("Clara tools", () => {
 
   it("asks for a new time when a slot was just taken", async () => {
     const getAvailability = vi.fn().mockResolvedValue({ slots: [] });
-    const bookDiscoveryCall = vi.fn().mockRejectedValue(new SlotUnavailableError());
+    const bookDiscoveryCall = vi.fn().mockRejectedValue(new SlotTakenError({} as BookingRecord));
 
     const result = await executeChatTool(
       "book_call",
@@ -290,6 +291,35 @@ describe("Clara tools", () => {
 
     expect(result).toMatchObject({ ok: false, error: "slot_unavailable" });
     expect(result.slots).toEqual([]);
+  });
+
+  it("reports a missing booking store without offering to retry confirmation", async () => {
+    const bookDiscoveryCall = vi.fn().mockRejectedValue(new BookingStoreNotConfiguredError());
+    const result = await executeChatTool(
+      "book_call",
+      { slot_id: "slot-1", name: "Test Visitor", email: "visitor@example.com" },
+      context({ deps: { bookDiscoveryCall } }),
+    );
+    expect(result).toMatchObject({ ok: false, error: "booking_unavailable" });
+  });
+
+  it("does not show bookable times when booking storage is missing", async () => {
+    vi.stubEnv("DATABASE_URL", "");
+    const fetch = vi.fn().mockRejectedValue(new Error("Unexpected provider call"));
+    vi.stubGlobal("fetch", fetch);
+    try {
+      const result = await executeChatTool(
+        "check_availability",
+        { timezone: "Asia/Manila" },
+        context(),
+      );
+      expect(result).toMatchObject({ ok: false, error: "booking_unavailable" });
+      expect(fetch).not.toHaveBeenCalled();
+    } finally {
+      vi.unstubAllGlobals();
+      vi.unstubAllEnvs();
+      resetConfigForTests();
+    }
   });
 
   it("sends a solution brief only to the visitor and the fixed team address", async () => {
@@ -355,12 +385,17 @@ describe("Clara tools", () => {
 
     const result = await executeChatTool(
       "handoff_to_team",
-      { reason: "The visitor needs a person to discuss a contract.", contact: "ada@example.com" },
+      { reason: "Do you work with Shopify?", contact: "ada@example.com" },
       context({ deps: { sendEmail } }),
     );
 
     expect(result).toMatchObject({ ok: true });
     expect(sendEmail).toHaveBeenCalledOnce();
-    expect(sendEmail.mock.calls[0][0]).toMatchObject({ to: "team@clarteon.test" });
+    expect(sendEmail.mock.calls[0][0]).toMatchObject({
+      to: "team@clarteon.test",
+      subject: "Clara handoff request",
+      text: expect.stringContaining("Question or problem: Do you work with Shopify?"),
+    });
+    expect(sendEmail.mock.calls[0][0].text).toContain("Visitor’s reply email: ada@example.com");
   });
 });

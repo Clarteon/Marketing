@@ -3007,6 +3007,32 @@
   min-height: 65px;
 }
 
+.turnstileStatus {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.625rem;
+  color: var(--muted);
+  font-size: 0.8125rem;
+}
+
+.turnstileStatus button {
+  min-height: 44px;
+  padding: 0 0.25rem;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  cursor: pointer;
+}
+
+.turnstileStatus button:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
 .hint {
   color: var(--muted);
   font-size: 0.875rem;

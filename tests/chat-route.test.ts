@@ -149,6 +149,18 @@ describe("POST /api/chat", () => {
     expect(mocks.runChatTurn).not.toHaveBeenCalled();
   });
 
+  it("rejects destructive booking commands and requires bot verification for booking steps", async () => {
+    const invalid = await POST(
+      request(validBody({ booking: { step: "delete", id: "booking-1" } })),
+    );
+    expect(invalid.status).toBe(400);
+    const gated = await POST(
+      request(validBody({ booking: { step: "times" }, turnstileToken: undefined })),
+    );
+    expect(gated.status).toBe(403);
+    expect(mocks.runChatTurn).not.toHaveBeenCalled();
+  });
+
   it("rejects a failed or replayed bot check", async () => {
     mocks.verifyTurnstile.mockResolvedValue(false);
 

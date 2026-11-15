@@ -22,7 +22,14 @@ import {
   slotDateKey,
   timeZoneLabel,
 } from "@/lib/booking/format";
-import { addDaysToDateKey, parseDateKey, weekdayForDateKey } from "@/lib/booking/time";
+import { addDaysToDateKey, weekdayForDateKey } from "@/lib/booking/time";
+import {
+  calendarDays,
+  calendarDayNumber,
+  calendarMonthKey,
+  calendarMonthLabel,
+} from "@/lib/booking/calendar";
+import { COMMON_TIMEZONES } from "@/lib/booking/timezones";
 import { Button } from "./Button";
 import { SelectField } from "./SelectField";
 import { TurnstileWidget } from "./TurnstileWidget";
@@ -65,22 +72,6 @@ interface SlotGroup {
   label: string;
   slots: Slot[];
 }
-
-const COMMON_TIMEZONES = [
-  "Asia/Manila",
-  "Asia/Singapore",
-  "Asia/Tokyo",
-  "Asia/Dubai",
-  "Europe/London",
-  "Europe/Berlin",
-  "Europe/Paris",
-  "America/New_York",
-  "America/Chicago",
-  "America/Denver",
-  "America/Los_Angeles",
-  "Australia/Sydney",
-  "UTC",
-] as const;
 
 type AvailabilityState = "loading" | "ready" | "unavailable" | "error";
 type BookingStep = "date" | "time" | "details";
@@ -133,37 +124,6 @@ function groupSlots(slots: Slot[], timezone: string): SlotGroup[] {
     });
   }
   return [...groups.values()].sort((left, right) => left.key.localeCompare(right.key));
-}
-
-function calendarMonthKey(dateKey: string): string {
-  return dateKey.slice(0, 7);
-}
-
-function calendarMonthLabel(monthKey: string): string {
-  const [year, month] = monthKey.split("-").map(Number);
-  return new Intl.DateTimeFormat("en", {
-    month: "long",
-    year: "numeric",
-    timeZone: "UTC",
-  }).format(new Date(Date.UTC(year, month - 1, 1, 12)));
-}
-
-function calendarDays(monthKey: string): (string | null)[] {
-  const [year, month] = monthKey.split("-").map(Number);
-  const firstDay = `${monthKey}-01`;
-  const offset = (weekdayForDateKey(firstDay) + 6) % 7;
-  const dayCount = new Date(Date.UTC(year, month, 0)).getUTCDate();
-  const days: (string | null)[] = [
-    ...Array.from({ length: offset }, () => null),
-    ...Array.from({ length: dayCount }, (_, index) => addDaysToDateKey(firstDay, index)),
-  ];
-  // Six weeks keep the calendar height stable for every month.
-  while (days.length < 42) days.push(null);
-  return days;
-}
-
-function calendarDayNumber(dateKey: string): string {
-  return String(parseDateKey(dateKey).day);
 }
 
 function nextAvailableDate(

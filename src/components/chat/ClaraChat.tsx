@@ -2,14 +2,27 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+  type KeyboardEvent,
+} from "react";
 import { MessageMarkdown as ReactMarkdown } from "./MessageMarkdown";
 import { Button } from "@/components/ui/Button";
-import { TurnstileWidget } from "@/components/ui/TurnstileWidget";
-import { CHAT_TURNSTILE_ACTION } from "@/lib/chat/constants";
+import { preloadTurnstile, TurnstileWidget } from "@/components/ui/TurnstileWidget";
+import { BOOKING_DEFAULT_TIMEZONE } from "@/lib/booking/constants";
+import { CHAT_MESSAGE_MAX_CHARS, CHAT_TURNSTILE_ACTION } from "@/lib/chat/constants";
+import type { ChatBookingStep } from "@/lib/chat/schema";
+import type { ChatBookingOptions, ChatEvent } from "@/lib/chat/types";
 import { site } from "@/lib/site";
+import { BookingChoices, type BookingDraft } from "./BookingChoices";
 import styles from "./chat.module.css";
 import { detectedTimezone, TimezoneChoices } from "./TimezoneChoices";
+import { useDictation } from "./useDictation";
+import { useReadAloud } from "./useReadAloud";
 
 interface ClaraChatProps {
   turnstileSiteKey?: string;
@@ -19,20 +32,15 @@ interface ChatMessage {
   id: string;
   role: "user" | "assistant";
   content: string;
-}
-
-interface ChatEvent {
-  type: "text" | "status" | "degraded" | "error" | "done" | "confirmation";
-  token?: string;
-  description?: string;
-  text?: string;
-  status?: string;
-  message?: string;
-  code?: string;
+  readable?: boolean;
 }
 
 const MAX_CLIENT_MESSAGES = 20;
+const EMPTY_BOOKING_DRAFT: BookingDraft = { name: "", email: "" };
+const DICTATION_ENABLED = process.env.NEXT_PUBLIC_CLARA_DICTATION === "true";
+const READ_ALOUD_ENABLED = process.env.NEXT_PUBLIC_CLARA_READ_ALOUD !== "false";
 const WELCOME = "Hi, I’m Clara, Clarteon’s AI assistant. What is slowing your team down right now?";
+const BOT_CHECK_PENDING = "Please complete the quick check below, then send your message.";
 
 function chatLink(value: string): string | undefined {
   if (value === `mailto:${site.email}`) return value;
@@ -65,6 +73,8 @@ function newSessionId(): string {
 
 function errorMessage(code: string): string {
   switch (code) {
+    case "invalid_input":
+      return "Please check your details and try again.";
     case "rate_limited":
       return "I’m getting a lot of messages right now. Please wait a moment and try again.";
     case "bot_check_required":
@@ -119,19 +129,56 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
   const [botVerified, setBotVerified] = useState(false);
   const [degraded, setDegraded] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [confirmation, setConfirmation] = useState<{ token: string; description: string } | null>(
-    null,
-  );
+  const [confirmation, setConfirmation] = useState<{
+    token: string;
+    description: string;
+    action?: string;
+    retry?: boolean;
+  } | null>(null);
+  const [bookingOptions, setBookingOptions] = useState<ChatBookingOptions | null>(null);
+  const [bookingDraft, setBookingDraft] = useState<BookingDraft>(EMPTY_BOOKING_DRAFT);
 
   const panelRef = useRef<HTMLElement>(null);
   const bubbleRef = useRef<HTMLButtonElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const reviewRef = useRef<HTMLDivElement>(null);
+  const micButtonRef = useRef<HTMLButtonElement>(null);
+  const discardButtonRef = useRef<HTMLButtonElement>(null);
+  const voiceFocus = useRef<"mic" | "draft" | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const sessionIdRef = useRef<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const sendingRef = useRef(false);
 
   const chatAvailable = Boolean(turnstileSiteKey);
+  const dictation = useDictation();
+  const readAloud = useReadAloud(open && privacyAccepted && READ_ALOUD_ENABLED);
+  const cancelDictation = dictation.cancel;
+  const stopReadAloud = readAloud.stop;
+  const voicePhase = dictation.phase;
+  const voiceBusy = voicePhase !== "idle";
+  const recording = voicePhase === "recording";
+  const micLabel = recording ? "Stop recording" : "Record a message";
+  const discardLabel = recording ? "Discard recording" : "Cancel dictation";
+  const showMic =
+    open &&
+    DICTATION_ENABLED &&
+    chatAvailable &&
+    Boolean(navigator.mediaDevices?.getUserMedia) &&
+    typeof MediaRecorder !== "undefined" &&
+    typeof OfflineAudioContext !== "undefined";
+
+  const closeChat = useCallback(() => {
+    abortRef.current?.abort();
+    abortRef.current = null;
+    sendingRef.current = false;
+    setSending(false);
+    voiceFocus.current = null;
+    cancelDictation();
+    stopReadAloud();
+    setOpen(false);
+    bubbleRef.current?.focus();
+  }, [cancelDictation, stopReadAloud]);
 
   useEffect(() => {
     let rafId: number | null = null;
@@ -181,12 +228,7 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
 
     const onKeyDown = (event: globalThis.KeyboardEvent) => {
       if (event.key === "Escape") {
-        abortRef.current?.abort();
-        abortRef.current = null;
-        sendingRef.current = false;
-        setSending(false);
-        setOpen(false);
-        bubbleRef.current?.focus();
+        closeChat();
         return;
       }
 
@@ -211,7 +253,25 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
 
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [open, privacyAccepted]);
+  }, [closeChat, open, privacyAccepted]);
+
+  useEffect(() => {
+    if (!open || !voiceFocus.current) return;
+
+    const control =
+      voicePhase === "recording" || voicePhase === "idle"
+        ? micButtonRef.current
+        : discardButtonRef.current;
+    const active = document.activeElement;
+    if (active === document.body || control?.form?.contains(active)) {
+      const target =
+        voicePhase === "idle" && (voiceFocus.current === "draft" || control?.disabled)
+          ? inputRef.current
+          : control;
+      target?.focus({ preventScroll: true });
+    }
+    if (voicePhase === "idle") voiceFocus.current = null;
+  }, [open, voicePhase]);
 
   useEffect(() => {
     if (!open) return;
@@ -222,7 +282,9 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
 
     const updateVisibleViewport = () => {
       const keyboardCoversViewport =
-        document.activeElement === inputRef.current &&
+        (document.activeElement === inputRef.current ||
+          (document.activeElement instanceof HTMLInputElement &&
+            panel.contains(document.activeElement))) &&
         visualViewport.offsetTop + visualViewport.height < window.innerHeight - 100;
 
       if (!keyboardCoversViewport) {
@@ -260,6 +322,10 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
   }, [messages, sending, open, degraded, error]);
 
   useEffect(() => {
+    if (open && !sending && confirmation?.action === "book_call") reviewRef.current?.focus();
+  }, [confirmation, open, sending]);
+
+  useEffect(() => {
     return () => abortRef.current?.abort();
   }, []);
 
@@ -274,29 +340,29 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
     abortRef.current = null;
     sendingRef.current = false;
     setSending(false);
+    voiceFocus.current = null;
+    cancelDictation();
+    stopReadAloud();
     sessionIdRef.current = newSessionId();
     setMessages([{ id: "welcome", role: "assistant", content: WELCOME }]);
     setInput("");
     setError(null);
     setDegraded(null);
     setConfirmation(null);
+    setBookingOptions(null);
+    setBookingDraft(EMPTY_BOOKING_DRAFT);
     window.setTimeout(() => inputRef.current?.focus(), 0);
   }
 
-  function closeChat() {
-    abortRef.current?.abort();
-    abortRef.current = null;
-    sendingRef.current = false;
-    setSending(false);
-    setOpen(false);
-    bubbleRef.current?.focus();
+  function refreshBotCheck() {
+    setBotVerified(false);
+    setToken("");
+    setTurnstileKey((value) => value + 1);
   }
 
   function handleHttpError(code: string) {
     if (code === "bot_check_required" || code === "bot_check_failed") {
-      setBotVerified(false);
-      setToken("");
-      setTurnstileKey((value) => value + 1);
+      refreshBotCheck();
     }
     if (
       code === "chat_unavailable" ||
@@ -309,15 +375,73 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
     setError(errorMessage(code));
   }
 
-  async function sendMessage(raw: string, confirmationToken?: string, timezoneOverride?: string) {
+  async function transcribe(audio: Blob, signal: AbortSignal) {
+    sessionIdRef.current ??= newSessionId();
+    const headers = new Headers({
+      "Content-Type": "audio/wav",
+      "X-Chat-Session": sessionIdRef.current,
+    });
+    let refreshCheck = !botVerified;
+    if (refreshCheck) {
+      headers.set("X-Turnstile-Token", token);
+      setToken("");
+    }
+
+    try {
+      const response = await fetch("/api/chat/transcribe", {
+        method: "POST",
+        headers,
+        body: audio,
+        signal,
+      });
+      signal.throwIfAborted();
+      if (response.headers.get("X-Chat-Session-Verified") === "1") {
+        refreshCheck = false;
+        setBotVerified(true);
+        setToken("");
+      }
+      const result = (await response.json()) as { text?: unknown; error?: string };
+      signal.throwIfAborted();
+
+      if (result.error === "bot_check_required" || result.error === "bot_check_failed") {
+        refreshCheck = true;
+        return "Complete the quick check, then try recording again.";
+      }
+      if (response.status === 429) return "Voice is busy right now. You can still type.";
+      if (result.error === "no_speech")
+        return "I didn’t hear anything. Try again or type your message.";
+      if (!response.ok || typeof result.text !== "string") {
+        return "I couldn’t turn that recording into text. You can still type.";
+      }
+
+      const transcript = result.text;
+      setInput((draft) =>
+        `${draft}${draft && !/\s$/.test(draft) ? " " : ""}${transcript}`.slice(
+          0,
+          CHAT_MESSAGE_MAX_CHARS,
+        ),
+      );
+      voiceFocus.current = "draft";
+    } catch {
+      return "I couldn’t reach dictation. You can still type.";
+    } finally {
+      if (refreshCheck) refreshBotCheck();
+    }
+  }
+
+  async function sendMessage(
+    raw: string,
+    options: { confirmationToken?: string; timezone?: string; booking?: ChatBookingStep } = {},
+  ) {
+    const { confirmationToken, booking } = options;
     const message = raw.trim();
-    if (!message || sendingRef.current || !privacyAccepted) return;
+    if (!message || sendingRef.current || dictation.active() || !privacyAccepted) return;
     if (!chatAvailable) {
       setDegraded("Chat is offline right now. You can still send a project brief or book a call.");
       return;
     }
     if (!botVerified && !token) {
-      setError("Please complete the quick check below, then send your message.");
+      setError(BOT_CHECK_PENDING);
       return;
     }
     if (messages.length + 1 > MAX_CLIENT_MESSAGES && !confirmationToken) {
@@ -330,7 +454,15 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
       role: item.role,
       content: item.content,
     }));
-    const userMessage: ChatMessage = { id: `user-${Date.now()}`, role: "user", content: message };
+    const bookingConfirmation =
+      confirmation?.action === "book_call" && confirmation.token === confirmationToken
+        ? confirmation
+        : null;
+    const userMessage: ChatMessage = {
+      id: `user-${Date.now()}`,
+      role: "user",
+      content: bookingConfirmation ? "Confirm booking" : message,
+    };
     const assistantId = `assistant-${Date.now()}`;
 
     setMessages((current) => [
@@ -347,6 +479,7 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
 
     const controller = new AbortController();
     abortRef.current = controller;
+    let restoreBookingConfirmation = Boolean(bookingConfirmation);
 
     try {
       const response = await fetch("/api/chat", {
@@ -358,9 +491,10 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
           message,
           history,
           turnstileToken: botVerified ? undefined : token,
-          timezone: timezoneOverride ?? selectedTimezone ?? detectedTimezone(),
+          timezone: options.timezone ?? selectedTimezone ?? detectedTimezone(),
           pageUrl: window.location.pathname,
           confirmationToken,
+          booking,
         }),
       });
 
@@ -380,7 +514,12 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
       setToken("");
 
       let receivedText = false;
+      let completed = false;
+      let failed = false;
       let degradedMessage: string | null = null;
+      let receivedOptions = false;
+      let retryBooking = false;
+      let invalidConfirmation = false;
 
       await readEvents(response, (event) => {
         if (event.type === "text" && event.text) {
@@ -391,14 +530,43 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
             ),
           );
         } else if (event.type === "confirmation" && event.token && event.description) {
-          setConfirmation({ token: event.token, description: event.description });
+          setConfirmation({
+            token: event.token,
+            description: event.description,
+            action: event.action,
+          });
+        } else if (event.type === "booking_options" && event.bookingOptions) {
+          receivedOptions = true;
+          setBookingOptions(event.bookingOptions);
+          setBookingDraft((current) => ({ ...current, slotId: undefined }));
+        } else if (event.type === "status" && event.status === "retry_booking") {
+          retryBooking = true;
+        } else if (event.type === "status" && event.status === "confirmation_invalid") {
+          invalidConfirmation = true;
         } else if (event.type === "degraded") {
+          failed = true;
           degradedMessage = event.message ?? errorMessage("chat_unavailable");
           setDegraded(degradedMessage);
         } else if (event.type === "error") {
+          failed = true;
           setError(event.message ?? "Something went wrong on my side. Please try again.");
+        } else if (event.type === "done") {
+          completed = true;
         }
       });
+
+      if (receivedText && completed && !failed && !controller.signal.aborted) {
+        if (bookingConfirmation && !retryBooking) {
+          restoreBookingConfirmation = false;
+          if (!receivedOptions && !invalidConfirmation) {
+            setBookingOptions(null);
+            setBookingDraft(EMPTY_BOOKING_DRAFT);
+          }
+        }
+        setMessages((current) =>
+          current.map((item) => (item.id === assistantId ? { ...item, readable: true } : item)),
+        );
+      }
 
       if (!receivedText && !degradedMessage) {
         setError("I didn’t get a reply. Please try again, or send a project brief.");
@@ -408,6 +576,9 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
         setError("I couldn’t reach the server. Please try again, or send a project brief.");
       }
     } finally {
+      if (restoreBookingConfirmation && bookingConfirmation) {
+        setConfirmation({ ...bookingConfirmation, retry: true });
+      }
       setMessages((current) =>
         current.filter((item) => !(item.id === assistantId && item.content.length === 0)),
       );
@@ -415,6 +586,17 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
       sendingRef.current = false;
       setSending(false);
     }
+  }
+
+  function showBookingTimes(timezone: string, from?: string) {
+    setSelectedTimezone(timezone);
+    void sendMessage(
+      from ? "Show more discovery call times." : "I’d like to see discovery call times.",
+      {
+        timezone,
+        booking: { step: "times", from },
+      },
+    );
   }
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -442,6 +624,7 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
     chatAvailable &&
     Boolean(input.trim()) &&
     !sending &&
+    !voiceBusy &&
     (botVerified || Boolean(token)) &&
     !activeDegraded;
 
@@ -456,7 +639,14 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
         aria-label="Chat with Clara"
         aria-expanded={open}
         aria-controls="clara-chat-panel"
-        onClick={() => (open ? closeChat() : setOpen(true))}
+        onClick={() => {
+          if (open) {
+            closeChat();
+            return;
+          }
+          if (chatAvailable && !botVerified) preloadTurnstile();
+          setOpen(true);
+        }}
       >
         <span className={styles.pulseRing} aria-hidden="true" />
         <span className={styles.pulseRingSecond} aria-hidden="true" />
@@ -579,6 +769,11 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
                     I can reply. Please don’t share passwords, payment details or other sensitive
                     information.
                   </p>
+                  {showMic ? (
+                    <p className={styles.privacyLead}>
+                      If you record a message, audio is turned into text so it can be sent.
+                    </p>
+                  ) : null}
                   <ul className={styles.privacyHighlights} aria-label="What Clara can help with">
                     <li>Diagnose workflow bottlenecks and manual admin</li>
                     <li>Check live availability and book a Google Meet call</li>
@@ -627,7 +822,7 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
                             <span />
                           </p>
                         ) : (
-                          <div className={styles.assistantText}>
+                          <div className={styles.assistantText} data-clara-reply>
                             <ReactMarkdown
                               allowedElements={["p", "strong", "em", "ul", "ol", "li", "a", "br"]}
                               unwrapDisallowed
@@ -648,6 +843,26 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
                       ) : (
                         <p className={styles.messageText}>{item.content}</p>
                       )}
+                      {readAloud.supported && item.readable && !isPendingReply ? (
+                        <button
+                          type="button"
+                          className={styles.voiceButton}
+                          disabled={voiceBusy}
+                          onClick={(event) => {
+                            if (readAloud.speakingId === item.id) {
+                              stopReadAloud();
+                              return;
+                            }
+                            const reply =
+                              event.currentTarget.parentElement?.querySelector<HTMLElement>(
+                                "[data-clara-reply]",
+                              );
+                            readAloud.speak(item.id, reply?.innerText ?? item.content);
+                          }}
+                        >
+                          {readAloud.speakingId === item.id ? "Stop reading" : "Read aloud"}
+                        </button>
+                      ) : null}
                       {item.role === "assistant" &&
                       item.id === messages.at(-1)?.id &&
                       item.content.includes("](#clara-timezone)") &&
@@ -658,11 +873,9 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
                         <TimezoneChoices
                           onChoose={(zone, label) => {
                             setSelectedTimezone(zone);
-                            void sendMessage(
-                              `Show discovery call times in ${label} (${zone}).`,
-                              undefined,
-                              zone,
-                            );
+                            void sendMessage(`Show discovery call times in ${label} (${zone}).`, {
+                              timezone: zone,
+                            });
                           }}
                         />
                       ) : null}
@@ -670,16 +883,43 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
                   );
                 })}
 
+                {bookingOptions && !confirmation && !sending && !activeDegraded ? (
+                  <BookingChoices
+                    options={bookingOptions}
+                    draft={bookingDraft}
+                    disabled={voiceBusy}
+                    onDraft={setBookingDraft}
+                    onTimes={showBookingTimes}
+                    onReview={(booking, timezone) =>
+                      void sendMessage("Review my booking.", { booking, timezone })
+                    }
+                  />
+                ) : null}
+
                 {confirmation ? (
-                  <div className={styles.degraded} role="group" aria-label="Review action details">
+                  <div
+                    ref={reviewRef}
+                    className={styles.degraded}
+                    role="group"
+                    tabIndex={-1}
+                    aria-label="Review action details"
+                  >
                     <p className={styles.messageText}>{confirmation.description}</p>
                     <div className={styles.degradedActions}>
                       <Button
                         type="button"
-                        disabled={sending}
-                        onClick={() => void sendMessage("Confirm this action.", confirmation.token)}
+                        disabled={sending || voiceBusy}
+                        onClick={() =>
+                          void sendMessage("Confirm this action.", {
+                            confirmationToken: confirmation.token,
+                          })
+                        }
                       >
-                        Confirm
+                        {confirmation.action === "book_call"
+                          ? confirmation.retry
+                            ? "Retry booking"
+                            : "Confirm booking"
+                          : "Confirm"}
                       </Button>
                       <Button
                         type="button"
@@ -690,9 +930,12 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
                         Cancel
                       </Button>
                     </div>
-                    <p>
-                      Only confirm if these details are correct. You can cancel or ask for changes.
-                    </p>
+                    {confirmation.action !== "book_call" ? (
+                      <p>
+                        Only confirm if these details are correct. You can cancel or ask for
+                        changes.
+                      </p>
+                    ) : null}
                   </div>
                 ) : null}
 
@@ -715,22 +958,26 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
                   <div className={styles.quickStarts} aria-label="Quick start questions">
                     <button
                       type="button"
-                      disabled={chatAvailable && !botVerified && !token}
+                      disabled={voiceBusy || (chatAvailable && !botVerified && !token)}
                       onClick={() => void sendMessage("I have a problem to solve.")}
                     >
                       I have a problem to solve
                     </button>
                     <button
                       type="button"
-                      disabled={chatAvailable && !botVerified && !token}
+                      disabled={voiceBusy || (chatAvailable && !botVerified && !token)}
                       onClick={() => void sendMessage("What does Clarteon do?")}
                     >
                       What does Clarteon do?
                     </button>
                     <button
                       type="button"
-                      disabled={chatAvailable && !botVerified && !token}
-                      onClick={() => void sendMessage("I’d like to book a discovery call.")}
+                      disabled={voiceBusy || (chatAvailable && !botVerified && !token)}
+                      onClick={() =>
+                        showBookingTimes(
+                          selectedTimezone ?? detectedTimezone() ?? BOOKING_DEFAULT_TIMEZONE,
+                        )
+                      }
                     >
                       Book a call
                     </button>
@@ -747,28 +994,26 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
                   {error}
                 </p>
               ) : null}
+              {dictation.error || readAloud.error ? (
+                <p className={styles.error} role="alert">
+                  {dictation.error || readAloud.error}
+                </p>
+              ) : null}
 
               {!chatAvailable ? (
                 <p className={styles.offline}>
                   Chat is offline right now. Use the project brief, booking or email link above.
                 </p>
               ) : !botVerified ? (
-                <div className={styles.botCheck} data-verified={Boolean(token)}>
-                  <div className={styles.botCheckStatus} aria-live="polite">
-                    <span className={styles.botCheckIndicator} aria-hidden="true" />
-                    <span className={styles.botCheckLabel}>
-                      {token
-                        ? "Verified by Cloudflare · Ready to chat"
-                        : "Cloudflare security check · Verifying browser…"}
-                    </span>
-                  </div>
+                <div className={styles.botCheck} hidden={Boolean(token)}>
                   <TurnstileWidget
                     key={turnstileKey}
                     siteKey={turnstileSiteKey ?? ""}
                     action={CHAT_TURNSTILE_ACTION}
-                    onToken={(nextToken) => {
-                      setToken(nextToken);
-                      setError(null);
+                    appearance="interaction-only"
+                    onToken={(verifiedToken) => {
+                      setToken(verifiedToken);
+                      setError((current) => (current === BOT_CHECK_PENDING ? null : current));
                     }}
                     onError={() => setToken("")}
                   />
@@ -776,35 +1021,140 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
               ) : null}
 
               <form className={styles.form} onSubmit={onSubmit}>
-                <label htmlFor="clara-message" className={styles.srOnly}>
-                  Your message to Clara
-                </label>
-                <textarea
-                  ref={inputRef}
-                  id="clara-message"
-                  className={styles.input}
-                  rows={2}
-                  maxLength={2000}
-                  value={input}
-                  placeholder={
-                    activeDegraded
-                      ? "Chat is paused. Use the links above."
-                      : !botVerified && !token
-                        ? "Completing Cloudflare security check…"
-                        : "Type your message…"
-                  }
-                  disabled={!chatAvailable || Boolean(activeDegraded) || sending}
-                  onChange={(event) => setInput(event.target.value)}
-                  onKeyDown={onInputKeyDown}
-                />
-                <button
-                  type="submit"
-                  className={styles.send}
-                  disabled={!canSend}
-                  aria-label="Send message"
-                >
-                  Send
-                </button>
+                {voiceBusy ? (
+                  <>
+                    <button
+                      ref={discardButtonRef}
+                      type="button"
+                      className={styles.discard}
+                      aria-label={discardLabel}
+                      title={discardLabel}
+                      onClick={cancelDictation}
+                    >
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.7"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        aria-hidden="true"
+                        focusable="false"
+                      >
+                        <path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v5m4-5v5" />
+                      </svg>
+                    </button>
+                    <div className={styles.voiceStatus}>
+                      {recording ? (
+                        <span className={styles.recordingDot} aria-hidden="true" />
+                      ) : null}
+                      <span role="status">
+                        {recording
+                          ? "Recording"
+                          : voicePhase === "requesting"
+                            ? "Waiting for microphone…"
+                            : "Turning speech into text…"}
+                      </span>
+                      {recording ? (
+                        <span className={styles.voiceTimer} aria-hidden="true">
+                          0:{String(dictation.seconds).padStart(2, "0")}
+                        </span>
+                      ) : null}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <label htmlFor="clara-message" className={styles.srOnly}>
+                      Your message to Clara
+                    </label>
+                    <textarea
+                      ref={inputRef}
+                      id="clara-message"
+                      className={styles.input}
+                      rows={2}
+                      maxLength={CHAT_MESSAGE_MAX_CHARS}
+                      value={input}
+                      placeholder={
+                        activeDegraded
+                          ? "Chat is paused. Use the links above."
+                          : "Type your message…"
+                      }
+                      disabled={!chatAvailable || Boolean(activeDegraded) || sending}
+                      onChange={(event) => setInput(event.target.value)}
+                      onKeyDown={onInputKeyDown}
+                    />
+                  </>
+                )}
+                {showMic && (!voiceBusy || recording) ? (
+                  <button
+                    ref={micButtonRef}
+                    type="button"
+                    className={styles.microphone}
+                    data-recording={recording}
+                    aria-label={micLabel}
+                    title={micLabel}
+                    disabled={
+                      !recording && (sending || Boolean(activeDegraded) || (!botVerified && !token))
+                    }
+                    onClick={() => {
+                      if (recording) {
+                        dictation.stop();
+                      } else {
+                        voiceFocus.current = "mic";
+                        stopReadAloud();
+                        void dictation.record(transcribe);
+                      }
+                    }}
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      {recording ? (
+                        <rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor" />
+                      ) : (
+                        <g
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.7"
+                          strokeLinecap="round"
+                        >
+                          <rect x="9" y="3" width="6" height="12" rx="3" />
+                          <path d="M5 11v1a7 7 0 0 0 14 0v-1M12 19v3m-3 0h6" />
+                        </g>
+                      )}
+                    </svg>
+                  </button>
+                ) : null}
+                {!voiceBusy ? (
+                  <button
+                    type="submit"
+                    className={styles.send}
+                    disabled={!canSend}
+                    aria-label="Send message"
+                    title="Send message"
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <path d="M12 19V5m-6 6 6-6 6 6" />
+                    </svg>
+                  </button>
+                ) : null}
               </form>
               <p className={styles.footnote}>
                 <span>Clara is an AI assistant. A person can always help.</span>{" "}

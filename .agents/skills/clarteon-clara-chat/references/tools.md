@@ -9,7 +9,7 @@ Validate every argument in code. Tools return real results, and Clara must never
 | `check_availability` | `timezone`, optional `from`, `to` | A short list of slots with ids and times in the visitor's timezone | Uses the booking rules config. Reads free and busy time. Limits how many slots are returned |
 | `book_call` | `slot_id`, `name`, `email`, optional `notes` | Confirmed time and Meet link, or a clear error with fresh slots | Requires a prior read-back of name and email. Rechecks the slot. Idempotency key. Sends confirmations from the fixed sender. Rate limited |
 | `send_solution_brief` | `email`, `summary` | `sent: true` or an error | Only after the visitor agreed. One visitor address. Sent to the visitor and the team. No prices and no promises in the brief |
-| `handoff_to_team` | `reason`, optional `contact` | `handoff_id` | Alerts the team inbox. Collects only the contact details the visitor chose to give |
+| `handoff_to_team` | `reason` (a short excerpt of the visitor’s question or problem), `contact` (their reply email) | `handoff_id` | Sends the approved excerpt and reply address to the team inbox for a person to answer |
 
 Cap tool rounds per turn so a loop cannot burn the daily allowance.
 

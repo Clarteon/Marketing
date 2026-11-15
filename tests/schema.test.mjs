@@ -13,10 +13,34 @@ describe("database schema", () => {
     const schema = await readFile(resolve(process.cwd(), "db/schema.sql"), "utf8");
     const statements = sqlStatements(schema);
 
-    expect(statements).toHaveLength(15);
+    expect(statements).toHaveLength(24);
     expect(statements.every((statement) => /^(create|alter) /i.test(statement))).toBe(true);
     expect(
+      statements.some((statement) =>
+        statement.includes("add column if not exists status text not null default 'new'"),
+      ),
+    ).toBe(true);
+    expect(
+      statements.some(
+        (statement) =>
+          statement.includes("status in ('new', 'contacted', 'booked', 'closed')") &&
+          statement.includes("leads_status_check"),
+      ),
+    ).toBe(true);
+    expect(
       statements.some((statement) => statement.includes("create table if not exists bookings")),
+    ).toBe(true);
+    expect(
+      statements.some((statement) =>
+        statement.includes("create unique index if not exists bookings_active_slot_idx"),
+      ),
+    ).toBe(true);
+    expect(
+      statements.some(
+        (statement) =>
+          statement.includes("check (status in ('pending', 'confirmed', 'cancelled'))") &&
+          !statement.includes("check (status in ('pending', 'confirmed'))"),
+      ),
     ).toBe(true);
     expect(
       statements.some((statement) =>

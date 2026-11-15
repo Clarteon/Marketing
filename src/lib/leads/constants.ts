@@ -15,3 +15,13 @@ export const teamSizeLabels: Record<TeamSize, string> = {
   "200+": "More than 200 people",
   "not-sure": "Not sure yet",
 };
+
+export const leadStatuses = ["new", "contacted", "booked", "closed"] as const;
+export type LeadStatus = (typeof leadStatuses)[number];
+
+export const leadStatusLabels: Record<LeadStatus, string> = {
+  new: "New",
+  contacted: "Contacted",
+  booked: "Booked",
+  closed: "Closed",
+};

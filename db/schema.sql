@@ -25,15 +25,27 @@ create table if not exists leads (
 alter table leads drop constraint if exists leads_source_check;
 alter table leads add constraint leads_source_check check (source in ('website-form', 'clara-chat'));
 
+-- Follow-up tracking for the admin list. Status is the team's own label for where
+-- a lead stands; it never changes what the public form or Clara store.
+alter table leads add column if not exists status text not null default 'new';
+alter table leads add column if not exists updated_at timestamptz not null default now();
+
+alter table leads drop constraint if exists leads_status_check;
+alter table leads add constraint leads_status_check check (
+  status in ('new', 'contacted', 'booked', 'closed')
+);
+
 create index if not exists leads_created_at_idx on leads (created_at);
 create index if not exists leads_email_idx on leads (email);
 
 -- Discovery-call bookings. A pending row holds a slot while the calendar event
--- is created; a confirmed row is the durable record. The unique slot_start is
--- the database-level double-booking guard.
+-- is created; a confirmed row is the durable record; a cancelled row keeps the
+-- history but frees its time. The partial unique index is the database-level
+-- double-booking guard, and it deliberately ignores cancelled rows so a freed
+-- slot can be booked again.
 create table if not exists bookings (
   request_id text primary key,
-  slot_start timestamptz not null unique,
+  slot_start timestamptz not null,
   slot_end timestamptz not null,
   name text not null,
   email text not null,
@@ -45,8 +57,23 @@ create table if not exists bookings (
   calendar_link text,
   created_at timestamptz not null default now(),
   confirmed_at timestamptz,
-  constraint bookings_status_check check (status in ('pending', 'confirmed'))
+  cancelled_at timestamptz,
+  constraint bookings_status_check check (status in ('pending', 'confirmed', 'cancelled'))
 );
+
+-- Older databases carry a table-wide unique constraint on slot_start and a
+-- two-value status check. Create the narrower index first, then drop the old
+-- constraint: a duplicate live slot would fail the index and leave the
+-- constraint in place rather than lose the guard.
+create unique index if not exists bookings_active_slot_idx
+  on bookings (slot_start)
+  where status in ('pending', 'confirmed');
+alter table bookings drop constraint if exists bookings_slot_start_key;
+
+alter table bookings drop constraint if exists bookings_status_check;
+alter table bookings add constraint bookings_status_check
+  check (status in ('pending', 'confirmed', 'cancelled'));
+alter table bookings add column if not exists cancelled_at timestamptz;
 
 create index if not exists bookings_email_idx on bookings (email);
 create index if not exists bookings_created_at_idx on bookings (created_at);

@@ -1,7 +1,7 @@
 import "server-only";
 import { getConfig } from "@/lib/config";
 import { NeonBookingStore } from "./neon-store";
-import type { BookingRecord, CalendarEvent, NewBooking } from "./types";
+import type { BookingDetailsPatch, BookingRecord, CalendarEvent, NewBooking } from "./types";
 
 export interface SaveBookingResult {
   booking: BookingRecord;
@@ -15,12 +15,23 @@ export interface BookingStore {
   markEventCreated(requestId: string, event: CalendarEvent): Promise<void>;
   confirm(requestId: string, event: CalendarEvent): Promise<BookingRecord>;
   deletePending(requestId: string): Promise<void>;
+  updateBookingDetails(requestId: string, patch: BookingDetailsPatch): Promise<BookingRecord>;
+  rescheduleBooking(requestId: string, slotStart: Date, slotEnd: Date): Promise<BookingRecord>;
+  cancelBooking(requestId: string): Promise<BookingRecord>;
+  restoreConfirmed(requestId: string): Promise<BookingRecord>;
 }
 
 export class BookingStoreNotConfiguredError extends Error {
   constructor() {
     super("Booking storage is not configured.");
     this.name = "BookingStoreNotConfiguredError";
+  }
+}
+
+export class BookingNotFoundError extends Error {
+  constructor() {
+    super("The booking could not be found.");
+    this.name = "BookingNotFoundError";
   }
 }
 
@@ -31,6 +42,16 @@ export class SlotTakenError extends Error {
     super("The selected booking slot is already held.");
     this.name = "SlotTakenError";
     this.existing = existing;
+  }
+}
+
+export class BookingNotCancellableError extends Error {
+  readonly status: string;
+
+  constructor(status: string) {
+    super("Only a confirmed booking can be cancelled.");
+    this.name = "BookingNotCancellableError";
+    this.status = status;
   }
 }
 

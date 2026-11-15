@@ -73,6 +73,8 @@ function createFakeCalendar(overrides: Partial<CalendarProvider> = {}): Calendar
       meetLink: "https://meet.google.com/abc-defg-hij",
       calendarLink: "https://calendar.google.com/event?eid=x",
     })),
+    updateEvent: vi.fn(async () => {}),
+    deleteEvent: vi.fn(async () => {}),
     ...overrides,
   } as CalendarProvider;
 }
