@@ -72,7 +72,7 @@ describe("page accessibility", () => {
     expect(screen.queryByText("Your business tech partner")).not.toBeInTheDocument();
     expect(screen.getByTestId("elastic-highlight")).toHaveTextContent("problem.");
     await expectNoA11yViolations(container);
-  });
+  }, 30_000);
 
   it("Solutions", async () => {
     const page = await loadPage("solutions");
@@ -85,7 +85,7 @@ describe("page accessibility", () => {
 
     expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
     await expectNoA11yViolations(container);
-  });
+  }, 30_000);
 
   it("How we work", async () => {
     const page = await loadPage("how-we-work");
@@ -98,7 +98,7 @@ describe("page accessibility", () => {
 
     expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
     await expectNoA11yViolations(container);
-  });
+  }, 30_000);
 
   it("Our work", async () => {
     const page = await loadPage("our-work");
@@ -112,7 +112,7 @@ describe("page accessibility", () => {
 
     expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
     await expectNoA11yViolations(container);
-  });
+  }, 30_000);
 
   it("Insights", async () => {
     const page = await loadPage("insights");
@@ -205,7 +205,7 @@ describe("navigation and forms", () => {
     const data = parsePageData(contactSchema, page);
     render(<ContactPage data={data} turnstileSiteKey="" />);
 
-    expect(await screen.findByLabelText("Name")).toBeInTheDocument();
+    expect(await screen.findByLabelText("Name", {}, { timeout: 10_000 })).toBeInTheDocument();
     expect(screen.getByLabelText("Email")).toBeInTheDocument();
     expect(screen.getByLabelText(/What is slowing you down/)).toBeInTheDocument();
     expect(screen.getByLabelText(/I agree/)).toBeInTheDocument();

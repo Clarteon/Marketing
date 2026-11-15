@@ -84,7 +84,7 @@ test("diagram fits phone, tablet and desktop with readable targets and stable de
     expect(box.x).toBeGreaterThanOrEqual(0);
     expect(box.x + box.width).toBeLessThanOrEqual(width);
     const nodes = diagram.getByRole("button").filter({ has: page.locator("svg") });
-    await expect(nodes).toHaveCount(8);
+    await expect(nodes).toHaveCount(12);
     for (const node of await nodes.all()) {
       const target = (await node.boundingBox())!;
       expect(target.width).toBeGreaterThanOrEqual(44);

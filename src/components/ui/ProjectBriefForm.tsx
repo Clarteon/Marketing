@@ -160,12 +160,6 @@ export function ProjectBriefForm({ turnstileSiteKey, className }: ProjectBriefFo
 
   return (
     <div className={cx(styles.container, className)}>
-      {/* 4 Precision Viewfinder Corner Reticles */}
-      <div className={cx(styles.reticleCorner, styles.cornerTopLeft)} aria-hidden="true" />
-      <div className={cx(styles.reticleCorner, styles.cornerTopRight)} aria-hidden="true" />
-      <div className={cx(styles.reticleCorner, styles.cornerBottomLeft)} aria-hidden="true" />
-      <div className={cx(styles.reticleCorner, styles.cornerBottomRight)} aria-hidden="true" />
-
       <form ref={formRef} className={styles.form} onSubmit={handleSubmit}>
         {/* Keep the required contact fields visible. */}
         <div className={styles.formGrid}>

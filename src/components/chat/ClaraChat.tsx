@@ -34,7 +34,6 @@ interface ChatEvent {
 const MAX_CLIENT_MESSAGES = 20;
 const WELCOME = "Hi, I’m Clara, Clarteon’s AI assistant. What is slowing your team down right now?";
 
-// Model links can only navigate to the site, its mailbox, or meeting providers.
 function chatLink(value: string): string | undefined {
   if (value === `mailto:${site.email}`) return value;
   if (/^[\/#]/.test(value) && !/[\\\s]/.test(value) && !value.startsWith("//")) return value;
@@ -49,7 +48,7 @@ function chatLink(value: string): string | undefined {
     )
       return url.href;
   } catch {
-    // Unsupported or incomplete links stay readable while the reply streams.
+    return undefined;
   }
 }
 
@@ -109,6 +108,7 @@ async function readEvents(response: Response, onEvent: (event: ChatEvent) => voi
 export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [inHeroSection, setInHeroSection] = useState(false);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -132,6 +132,39 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
   const sendingRef = useRef(false);
 
   const chatAvailable = Boolean(turnstileSiteKey);
+
+  useEffect(() => {
+    let rafId: number | null = null;
+    let lastInHero: boolean | null = null;
+    const heroMini = document.querySelector<HTMLElement>('[data-testid="hero-mini-clara"]');
+    const heroSection = heroMini ? (heroMini.closest("section") ?? heroMini) : null;
+
+    const evaluateHeroVisibility = () => {
+      rafId = null;
+      const next = heroSection ? heroSection.getBoundingClientRect().bottom > 140 : false;
+      if (lastInHero !== next) {
+        lastInHero = next;
+        setInHeroSection(next);
+      }
+    };
+
+    const scheduleCheck = () => {
+      if (rafId === null) {
+        rafId = window.requestAnimationFrame(evaluateHeroVisibility);
+      }
+    };
+
+    evaluateHeroVisibility();
+    if (!heroSection) return;
+
+    window.addEventListener("scroll", scheduleCheck, { passive: true });
+    window.addEventListener("resize", scheduleCheck, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", scheduleCheck);
+      window.removeEventListener("resize", scheduleCheck);
+      if (rafId !== null) window.cancelAnimationFrame(rafId);
+    };
+  }, [pathname]);
 
   useEffect(() => {
     if (!open) return;
@@ -236,6 +269,20 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
     window.setTimeout(() => inputRef.current?.focus(), 0);
   }
 
+  function resetChat() {
+    abortRef.current?.abort();
+    abortRef.current = null;
+    sendingRef.current = false;
+    setSending(false);
+    sessionIdRef.current = newSessionId();
+    setMessages([{ id: "welcome", role: "assistant", content: WELCOME }]);
+    setInput("");
+    setError(null);
+    setDegraded(null);
+    setConfirmation(null);
+    window.setTimeout(() => inputRef.current?.focus(), 0);
+  }
+
   function closeChat() {
     abortRef.current?.abort();
     abortRef.current = null;
@@ -323,7 +370,7 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
           const body = (await response.json()) as { error?: unknown };
           if (typeof body.error === "string") code = body.error;
         } catch {
-          // Keep the generic code.
+          void 0;
         }
         handleHttpError(code);
         return;
@@ -378,6 +425,7 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
   function onInputKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
+      if (!botVerified && !token) return;
       void sendMessage(input);
     }
   }
@@ -402,7 +450,9 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
       <button
         ref={bubbleRef}
         type="button"
-        className={`${styles.bubble} ${open ? styles.bubbleOpen : ""}`}
+        className={`${styles.bubble} ${open ? styles.bubbleOpen : ""} ${
+          inHeroSection && !open ? styles.bubbleHeroHidden : ""
+        }`}
         aria-label="Chat with Clara"
         aria-expanded={open}
         aria-controls="clara-chat-panel"
@@ -463,104 +513,162 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
           ref={panelRef}
           id="clara-chat-panel"
           className={styles.panel}
+          data-stage={privacyAccepted ? "chat" : "consent"}
           role="dialog"
           aria-modal="true"
           aria-labelledby="clara-chat-title"
         >
           <header className={styles.header}>
-            <div>
-              <h2 id="clara-chat-title" className={styles.title}>
-                Clara
-              </h2>
-              <p className={styles.subtitle}>Clarteon’s AI assistant</p>
+            <div className={styles.headerIdentity}>
+              <span className={styles.headerAvatar} aria-hidden="true">
+                <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="32" height="32" rx="9" fill="#C6F432" />
+                  <path
+                    d="M21.3 10a8 8 0 1 0 0 12"
+                    stroke="#0A0A0A"
+                    strokeWidth="3.2"
+                    strokeLinecap="round"
+                  />
+                  <circle cx="16" cy="16" r="2.6" fill="#0A0A0A" />
+                </svg>
+              </span>
+              <div>
+                <h2 id="clara-chat-title" className={styles.title}>
+                  Clara
+                </h2>
+                <p className={styles.subtitle}>Clarteon’s AI assistant</p>
+              </div>
             </div>
-            <button
-              type="button"
-              className={styles.closeButton}
-              aria-label="Close chat"
-              onClick={closeChat}
-            >
-              Close
-            </button>
+            <div className={styles.headerActions}>
+              {privacyAccepted ? (
+                <button
+                  type="button"
+                  className={styles.resetButton}
+                  aria-label="Reset conversation"
+                  onClick={resetChat}
+                >
+                  Reset
+                </button>
+              ) : null}
+              <button
+                type="button"
+                className={styles.closeButton}
+                aria-label="Close chat"
+                onClick={closeChat}
+              >
+                Close
+              </button>
+            </div>
           </header>
 
           <div
             ref={listRef}
             className={styles.messages}
+            data-stage={privacyAccepted ? "chat" : "consent"}
             role="log"
             aria-live="polite"
             aria-relevant="additions text"
           >
             {!privacyAccepted ? (
               <div className={styles.privacy}>
-                <h3 className={styles.privacyTitle}>Before we start</h3>
-                <p>
-                  I’m Clara, Clarteon’s AI assistant. Your messages are sent to our AI provider,
-                  Groq, so I can reply. Please don’t share passwords, payment details or other
-                  sensitive information.
-                </p>
-                <p>
-                  Read the{" "}
-                  <Link href="/privacy" className={styles.inlineLink}>
-                    Privacy page
-                  </Link>{" "}
-                  for how chats are handled.
-                </p>
-                <Button type="button" data-chat-initial-focus onClick={acceptPrivacy}>
-                  I understand
-                </Button>
+                <div className={styles.privacyBody}>
+                  <span className={styles.privacyBadge}>Private session</span>
+                  <h3 className={styles.privacyTitle}>Before we start</h3>
+                  <p className={styles.privacyLead}>
+                    I’m Clara, Clarteon’s AI assistant. Your messages are sent to our AI provider so
+                    I can reply. Please don’t share passwords, payment details or other sensitive
+                    information.
+                  </p>
+                  <ul className={styles.privacyHighlights} aria-label="What Clara can help with">
+                    <li>Diagnose workflow bottlenecks and manual admin</li>
+                    <li>Check live availability and book a Google Meet call</li>
+                    <li>Send a project brief to the Clarteon team</li>
+                  </ul>
+                </div>
+                <div className={styles.privacyFooter}>
+                  <p className={styles.privacyNote}>
+                    Read the{" "}
+                    <Link href="/privacy" className={styles.inlineLink}>
+                      Privacy page
+                    </Link>{" "}
+                    for how chats are handled.
+                  </p>
+                  <Button
+                    type="button"
+                    data-chat-initial-focus
+                    className={styles.privacyAcceptButton}
+                    onClick={acceptPrivacy}
+                  >
+                    I understand
+                  </Button>
+                </div>
               </div>
             ) : (
               <>
-                {messages.map((item) => (
-                  <div
-                    key={item.id}
-                    className={`${styles.message} ${
-                      item.role === "user" ? styles.userMessage : styles.assistantMessage
-                    }`}
-                  >
-                    <span className={styles.speaker}>{item.role === "user" ? "You" : "Clara"}</span>
-                    {item.role === "assistant" ? (
-                      <div className={styles.assistantText}>
-                        <ReactMarkdown
-                          allowedElements={["p", "strong", "em", "ul", "ol", "li", "a", "br"]}
-                          unwrapDisallowed
-                          urlTransform={chatLink}
-                          components={{
-                            a: ({ href, children }) =>
-                              href === "#clara-timezone" ? null : href ? (
-                                <a href={href}>{children}</a>
-                              ) : (
-                                <span>{children}</span>
-                              ),
+                {messages.map((item) => {
+                  const isPendingReply = item.role === "assistant" && item.content.length === 0;
+                  if (isPendingReply && !sending) return null;
+
+                  return (
+                    <div
+                      key={item.id}
+                      className={`${styles.message} ${
+                        item.role === "user" ? styles.userMessage : styles.assistantMessage
+                      }`}
+                    >
+                      <span className={styles.speaker}>
+                        {item.role === "user" ? "You" : "Clara"}
+                      </span>
+                      {item.role === "assistant" ? (
+                        isPendingReply ? (
+                          <p className={styles.typing} aria-label="Clara is replying">
+                            <span />
+                            <span />
+                            <span />
+                          </p>
+                        ) : (
+                          <div className={styles.assistantText}>
+                            <ReactMarkdown
+                              allowedElements={["p", "strong", "em", "ul", "ol", "li", "a", "br"]}
+                              unwrapDisallowed
+                              urlTransform={chatLink}
+                              components={{
+                                a: ({ href, children }) =>
+                                  href === "#clara-timezone" ? null : href ? (
+                                    <a href={href}>{children}</a>
+                                  ) : (
+                                    <span>{children}</span>
+                                  ),
+                              }}
+                            >
+                              {item.content}
+                            </ReactMarkdown>
+                          </div>
+                        )
+                      ) : (
+                        <p className={styles.messageText}>{item.content}</p>
+                      )}
+                      {item.role === "assistant" &&
+                      item.id === messages.at(-1)?.id &&
+                      item.content.includes("](#clara-timezone)") &&
+                      !sending &&
+                      !activeDegraded &&
+                      !error &&
+                      !confirmation ? (
+                        <TimezoneChoices
+                          onChoose={(zone, label) => {
+                            setSelectedTimezone(zone);
+                            void sendMessage(
+                              `Show discovery call times in ${label} (${zone}).`,
+                              undefined,
+                              zone,
+                            );
                           }}
-                        >
-                          {item.content}
-                        </ReactMarkdown>
-                      </div>
-                    ) : (
-                      <p className={styles.messageText}>{item.content}</p>
-                    )}
-                    {item.role === "assistant" &&
-                    item.id === messages.at(-1)?.id &&
-                    item.content.includes("](#clara-timezone)") &&
-                    !sending &&
-                    !activeDegraded &&
-                    !error &&
-                    !confirmation ? (
-                      <TimezoneChoices
-                        onChoose={(zone, label) => {
-                          setSelectedTimezone(zone);
-                          void sendMessage(
-                            `Show discovery call times in ${label} (${zone}).`,
-                            undefined,
-                            zone,
-                          );
-                        }}
-                      />
-                    ) : null}
-                  </div>
-                ))}
+                        />
+                      ) : null}
+                    </div>
+                  );
+                })}
 
                 {confirmation ? (
                   <div className={styles.degraded} role="group" aria-label="Review action details">
@@ -588,17 +696,6 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
                   </div>
                 ) : null}
 
-                {sending ? (
-                  <div className={`${styles.message} ${styles.assistantMessage}`}>
-                    <span className={styles.speaker}>Clara</span>
-                    <p className={styles.typing} aria-label="Clara is replying">
-                      <span />
-                      <span />
-                      <span />
-                    </p>
-                  </div>
-                ) : null}
-
                 {activeDegraded ? (
                   <div className={styles.degraded} role="status">
                     <p>{activeDegraded}</p>
@@ -618,18 +715,21 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
                   <div className={styles.quickStarts} aria-label="Quick start questions">
                     <button
                       type="button"
+                      disabled={chatAvailable && !botVerified && !token}
                       onClick={() => void sendMessage("I have a problem to solve.")}
                     >
                       I have a problem to solve
                     </button>
                     <button
                       type="button"
+                      disabled={chatAvailable && !botVerified && !token}
                       onClick={() => void sendMessage("What does Clarteon do?")}
                     >
                       What does Clarteon do?
                     </button>
                     <button
                       type="button"
+                      disabled={chatAvailable && !botVerified && !token}
                       onClick={() => void sendMessage("I’d like to book a discovery call.")}
                     >
                       Book a call
@@ -653,12 +753,23 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
                   Chat is offline right now. Use the project brief, booking or email link above.
                 </p>
               ) : !botVerified ? (
-                <div className={styles.botCheck}>
+                <div className={styles.botCheck} data-verified={Boolean(token)}>
+                  <div className={styles.botCheckStatus} aria-live="polite">
+                    <span className={styles.botCheckIndicator} aria-hidden="true" />
+                    <span className={styles.botCheckLabel}>
+                      {token
+                        ? "Verified by Cloudflare · Ready to chat"
+                        : "Cloudflare security check · Verifying browser…"}
+                    </span>
+                  </div>
                   <TurnstileWidget
                     key={turnstileKey}
                     siteKey={turnstileSiteKey ?? ""}
                     action={CHAT_TURNSTILE_ACTION}
-                    onToken={setToken}
+                    onToken={(nextToken) => {
+                      setToken(nextToken);
+                      setError(null);
+                    }}
                     onError={() => setToken("")}
                   />
                 </div>
@@ -676,7 +787,11 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
                   maxLength={2000}
                   value={input}
                   placeholder={
-                    activeDegraded ? "Chat is paused. Use the links above." : "Type your message…"
+                    activeDegraded
+                      ? "Chat is paused. Use the links above."
+                      : !botVerified && !token
+                        ? "Completing Cloudflare security check…"
+                        : "Type your message…"
                   }
                   disabled={!chatAvailable || Boolean(activeDegraded) || sending}
                   onChange={(event) => setInput(event.target.value)}
@@ -692,7 +807,7 @@ export function ClaraChat({ turnstileSiteKey }: ClaraChatProps) {
                 </button>
               </form>
               <p className={styles.footnote}>
-                Clara is an AI assistant. For anything important, a person can help.{" "}
+                <span>Clara is an AI assistant. A person can always help.</span>{" "}
                 <Link href="/privacy" className={styles.inlineLink}>
                   Privacy
                 </Link>

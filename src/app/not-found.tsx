@@ -13,7 +13,6 @@ export default function NotFound() {
     <Page>
       <Section>
         <div className={styles.sectionHeader}>
-          <p className={styles.eyebrow}>404</p>
           <h1 className={styles.sectionTitle}>This page does not exist.</h1>
           <p className={styles.sectionIntro}>
             The link may be old, or the page may have moved. Start again from the home page.

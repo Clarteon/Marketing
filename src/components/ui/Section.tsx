@@ -1,5 +1,6 @@
 import type { HTMLAttributes, ReactNode, Ref } from "react";
 import { cx } from "@/lib/cx";
+import { SectionSpotlight } from "./SectionSpotlight";
 import styles from "./ui.module.css";
 
 export type Tone = "paper" | "stone" | "ink" | "lime";
@@ -9,6 +10,7 @@ interface SectionProps extends Omit<HTMLAttributes<HTMLElement>, "children"> {
   tone?: Tone;
   width?: Width;
   background?: ReactNode;
+  after?: ReactNode;
   children: ReactNode;
   ref?: Ref<HTMLElement>;
 }
@@ -24,6 +26,7 @@ export function Section({
   tone = "paper",
   width = "default",
   background,
+  after,
   className,
   children,
   ref,
@@ -31,10 +34,11 @@ export function Section({
 }: SectionProps) {
   return (
     <section ref={ref} className={cx(styles.section, toneClass[tone], className)} {...props}>
-      {background}
+      {background ?? <SectionSpotlight />}
       <div className={cx(styles.sectionInner, width === "narrow" && styles.widthNarrow)}>
         {children}
       </div>
+      {after}
     </section>
   );
 }

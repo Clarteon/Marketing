@@ -28,12 +28,39 @@ export function DeferredForm({
     const activate = () => {
       if (active) setAttempt((current) => current || 1);
     };
+    const sectionId = node.closest("[id]")?.id;
+    const matchesHash = () => Boolean(sectionId && window.location.hash === `#${sectionId}`);
+
+    if (matchesHash()) {
+      queueMicrotask(activate);
+    }
+
+    const onHashChange = () => {
+      if (matchesHash()) activate();
+    };
+
+    const onAnchorClick = (event: MouseEvent) => {
+      if (!sectionId || !(event.target instanceof Element)) return;
+      const anchor = event.target.closest("a[href]");
+      if (!anchor) return;
+      const href = anchor.getAttribute("href");
+      if (href === `#${sectionId}` || href?.endsWith(`#${sectionId}`)) {
+        activate();
+      }
+    };
+
+    window.addEventListener("hashchange", onHashChange);
+    document.addEventListener("click", onAnchorClick, true);
+
     if (typeof IntersectionObserver !== "function") {
       queueMicrotask(activate);
       return () => {
         active = false;
+        window.removeEventListener("hashchange", onHashChange);
+        document.removeEventListener("click", onAnchorClick, true);
       };
     }
+
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
         activate();
@@ -43,6 +70,8 @@ export function DeferredForm({
     observer.observe(node);
     return () => {
       active = false;
+      window.removeEventListener("hashchange", onHashChange);
+      document.removeEventListener("click", onAnchorClick, true);
       observer.disconnect();
     };
   }, []);

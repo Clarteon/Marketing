@@ -3,9 +3,12 @@ import { describe, expect, it } from "vitest";
 import { BookingSection } from "@/components/ui/BookingSection";
 import { Button } from "@/components/ui/Button";
 import { CoordinateGrid } from "@/components/ui/CoordinateGrid";
+import { HalftoneClusterField } from "@/components/ui/HalftoneClusterField";
 import { HeroFlowVisualization } from "@/components/ui/HeroFlowVisualization";
 import { Logo } from "@/components/ui/Logo";
 import { PageHero } from "@/components/ui/PageHero";
+import { ServicePhotoCollage } from "@/components/ui/ServicePhotoCollage";
+import { WorkShowcase } from "@/components/pages/WorkShowcase";
 
 describe("design system", () => {
   it("renders a link button for navigation", () => {
@@ -195,5 +198,74 @@ describe("design system", () => {
     fireEvent.click(reset);
     expect(reset).toBeDisabled();
     expect(screen.getByRole("status")).toHaveTextContent("Select an icon to learn more.");
+  });
+
+  it("renders frameless halftone cluster field and service photo collage", () => {
+    render(
+      <>
+        <HalftoneClusterField tone="ink" variant="hero" />
+        <ServicePhotoCollage
+          primary={{
+            src: "/images/services/workflow-mapping.jpg",
+            alt: "Two teammates mapping workflow rules",
+            caption: "Problem diagnosis & workflow mapping",
+          }}
+          secondary={{
+            src: "/images/services/software-build.jpg",
+            alt: "Software engineer building application",
+            caption: "Custom automation & software build",
+          }}
+        />
+      </>,
+    );
+
+    const field = screen.getByTestId("halftone-cluster-field");
+    expect(field).toHaveAttribute("aria-hidden", "true");
+    expect(field.querySelector("canvas")).toBeInTheDocument();
+    expect(screen.getByAltText("Two teammates mapping workflow rules")).toBeInTheDocument();
+    expect(screen.getByText("Problem diagnosis & workflow mapping")).toBeInTheDocument();
+  });
+
+  it("filters case study entries interactively by problem area", () => {
+    render(
+      <WorkShowcase
+        items={[
+          {
+            type: "case-study",
+            title: "Automated Order Processing Portal",
+            summary: "Direct online ordering instead of spreadsheet re-entry.",
+            status: "published",
+            tags: ["automation"],
+            synonyms: [],
+            order: 1,
+            slug: "order-portal",
+            category: "operations",
+            categoryLabel: "Orders, stock & payments",
+            solution_type: "Custom web portal",
+          },
+          {
+            type: "case-study",
+            title: "Conversational Triage Desk",
+            summary: "Answers common customer requests and escalates cleanly.",
+            status: "published",
+            tags: ["chatbots"],
+            synonyms: [],
+            order: 2,
+            slug: "triage-desk",
+            category: "conversations",
+            categoryLabel: "Customer support & AI coaching",
+            solution_type: "AI workflow assistant",
+          },
+        ]}
+      />,
+    );
+
+    expect(screen.getByText("Automated Order Processing Portal")).toBeInTheDocument();
+    expect(screen.getByText("Conversational Triage Desk")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: /Customer support/i }));
+
+    expect(screen.queryByText("Automated Order Processing Portal")).not.toBeInTheDocument();
+    expect(screen.getByText("Conversational Triage Desk")).toBeInTheDocument();
   });
 });

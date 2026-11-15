@@ -1,0 +1,116 @@
+.marquee {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  overflow: hidden;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+  background: var(--ink);
+  padding-block: clamp(0.95rem, 1.65vw, 1.35rem);
+}
+
+.marquee::before,
+.marquee::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: clamp(1.5rem, 5vw, 4rem);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.marquee::before {
+  left: 0;
+  background: linear-gradient(90deg, var(--ink) 0%, transparent 100%);
+}
+
+.marquee::after {
+  right: 0;
+  background: linear-gradient(270deg, var(--ink) 0%, transparent 100%);
+}
+
+.track {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  width: max-content;
+  will-change: transform;
+  animation: solution-marquee-scroll 30s linear infinite;
+}
+
+.marquee:hover .track,
+.marquee:focus-within .track {
+  animation-play-state: paused;
+}
+
+.list {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.label {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.0625rem, 1.55vw, 1.4rem);
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+  color: var(--paper);
+}
+
+.dot {
+  width: 0.42rem;
+  height: 0.42rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--lime);
+  box-shadow: 0 0 8px rgba(198, 244, 50, 0.45);
+  margin-inline: clamp(1.25rem, 2.8vw, 2.5rem);
+}
+
+@keyframes solution-marquee-scroll {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(-25%, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee::before,
+  .marquee::after {
+    display: none;
+  }
+
+  .track {
+    animation: none;
+    width: 100%;
+    justify-content: center;
+    padding-inline: 1.5rem;
+  }
+
+  .list {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.65rem 0;
+  }
+
+  .duplicate {
+    display: none;
+  }
+}

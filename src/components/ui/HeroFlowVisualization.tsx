@@ -8,11 +8,15 @@ type NodeKey =
   | "manual"
   | "disconnected"
   | "messages"
+  | "approvals"
+  | "visibility"
   | "software"
   | "automation"
   | "integration"
   | "assistant"
-  | "custom";
+  | "crm"
+  | "custom"
+  | "web";
 
 type FlowNode = {
   id: NodeKey;
@@ -21,12 +25,13 @@ type FlowNode = {
   icon: ReactNode;
 };
 
-// Possible directions to explore, rather than promises of a fixed solution.
 const relationships: Partial<Record<NodeKey, NodeKey[]>> = {
   manual: ["automation", "integration"],
-  disconnected: ["integration", "automation"],
-  messages: ["assistant", "integration"],
-  software: ["custom", "integration"],
+  disconnected: ["integration", "automation", "crm"],
+  messages: ["assistant", "crm", "web"],
+  approvals: ["automation", "custom"],
+  visibility: ["crm", "integration", "custom"],
+  software: ["custom", "web", "integration"],
 };
 
 const challenges: FlowNode[] = [
@@ -34,27 +39,46 @@ const challenges: FlowNode[] = [
     id: "manual",
     label: "Copying & pasting data",
     description:
-      "Workflow automation and connected systems can reduce repeated data entry, giving your team more time for meaningful work.",
+      "Your team retypes the same order, invoice, or client details across email, spreadsheets, and internal apps. Workflow automation and connected systems pass that record across every tool the moment it arrives.",
     icon: (
-      <path
-        fillRule="evenodd"
-        d="M6 2h8l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm8 1.8V8h4.2L14 3.8ZM8 11a1 1 0 0 0 0 2h7a1 1 0 0 0 0-2H8Zm0 4a1 1 0 0 0 0 2h7a1 1 0 0 0 0-2H8Zm0 4a1 1 0 0 0 0 2h4a1 1 0 0 0 0-2H8Z"
-      />
+      <>
+        <rect
+          x="4.5"
+          y="4.5"
+          width="10.5"
+          height="12.5"
+          rx="2"
+          stroke="currentColor"
+          strokeWidth="1.5"
+        />
+        <path
+          d="M9.5 7.5h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-8a2 2 0 0 1-2-2v-2.5"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        />
+      </>
     ),
   },
   {
     id: "disconnected",
     label: "Apps that don’t talk",
     description:
-      "System integrations can keep information in sync. Workflow automation can then move work between your tools.",
+      "Sales, operations, and billing each keep their own version of the truth because your software cannot share updates. System integrations sync records across your apps automatically so nobody has to export CSVs by hand.",
     icon: (
       <>
         <path
-          fillRule="evenodd"
-          d="M4 3h6a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm1 3v4h4V6H5Zm9 5h6a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-6a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2Zm1 3v4h4v-4h-4Z"
+          d="M9.5 14.5 7.2 16.8a3.2 3.2 0 0 1-4.5-4.5l2.3-2.3M14.5 9.5l2.3-2.3a3.2 3.2 0 0 1 4.5 4.5l-2.3 2.3"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
         />
-        <rect x="16" y="4" width="5" height="2" rx="1" />
-        <rect x="3" y="18" width="5" height="2" rx="1" />
+        <path
+          d="M9 9V6.5M6.5 9H9M15 15v2.5M17.5 15H15"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        />
       </>
     ),
   },
@@ -62,24 +86,75 @@ const challenges: FlowNode[] = [
     id: "messages",
     label: "Missed messages & leads",
     description:
-      "An AI assistant can answer common questions. Connected systems can help route enquiries to the right person.",
+      "Prospects ask questions after hours or during busy shifts and move on when nobody replies in time. An AI assistant answers common questions from your approved docs, qualifies the lead, and books the call on your calendar.",
     icon: (
-      <path
-        fillRule="evenodd"
-        d="M5 3h14a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H9l-5 3v-3.2A3 3 0 0 1 2 16V6a3 3 0 0 1 3-3Zm2 6a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Zm5 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Zm5 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z"
-      />
+      <>
+        <path
+          d="M4.5 6.5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v7.5a2 2 0 0 1-2 2H9l-4.5 3.5V6.5Z"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M8.5 9.25h7M8.5 12.25h4.5"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        />
+      </>
+    ),
+  },
+  {
+    id: "approvals",
+    label: "Slow handoffs & approvals",
+    description:
+      "Requests sit buried in chat threads or email chains because nobody knows whose turn it is to sign off. Automated routing notifies the right reviewer right away, tracks status in one place, and keeps work moving.",
+    icon: (
+      <>
+        <circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="1.5" />
+        <path
+          d="M12 7.5V12l3.2 2"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </>
+    ),
+  },
+  {
+    id: "visibility",
+    label: "Scattered client records",
+    description:
+      "Customer history lives scattered across inboxes, notebooks, and spreadsheets, so follow-ups slip through the cracks. A clean CRM pipeline linked to your forms and inbox gives the whole team one reliable timeline for every client.",
+    icon: (
+      <>
+        <path
+          d="M12 4.5 19.5 8.5 12 12.5 4.5 8.5 12 4.5Z"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinejoin="round"
+        />
+        <path
+          d="m4.5 12.25 7.5 4 7.5-4M4.5 16l7.5 4 7.5-4"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </>
     ),
   },
   {
     id: "software",
     label: "Clunky software",
     description:
-      "Custom software can fit the way your team works, with integrations to keep useful existing tools connected.",
+      "Off-the-shelf software forces your staff through awkward workarounds and extra clicks that slow down daily work. We build focused custom software and web portals shaped around how your team actually operates.",
     icon: (
-      <path
-        fillRule="evenodd"
-        d="M5 3h14a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3Zm0 3v2h14V6H5Zm4 5a1 1 0 0 0-1 1H6v2h2a1 1 0 0 0 2 0h8v-2h-8a1 1 0 0 0-1-1Zm6 5a1 1 0 0 0-1 1H6v2h8a1 1 0 0 0 2 0h2v-2h-2a1 1 0 0 0-1-1Z"
-      />
+      <>
+        <rect x="4" y="5" width="16" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M4 9h16M9 9v10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      </>
     ),
   },
 ];
@@ -89,33 +164,34 @@ const solutions: FlowNode[] = [
     id: "automation",
     label: "Workflow automation",
     description:
-      "Move routine tasks between steps automatically, with clear rules and people involved where judgement matters.",
+      "Move routine tasks between steps automatically, with clear rules and people involved where judgement matters. Your team spends its time on exceptions and customer care instead of repetitive admin.",
     icon: (
-      <path
-        fillRule="evenodd"
-        d="m10 2-.5 3-1.8.8-2.5-1.7-2.1 3.6 2.5 1.8-.2 2 .2 2-2.5 1.8 2.1 3.6 2.5-1.7 1.8.8.5 3h4l.5-3 1.8-.8 2.5 1.7 2.1-3.6-2.5-1.8.2-2-.2-2 2.5-1.8-2.1-3.6-2.5 1.7-1.8-.8-.5-3h-4Zm2 6a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z"
-      />
+      <>
+        <path
+          d="M5.5 8.5h11a2.5 2.5 0 0 1 2.5 2.5v1M18.5 15.5h-11A2.5 2.5 0 0 1 5 13v-1"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        />
+        <path
+          d="m14 6 2.5 2.5L14 11M10 13l-2.5 2.5L10 18"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </>
     ),
   },
   {
     id: "integration",
     label: "System integrations",
     description:
-      "Connect the tools you already use so information can move between them without repeated copying and pasting.",
+      "Connect the apps you already rely on through dependable APIs and webhooks so updates flow in real time. Change a record once and every connected tool reflects it within seconds.",
     icon: (
       <>
-        <rect x="10.5" y="4" width="3" height="4" rx="1.5" />
-        <rect x="10.5" y="16" width="3" height="4" rx="1.5" />
-        <rect x="4" y="10.5" width="4" height="3" rx="1.5" />
-        <rect x="16" y="10.5" width="4" height="3" rx="1.5" />
-        <circle cx="12" cy="4" r="3" />
-        <circle cx="4" cy="12" r="3" />
-        <circle cx="20" cy="12" r="3" />
-        <circle cx="12" cy="20" r="3" />
-        <path
-          fillRule="evenodd"
-          d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0 3a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z"
-        />
+        <circle cx="9.25" cy="12" r="4.75" stroke="currentColor" strokeWidth="1.5" />
+        <circle cx="14.75" cy="12" r="4.75" stroke="currentColor" strokeWidth="1.5" />
       </>
     ),
   },
@@ -123,27 +199,69 @@ const solutions: FlowNode[] = [
     id: "assistant",
     label: "AI assistants",
     description:
-      "Help visitors find answers to common questions and guide enquiries toward a useful next step, with a handoff to your team.",
+      "Give visitors and staff an assistant grounded in your approved knowledge that answers questions, qualifies enquiries, and books discovery calls. When a conversation needs a person, it hands over the full context cleanly.",
     icon: (
-      <path
-        fillRule="evenodd"
-        d="M11 2h2v3h5a4 4 0 0 1 4 4v8a3 3 0 0 1-3 3h-9l-5 3v-3.2A4 4 0 0 1 2 16V9a4 4 0 0 1 4-4h5V2Zm-4 8v4h3v-4H7Zm7 0v4h3v-4h-3Z"
-      />
+      <>
+        <path
+          d="M16.2 7.8a6 6 0 1 0 0 8.4"
+          stroke="currentColor"
+          strokeWidth="1.75"
+          strokeLinecap="round"
+        />
+        <circle cx="12" cy="12" r="1.75" fill="currentColor" />
+      </>
+    ),
+  },
+  {
+    id: "crm",
+    label: "CRM & lead pipelines",
+    description:
+      "Organize every enquiry, client record, and follow-up task into a clear pipeline your team will actually use. Automated reminders and form syncs make sure every lead has an owner and a next step.",
+    icon: (
+      <>
+        <rect x="4" y="5" width="16" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M9.33 5v14M14.66 5v14" stroke="currentColor" strokeWidth="1.5" />
+      </>
     ),
   },
   {
     id: "custom",
     label: "Custom software",
     description:
-      "Build a focused tool around your business process when existing software makes everyday work harder than it needs to be.",
+      "Replace fragile spreadsheets and rigid subscription tools with an internal application built around your exact workflow. We design fast, straightforward interfaces that your staff can pick up on day one.",
     icon: (
       <>
-        <path d="M7.4 5.5 1.7 11a1.4 1.4 0 0 0 0 2l5.7 5.5 2-2.1L4.9 12l4.5-4.4-2-2.1Zm9.2 0-2 2.1 4.5 4.4-4.5 4.4 2 2.1 5.7-5.5a1.4 1.4 0 0 0 0-2l-5.7-5.5Z" />
-        <rect x="10.5" y="3" width="3" height="18" rx="1.5" transform="rotate(15 12 12)" />
+        <path
+          d="m8.5 9-3.5 3 3.5 3M15.5 9l3.5 3-3.5 3M13.25 7.5l-2.5 9"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </>
+    ),
+  },
+  {
+    id: "web",
+    label: "Websites & client portals",
+    description:
+      "Launch a fast website or client portal that explains your work clearly, captures structured project briefs, and books calls directly. Visitors get a clear path to work with you without back-and-forth emails.",
+    icon: (
+      <>
+        <rect x="4" y="5" width="16" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
+        <path
+          d="M4 9h16M10.5 15.5l4-4M11.5 11.5h3v3"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
       </>
     ),
   },
 ];
+
+const allNodes: FlowNode[] = [...challenges, ...solutions];
 
 function DiagramNode({
   node,
@@ -184,13 +302,12 @@ function DiagramNode({
       onBlur={() => onFocus(null)}
       onClick={onSelect}
     >
-      <span className={styles.beaconPip} aria-hidden="true" />
       <div className={styles.iconWrapper}>
         <svg
-          width="28"
-          height="28"
+          width="22"
+          height="22"
           viewBox="0 0 24 24"
-          fill="currentColor"
+          fill="none"
           aria-hidden="true"
           focusable="false"
         >
@@ -207,23 +324,24 @@ function DiagramNode({
 export function HeroFlowVisualization() {
   const descriptionId = useId();
   const graphRef = useRef<HTMLDivElement>(null);
-  const [dimensions, setDimensions] = useState({ width: 510, height: 330 });
+  const [dimensions, setDimensions] = useState({ width: 510, height: 420 });
   const [hovered, setHovered] = useState<NodeKey | null>(null);
   const [focused, setFocused] = useState<NodeKey | null>(null);
   const [selected, setSelected] = useState<NodeKey | null>(null);
   const activeNode = hovered ?? focused ?? selected;
-  const activeMeta = [...challenges, ...solutions].find((node) => node.id === activeNode);
+  const activeMeta = allNodes.find((node) => node.id === activeNode);
   const related = activeNode
     ? (relationships[activeNode] ??
       challenges
         .filter((node) => relationships[node.id]?.includes(activeNode))
         .map((node) => node.id))
     : [];
+  const relatedLabels = related
+    .map((id) => allNodes.find((n) => n.id === id)?.label)
+    .filter((label): label is string => Boolean(label));
   const routeTitle = activeMeta?.label;
+  const isActiveProblem = Boolean(activeMeta && challenges.some((c) => c.id === activeMeta.id));
 
-  // Track the actual rendered dimensions of the graph area so that the SVG coordinate system
-  // matches pixel-for-pixel (1:1). This eliminates any non-uniform horizontal stretching,
-  // guaranteeing that all particles and dashes remain perfectly round circles on all viewports!
   useEffect(() => {
     const el = graphRef.current;
     if (!el) return;
@@ -256,7 +374,6 @@ export function HeroFlowVisualization() {
     const update = () => {
       const playing = inView && !document.hidden && !motionQuery?.matches;
       stage.dataset.motionPlaying = String(playing);
-      // CSS animation-play-state does not pause SVG's animateMotion timeline.
       if (playing) svg.unpauseAnimations?.();
       else svg.pauseAnimations?.();
     };
@@ -279,18 +396,35 @@ export function HeroFlowVisualization() {
   }, []);
 
   const getReticleRotation = () => {
-    const index = [...challenges, ...solutions].findIndex((node) => node.id === activeNode);
-    return index < 0
-      ? "0deg"
-      : ["-45deg", "-20deg", "20deg", "45deg", "45deg", "20deg", "-20deg", "-45deg"][index];
+    const index = allNodes.findIndex((node) => node.id === activeNode);
+    const angles = [
+      "-55deg",
+      "-33deg",
+      "-11deg",
+      "11deg",
+      "33deg",
+      "55deg",
+      "55deg",
+      "33deg",
+      "11deg",
+      "-11deg",
+      "-33deg",
+      "-55deg",
+    ];
+    return index < 0 ? "0deg" : (angles[index] ?? "0deg");
   };
 
-  const isSmall = dimensions.height <= 310 || dimensions.width <= 640;
-  const startX = isSmall ? 26 : 30;
-  const endX = dimensions.width - startX;
+  const isSmall = dimensions.height <= 390 || dimensions.width <= 640;
+  const nodeRadius = isSmall ? 24 : 28;
+  const startX = nodeRadius;
+  const endX = dimensions.width - nodeRadius;
   const centerX = dimensions.width / 2;
   const centerY = dimensions.height / 2;
-  const yOffsets = isSmall ? [26, 109, 191, 274] : [30, 120, 210, 300];
+  const count = challenges.length;
+  const usableSpan = Math.max(1, dimensions.height - nodeRadius * 2);
+  const yOffsets = Array.from({ length: count }, (_, idx) =>
+    Math.round(nodeRadius + (usableSpan * idx) / (count - 1)),
+  );
 
   const renderNodes = (nodes: FlowNode[], side: "problem" | "solution") =>
     nodes.map((node) => (
@@ -328,8 +462,8 @@ export function HeroFlowVisualization() {
       }}
     >
       <div className={styles.categories} aria-hidden="true">
-        <span>Business challenges</span>
-        <span>Technology solutions</span>
+        <span className={styles.categoryLabel}>Business challenges</span>
+        <span className={styles.categoryLabel}>Technology solutions</span>
       </div>
 
       <div ref={graphRef} className={styles.graphArea}>
@@ -340,40 +474,16 @@ export function HeroFlowVisualization() {
           aria-hidden="true"
         >
           <defs>
-            <linearGradient id="flowCoralToLime" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#f43f5e" stopOpacity="0.95" />
-              <stop offset="60%" stopColor="#fb923c" stopOpacity="0.9" />
+            <linearGradient id="flowProblemToCore" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#0a0a0a" stopOpacity="0.95" />
+              <stop offset="70%" stopColor="#5c5c58" stopOpacity="0.9" />
               <stop offset="100%" stopColor="#c6f432" stopOpacity="1" />
             </linearGradient>
-            <linearGradient id="flowAmberToLime" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.95" />
-              <stop offset="65%" stopColor="#facc15" stopOpacity="0.9" />
-              <stop offset="100%" stopColor="#c6f432" stopOpacity="1" />
-            </linearGradient>
-            <linearGradient id="flowLimeToGreen" x1="0%" y1="0%" x2="100%" y2="0%">
+            <linearGradient id="flowCoreToSolution" x1="0%" y1="0%" x2="100%" y2="0%">
               <stop offset="0%" stopColor="#c6f432" stopOpacity="1" />
-              <stop offset="60%" stopColor="#10b981" stopOpacity="0.95" />
-              <stop offset="100%" stopColor="#047857" stopOpacity="0.9" />
+              <stop offset="55%" stopColor="#9fcc10" stopOpacity="0.95" />
+              <stop offset="100%" stopColor="#0a0a0a" stopOpacity="0.95" />
             </linearGradient>
-            <linearGradient id="flowLimeToCyan" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#c6f432" stopOpacity="1" />
-              <stop offset="50%" stopColor="#14b8a6" stopOpacity="0.95" />
-              <stop offset="100%" stopColor="#0284c7" stopOpacity="0.9" />
-            </linearGradient>
-            <filter id="flowBeamGlow" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="2.5" result="blur" />
-              <feMerge>
-                <feMergeNode in="blur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-            <filter id="flowParticleGlow" x="-30%" y="-30%" width="160%" height="160%">
-              <feGaussianBlur stdDeviation="2" result="blur" />
-              <feMerge>
-                <feMergeNode in="blur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
           </defs>
 
           {[challenges, solutions].flatMap((nodes, side) =>
@@ -396,79 +506,44 @@ export function HeroFlowVisualization() {
               const strokeGradient =
                 emphasis === "active"
                   ? side === 0
-                    ? index % 2 === 1
-                      ? "url(#flowAmberToLime)"
-                      : "url(#flowCoralToLime)"
-                    : index === 3
-                      ? "url(#flowLimeToCyan)"
-                      : "url(#flowLimeToGreen)"
+                    ? "url(#flowProblemToCore)"
+                    : "url(#flowCoreToSolution)"
                   : undefined;
 
               return (
                 <g key={node.id}>
-                  {/* Subtle geometric blueprint rail */}
                   <path className={styles.railTrack} d={path} vectorEffect="non-scaling-stroke" />
 
-                  {/* Soft volumetric glow corridor */}
                   <path
                     className={styles.glowCorridor}
                     d={path}
-                    stroke={strokeGradient ?? (side === 0 ? "var(--coral)" : "var(--lime)")}
+                    stroke={strokeGradient ?? (side === 0 ? "var(--ink)" : "var(--lime)")}
                     data-emphasis={emphasis}
                     data-side={side === 0 ? "problem" : "solution"}
                     vectorEffect="non-scaling-stroke"
                   />
 
-                  {/* Primary flow connector (targeted by e2e tests) */}
                   <path
                     data-node={node.id}
                     data-side={side === 0 ? "problem" : "solution"}
-                    data-tone={side === 0 && index % 2 === 1 ? "amber" : "coral"}
                     data-emphasis={emphasis}
                     className={styles.connector}
                     d={path}
                     stroke={strokeGradient}
-                    filter={emphasis === "active" ? "url(#flowBeamGlow)" : undefined}
                     vectorEffect="non-scaling-stroke"
                   />
 
-                  {/* Secondary trailing pulse for smooth fluid motion */}
-                  <circle
-                    className={styles.particleTrail}
-                    data-side={side === 0 ? "problem" : "solution"}
-                    data-tone={side === 0 && index % 2 === 1 ? "amber" : "coral"}
-                    data-emphasis={emphasis}
-                    r={emphasis === "active" ? (side === 0 ? 3.2 : 3.8) : 2.2}
-                  >
-                    <animateMotion
-                      path={path}
-                      dur={(side === 0 ? 2.4 : 1.1) + index * 0.12 + "s"}
-                      begin={index * -0.5 + (side === 0 ? 0.35 : 0.22) + "s"}
-                      calcMode={side === 0 ? "spline" : "paced"}
-                      keyPoints={side === 0 ? "0;0.35;0.65;1" : undefined}
-                      keyTimes={side === 0 ? "0;0.3;0.65;1" : undefined}
-                      keySplines={side === 0 ? "0.4 0 0.8 1;0.2 0 0.8 1;0.2 0 0.6 1" : undefined}
-                      repeatCount="indefinite"
-                    />
-                  </circle>
-
-                  {/* Primary traveling photonic particle (targeted by tests) */}
                   <circle
                     className={styles.particle}
                     data-side={side === 0 ? "problem" : "solution"}
-                    data-tone={side === 0 && index % 2 === 1 ? "amber" : "coral"}
                     data-emphasis={emphasis}
-                    filter={emphasis === "active" ? "url(#flowParticleGlow)" : undefined}
-                    r={emphasis === "active" ? (side === 0 ? 5 : 5.8) : side === 0 ? 3.4 : 4}
+                    r={emphasis === "active" ? 4.5 : 3}
                   >
                     <animateMotion
                       path={path}
-                      dur={(side === 0 ? 2.4 : 1.1) + index * 0.12 + "s"}
-                      begin={index * -0.5 + "s"}
-                      calcMode={side === 0 ? "spline" : "paced"}
-                      keyPoints={side === 0 ? "0;0.35;0.65;1" : undefined}
-                      keyTimes={side === 0 ? "0;0.3;0.65;1" : undefined}
-                      keySplines={side === 0 ? "0.4 0 0.8 1;0.2 0 0.8 1;0.2 0 0.6 1" : undefined}
+                      dur={(side === 0 ? 2.6 : 1.6) + index * 0.14 + "s"}
+                      begin={index * -0.42 + "s"}
+                      calcMode="linear"
                       repeatCount="indefinite"
                     />
                   </circle>
@@ -492,7 +567,6 @@ export function HeroFlowVisualization() {
               <div className={aperture.ambientGlow} />
               <div className={aperture.pulseWave} />
 
-              {/* Kinetic Outer Precision Dial */}
               <svg className={aperture.outerDial} viewBox="0 0 200 200" fill="none">
                 <circle
                   cx="100"
@@ -549,7 +623,6 @@ export function HeroFlowVisualization() {
                 />
               </svg>
 
-              {/* Interactive Focusing Reticle Ring */}
               <svg
                 className={aperture.ring}
                 style={{ transform: `rotate(${getReticleRotation()})` }}
@@ -580,7 +653,6 @@ export function HeroFlowVisualization() {
                 />
               </svg>
 
-              {/* Central Aperture Core Tile */}
               <div className={aperture.tile}>
                 <div className={aperture.tileSheen} />
                 <svg className={aperture.symbol} viewBox="0 0 32 32" focusable="false">
@@ -604,7 +676,6 @@ export function HeroFlowVisualization() {
               </div>
             </div>
 
-            {/* Pure Wordmark */}
             <div className={aperture.wordmark}>Clarteon</div>
           </div>
 
@@ -617,38 +688,78 @@ export function HeroFlowVisualization() {
       <div
         className={styles.inspectionBar}
         data-flow-explanation=""
-        data-side={
-          activeMeta && challenges.some((c) => c.id === activeMeta.id) ? "problem" : "solution"
-        }
+        data-side={activeMeta ? (isActiveProblem ? "problem" : "solution") : "idle"}
       >
         <div className={styles.description}>
           <div className={styles.sizingCopy} aria-hidden="true">
             <p className={styles.message}>
-              <strong>See how the dots connect.</strong>
-              <span>
-                Explore how Clarteon turns business challenges into technology solutions. Select an
-                icon to learn more.
+              <span className={styles.messageMeta}>
+                <strong className={styles.messageTitle}>How challenges connect to solutions</strong>
+                <span className={styles.connectedList}>
+                  <span className={styles.connectedTag}>6 business challenges</span>
+                  <span className={styles.connectedTag}>6 technology solutions</span>
+                </span>
+              </span>
+              <span className={styles.messageBody}>
+                Every business challenge on the left maps to one or more technology solutions on the
+                right. Select an icon to learn more.
               </span>
             </p>
-            {[...challenges, ...solutions].map((node) => (
-              <p key={node.id} className={styles.message}>
-                <strong>{node.label}</strong>
-                <span>{node.description}</span>
-              </p>
-            ))}
+            {allNodes.map((node) => {
+              const nodeRelated = (
+                relationships[node.id] ??
+                challenges.filter((c) => relationships[c.id]?.includes(node.id)).map((c) => c.id)
+              )
+                .map((id) => allNodes.find((n) => n.id === id)?.label)
+                .filter((label): label is string => Boolean(label));
+              return (
+                <p key={node.id} className={styles.message}>
+                  <span className={styles.messageMeta}>
+                    <strong className={styles.messageTitle}>{node.label}</strong>
+                    <span className={styles.connectedList}>
+                      {nodeRelated.map((label) => (
+                        <span key={label} className={styles.connectedTag}>
+                          {label}
+                        </span>
+                      ))}
+                    </span>
+                  </span>
+                  <span className={styles.messageBody}>{node.description}</span>
+                </p>
+              );
+            })}
           </div>
           <div id={descriptionId} role="status" aria-live="polite" aria-atomic="true">
             {activeMeta ? (
               <p key={activeMeta.id} className={styles.message}>
-                <strong>{routeTitle}</strong>
-                <span>{activeMeta.description}</span>
+                <span className={styles.messageMeta}>
+                  <strong className={styles.messageTitle}>{routeTitle}</strong>
+                  {relatedLabels.length > 0 ? (
+                    <span className={styles.connectedList}>
+                      {relatedLabels.map((label) => (
+                        <span key={label} className={styles.connectedTag}>
+                          {label}
+                        </span>
+                      ))}
+                    </span>
+                  ) : null}
+                </span>
+                <span className={styles.messageBody}>{activeMeta.description}</span>
               </p>
             ) : (
               <p className={styles.message}>
-                <strong>See how the dots connect.</strong>
-                <span>
-                  Explore how Clarteon turns business challenges into technology solutions. Select
-                  an icon to learn more.
+                <span className={styles.messageMeta}>
+                  <strong className={styles.messageTitle}>
+                    How challenges connect to solutions
+                  </strong>
+                  <span className={styles.connectedList}>
+                    <span className={styles.connectedTag}>6 business challenges</span>
+                    <span className={styles.connectedTag}>6 technology solutions</span>
+                  </span>
+                </span>
+                <span className={styles.messageBody}>
+                  Every business challenge on the left maps to one or more technology solutions on
+                  the right. Select an icon to learn more.
                 </span>
               </p>
             )}

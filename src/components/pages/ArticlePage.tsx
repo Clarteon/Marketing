@@ -27,7 +27,7 @@ export function ArticlePage({ page }: ArticlePageProps) {
           <div className={styles.caseStudyDossier}>
             <div className={styles.caseStudyNavRow}>
               <Link href="/our-work" className={styles.caseStudyBackLink}>
-                <span aria-hidden="true">←</span> Back to Our work
+                Back to Our work
               </Link>
               <div className={styles.caseStudyBadges}>
                 {frontMatter.categoryLabel ? (
@@ -54,7 +54,7 @@ export function ArticlePage({ page }: ArticlePageProps) {
                     rel="noopener noreferrer"
                     className={styles.workExternalLink}
                   >
-                    Inspect live system <span aria-hidden="true">↗</span>
+                    Inspect live system
                   </a>
                 ) : null}
                 <Button href="/contact#book" variant="secondary">
@@ -67,19 +67,19 @@ export function ArticlePage({ page }: ArticlePageProps) {
               <dl className={styles.workBreakdown}>
                 {frontMatter.problemBrief ? (
                   <div className={styles.workBreakdownCell}>
-                    <dt className={styles.workBreakdownTerm}>01 / The problem</dt>
+                    <dt className={styles.workBreakdownTerm}>The problem</dt>
                     <dd className={styles.workBreakdownDetail}>{frontMatter.problemBrief}</dd>
                   </div>
                 ) : null}
                 {frontMatter.approachBrief ? (
                   <div className={styles.workBreakdownCell}>
-                    <dt className={styles.workBreakdownTerm}>02 / What we built</dt>
+                    <dt className={styles.workBreakdownTerm}>What we built</dt>
                     <dd className={styles.workBreakdownDetail}>{frontMatter.approachBrief}</dd>
                   </div>
                 ) : null}
                 {frontMatter.outcomeBrief ? (
                   <div className={styles.workBreakdownCell}>
-                    <dt className={styles.workBreakdownTerm}>03 / What changed</dt>
+                    <dt className={styles.workBreakdownTerm}>What changed</dt>
                     <dd className={styles.workBreakdownDetail}>{frontMatter.outcomeBrief}</dd>
                   </div>
                 ) : null}
@@ -145,7 +145,7 @@ export function ArticlePage({ page }: ArticlePageProps) {
 
       <Section width="narrow">
         <ReadingProgress>
-          <Markdown>{page.body}</Markdown>
+          <Markdown className={styles.legalProse}>{page.body}</Markdown>
         </ReadingProgress>
       </Section>
 

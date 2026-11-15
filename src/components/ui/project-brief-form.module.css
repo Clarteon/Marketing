@@ -8,69 +8,11 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
   padding: clamp(1.5rem, 3.5vw, 2.5rem);
-  box-shadow:
-    0 1px 3px rgba(10, 10, 10, 0.04),
-    0 4px 16px rgba(10, 10, 10, 0.02);
-  transition:
-    border-color 200ms ease,
-    box-shadow 200ms ease;
+  transition: border-color 200ms ease;
 }
 
 .container:focus-within {
   border-color: rgba(10, 10, 10, 0.35);
-  box-shadow:
-    0 2px 6px rgba(10, 10, 10, 0.04),
-    0 12px 28px -6px rgba(10, 10, 10, 0.06);
-}
-
-/* ==========================================================================
-   Aperture Viewfinder Corner Reticles
-   ========================================================================== */
-
-.reticleCorner {
-  position: absolute;
-  width: 14px;
-  height: 14px;
-  pointer-events: none;
-  border-color: rgba(10, 10, 10, 0.18);
-  transition: border-color 200ms ease;
-  z-index: 2;
-}
-
-.cornerTopLeft {
-  top: 0;
-  left: 0;
-  border-top: 2px solid;
-  border-left: 2px solid;
-  border-top-left-radius: 4px;
-}
-
-.cornerTopRight {
-  top: 0;
-  right: 0;
-  border-top: 2px solid;
-  border-right: 2px solid;
-  border-top-right-radius: 4px;
-}
-
-.cornerBottomLeft {
-  bottom: 0;
-  left: 0;
-  border-bottom: 2px solid;
-  border-left: 2px solid;
-  border-bottom-left-radius: 4px;
-}
-
-.cornerBottomRight {
-  bottom: 0;
-  right: 0;
-  border-bottom: 2px solid;
-  border-right: 2px solid;
-  border-bottom-right-radius: 4px;
-}
-
-.container:focus-within .reticleCorner {
-  border-color: var(--ink);
 }
 
 /* ==========================================================================
@@ -127,6 +69,13 @@
   color: #0a0a0a;
   border-color: var(--lime-dark);
   font-weight: 600;
+}
+
+.chipActive::selection,
+.chipActive *::selection {
+  background: var(--ink);
+  color: var(--lime);
+  -webkit-text-fill-color: var(--lime);
 }
 
 .chipActive:hover {
@@ -317,7 +266,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .container,
-  .reticleCorner,
   .chip,
   .input,
   .textarea,

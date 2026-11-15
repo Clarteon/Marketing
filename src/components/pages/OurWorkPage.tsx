@@ -23,7 +23,6 @@ export function OurWorkPage({ data, body, items }: OurWorkPageProps) {
 
       <Section aria-labelledby="work-title">
         <ScrollReveal variant="wipe" className={styles.sectionHeader}>
-          <p className={styles.eyebrow}>Case studies & reference builds</p>
           <h2 id="work-title" className={styles.sectionTitle}>
             {items.length > 0 ? "Start with the problem. Inspect the system." : data.empty.title}
           </h2>
@@ -49,7 +48,11 @@ export function OurWorkPage({ data, body, items }: OurWorkPageProps) {
 
       {body.trim() ? (
         <Section tone="stone">
-          <Markdown reveal>{body}</Markdown>
+          <div className={styles.workNoteContainer}>
+            <Markdown reveal className={styles.legalProse}>
+              {body}
+            </Markdown>
+          </div>
         </Section>
       ) : null}
 

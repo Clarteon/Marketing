@@ -10,6 +10,7 @@ interface TurnstileApi {
       sitekey: string;
       action: string;
       theme: "light" | "dark" | "auto";
+      appearance?: "always" | "execute" | "interaction-only";
       callback: (token: string) => void;
       "expired-callback": () => void;
       "error-callback": () => void;
@@ -56,6 +57,7 @@ export function TurnstileWidget({ siteKey, action, onToken, onError }: Turnstile
         sitekey: siteKey,
         action,
         theme: "light",
+        appearance: "always",
         callback: (token) => callbacksRef.current.onToken(token),
         "expired-callback": () => callbacksRef.current.onError(),
         "error-callback": () => callbacksRef.current.onError(),

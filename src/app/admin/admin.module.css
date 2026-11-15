@@ -149,6 +149,12 @@
   color: var(--ink);
 }
 
+.primaryButton::selection {
+  background: var(--ink);
+  color: var(--lime);
+  -webkit-text-fill-color: var(--lime);
+}
+
 .primaryButton:hover:not(:disabled) {
   background: var(--lime-dark);
   border-color: var(--lime-dark);

@@ -5,6 +5,7 @@ import { Page } from "@/components/ui/Page";
 import { PageHero } from "@/components/ui/PageHero";
 import { ReadingProgress } from "@/components/ui/ReadingProgress";
 import { Section } from "@/components/ui/Section";
+import styles from "./pages.module.css";
 
 export function PrivacyPage({ data, body }: { data: SimplePageData; body: string }) {
   return (
@@ -12,7 +13,7 @@ export function PrivacyPage({ data, body }: { data: SimplePageData; body: string
       <PageHero title={data.hero.title} intro={data.hero.intro} />
       <Section width="narrow">
         <ReadingProgress>
-          <Markdown>{body}</Markdown>
+          <Markdown className={styles.legalProse}>{body}</Markdown>
         </ReadingProgress>
       </Section>
       <BookingSection />

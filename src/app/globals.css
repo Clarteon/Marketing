@@ -39,7 +39,7 @@ html {
 
 body {
   margin: 0;
-  background: var(--paper);
+  background-color: var(--paper);
   color: var(--ink);
   font-family:
     var(--font-sans, system-ui),
@@ -112,6 +112,21 @@ main:focus-visible {
 ::selection {
   background: var(--lime);
   color: var(--ink);
+  -webkit-text-fill-color: var(--ink);
+}
+
+[data-tone="lime"]::selection,
+[data-tone="lime"] ::selection {
+  background: var(--ink);
+  color: var(--lime);
+  -webkit-text-fill-color: var(--lime);
+}
+
+[data-tone="lime"] [data-selection="lime"]::selection,
+[data-tone="lime"] [data-selection="lime"] ::selection {
+  background: var(--lime);
+  color: var(--ink);
+  -webkit-text-fill-color: var(--ink);
 }
 
 section[id] {

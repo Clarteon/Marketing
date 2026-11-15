@@ -323,4 +323,41 @@ describe("Clara chat widget", () => {
     expect(screen.getByRole("link", { name: "Send a project brief" })).toBeInTheDocument();
     expect(screen.getByLabelText("Your message to Clara")).toBeDisabled();
   });
+
+  it("resets the conversation and avoids duplicate typing bubbles or provider branding", async () => {
+    let stream!: ReadableStreamDefaultController<Uint8Array>;
+    const body = new ReadableStream<Uint8Array>({
+      start(controller) {
+        stream = controller;
+      },
+    });
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true, body }));
+    render(<ClaraChat turnstileSiteKey="site-key" />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Chat with Clara" }));
+    expect(screen.queryByText(/Groq/i)).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "I understand" }));
+    fireEvent.click(screen.getByRole("button", { name: "Complete verification" }));
+
+    await send("Help with approvals.");
+
+    const log = screen.getByRole("log");
+    expect(within(log).getAllByText("Clara")).toHaveLength(2);
+    expect(within(log).getByLabelText("Clara is replying")).toBeInTheDocument();
+
+    await act(async () => {
+      stream.enqueue(
+        new TextEncoder().encode(
+          `${JSON.stringify({ type: "text", text: "We can automate approvals." })}\n`,
+        ),
+      );
+      stream.close();
+    });
+
+    expect(await screen.findByText("We can automate approvals.")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Reset conversation" }));
+    expect(screen.queryByText("Help with approvals.")).not.toBeInTheDocument();
+    expect(screen.queryByText("We can automate approvals.")).not.toBeInTheDocument();
+    expect(screen.getByText(/Hi, I’m Clara/)).toBeInTheDocument();
+  });
 });

@@ -90,23 +90,6 @@ export function BookingSection({
     return () => observer.disconnect();
   }, [pathname, title]);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
-    const node = sectionRef.current;
-    if (!node) return;
-    const rect = node.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    node.style.setProperty("--glow-x", `${x}px`);
-    node.style.setProperty("--glow-y", `${y}px`);
-    node.style.setProperty("--glow-opacity", "1");
-  };
-
-  const handleMouseLeave = () => {
-    const node = sectionRef.current;
-    if (!node) return;
-    node.style.setProperty("--glow-opacity", "0");
-  };
-
   return (
     <Section
       ref={sectionRef}
@@ -118,13 +101,9 @@ export function BookingSection({
         mode === "form" && styles.bookingSectionForm,
         onLime ? styles.bookingSectionLime : styles.bookingSectionInk,
       )}
-      background={<div className={styles.bookingAmbientFlow} aria-hidden="true" />}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
     >
       <div className={`${styles.booking} ${mode === "form" ? styles.bookingFormLayout : ""}`}>
         <div className={styles.bookingContent}>
-          {onLime ? null : <p className={styles.eyebrow}>Next step</p>}
           <h2 id={titleId} className={styles.bookingTitle}>
             {renderHighlightedTitle(title, highlightRef, highlightOn)}
           </h2>
