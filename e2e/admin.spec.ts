@@ -29,6 +29,10 @@ test("admin sub-pages redirect to sign-in", async ({ page }) => {
   await expect(page).toHaveURL(/\/admin\/login$/);
   await page.goto("/admin/review");
   await expect(page).toHaveURL(/\/admin\/login$/);
+  await page.goto("/admin/projects");
+  await expect(page).toHaveURL(/\/admin\/login$/);
+  await page.goto("/admin/site");
+  await expect(page).toHaveURL(/\/admin\/login$/);
   await page.goto("/admin/bookings/00000000-0000-4000-8000-000000000001");
   await expect(page).toHaveURL(/\/admin\/login$/);
   await page.goto("/admin/leads/00000000-0000-4000-8000-000000000001");
@@ -79,6 +83,26 @@ test.describe("signed in", () => {
     await expect(page.getByRole("heading", { name: "Lead", exact: true })).toBeVisible();
     await expect(page.getByText(/lead storage is not configured/i)).toBeVisible();
     await expect(page.getByRole("link", { name: /Back to leads/i })).toBeVisible();
+    expect(await axeViolations(page)).toEqual([]);
+  });
+
+  test("the projects manager opens and lists checked-in projects", async ({ page }) => {
+    await page.goto("/admin/projects");
+    await expect(page).toHaveURL(/\/admin\/projects$/);
+    await expect(page.getByRole("heading", { name: "Projects", exact: true })).toBeVisible();
+    await expect(page.getByText(/project database storage is not configured/i)).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Projects \(5\)/i })).toBeVisible();
+    expect(await axeViolations(page)).toEqual([]);
+  });
+
+  test("the site configuration page opens and displays team portrait slots", async ({ page }) => {
+    await page.goto("/admin/site");
+    await expect(page).toHaveURL(/\/admin\/site$/);
+    await expect(
+      page.getByRole("heading", { name: "Site configuration", exact: true }),
+    ).toBeVisible();
+    await expect(page.getByText(/site configuration storage is not configured/i)).toBeVisible();
+    await expect(page.getByLabel(/Hsisan Angel Romero/i)).toBeVisible();
     expect(await axeViolations(page)).toEqual([]);
   });
 });

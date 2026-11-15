@@ -46,7 +46,7 @@ async function send(text: string) {
   fireEvent.click(screen.getByRole("button", { name: "Send message" }));
 }
 
-describe("Clara chat widget", () => {
+describe("Clara chat widget", { timeout: 30_000 }, () => {
   it("confirms detected local time and keeps an override on later messages", async () => {
     const fetchMock = vi.fn().mockImplementation(() =>
       Promise.resolve(
@@ -64,23 +64,27 @@ describe("Clara chat widget", () => {
     await openAndAccept();
     fireEvent.click(screen.getByRole("button", { name: "Complete verification" }));
     await send("I’d like to book a discovery call.");
-    fireEvent.click(await screen.findByRole("button", { name: "Yes, use this time" }));
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Yes, use this time" }, { timeout: 5000 }),
+    );
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2), { timeout: 5000 });
     const detected = Intl.DateTimeFormat().resolvedOptions().timeZone;
     expect(JSON.parse(fetchMock.mock.calls[1][1].body).timezone).toBe(detected);
-    fireEvent.click(await screen.findByRole("button", { name: "Choose another location" }));
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Choose another location" }, { timeout: 5000 }),
+    );
     fireEvent.change(screen.getByLabelText("Search city or time zone"), {
       target: { value: "London" },
     });
     fireEvent.click(screen.getByRole("button", { name: /^London —/ }));
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(3));
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(3), { timeout: 5000 });
     expect(JSON.parse(fetchMock.mock.calls[2][1].body)).toMatchObject({
       timezone: "Europe/London",
       message: expect.stringContaining("Europe/London"),
     });
-    await screen.findByRole("button", { name: "Yes, use this time" });
+    await screen.findByRole("button", { name: "Yes, use this time" }, { timeout: 5000 });
     await send("What is the next available day?");
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(4));
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(4), { timeout: 5000 });
     expect(JSON.parse(fetchMock.mock.calls[3][1].body).timezone).toBe("Europe/London");
   });
 

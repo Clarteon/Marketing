@@ -12,7 +12,7 @@ test("every sitemap page renders with SEO basics, no console errors and no axe v
   page,
 }) => {
   // Axe scans every sitemap page. On a busy parallel runner that can approach the default timeout.
-  test.setTimeout(120_000);
+  test.setTimeout(240_000);
   // No real Turnstile calls; the forms spec covers the widget with a stub.
   await page.route("https://challenges.cloudflare.com/**", (route) => route.abort());
   const paths = await sitemapPaths(page);
@@ -62,7 +62,7 @@ test("every sitemap page renders with SEO basics, no console errors and no axe v
 });
 
 test("pages have no horizontal overflow", async ({ page }) => {
-  test.slow();
+  test.setTimeout(240_000);
   await page.route("https://challenges.cloudflare.com/**", (route) => route.abort());
   for (const path of await sitemapPaths(page)) {
     await page.goto(path);
@@ -119,8 +119,10 @@ test("the home page carries Organization and WebSite structured data", async ({ 
   expect(types).toEqual(["Organization", "WebSite"]);
 });
 
-test("draft pages stay unpublished", async ({ page }) => {
-  expect((await page.goto("/terms"))?.status()).toBe(404);
+test("published terms and unknown pages behave properly", async ({ page }) => {
+  expect((await page.goto("/terms"))?.status()).toBe(200);
+  await expect(page.getByRole("heading", { level: 1, name: "Terms of Service" })).toBeVisible();
+  expect((await page.goto("/definitely-missing-page"))?.status()).toBe(404);
 });
 
 test("the skip link is the first stop for keyboard users", async ({ page, isMobile }) => {

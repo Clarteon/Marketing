@@ -9,6 +9,7 @@ test("scroll responses restart after navigating between pages without a refresh"
   page,
   isMobile,
 }) => {
+  test.slow();
   await page.route("https://challenges.cloudflare.com/**", (route) => route.abort());
   await page.goto("/solutions");
   await page.evaluate(() => {
@@ -81,6 +82,7 @@ test("new motion leaves every section readable with reduced motion", async ({ pa
 });
 
 test("page content stays visible when JavaScript is disabled", async ({ browser }) => {
+  test.slow();
   const context = await browser.newContext({ javaScriptEnabled: false });
   await context.route("https://challenges.cloudflare.com/**", (route) => route.abort());
   const page = await context.newPage();

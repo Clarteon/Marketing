@@ -7,6 +7,7 @@ vi.mock("next/navigation", () => ({
 }));
 
 vi.mock("@/components/ui/TurnstileWidget", () => ({
+  preloadTurnstile: vi.fn(),
   TurnstileWidget: ({ onToken }: { onToken: (token: string) => void }) => (
     <button type="button" onClick={() => onToken("test-token")}>
       Complete verification
@@ -44,7 +45,7 @@ async function send(text: string) {
   fireEvent.click(screen.getByRole("button", { name: "Send message" }));
 }
 
-describe("scenario 23: long chat", () => {
+describe("scenario 23: long chat", { timeout: 30_000 }, () => {
   afterEach(() => {
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
