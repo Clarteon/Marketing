@@ -23,6 +23,7 @@ import {
   timeZoneLabel,
 } from "@/lib/booking/format";
 import { addDaysToDateKey, weekdayForDateKey } from "@/lib/booking/time";
+import { readPreferredTimeZone, savePreferredTimeZone } from "@/lib/cookies";
 import {
   calendarDays,
   calendarDayNumber,
@@ -81,6 +82,8 @@ type Status =
   | { kind: "success"; message: string };
 
 function browserTimeZone(): string {
+  const saved = readPreferredTimeZone();
+  if (saved) return saved;
   try {
     const value = Intl.DateTimeFormat().resolvedOptions().timeZone;
     return value && value.length <= 100 ? value : BOOKING_DEFAULT_TIMEZONE;
@@ -356,8 +359,8 @@ export function BookingForm({ turnstileSiteKey }: BookingFormProps) {
   }
 
   function changeTimezone(value: string) {
-    // Same zone means no refetch, so clearing the slots here would leave the picker loading forever.
     if (value === timezone) return;
+    savePreferredTimeZone(value);
     setSelectedTimezone(value);
     setSelectedDateKey(null);
     setCalendarFocusDateKey(null);

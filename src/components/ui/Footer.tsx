@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { navItems, site } from "@/lib/site";
+import { CookiePreferencesButton } from "./CookieConsent";
 import { Logo } from "./Logo";
 import styles from "./ui.module.css";
 
@@ -61,12 +62,13 @@ export function Footer() {
 
         <div className={styles.footerMetaStack}>
           <div className={styles.footerLegalLinks}>
-            <a href="/terms" className={styles.footerUtilLink}>
+            <Link href="/terms" className={styles.footerUtilLink}>
               Terms of Service
-            </a>
+            </Link>
             <Link href="/privacy" className={styles.footerUtilLink}>
               Privacy
             </Link>
+            <CookiePreferencesButton className={styles.footerUtilLink} />
           </div>
           <p className={styles.footerTagline}>{site.tagline}</p>
         </div>

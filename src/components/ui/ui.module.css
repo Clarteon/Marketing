@@ -176,9 +176,9 @@
 
 .navGlider {
   position: absolute;
-  top: 4px;
+  top: 0;
   left: 0;
-  height: calc(100% - 8px);
+  height: 40px;
   border-radius: var(--radius-pill);
   background: rgba(255, 255, 255, 0.08);
   box-shadow:
@@ -188,13 +188,14 @@
   z-index: 0;
   opacity: 0;
   transition: opacity 160ms ease;
-  will-change: transform, width;
+  will-change: transform, width, height;
 }
 
 .navGliderActive {
   transition:
     transform 280ms cubic-bezier(0.22, 1, 0.36, 1),
     width 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    height 260ms cubic-bezier(0.22, 1, 0.36, 1),
     opacity 160ms ease;
 }
 
@@ -2716,10 +2717,15 @@
   display: inline-flex;
   align-items: center;
   min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
   color: var(--graphite);
+  font-family: inherit;
   font-size: 0.8125rem;
   font-weight: 500;
   text-decoration: none;
+  cursor: pointer;
   transition: color 180ms ease;
 }
 
@@ -3379,4 +3385,320 @@
 
 .heroHome .coordinateGrid {
   opacity: 1;
+}
+
+.cookieBanner {
+  position: fixed;
+  left: 1.5rem;
+  bottom: 1.5rem;
+  z-index: 44;
+  width: min(26.5rem, calc(100vw - 3rem));
+  display: grid;
+  gap: 0.9rem;
+  padding: 1.15rem 1.25rem;
+  border: 1px solid rgba(15, 18, 16, 0.14);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(12px);
+  color: var(--ink);
+  box-shadow: 0 20px 48px rgba(15, 18, 16, 0.16);
+}
+
+.cookieBannerHeader {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.cookieBannerTitle {
+  margin: 0;
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: 1.05rem;
+  font-weight: 500;
+  line-height: 1.25;
+  color: var(--ink);
+}
+
+.cookieBannerText {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #3e433f;
+}
+
+.cookieInlineLink {
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.16em;
+}
+
+.cookieBannerActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cookieAcceptButton,
+.cookieSecondaryButton,
+.cookieTextButton {
+  min-height: 40px;
+  padding: 0.45rem 0.95rem;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease;
+}
+
+.cookieAcceptButton {
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: #ffffff;
+}
+
+.cookieAcceptButton:hover {
+  background: #232825;
+}
+
+.cookieSecondaryButton {
+  border: 1px solid rgba(15, 18, 16, 0.22);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.cookieSecondaryButton:hover {
+  border-color: var(--ink);
+  background: var(--stone);
+}
+
+.cookieTextButton {
+  padding-inline: 0.5rem;
+  border: 0;
+  background: transparent;
+  color: #3e433f;
+  text-decoration: underline;
+  text-underline-offset: 0.16em;
+}
+
+.cookieTextButton:hover {
+  color: var(--ink);
+}
+
+.cookieAcceptButton:focus-visible,
+.cookieSecondaryButton:focus-visible,
+.cookieTextButton:focus-visible,
+.cookieCloseButton:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.cookieModalBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+  background: rgba(15, 18, 16, 0.62);
+  backdrop-filter: blur(4px);
+}
+
+.cookieModal {
+  width: min(38rem, 100%);
+  max-height: min(88vh, 46rem);
+  overflow-y: auto;
+  display: grid;
+  gap: 1.15rem;
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 28px 64px rgba(15, 18, 16, 0.24);
+}
+
+.cookieModalHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.cookieModalEyebrow {
+  margin: 0 0 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.cookieModalTitle {
+  margin: 0;
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: clamp(1.35rem, 2.4vw, 1.65rem);
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.cookieCloseButton {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.cookieCloseButton:hover {
+  background: var(--stone);
+}
+
+.cookieModalIntro {
+  margin: 0;
+  font-size: 0.925rem;
+  line-height: 1.55;
+  color: #3e433f;
+}
+
+.cookieModalIntro a {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.cookieCategoryList {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.cookieCategory {
+  display: grid;
+  gap: 0.65rem;
+  padding: 1rem 1.05rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--stone);
+}
+
+.cookieCategoryTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.cookieCategoryTitle {
+  margin: 0 0 0.25rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.cookieCategoryDesc {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #3e433f;
+}
+
+.cookieBadgeRequired,
+.cookieBadgeNeutral {
+  flex-shrink: 0;
+  padding: 0.28rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.cookieBadgeRequired {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.cookieBadgeNeutral {
+  border: 1px solid var(--border);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.cookieToggleLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  min-height: 44px;
+  padding: 0 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--paper);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.cookieToggleInput {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--ink);
+  cursor: pointer;
+}
+
+.cookieDetailList {
+  margin: 0;
+  padding-left: 1.15rem;
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: #3e433f;
+}
+
+.cookieDetailList code {
+  padding: 0.1rem 0.3rem;
+  border-radius: 4px;
+  background: rgba(15, 18, 16, 0.07);
+  font-size: 0.78rem;
+  color: var(--ink);
+}
+
+.cookieModalFooter {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.55rem;
+  padding-top: 0.25rem;
+}
+
+@media (max-width: 720px) {
+  .cookieBanner {
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 5.5rem;
+    width: auto;
+  }
+
+  .cookieCategoryTop {
+    flex-direction: column;
+  }
+
+  .cookieModalFooter {
+    justify-content: stretch;
+  }
+
+  .cookieModalFooter > button {
+    flex: 1 1 auto;
+  }
 }

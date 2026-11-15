@@ -16,6 +16,7 @@ describe("published content", () => {
       "our-work",
       "privacy",
       "solutions",
+      "terms",
     ]);
   });
 

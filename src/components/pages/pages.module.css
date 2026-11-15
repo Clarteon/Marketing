@@ -290,15 +290,24 @@
   color: var(--lime);
 }
 
-@media (min-width: 981px) {
+@media (min-width: 981px) and (prefers-reduced-motion: no-preference) {
   .processSection {
-    min-height: 185vh;
+    min-height: 245vh;
     padding-block: clamp(4.5rem, 6.5vw, 6rem);
   }
 
   .processSection > div:last-child {
     position: sticky;
     top: calc(74px + 7vh);
+  }
+
+  .conduitRunway {
+    min-height: 215vh;
+  }
+
+  .conduitStickyStage {
+    position: sticky;
+    top: clamp(7rem, 22vh, 11rem);
   }
 }
 
@@ -1858,6 +1867,27 @@
   line-height: 1.72;
 }
 
+.legalProse h3 {
+  margin-top: 1.35rem;
+  margin-bottom: 0.45rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.legalProse ul {
+  display: grid;
+  gap: 0.45rem;
+  padding-left: 1.25rem;
+}
+
+.legalProse code {
+  padding: 0.12rem 0.35rem;
+  border-radius: 4px;
+  background: var(--stone);
+  font-size: 0.875em;
+}
+
 @media (min-width: 961px) {
   .discoverySticky,
   .aboutSideRail,
@@ -1971,4 +2001,310 @@
   .discoveryAgendaItem:hover .discoveryAgendaDot {
     transform: none;
   }
+}
+
+.orgHeader {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  align-items: end;
+  gap: 1.5rem 3rem;
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+
+.orgEyebrow {
+  margin: 0 0 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.orgHeading {
+  margin: 0;
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: clamp(1.85rem, 3.2vw, 2.55rem);
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+}
+
+.orgLead {
+  margin: 0;
+  font-size: 1.02rem;
+  line-height: 1.65;
+  color: var(--graphite);
+  max-width: 48ch;
+}
+
+.orgChart {
+  display: grid;
+  justify-items: center;
+  gap: 0;
+}
+
+.orgTierRoot {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.orgTierRoot > .orgNodeCard {
+  width: min(26rem, 100%);
+}
+
+.orgBranchTrunk {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  width: min(36rem, 62%);
+  height: 2.5rem;
+}
+
+.orgSpineVertical {
+  width: 1px;
+  height: 100%;
+  background: rgba(15, 18, 16, 0.24);
+}
+
+.orgBranchHorizontal {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(15, 18, 16, 0.24);
+}
+
+.orgTierPair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem clamp(1.25rem, 3vw, 2.5rem);
+  width: min(56rem, 100%);
+}
+
+.orgBranchColumn {
+  display: grid;
+  justify-items: center;
+}
+
+.orgDropConnector {
+  width: 1px;
+  height: 1.35rem;
+  background: rgba(15, 18, 16, 0.24);
+}
+
+.orgNodeCard {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  align-items: center;
+  gap: 1.1rem;
+  padding: 1rem;
+  border: 1px solid rgba(15, 18, 16, 0.14);
+  border-radius: var(--radius-card);
+  background: var(--paper);
+  box-shadow: 0 10px 28px rgba(15, 18, 16, 0.04);
+}
+
+.orgNodeCardExecutive {
+  border-color: rgba(184, 243, 65, 0.45);
+  background: var(--ink);
+  color: var(--paper);
+  box-shadow: 0 18px 42px rgba(15, 18, 16, 0.14);
+}
+
+.orgPortraitFrame {
+  position: relative;
+  width: 96px;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid rgba(15, 18, 16, 0.12);
+}
+
+.orgPortraitImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.orgPortraitPlaceholder,
+.orgPortraitPlaceholderDark {
+  display: grid;
+  place-items: center;
+}
+
+.orgPortraitPlaceholder {
+  background: linear-gradient(155deg, #f1f3ef 0%, #e7ebe3 100%);
+  color: var(--ink);
+}
+
+.orgPortraitPlaceholderDark {
+  border-color: rgba(255, 255, 255, 0.16);
+  background: linear-gradient(155deg, #1b1f1c 0%, #101311 100%);
+  color: var(--paper);
+}
+
+.orgPortraitSilhouette {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.orgPortraitMonogram {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.orgPortraitCaption {
+  position: absolute;
+  bottom: 0.35rem;
+  left: 0.35rem;
+  right: 0.35rem;
+  text-align: center;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.orgNodeBody {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.orgNodeTag {
+  justify-self: start;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 18, 16, 0.14);
+  background: var(--stone);
+  color: #3e433f;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.orgNodeTagExecutive {
+  border-color: var(--lime);
+  background: var(--lime);
+  color: var(--ink);
+}
+
+.orgNodeName {
+  margin: 0;
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: 1.18rem;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.orgNodeNameExecutive {
+  color: var(--paper);
+}
+
+.orgNodeRole {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: #3e433f;
+}
+
+.orgNodeRoleExecutive {
+  color: #d4d9d5;
+}
+
+@media (max-width: 780px) {
+  .orgHeader {
+    grid-template-columns: 1fr;
+  }
+
+  .orgBranchTrunk,
+  .orgDropConnector {
+    display: none;
+  }
+
+  .orgChart {
+    gap: 1rem;
+    justify-items: stretch;
+  }
+
+  .orgTierPair {
+    grid-template-columns: 1fr;
+    gap: 0.9rem;
+    padding-left: 1rem;
+    border-left: 2px solid rgba(15, 18, 16, 0.22);
+  }
+}
+
+@media (max-width: 440px) {
+  .orgNodeCard {
+    grid-template-columns: 76px minmax(0, 1fr);
+    gap: 0.85rem;
+    padding: 0.85rem;
+  }
+
+  .orgPortraitFrame {
+    width: 76px;
+  }
+}
+
+.insightCardMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.45rem 1rem;
+  font-size: 0.84rem;
+  color: #3e433f;
+}
+
+.insightAuthorName {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.insightPublishDate {
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+
+.articleMetaBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem 1.5rem;
+  padding-bottom: 1.25rem;
+  margin-bottom: 1.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.articleAuthorBlock {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 1.15rem;
+  font-size: 0.9rem;
+  color: #3e433f;
+}
+
+.articleAuthorName {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.articleDateLabel {
+  color: var(--muted);
 }
