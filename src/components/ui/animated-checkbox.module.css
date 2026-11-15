@@ -1,0 +1,222 @@
+.checkboxLabel {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  min-height: 44px;
+  padding-block: 0.35rem;
+  cursor: pointer;
+  user-select: none;
+  color: inherit;
+}
+
+.checkboxLabelCompact {
+  align-items: center;
+  gap: 0.65rem;
+  min-height: 44px;
+  padding-block: 0.15rem;
+}
+
+.checkboxDisabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.checkboxControl {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  margin-top: 0.08rem;
+}
+
+.checkboxLabelCompact .checkboxControl {
+  margin-top: 0;
+}
+
+.checkboxInput {
+  position: absolute;
+  inset: -10px;
+  width: calc(100% + 20px);
+  height: calc(100% + 20px);
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.checkboxDisabled .checkboxInput {
+  cursor: not-allowed;
+}
+
+.checkboxBox {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 1.5px solid var(--border-strong, #b8b6ad);
+  background: var(--paper, #ffffff);
+  color: var(--ink, #0a0a0a);
+  box-shadow: inset 0 1px 2px rgba(10, 10, 10, 0.05);
+  transition:
+    background-color 200ms ease 50ms,
+    border-color 200ms ease 50ms,
+    box-shadow 220ms ease,
+    transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.checkboxBox::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 10px;
+  border: 2px solid var(--lime, #c6f432);
+  opacity: 0;
+  transform: scale(0.75);
+  pointer-events: none;
+}
+
+.checkboxLabel:hover .checkboxInput:not(:disabled) + .checkboxBox {
+  border-color: var(--ink, #0a0a0a);
+}
+
+.checkboxInput:active:not(:disabled) + .checkboxBox {
+  transform: scale(0.9);
+}
+
+.checkboxInput:focus-visible + .checkboxBox {
+  outline: 2.5px solid var(--ink, #0a0a0a);
+  outline-offset: 2px;
+}
+
+.checkboxInput:checked + .checkboxBox {
+  background: var(--lime, #c6f432);
+  border-color: var(--ink, #0a0a0a);
+  box-shadow: 0 2px 6px rgba(10, 10, 10, 0.08);
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 200ms ease,
+    transform 280ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.checkboxControl[data-phase="enter"] .checkboxBox {
+  animation: clarteonCheckboxEnter 320ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.checkboxControl[data-phase="enter"] .checkboxBox::after {
+  animation: clarteonCheckboxHaloEnter 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.checkboxControl[data-phase="exit"] .checkboxBox {
+  animation: clarteonCheckboxExit 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.checkboxControl[data-phase="exit"] .checkboxBox::after {
+  animation: clarteonCheckboxHaloExit 260ms ease-out;
+}
+
+.checkboxMark {
+  width: 14px;
+  height: 14px;
+  overflow: visible;
+}
+
+.checkboxPath {
+  stroke-dasharray: 22;
+  stroke-dashoffset: 22;
+  opacity: 0;
+  transform-origin: center;
+  transform: scale(0.8);
+  transition:
+    stroke-dashoffset 200ms cubic-bezier(0.4, 0, 0.2, 1),
+    transform 200ms ease,
+    opacity 110ms ease 100ms;
+}
+
+.checkboxInput:checked + .checkboxBox .checkboxPath {
+  stroke-dashoffset: 0;
+  opacity: 1;
+  transform: scale(1);
+  transition:
+    stroke-dashoffset 250ms cubic-bezier(0.22, 1, 0.36, 1) 45ms,
+    transform 280ms cubic-bezier(0.34, 1.56, 0.64, 1) 30ms,
+    opacity 110ms ease;
+}
+
+.checkboxText {
+  font-size: inherit;
+  line-height: 1.45;
+  color: inherit;
+}
+
+.checkboxText a {
+  color: inherit;
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.18em;
+}
+
+@keyframes clarteonCheckboxEnter {
+  0% {
+    transform: scale(0.86);
+  }
+  55% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes clarteonCheckboxExit {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(0.88);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes clarteonCheckboxHaloEnter {
+  0% {
+    opacity: 0.72;
+    transform: scale(0.82);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.28);
+  }
+}
+
+@keyframes clarteonCheckboxHaloExit {
+  0% {
+    opacity: 0.4;
+    transform: scale(1.06);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .checkboxBox,
+  .checkboxPath,
+  .checkboxControl[data-phase="enter"] .checkboxBox,
+  .checkboxControl[data-phase="enter"] .checkboxBox::after,
+  .checkboxControl[data-phase="exit"] .checkboxBox,
+  .checkboxControl[data-phase="exit"] .checkboxBox::after {
+    transition: none;
+    animation: none;
+  }
+}

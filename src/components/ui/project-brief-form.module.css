@@ -7,10 +7,8 @@
   background: var(--paper);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
-  padding: clamp(1.5rem, 3.5vw, 2.5rem);
-  box-shadow:
-    0 1px 3px rgba(10, 10, 10, 0.04),
-    0 4px 16px rgba(10, 10, 10, 0.02);
+  padding: clamp(1.4rem, 3vw, 2.25rem);
+  box-shadow: 0 18px 42px -28px rgba(10, 10, 10, 0.14);
   transition:
     border-color 200ms ease,
     box-shadow 200ms ease;
@@ -18,59 +16,7 @@
 
 .container:focus-within {
   border-color: rgba(10, 10, 10, 0.35);
-  box-shadow:
-    0 2px 6px rgba(10, 10, 10, 0.04),
-    0 12px 28px -6px rgba(10, 10, 10, 0.06);
-}
-
-/* ==========================================================================
-   Aperture Viewfinder Corner Reticles
-   ========================================================================== */
-
-.reticleCorner {
-  position: absolute;
-  width: 14px;
-  height: 14px;
-  pointer-events: none;
-  border-color: rgba(10, 10, 10, 0.18);
-  transition: border-color 200ms ease;
-  z-index: 2;
-}
-
-.cornerTopLeft {
-  top: 0;
-  left: 0;
-  border-top: 2px solid;
-  border-left: 2px solid;
-  border-top-left-radius: 4px;
-}
-
-.cornerTopRight {
-  top: 0;
-  right: 0;
-  border-top: 2px solid;
-  border-right: 2px solid;
-  border-top-right-radius: 4px;
-}
-
-.cornerBottomLeft {
-  bottom: 0;
-  left: 0;
-  border-bottom: 2px solid;
-  border-left: 2px solid;
-  border-bottom-left-radius: 4px;
-}
-
-.cornerBottomRight {
-  bottom: 0;
-  right: 0;
-  border-bottom: 2px solid;
-  border-right: 2px solid;
-  border-bottom-right-radius: 4px;
-}
-
-.container:focus-within .reticleCorner {
-  border-color: var(--ink);
+  box-shadow: 0 22px 48px -28px rgba(10, 10, 10, 0.2);
 }
 
 /* ==========================================================================
@@ -129,6 +75,13 @@
   font-weight: 600;
 }
 
+.chipActive::selection,
+.chipActive *::selection {
+  background: var(--ink);
+  color: var(--lime);
+  -webkit-text-fill-color: var(--lime);
+}
+
 .chipActive:hover {
   background: var(--lime-dark);
   border-color: var(--lime-dark);
@@ -153,19 +106,83 @@
 .optionalContext {
   display: grid;
   gap: 1rem;
+  padding: 0.35rem 0.95rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: rgba(244, 243, 239, 0.55);
+  interpolate-size: allow-keywords;
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease,
+    padding-bottom 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.optionalContext:hover {
+  border-color: rgba(10, 10, 10, 0.26);
 }
 
 .optionalContext[open] {
-  padding-block: 0.25rem;
+  padding-bottom: 1.15rem;
+  border-color: rgba(10, 10, 10, 0.24);
+  background: var(--paper);
+}
+
+.optionalContext::details-content {
+  block-size: 0;
+  opacity: 0;
+  overflow: clip;
+  transform: translateY(-4px);
+  transition:
+    block-size 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 200ms ease,
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    content-visibility 240ms allow-discrete;
+}
+
+.optionalContext[open]::details-content {
+  block-size: auto;
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .optionalSummary {
-  width: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
   min-height: 44px;
   color: var(--ink);
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   font-weight: 600;
+  list-style: none;
   cursor: pointer;
+}
+
+.optionalSummary::-webkit-details-marker {
+  display: none;
+}
+
+.optionalSummary::after {
+  content: "+";
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 999px;
+  background: var(--stone);
+  color: var(--ink);
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1;
+  transition:
+    background-color 160ms ease,
+    transform 180ms ease;
+}
+
+.optionalContext[open] .optionalSummary::after {
+  content: "-";
+  background: var(--lime);
 }
 
 .optionalSummary:focus-visible {
@@ -176,7 +193,9 @@
 .optionalGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.5rem 1rem;
+  gap: 1.25rem 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
 }
 
 .focusField {
@@ -202,17 +221,19 @@
   padding: 0.75rem 0.95rem;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  background: var(--paper);
+  background: #faf9f6;
   color: var(--ink);
   font-size: 0.95rem;
   transition:
     border-color 200ms ease,
+    background-color 200ms ease,
     box-shadow 200ms ease;
 }
 
 .input:hover,
 .textarea:hover {
   border-color: rgba(10, 10, 10, 0.28);
+  background: var(--paper);
 }
 
 .textarea {
@@ -223,6 +244,7 @@
 .input:focus,
 .textarea:focus {
   border-color: var(--ink);
+  background: var(--paper);
   outline: none;
   box-shadow:
     0 0 0 3px rgba(198, 244, 50, 0.35),
@@ -249,25 +271,12 @@
 .checkboxField {
   display: flex;
   align-items: flex-start;
-  gap: 0.75rem;
+  padding-top: 0.15rem;
 }
 
-.checkbox {
-  width: 1.25rem;
-  height: 1.25rem;
-  margin-top: 0.2rem;
-  accent-color: var(--ink);
-  cursor: pointer;
-}
-
-.checkboxLabel {
-  color: var(--muted);
-  font-size: 0.95rem;
-  line-height: 1.5;
-}
-
-.checkboxLabel a {
+.checkboxField a {
   color: var(--ink);
+  font-weight: 500;
   text-decoration: underline;
   text-underline-offset: 0.2em;
 }
@@ -317,11 +326,13 @@
 
 @media (prefers-reduced-motion: reduce) {
   .container,
-  .reticleCorner,
   .chip,
   .input,
   .textarea,
-  .select {
+  .select,
+  .optionalContext,
+  .optionalSummary::after,
+  .optionalContext::details-content {
     transition: none !important;
   }
 }

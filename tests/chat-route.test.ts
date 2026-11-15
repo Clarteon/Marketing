@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { resetConfigForTests } from "@/lib/config";
+import { CHAT_DEGRADED_MESSAGE } from "@/lib/chat/constants";
 import { ChatUnavailableError } from "@/lib/chat/model";
 import { createChatSessionToken } from "@/lib/chat/session";
 import { resetRateLimitsForTests } from "@/lib/guardrails/rate-limit";
@@ -239,7 +240,11 @@ describe("POST /api/chat", () => {
     expect(response.status).toBe(200);
     const parsed = events(await response.text());
     expect(parsed).toEqual([
-      expect.objectContaining({ type: "degraded", code: "not_configured" }),
+      expect.objectContaining({
+        type: "degraded",
+        message: CHAT_DEGRADED_MESSAGE,
+        code: "not_configured",
+      }),
       { type: "done" },
     ]);
   });

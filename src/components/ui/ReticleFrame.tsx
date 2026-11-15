@@ -10,6 +10,7 @@ interface ReticleFrameProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
   tone?: "paper" | "stone" | "ink";
   badge?: string;
+  showCorners?: boolean;
   className?: string;
 }
 
@@ -17,6 +18,7 @@ export function ReticleFrame({
   children,
   tone = "paper",
   badge,
+  showCorners = true,
   className,
   ...props
 }: ReticleFrameProps) {
@@ -71,11 +73,14 @@ export function ReticleFrame({
       className={cx(styles.reticleContainer, tone === "ink" && styles.reticleInk, className)}
       {...props}
     >
-      {/* 4 Precision Viewfinder Corner Reticles */}
-      <div className={cx(styles.reticleCorner, styles.cornerTopLeft)} aria-hidden="true" />
-      <div className={cx(styles.reticleCorner, styles.cornerTopRight)} aria-hidden="true" />
-      <div className={cx(styles.reticleCorner, styles.cornerBottomLeft)} aria-hidden="true" />
-      <div className={cx(styles.reticleCorner, styles.cornerBottomRight)} aria-hidden="true" />
+      {showCorners ? (
+        <>
+          <div className={cx(styles.reticleCorner, styles.cornerTopLeft)} aria-hidden="true" />
+          <div className={cx(styles.reticleCorner, styles.cornerTopRight)} aria-hidden="true" />
+          <div className={cx(styles.reticleCorner, styles.cornerBottomLeft)} aria-hidden="true" />
+          <div className={cx(styles.reticleCorner, styles.cornerBottomRight)} aria-hidden="true" />
+        </>
+      ) : null}
 
       {badge ? (
         <div className={styles.reticleBadge} aria-hidden="true">

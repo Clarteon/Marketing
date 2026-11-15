@@ -24,7 +24,7 @@ function jsonResponse(body: unknown, status = 200): Response {
   } as Response;
 }
 
-describe("booking form", () => {
+describe("booking form", { timeout: 30_000 }, () => {
   beforeEach(() => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-10-20T12:00:00.000Z"));

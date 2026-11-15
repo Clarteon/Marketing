@@ -278,5 +278,21 @@ test.describe("discovery call booking", () => {
     await expect(
       page.locator("#book").getByRole("link", { name: "Send a project brief" }),
     ).toBeVisible();
+
+    const bookingFrame = page.locator('[data-deferred-form="booking"][data-loaded="true"]');
+    await expect(bookingFrame).toBeVisible();
+    const frameHeight = await bookingFrame.evaluate((node) => (node as HTMLElement).offsetHeight);
+    expect(frameHeight).toBeLessThan(360);
+  });
+
+  test("animates brief consent checkbox state on user toggle", async ({ page }) => {
+    await page.goto("/contact#brief");
+    const checkbox = page.locator("#brief-consent");
+    await expect(checkbox).toBeVisible();
+    const control = checkbox.locator("..");
+    await expect(control).toHaveAttribute("data-phase", "idle");
+
+    await checkbox.click();
+    await expect(checkbox).toBeChecked();
   });
 });

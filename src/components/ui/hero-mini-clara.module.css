@@ -1,0 +1,478 @@
+.stage {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  width: 100%;
+  max-width: 28.5rem;
+  margin-inline: auto;
+  padding: 0.15rem 0;
+}
+
+.backdropCard {
+  grid-area: 1 / 1;
+  align-self: stretch;
+  justify-self: end;
+  position: relative;
+  width: min(85%, 23.75rem);
+  min-height: 25.5rem;
+  padding: 1.15rem 1.25rem 1.5rem;
+  border-radius: 1.5rem;
+  border: 1px solid rgba(198, 244, 50, 0.18);
+  background:
+    radial-gradient(
+      circle at 82% 46%,
+      rgba(198, 244, 50, 0.24) 0%,
+      rgba(198, 244, 50, 0.08) 44%,
+      rgba(10, 14, 8, 0.96) 80%
+    ),
+    linear-gradient(145deg, #0d1309 0%, #090b08 100%);
+  box-shadow:
+    0 24px 52px -16px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.watermarkAperture {
+  position: absolute;
+  right: -1.85rem;
+  top: 4.5rem;
+  width: 18.5rem;
+  height: 18.5rem;
+  color: rgba(198, 244, 50, 0.13);
+  pointer-events: none;
+  user-select: none;
+}
+
+.nextStepCard {
+  position: relative;
+  z-index: 1;
+  margin-left: auto;
+  width: fit-content;
+  max-width: 100%;
+  padding: 0.72rem 1.05rem;
+  border-radius: 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(198, 244, 50, 0.07) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 12px 28px -10px rgba(0, 0, 0, 0.45);
+}
+
+.nextStepTitle {
+  margin: 0;
+  font-family: var(--font-fraunces, Georgia), Georgia, "Times New Roman", serif;
+  font-size: clamp(0.875rem, 1.2vw, 1.05rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+.chatCard {
+  grid-area: 1 / 1;
+  align-self: start;
+  justify-self: start;
+  position: relative;
+  z-index: 2;
+  margin-top: 5.15rem;
+  margin-bottom: 1.35rem;
+  width: min(76%, 20.25rem);
+  padding: 0.95rem 1rem 0.9rem;
+  border-radius: 1.15rem;
+  border: 1px solid rgba(10, 10, 10, 0.08);
+  background: #ffffff;
+  color: #0a0a0a;
+  box-shadow:
+    0 22px 48px -12px rgba(0, 0, 0, 0.58),
+    0 4px 14px rgba(0, 0, 0, 0.2);
+}
+
+.chatHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid #ecece7;
+}
+
+.avatarTile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.95rem;
+  height: 1.95rem;
+  flex-shrink: 0;
+  border-radius: 0.5rem;
+  background: var(--lime);
+  color: #0a0a0a;
+}
+
+.avatarIcon {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.chatHeaderMeta {
+  display: grid;
+  gap: 0.04rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.resetMiniBtn {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.75rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid rgba(10, 10, 10, 0.16);
+  background: #f4f4f2;
+  color: #0a0a0a;
+  font-family: inherit;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
+}
+
+.resetMiniBtn:hover {
+  background: var(--lime);
+  border-color: #0a0a0a;
+}
+
+.resetMiniBtn:focus-visible {
+  outline: 2px solid #0a0a0a;
+  outline-offset: 2px;
+}
+
+.chatName {
+  margin: 0;
+  font-size: 0.84375rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #0a0a0a;
+}
+
+.chatRole {
+  margin: 0;
+  font-size: 0.7rem;
+  font-weight: 400;
+  line-height: 1.25;
+  color: #5c5c58;
+}
+
+.chatMessages {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.65rem;
+  overflow: visible;
+}
+
+.chatMessagesScrollable {
+  max-height: 12.25rem;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(10, 10, 10, 0.2) transparent;
+}
+
+.chatMessagesScrollable::-webkit-scrollbar {
+  width: 4px;
+}
+
+.chatMessagesScrollable::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.chatMessagesScrollable::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chatMessagesScrollable::-webkit-scrollbar-thumb {
+  background: rgba(10, 10, 10, 0.18);
+  border-radius: 999px;
+}
+
+.chatMessagesScrollable::-webkit-scrollbar-thumb:hover {
+  background: rgba(10, 10, 10, 0.34);
+}
+
+.assistantBubble {
+  margin: 0;
+  max-width: 94%;
+  padding: 0.58rem 0.78rem;
+  border-radius: 0.75rem 0.75rem 0.75rem 0.2rem;
+  background: #f2f1ec;
+  color: #0a0a0a;
+  font-size: 0.75rem;
+  line-height: 1.42;
+}
+
+.assistantBubble p {
+  margin: 0;
+}
+
+.assistantBubble p + p {
+  margin-top: 0.4rem;
+}
+
+.assistantBubble ul,
+.assistantBubble ol {
+  margin: 0.35rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.assistantBubble a {
+  color: #0a0a0a;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.confirmationBox {
+  display: grid;
+  gap: 0.45rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(10, 10, 10, 0.14);
+  background: #f9f9f6;
+  color: #0a0a0a;
+  font-size: 0.74rem;
+  line-height: 1.4;
+}
+
+.confirmationText {
+  margin: 0;
+  font-weight: 500;
+}
+
+.confirmationActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.confirmBtn,
+.cancelBtn,
+.slotChoiceBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.85rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
+}
+
+.confirmBtn {
+  border: 1px solid #0a0a0a;
+  background: var(--lime);
+  color: #0a0a0a;
+}
+
+.confirmBtn:hover:not(:disabled) {
+  background: #d8fb48;
+}
+
+.cancelBtn {
+  border: 1px solid rgba(10, 10, 10, 0.2);
+  background: #ffffff;
+  color: #0a0a0a;
+}
+
+.slotChoices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.45rem;
+}
+
+.slotChoiceBtn {
+  border: 1px solid rgba(10, 10, 10, 0.18);
+  background: #ffffff;
+  color: #0a0a0a;
+}
+
+.slotChoiceBtn:hover {
+  border-color: #0a0a0a;
+  background: var(--lime);
+}
+
+.userBubble {
+  margin: 0;
+  margin-left: auto;
+  max-width: 94%;
+  padding: 0.58rem 0.78rem;
+  border-radius: 0.75rem 0.75rem 0.2rem 0.75rem;
+  background: var(--lime);
+  color: #0a0a0a;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.42;
+}
+
+.userBubble::selection,
+.userBubble *::selection,
+.avatarTile::selection,
+.avatarTile *::selection,
+.slotChoiceBtn:hover::selection,
+.resetMiniBtn:hover::selection,
+.composerSend::selection {
+  background: var(--ink);
+  color: var(--lime);
+  -webkit-text-fill-color: var(--lime);
+}
+
+.hiddenTurnstile {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  pointer-events: none;
+}
+
+.composerForm {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.65rem;
+  padding: 0.24rem 0.28rem 0.24rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid #d8d8d2;
+  background: #ffffff;
+  transition: border-color 160ms ease;
+}
+
+.composerForm:focus-within {
+  border-color: #9e9e96;
+}
+
+.composerInput,
+.composerInput:focus,
+.composerInput:focus-visible {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  color: #0a0a0a;
+  font-family: inherit;
+  font-size: 0.75rem;
+  line-height: 1.3;
+  outline: none !important;
+  outline-offset: 0 !important;
+  box-shadow: none !important;
+}
+
+.composerInput::placeholder {
+  color: #5c5c58;
+}
+
+.composerSend {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.8rem;
+  height: 1.8rem;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--lime);
+  color: #0a0a0a;
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    background-color 160ms ease;
+}
+
+.composerSend:hover:not(:disabled) {
+  background: #d8fb48;
+  transform: scale(1.05);
+}
+
+.composerSend:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.composerSend:focus-visible {
+  outline: 2px solid #0a0a0a;
+  outline-offset: 2px;
+}
+
+.composerSendIcon {
+  width: 0.85rem;
+  height: 0.85rem;
+}
+
+.privacyNote {
+  margin: 0.4rem 0 0;
+  font-size: 0.65rem;
+  color: #5c5c58;
+  text-align: right;
+}
+
+.privacyLink {
+  color: #0a0a0a;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+@media (max-width: 640px) {
+  .stage {
+    padding: 0.15rem 0;
+  }
+
+  .backdropCard {
+    width: min(86%, 23.75rem);
+    min-height: 23rem;
+    padding: 1rem 1.05rem 1.35rem;
+  }
+
+  .chatCard {
+    width: min(79%, 20.25rem);
+    margin-top: 4.65rem;
+    margin-bottom: 1.2rem;
+    padding: 0.85rem 0.9rem 0.8rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .backdropCard {
+    width: 87%;
+    min-height: 21.5rem;
+    padding: 0.85rem 0.9rem 1.2rem;
+    border-radius: 1.25rem;
+  }
+
+  .nextStepCard {
+    padding: 0.52rem 0.8rem;
+  }
+
+  .nextStepTitle {
+    font-size: 0.8125rem;
+    white-space: nowrap;
+  }
+
+  .chatCard {
+    width: 82%;
+    margin-top: 4.2rem;
+    margin-bottom: 1.05rem;
+    padding: 0.78rem 0.82rem 0.72rem;
+    border-radius: 1rem;
+  }
+}

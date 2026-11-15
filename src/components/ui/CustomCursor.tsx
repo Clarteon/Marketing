@@ -42,11 +42,12 @@ export function CustomCursor() {
   const isClickingRef = useRef(false);
   const isHoveredRef = useRef(false);
   const isLimeTargetRef = useRef(false);
+  const isDarkToneRef = useRef(false);
+  const isTextInputRef = useRef(false);
 
   useEffect(() => {
     if (!isSupported) return;
 
-    // Enable global hiding of default arrow & hand cursor
     document.documentElement.classList.add("custom-cursor-active");
 
     let mouseX = -100;
@@ -55,6 +56,7 @@ export function CustomCursor() {
     let initialized = false;
     let visible = false;
     let rafId: number | null = null;
+    let lastTarget: EventTarget | null = null;
 
     function schedule() {
       if (rafId === null && visible && !document.hidden) {
@@ -87,36 +89,41 @@ export function CustomCursor() {
     };
 
     const onPointerOver = (e: PointerEvent) => {
+      if (e.target === lastTarget) return;
+      lastTarget = e.target;
       const target = e.target as HTMLElement | null;
-      if (!target) return;
+      if (!target || typeof target.closest !== "function") return;
 
-      // Check for form inputs / editable text fields
       const isInput = Boolean(
         target.closest(
           'input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type="radio"]), textarea, [contenteditable="true"]',
         ),
       );
-      setIsTextInput(isInput);
+      if (isTextInputRef.current !== isInput) {
+        isTextInputRef.current = isInput;
+        setIsTextInput(isInput);
+      }
 
-      // Check if target is a lime-colored component (e.g. primary button, lime tile, lime chip)
       const isLime = Boolean(
         target.closest(
           '[class*="primary"], [class*="toneLime"], [class*="tile"], [data-variant="primary"], .bg-lime',
         ),
       );
-      setIsLimeTarget(isLime);
-      isLimeTargetRef.current = isLime;
+      if (isLimeTargetRef.current !== isLime) {
+        isLimeTargetRef.current = isLime;
+        setIsLimeTarget(isLime);
+      }
 
-      // Check for interactive targets (links, buttons, cards)
       const isInteractive = Boolean(
         target.closest(
           'a, button, [role="button"], input[type="submit"], input[type="button"], label, select, summary, [data-cursor="focus"], [data-cursor="interactive"], [class*="problemCard"], [class*="cardInteractive"], [class*="listItem"], [class*="step"]',
         ),
       );
-      setIsHovered(isInteractive);
-      isHoveredRef.current = isInteractive;
+      if (isHoveredRef.current !== isInteractive) {
+        isHoveredRef.current = isInteractive;
+        setIsHovered(isInteractive);
+      }
 
-      // Check if current section/element has dark ink tone, accounting for nested light containers
       const darkContainer = target.closest('[class*="toneInk"], [data-tone="ink"], .dark-surface');
       const lightContainer = target.closest(
         '[class*="bookingFormPanel"], [class*="tonePaper"], [class*="toneStone"], [data-tone="paper"], [data-tone="stone"]',
@@ -124,7 +131,10 @@ export function CustomCursor() {
       const isDark = Boolean(
         darkContainer && (!lightContainer || !darkContainer.contains(lightContainer)),
       );
-      setIsDarkTone(isDark);
+      if (isDarkToneRef.current !== isDark) {
+        isDarkToneRef.current = isDark;
+        setIsDarkTone(isDark);
+      }
       schedule();
     };
 

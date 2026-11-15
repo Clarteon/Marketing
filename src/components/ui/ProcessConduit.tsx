@@ -11,7 +11,7 @@ interface ProcessConduitProps {
   className?: string;
 }
 
-const STEP_THRESHOLDS = [0.08, 0.32, 0.6, 0.85];
+const STEP_THRESHOLDS = [0.04, 0.3, 0.58, 0.84];
 
 const toneClasses: Record<"paper" | "stone" | "ink", string> = {
   ink: "",
@@ -62,20 +62,32 @@ export function ProcessConduit({ steps, tone = "ink", className }: ProcessCondui
 
     const container = containerRef.current;
     if (!container) return;
+    const runway = container.closest("[data-conduit-runway]") ?? container.closest("section");
 
     let rafId: number | null = null;
     let inView = !("IntersectionObserver" in window);
     let lastProgress = "";
+    const activeSteps = STEP_THRESHOLDS.map((_, index) => index === 0);
 
     function handleScroll() {
       if (!container) return;
       const rect = container.getBoundingClientRect();
+      const runwayRect = runway ? runway.getBoundingClientRect() : rect;
       const viewportHeight = window.innerHeight;
 
-      const startTrigger = viewportHeight * 0.75;
-      const totalSpan = rect.height + viewportHeight * 0.45;
-      const currentSpan = startTrigger - rect.top;
-      const progress = Math.min(1, Math.max(0, currentSpan / totalSpan));
+      let progress = 0;
+      if (runwayRect.height > rect.height * 1.4) {
+        const startTop = viewportHeight * 0.42;
+        const endTop = viewportHeight * 0.94 - runwayRect.height;
+        const travel = Math.max(1, startTop - endTop);
+        progress = Math.min(1, Math.max(0, (startTop - runwayRect.top) / travel));
+      } else {
+        const startTrigger = viewportHeight * 0.72;
+        const endTrigger = viewportHeight * 0.38;
+        const totalSpan = Math.max(1, startTrigger - endTrigger + rect.height * 0.78);
+        const currentSpan = startTrigger - rect.top;
+        progress = Math.min(1, Math.max(0, currentSpan / totalSpan));
+      }
 
       const nextProgress = progress.toFixed(3);
       if (nextProgress !== lastProgress) {
@@ -85,6 +97,8 @@ export function ProcessConduit({ steps, tone = "ink", className }: ProcessCondui
 
       STEP_THRESHOLDS.forEach((threshold, index) => {
         const isActive = progress >= threshold || (index === 0 && progress >= 0.02);
+        if (activeSteps[index] === isActive) return;
+        activeSteps[index] = isActive;
         const milestoneEl = milestoneRefs.current[index];
         const stepEl = stepRefs.current[index];
         if (milestoneEl) {
@@ -114,14 +128,12 @@ export function ProcessConduit({ steps, tone = "ink", className }: ProcessCondui
       "IntersectionObserver" in window
         ? new IntersectionObserver(([entry]) => {
             inView = entry.isIntersecting;
-            // Set the final state once on exit, too; skip the rest of offscreen scrolling.
             handleScroll();
           })
         : null;
-    observer?.observe(container);
+    observer?.observe(runway ?? container);
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll, { passive: true });
-    // Initial evaluation via RAF so it is not synchronous within the effect body
     rafId = window.requestAnimationFrame(() => {
       measureVerticalTrack();
       handleScroll();
@@ -178,7 +190,7 @@ export function ProcessConduit({ steps, tone = "ink", className }: ProcessCondui
               }}
               className={styles.stepHeader}
             >
-              <span className={styles.stepNumber}>{index + 1}</span>
+              <span className={styles.stepNumber}>{String(index + 1).padStart(2, "0")}</span>
               <span className={styles.stepBeacon} aria-hidden="true" />
             </div>
             <h3 className={styles.stepTitle}>{step.title}</h3>

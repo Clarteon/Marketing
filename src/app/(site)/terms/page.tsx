@@ -5,7 +5,6 @@ import { metadataForPage } from "@/lib/metadata";
 import { getPageWithData } from "@/lib/page-loader";
 import { simplePageSchema } from "@/lib/page-schemas";
 
-// Draft until a lawyer approves it: getPage returns null for drafts, so this route 404s.
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPage("terms");
   return page ? metadataForPage(page) : {};

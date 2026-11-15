@@ -9,6 +9,7 @@ import {
   type AdminLeadRow,
   type LeadStats,
 } from "@/lib/admin/lead-queries";
+import { listAdminProjects } from "@/lib/admin/projects";
 import {
   getBookingStats,
   listBookings,
@@ -46,9 +47,10 @@ export default async function AdminDashboardPage() {
   let upcoming: AdminBookingRow[] = [];
   let recentLeads: AdminLeadRow[] = [];
   let openQuestions: number | undefined;
+  let projectStats: { published: number; drafts: number; featured: number } | undefined;
 
   if (configured) {
-    const [bookings, leads, nextCalls, latestLeads, queue] = await Promise.all([
+    const [bookings, leads, nextCalls, latestLeads, queue, projectsResult] = await Promise.all([
       attempt("admin_dashboard_stats_failed", getBookingStats),
       attempt("admin_dashboard_lead_stats_failed", getLeadStats),
       attempt("admin_dashboard_upcoming_failed", () =>
@@ -58,6 +60,7 @@ export default async function AdminDashboardPage() {
         listLeads({ source: "all", status: "all", page: 1 }),
       ),
       attempt("admin_dashboard_review_failed", () => getReviewQueue(50)),
+      attempt("admin_dashboard_projects_failed", listAdminProjects),
     ]);
 
     stats = bookings;
@@ -65,6 +68,16 @@ export default async function AdminDashboardPage() {
     upcoming = nextCalls?.rows.slice(0, 3) ?? [];
     recentLeads = latestLeads?.rows.slice(0, 3) ?? [];
     openQuestions = queue?.length;
+    if (projectsResult) {
+      projectStats = {
+        published: projectsResult.projects.filter((project) => project.status === "published")
+          .length,
+        drafts: projectsResult.projects.filter((project) => project.status === "draft").length,
+        featured: projectsResult.projects.filter(
+          (project) => project.status === "published" && project.featuredOnHome,
+        ).length,
+      };
+    }
   }
 
   const unavailable =
@@ -96,12 +109,19 @@ export default async function AdminDashboardPage() {
           upcoming={upcoming}
           recentLeads={recentLeads}
           openQuestions={openQuestions}
+          projectStats={projectStats}
           unavailable={unavailable}
         />
       )}
 
       <div className={styles.dashboardActions}>
         <Button href="/admin/bookings">View all bookings</Button>
+        <Button href="/admin/projects" variant="secondary">
+          Manage projects
+        </Button>
+        <Button href="/admin/site" variant="secondary">
+          Site config
+        </Button>
         <Button href="/admin/review" variant="secondary">
           Open review queue
         </Button>

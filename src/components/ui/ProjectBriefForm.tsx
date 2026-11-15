@@ -10,6 +10,7 @@ import {
   teamSizes,
 } from "@/lib/leads/constants";
 import { SelectField } from "@/components/ui/SelectField";
+import { AnimatedCheckbox } from "./AnimatedCheckbox";
 import { Button } from "./Button";
 import { TurnstileWidget } from "./TurnstileWidget";
 import styles from "./project-brief-form.module.css";
@@ -160,12 +161,6 @@ export function ProjectBriefForm({ turnstileSiteKey, className }: ProjectBriefFo
 
   return (
     <div className={cx(styles.container, className)}>
-      {/* 4 Precision Viewfinder Corner Reticles */}
-      <div className={cx(styles.reticleCorner, styles.cornerTopLeft)} aria-hidden="true" />
-      <div className={cx(styles.reticleCorner, styles.cornerTopRight)} aria-hidden="true" />
-      <div className={cx(styles.reticleCorner, styles.cornerBottomLeft)} aria-hidden="true" />
-      <div className={cx(styles.reticleCorner, styles.cornerBottomRight)} aria-hidden="true" />
-
       <form ref={formRef} className={styles.form} onSubmit={handleSubmit}>
         {/* Keep the required contact fields visible. */}
         <div className={styles.formGrid}>
@@ -280,17 +275,10 @@ export function ProjectBriefForm({ turnstileSiteKey, className }: ProjectBriefFo
         </div>
 
         <div className={styles.checkboxField}>
-          <input
-            className={styles.checkbox}
-            id="brief-consent"
-            name="consent"
-            type="checkbox"
-            required
-          />
-          <label className={styles.checkboxLabel} htmlFor="brief-consent">
+          <AnimatedCheckbox id="brief-consent" name="consent" required compact>
             I agree that Clarteon may use these details to reply. See the{" "}
             <Link href="/privacy">Privacy page</Link>.
-          </label>
+          </AnimatedCheckbox>
         </div>
 
         {configured ? (

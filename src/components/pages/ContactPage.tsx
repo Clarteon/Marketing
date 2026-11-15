@@ -1,9 +1,12 @@
+import Image from "next/image";
 import type { ContactData } from "@/lib/page-schemas";
+import { cx } from "@/lib/cx";
 import { BookingSection } from "@/components/ui/BookingSection";
 import { Button } from "@/components/ui/Button";
+import { DeferredForm } from "@/components/ui/DeferredForm";
+import { HeroDirectory } from "@/components/ui/HeroDirectory";
 import { Page } from "@/components/ui/Page";
 import { PageHero } from "@/components/ui/PageHero";
-import { DeferredForm } from "@/components/ui/DeferredForm";
 import { ReticleFrame } from "@/components/ui/ReticleFrame";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { Section } from "@/components/ui/Section";
@@ -31,6 +34,29 @@ export function ContactPage({
             </Button>
           </>
         }
+        visual={
+          <HeroDirectory
+            heading="Ways to reach us"
+            note="30-minute discovery calls run via Google Meet."
+            items={[
+              {
+                label: "Book a free discovery call",
+                meta: "Choose an open time slot",
+                href: "#book",
+              },
+              {
+                label: "Send a project brief",
+                meta: "Describe what needs fixing",
+                href: "#brief",
+              },
+              {
+                label: "Write to us directly",
+                meta: "Send a message by email",
+                href: "#message",
+              },
+            ]}
+          />
+        }
       />
 
       <BookingSection
@@ -43,12 +69,25 @@ export function ContactPage({
 
       <Section tone="stone" id="brief" aria-labelledby="brief-title">
         <div className={styles.contactGrid}>
-          <ScrollReveal variant="slide" stagger className={styles.sectionHeader}>
-            <p className={styles.eyebrow}>Project brief</p>
+          <ScrollReveal
+            variant="slide"
+            stagger
+            className={cx(styles.sectionHeader, styles.contactBriefHeader)}
+          >
             <h2 id="brief-title" className={styles.sectionTitle}>
               {data.brief.title}
             </h2>
             <p className={styles.sectionIntro}>{data.brief.intro}</p>
+            <div className={styles.contactBriefMedia}>
+              <Image
+                src="/images/editorial/contact-message.jpg"
+                alt="Hand sketching project notes and workflow diagrams on a wooden desk"
+                width={960}
+                height={640}
+                sizes="(max-width: 980px) 100vw, 38vw"
+                className={styles.editorialPhoto}
+              />
+            </div>
           </ScrollReveal>
 
           <ScrollReveal variant="settle">
@@ -58,9 +97,8 @@ export function ContactPage({
       </Section>
 
       <Section tone="lime" id="message" aria-labelledby="message-title">
-        <ReticleFrame className={styles.messageFrame}>
+        <ReticleFrame showCorners={false} className={styles.messageFrame}>
           <ScrollReveal variant="wipe" className={styles.messagePanel}>
-            <p className={styles.eyebrow}>Direct message</p>
             <h2 id="message-title" className={styles.sectionTitle}>
               {data.message.title}
             </h2>

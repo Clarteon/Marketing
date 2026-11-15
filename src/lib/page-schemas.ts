@@ -92,6 +92,12 @@ export type ListPageData = z.infer<typeof listPageSchema>;
 
 export const simplePageSchema = z.object({
   hero: heroSchema,
+  preamble: z
+    .object({
+      mission: z.string().trim().min(1),
+      vision: z.string().trim().min(1),
+    })
+    .optional(),
 });
 
 export type SimplePageData = z.infer<typeof simplePageSchema>;

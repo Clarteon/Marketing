@@ -149,6 +149,12 @@
   color: var(--ink);
 }
 
+.primaryButton::selection {
+  background: var(--ink);
+  color: var(--lime);
+  -webkit-text-fill-color: var(--lime);
+}
+
 .primaryButton:hover:not(:disabled) {
   background: var(--lime-dark);
   border-color: var(--lime-dark);
@@ -1201,6 +1207,303 @@
 
   .filterBar {
     display: grid;
+    grid-template-columns: 1fr;
+  }
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.cmsWorkspace {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.cmsGrid {
+  display: grid;
+  grid-template-columns: minmax(16rem, 20rem) minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: start;
+}
+
+.cmsSidebar {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--paper);
+}
+
+.cmsSidebarHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.cmsProjectList {
+  list-style: none;
+  display: grid;
+  gap: 0.65rem;
+  margin: 0;
+  padding: 0;
+}
+
+.cmsProjectItem {
+  width: 100%;
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.85rem;
+  text-align: left;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--stone);
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+  transition:
+    border-color 140ms ease,
+    background-color 140ms ease;
+}
+
+.cmsProjectItem:hover {
+  border-color: var(--ink);
+}
+
+.cmsProjectItemActive {
+  border-color: var(--ink);
+  background: var(--paper);
+  box-shadow: inset 3px 0 0 var(--ink);
+}
+
+.cmsProjectItemTop {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.cmsOrderBadge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--graphite);
+}
+
+.cmsHomeTag {
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: #e8f5b8;
+  color: #2f4d00;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.cmsProjectItemTitle {
+  font-size: 0.92rem;
+  line-height: 1.3;
+}
+
+.cmsProjectItemMeta {
+  font-size: 0.78rem;
+  color: var(--graphite);
+  overflow-wrap: anywhere;
+}
+
+.cmsEditorHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem 1.25rem;
+}
+
+.cmsEditorHint {
+  margin: 0.35rem 0 0;
+  font-size: 0.9rem;
+  color: var(--graphite);
+}
+
+.cmsShortArea {
+  min-height: 5.5rem;
+}
+
+.cmsTripleRow {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.cmsCheckboxRow {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-height: 44px;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--stone);
+  font-size: 0.92rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.cmsHighlightsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.cmsHighlightsList {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.cmsHighlightRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.cmsSmallButton,
+.cmsRemoveButton {
+  min-height: 40px;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cmsSmallButton:hover,
+.cmsRemoveButton:hover {
+  border-color: var(--ink);
+  background: var(--stone);
+}
+
+.cmsSectionDivider {
+  display: grid;
+  gap: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--line);
+}
+
+.cmsSubheading {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.cmsActionRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
+}
+
+.cmsDeleteConfirm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+}
+
+.cmsConfigStack {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.cmsToggleGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 1rem 0;
+}
+
+.cmsPageTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 1rem;
+}
+
+.cmsPageTab {
+  min-height: 40px;
+  padding: 0.4rem 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--stone);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cmsPageTabActive {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.cmsTeamGrid {
+  display: grid;
+  gap: 0.85rem;
+  margin: 1rem 0;
+}
+
+.cmsTeamRow {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.cmsTeamThumb {
+  width: 56px;
+  height: 56px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--stone);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.cmsTeamThumbImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+@media (max-width: 860px) {
+  .cmsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .cmsTripleRow,
+  .cmsToggleGrid {
     grid-template-columns: 1fr;
   }
 }

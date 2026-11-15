@@ -142,3 +142,52 @@ create table if not exists knowledge_index (
   chunk_count integer not null,
   payload jsonb not null
 );
+
+
+-- Admin-managed projects & showcase entries (seeded from case studies).
+create table if not exists site_projects (
+  slug text primary key,
+  title text not null,
+  summary text not null,
+  client text,
+  category text not null default 'operations',
+  category_label text,
+  solution_type text,
+  image text,
+  image_alt text,
+  secondary_image text,
+  secondary_image_alt text,
+  live_url text,
+  problem_brief text,
+  approach_brief text,
+  outcome_brief text,
+  highlights jsonb not null default '[]'::jsonb,
+  tags jsonb not null default '[]'::jsonb,
+  body text not null default '',
+  published_at date,
+  sort_order integer not null default 99,
+  featured_on_home boolean not null default false,
+  status text not null default 'published',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  constraint site_projects_category_check check (
+    category in ('operations', 'conversations', 'software', 'web')
+  ),
+  constraint site_projects_status_check check (
+    status in ('draft', 'published')
+  )
+);
+
+create index if not exists site_projects_status_order_idx
+  on site_projects (status, sort_order asc, updated_at desc);
+
+-- Editable website configuration, section toggles, hero overrides, and media slots.
+create table if not exists site_config (
+  config_key text primary key,
+  payload jsonb not null,
+  updated_by text,
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists site_config_updated_at_idx
+  on site_config (updated_at desc);

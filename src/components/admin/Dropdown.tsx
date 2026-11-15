@@ -18,21 +18,59 @@ interface DropdownProps {
 
 export function Dropdown({ label, value, options, onChange }: DropdownProps) {
   const [open, setOpen] = useState(false);
+  const [closing, setClosing] = useState(false);
   const [highlighted, setHighlighted] = useState(-1);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLUListElement>(null);
+  const closeTimerRef = useRef<number | null>(null);
 
   const selectedOption = options.find((option) => option.value === value);
+  const menuActive = open && !closing;
+
+  const openMenu = useCallback(() => {
+    if (closeTimerRef.current !== null) {
+      window.clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+    setClosing(false);
+    setOpen(true);
+    setHighlighted(options.findIndex((option) => option.value === value));
+  }, [options, value]);
 
   const close = useCallback(() => {
-    setOpen(false);
     setHighlighted(-1);
+    if (
+      typeof window === "undefined" ||
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
+    ) {
+      setClosing(false);
+      setOpen(false);
+      return;
+    }
+    setClosing(true);
+    if (closeTimerRef.current !== null) {
+      window.clearTimeout(closeTimerRef.current);
+    }
+    closeTimerRef.current = window.setTimeout(() => {
+      closeTimerRef.current = null;
+      setClosing(false);
+      setOpen(false);
+    }, 150);
   }, []);
+
+  useEffect(
+    () => () => {
+      if (closeTimerRef.current !== null) {
+        window.clearTimeout(closeTimerRef.current);
+      }
+    },
+    [],
+  );
 
   useEffect(() => {
     function onClickOutside(event: MouseEvent) {
       if (
-        open &&
+        menuActive &&
         triggerRef.current &&
         !triggerRef.current.contains(event.target as Node) &&
         menuRef.current &&
@@ -44,15 +82,14 @@ export function Dropdown({ label, value, options, onChange }: DropdownProps) {
 
     document.addEventListener("mousedown", onClickOutside);
     return () => document.removeEventListener("mousedown", onClickOutside);
-  }, [open, close]);
+  }, [menuActive, close]);
 
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent) => {
-      if (!open) {
+      if (!menuActive) {
         if (event.key === "Enter" || event.key === " " || event.key === "ArrowDown") {
           event.preventDefault();
-          setOpen(true);
-          setHighlighted(options.findIndex((option) => option.value === value));
+          openMenu();
         }
         return;
       }
@@ -85,7 +122,7 @@ export function Dropdown({ label, value, options, onChange }: DropdownProps) {
         return;
       }
     },
-    [open, value, options, highlighted, onChange, close],
+    [menuActive, openMenu, value, options, highlighted, onChange, close],
   );
 
   const selectOption = useCallback(
@@ -100,22 +137,23 @@ export function Dropdown({ label, value, options, onChange }: DropdownProps) {
     <div className={styles.dropdown}>
       <button
         ref={triggerRef}
-        className={cx(styles.trigger, open && styles.triggerOpen)}
+        className={cx(styles.trigger, menuActive && styles.triggerOpen)}
         aria-haspopup="listbox"
-        aria-expanded={open}
+        aria-expanded={menuActive}
         aria-label={label}
         onClick={(event) => {
           event.stopPropagation();
-          setOpen((previous) => !previous);
-          if (!open) {
-            setHighlighted(options.findIndex((option) => option.value === value));
+          if (menuActive) {
+            close();
+          } else {
+            openMenu();
           }
         }}
         onKeyDown={handleKeyDown}
       >
         <span className={styles.triggerLabel}>{selectedOption?.label ?? label}</span>
         <svg
-          className={cx(styles.triggerIcon, open && styles.triggerIconOpen)}
+          className={cx(styles.triggerIcon, menuActive && styles.triggerIconOpen)}
           viewBox="0 0 20 20"
           fill="none"
           aria-hidden="true"
@@ -131,7 +169,14 @@ export function Dropdown({ label, value, options, onChange }: DropdownProps) {
       </button>
 
       {open ? (
-        <ul ref={menuRef} className={styles.menu} role="listbox" aria-label={label}>
+        <ul
+          ref={menuRef}
+          className={styles.menu}
+          data-state={closing ? "closed" : "open"}
+          role={closing ? undefined : "listbox"}
+          aria-label={closing ? undefined : label}
+          aria-hidden={closing ? "true" : undefined}
+        >
           {options.map((option, index) => {
             const active = option.value === value;
             return (

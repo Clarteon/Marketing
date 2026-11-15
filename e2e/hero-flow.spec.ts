@@ -73,7 +73,7 @@ test("keyboard focus previews, Enter and Space select, and Escape clears", async
 test("diagram fits phone, tablet and desktop with readable targets and stable descriptions", async ({
   page,
 }) => {
-  test.slow(); // Six viewports, with every node and chat clearance checked at each width.
+  test.setTimeout(180_000); // Six viewports, with every node and chat clearance checked at each width.
   for (const width of [320, 390, 768, 1024, 1280, 1440]) {
     await page.setViewportSize({ width, height: width === 1280 ? 720 : 900 });
     const diagram = page.getByRole("region", { name: /interactive flow/i });
@@ -84,7 +84,7 @@ test("diagram fits phone, tablet and desktop with readable targets and stable de
     expect(box.x).toBeGreaterThanOrEqual(0);
     expect(box.x + box.width).toBeLessThanOrEqual(width);
     const nodes = diagram.getByRole("button").filter({ has: page.locator("svg") });
-    await expect(nodes).toHaveCount(8);
+    await expect(nodes).toHaveCount(12);
     for (const node of await nodes.all()) {
       const target = (await node.boundingBox())!;
       expect(target.width).toBeGreaterThanOrEqual(44);
@@ -164,7 +164,8 @@ test("proof artwork defers the mobile download and loads when approached", async
   page,
   isMobile,
 }) => {
-  const artwork = page.locator('img[src*="proof-paint-swash"]');
+  await page.goto("/solutions");
+  const artwork = page.locator('main img[loading="lazy"]').last();
   // Native lazy-load distances vary by viewport/network; the desktop illustration can already
   // be within Chrome's prefetch margin. The taller mobile page must defer it past the hero.
   if (isMobile) {

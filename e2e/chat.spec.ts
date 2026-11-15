@@ -23,7 +23,7 @@ async function openChat(page: Page) {
   await expect(page.getByRole("heading", { name: "Before we start" })).toBeVisible();
   await expect(page.getByLabel("Your message to Clara")).toHaveCount(0);
   await page.getByRole("button", { name: "I understand" }).click();
-  await expect(page.getByText(/Hi, I’m Clara/)).toBeVisible();
+  await expect(page.locator("#clara-chat-panel").getByText(/Hi, I’m Clara/)).toBeVisible();
 }
 
 test.describe("Clara chat", () => {

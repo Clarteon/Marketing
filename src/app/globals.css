@@ -40,7 +40,7 @@ html {
 
 body {
   margin: 0;
-  background: var(--paper);
+  background-color: var(--paper);
   color: var(--ink);
   font-family:
     var(--font-sans, system-ui),
@@ -113,6 +113,21 @@ main:focus-visible {
 ::selection {
   background: var(--lime);
   color: var(--ink);
+  -webkit-text-fill-color: var(--ink);
+}
+
+[data-tone="lime"]::selection,
+[data-tone="lime"] ::selection {
+  background: var(--ink);
+  color: var(--lime);
+  -webkit-text-fill-color: var(--lime);
+}
+
+[data-tone="lime"] [data-selection="lime"]::selection,
+[data-tone="lime"] [data-selection="lime"] ::selection {
+  background: var(--lime);
+  color: var(--ink);
+  -webkit-text-fill-color: var(--ink);
 }
 
 section[id] {
@@ -222,9 +237,25 @@ section[id] {
 
 .prose blockquote {
   margin-left: 0;
-  padding-left: 1.25rem;
+  margin-block: 2rem;
+  padding: 1.15rem 1.4rem;
   border-left: 3px solid var(--ink);
-  color: var(--graphite);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background: var(--stone);
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: clamp(1.08rem, 1.4vw, 1.24rem);
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+.prose img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-block: 2rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--stone);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { type CSSProperties, useEffect, useRef, useState } from "react";
 import { cx } from "@/lib/cx";
 import { navItems, site } from "@/lib/site";
 import { Button } from "./Button";
@@ -15,11 +15,15 @@ export function Header() {
   const [gliding, setGliding] = useState(false);
   const [gliderStyle, setGliderStyle] = useState<{
     left: number;
+    top: number;
     width: number;
+    height: number;
     opacity: number;
   }>({
     left: 0,
+    top: 0,
     width: 0,
+    height: 0,
     opacity: 0,
   });
 
@@ -27,20 +31,28 @@ export function Header() {
   const menuRef = useRef<HTMLElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const navRef = useRef<HTMLElement>(null);
+  const scrolledRef = useRef(false);
 
-  // Scroll detection for morphing pill dock
   useEffect(() => {
     const onScroll = () => {
-      setScrolled(window.scrollY > 20);
+      const next = window.scrollY > 20;
+      if (scrolledRef.current !== next) {
+        scrolledRef.current = next;
+        setScrolled(next);
+        setGliderStyle((prev) => (prev.opacity === 0 ? prev : { ...prev, opacity: 0 }));
+        setGliding(false);
+      }
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Keyboard accessibility and focus trap for mobile drawer
   useEffect(() => {
     if (!open) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
 
     const firstLink = menuRef.current?.querySelector<HTMLAnchorElement>("a");
     firstLink?.focus();
@@ -52,18 +64,39 @@ export function Header() {
       }
     };
 
+    const onResize = () => {
+      if (window.innerWidth > 980) {
+        setOpen(false);
+      }
+    };
+
     document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
+    window.addEventListener("resize", onResize);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("resize", onResize);
+    };
   }, [open]);
 
-  // Magnetic glider hover & focus tracking
-  const handleItemHover = (target: HTMLAnchorElement) => {
-    const navEl = navRef.current;
-    if (!navEl) return;
-    const navRect = navEl.getBoundingClientRect();
-    const linkRect = target.getBoundingClientRect();
+  const handleItemHover = (target: HTMLAnchorElement, isActive: boolean) => {
+    const left = target.offsetLeft;
+    const top = target.offsetTop;
+    const width = target.offsetWidth;
+    const height = target.offsetHeight;
 
     setGliderStyle((prev) => {
+      if (isActive) {
+        setGliding(false);
+        return {
+          left,
+          top,
+          width,
+          height,
+          opacity: 0,
+        };
+      }
+
       const isFirstAppear = prev.opacity === 0;
       if (isFirstAppear) {
         setGliding(false);
@@ -75,8 +108,10 @@ export function Header() {
       }
 
       return {
-        left: linkRect.left - navRect.left,
-        width: linkRect.width,
+        left,
+        top,
+        width,
+        height,
         opacity: 1,
       };
     });
@@ -93,8 +128,17 @@ export function Header() {
     }
   };
 
+  const isLightHero = Boolean(pathname && pathname !== "/");
+
   return (
-    <header className={cx(styles.header, scrolled && styles.headerScrolled)}>
+    <header
+      className={cx(
+        styles.header,
+        scrolled && styles.headerScrolled,
+        isLightHero && styles.headerLight,
+        open && styles.headerMenuOpen,
+      )}
+    >
       <div className={styles.headerInner}>
         <Link href="/" className={styles.headerLogo} aria-label="Clarteon home">
           <Logo />
@@ -110,8 +154,9 @@ export function Header() {
           <div
             className={cx(styles.navGlider, gliding && styles.navGliderActive)}
             style={{
-              transform: `translateX(${gliderStyle.left}px)`,
+              transform: `translate3d(${gliderStyle.left}px, ${gliderStyle.top}px, 0)`,
               width: `${gliderStyle.width}px`,
+              height: `${gliderStyle.height}px`,
               opacity: gliderStyle.opacity,
             }}
             aria-hidden="true"
@@ -127,8 +172,9 @@ export function Header() {
                 href={item.href}
                 className={cx(styles.navLink, isActive && styles.navLinkActive)}
                 aria-current={isActive ? "page" : undefined}
-                onMouseEnter={(e) => handleItemHover(e.currentTarget)}
-                onFocus={(e) => handleItemHover(e.currentTarget)}
+                onMouseEnter={(e) => handleItemHover(e.currentTarget, isActive)}
+                onFocus={(e) => handleItemHover(e.currentTarget, isActive)}
+                onClick={handleNavLeave}
               >
                 <span>{item.label}</span>
               </Link>
@@ -190,30 +236,49 @@ export function Header() {
         id="mobile-menu"
         className={styles.mobileNav}
         aria-label="Mobile"
+        data-open={open}
+        aria-hidden={!open}
+        inert={!open}
         hidden={!open}
       >
-        <div className={styles.mobileNavLinks}>
-          {navItems.map((item) => {
-            const isActive =
-              pathname === item.href || (pathname ? pathname.startsWith(`${item.href}/`) : false);
+        <div className={styles.mobileNavBackdrop} aria-hidden="true" />
+        <div className={styles.mobileNavContent}>
+          <p className={styles.mobileNavTagline}>{site.tagline}</p>
 
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cx(styles.mobileNavLink, isActive && styles.mobileNavLinkActive)}
-                aria-current={isActive ? "page" : undefined}
-                onClick={() => setOpen(false)}
-              >
-                <span>{item.label}</span>
-              </Link>
-            );
-          })}
-        </div>
-        <div className={styles.mobileNavActions}>
-          <Button href={site.cta.href} onClick={() => setOpen(false)}>
-            {site.cta.label}
-          </Button>
+          <div className={styles.mobileNavLinks}>
+            {navItems.map((item, index) => {
+              const isActive =
+                pathname === item.href || (pathname ? pathname.startsWith(`${item.href}/`) : false);
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cx(styles.mobileNavLink, isActive && styles.mobileNavLinkActive)}
+                  aria-current={isActive ? "page" : undefined}
+                  style={{ "--nav-i": index } as CSSProperties}
+                  onClick={() => setOpen(false)}
+                >
+                  <span className={styles.mobileNavLabel}>{item.label}</span>
+                </Link>
+              );
+            })}
+          </div>
+
+          <div className={styles.mobileNavFooter}>
+            <a
+              href={`mailto:${site.email}`}
+              className={styles.mobileNavEmail}
+              onClick={() => setOpen(false)}
+            >
+              {site.email}
+            </a>
+            <div className={styles.mobileNavActions}>
+              <Button href={site.cta.href} size="large" onClick={() => setOpen(false)}>
+                {site.cta.label}
+              </Button>
+            </div>
+          </div>
         </div>
       </nav>
     </header>

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-11-07T05:31:26.884Z",
+  "generatedAt": "2026-11-15T17:25:02.182Z",
   "chunks": [
     {
       "id": "about#how-we-work-with-clients-2",
@@ -48,6 +48,29 @@
       ]
     },
     {
+      "id": "about#preamble",
+      "url": "/about",
+      "title": "Preamble",
+      "headingPath": [
+        "Clarity first.",
+        "Preamble"
+      ],
+      "text": "Start with the friction slowing a business down, then design or connect software and automation that removes it cleanly. Small and growing teams running dependable systems they actually understand, free from manual copy-paste work and bloated tools.",
+      "tags": [
+        "about",
+        "clarteon",
+        "team",
+        "clarity",
+        "technology partner"
+      ],
+      "synonyms": [
+        "company",
+        "founders",
+        "team",
+        "about us"
+      ]
+    },
+    {
       "id": "about#the-team-3",
       "url": "/about",
       "title": "The team",
@@ -55,7 +78,7 @@
         "Clarity first.",
         "The team"
       ],
-      "text": "Clarteon is a young company. The founding team’s bios and certifications will be published here when they are ready. We do not publish credentials we cannot support.",
+      "text": "Clarteon is led by a five-person founding technology team based in the Republic of the Philippines, uniting executive direction, technical architecture, product delivery, AI automation, and full-stack software engineering. Individual portraits will be added alongside our published roles, and we only publish client claims or credentials that are directly verified.",
       "tags": [
         "about",
         "clarteon",
@@ -429,6 +452,166 @@
       ]
     },
     {
+      "id": "connect-your-tools-before-replacing-them#author",
+      "url": "/insights/connect-your-tools-before-replacing-them",
+      "title": "Author",
+      "headingPath": [
+        "When to connect your existing tools instead of rebuilding",
+        "Author"
+      ],
+      "text": "Aldrei Justin S. Santua",
+      "tags": [
+        "api integrations",
+        "system architecture",
+        "crm",
+        "custom software",
+        "data sync"
+      ],
+      "synonyms": [
+        "software integration",
+        "replace spreadsheets",
+        "legacy system",
+        "workflow bridge"
+      ]
+    },
+    {
+      "id": "connect-your-tools-before-replacing-them#authorrole",
+      "url": "/insights/connect-your-tools-before-replacing-them",
+      "title": "Author Role",
+      "headingPath": [
+        "When to connect your existing tools instead of rebuilding",
+        "Author Role"
+      ],
+      "text": "Chief Technology Officer (CTO)",
+      "tags": [
+        "api integrations",
+        "system architecture",
+        "crm",
+        "custom software",
+        "data sync"
+      ],
+      "synonyms": [
+        "software integration",
+        "replace spreadsheets",
+        "legacy system",
+        "workflow bridge"
+      ]
+    },
+    {
+      "id": "connect-your-tools-before-replacing-them#details-1",
+      "url": "/insights/connect-your-tools-before-replacing-them",
+      "title": "Details",
+      "headingPath": [
+        "When to connect your existing tools instead of rebuilding",
+        "Details"
+      ],
+      "text": "Replacing core business software sounds tempting when staff spend Friday afternoons exporting CSV spreadsheets, fixing broken column names, and re-uploading lists between tools. Rewriting the whole stack from scratch feels tidy on a whiteboard. Ripping out platforms that your finance desk, warehouse crew, or sales team already knows brings months of retraining, data migration bugs, and operational slowdown. When individual tools do their main job well and fail mostly at talking to each other, a dedicated integration layer delivers relief much sooner. Staff stay inside the interfaces they already understand while background services carry validated updates between systems automatically.",
+      "tags": [
+        "api integrations",
+        "system architecture",
+        "crm",
+        "custom software",
+        "data sync"
+      ],
+      "synonyms": [
+        "software integration",
+        "replace spreadsheets",
+        "legacy system",
+        "workflow bridge"
+      ]
+    },
+    {
+      "id": "connect-your-tools-before-replacing-them#imagealt",
+      "url": "/insights/connect-your-tools-before-replacing-them",
+      "title": "Image Alt",
+      "headingPath": [
+        "When to connect your existing tools instead of rebuilding",
+        "Image Alt"
+      ],
+      "text": "Ethernet cables wired through a network switch linking separate systems together",
+      "tags": [
+        "api integrations",
+        "system architecture",
+        "crm",
+        "custom software",
+        "data sync"
+      ],
+      "synonyms": [
+        "software integration",
+        "replace spreadsheets",
+        "legacy system",
+        "workflow bridge"
+      ]
+    },
+    {
+      "id": "connect-your-tools-before-replacing-them#overview",
+      "url": "/insights/connect-your-tools-before-replacing-them",
+      "title": "When to connect your existing tools instead of rebuilding",
+      "headingPath": [
+        "When to connect your existing tools instead of rebuilding"
+      ],
+      "text": "Full system rewrites carry heavy risk when the tools you already use handle accounting, messaging, or stock well on their own. Integration layers often unlock speed sooner.",
+      "tags": [
+        "api integrations",
+        "system architecture",
+        "crm",
+        "custom software",
+        "data sync"
+      ],
+      "synonyms": [
+        "software integration",
+        "replace spreadsheets",
+        "legacy system",
+        "workflow bridge"
+      ]
+    },
+    {
+      "id": "connect-your-tools-before-replacing-them#signs-an-integration-fits-better-than-a-rebuild-2",
+      "url": "/insights/connect-your-tools-before-replacing-them",
+      "title": "Signs an integration fits better than a rebuild",
+      "headingPath": [
+        "When to connect your existing tools instead of rebuilding",
+        "Signs an integration fits better than a rebuild"
+      ],
+      "text": "An integration makes immediate sense when one database already holds your trusted records, such as a billing tool that sends compliant invoices or a storefront that tracks inventory accurately. Often errors only creep in afterward because someone copied numbers by hand or missed a cancelled item in another tab. When the only missing piece is an exception queue or an approval dashboard, building a focused bridge beats throwing away years of working data. Our order processing automation architecture shows that pattern clearly. Incoming web forms, staff review sheets, and dispatch alerts stay familiar to the team, while server-side validation and clean API sync move every confirmed line item without duplicate typing. Keep the tools your staff already trust; build the clean bridge where copy-and-paste errors happen today.",
+      "tags": [
+        "api integrations",
+        "system architecture",
+        "crm",
+        "custom software",
+        "data sync"
+      ],
+      "synonyms": [
+        "software integration",
+        "replace spreadsheets",
+        "legacy system",
+        "workflow bridge"
+      ]
+    },
+    {
+      "id": "connect-your-tools-before-replacing-them#what-solid-integration-engineering-requires-3",
+      "url": "/insights/connect-your-tools-before-replacing-them",
+      "title": "What solid integration engineering requires",
+      "headingPath": [
+        "When to connect your existing tools instead of rebuilding",
+        "What solid integration engineering requires"
+      ],
+      "text": "Quick no-code connections often break silently whenever a field name changes or a third-party webhook fires twice in one second. Production integrations need explicit engineering safeguards at every boundary: Idempotency keys so duplicate webhooks never generate double invoices or repeat records. Strict schema checks to catch renamed or missing payload fields before corrupt data reaches storage. Explicit network timeouts paired with retry queues for flaky third-party APIs. Clear team alerts whenever an authentication token expires or a manual override is needed. That engineering discipline keeps automated workflows dependable month after month. If a legacy vendor blocks your business completely behind closed exports or hard account limits, custom software earns its keep. Otherwise, keeping proven tools intact while building the bridge between them lowers risk and puts time back into your week sooner. Review our software and integration options or send a project brief listing the tools you want wired together.",
+      "tags": [
+        "api integrations",
+        "system architecture",
+        "crm",
+        "custom software",
+        "data sync"
+      ],
+      "synonyms": [
+        "software integration",
+        "replace spreadsheets",
+        "legacy system",
+        "workflow bridge"
+      ]
+    },
+    {
       "id": "contact#booking",
       "url": "/contact#book",
       "title": "Book a free discovery call",
@@ -522,7 +705,7 @@
       "headingPath": [
         "Technology that starts with your problem."
       ],
-      "text": "Clarteon is a technology partner that starts with the problem, then finds the clearest way to automate, build or improve it. Your business tech partner Give your team more time to grow the business by removing repetitive work. We find the right solution, then automate the work or build what’s missing. Book a free discovery call. Send a project brief",
+      "text": "Clarteon is a technology partner that starts with the problem, then finds the clearest way to automate, build or improve it. Your business tech partner Clarteon is the technology partner that believes the right solution starts with the right question. We find the repetitive work slowing your business down, then automate it or build what you need, so you can grow. Book a free discovery call. Send a project brief",
       "tags": [
         "technology partner",
         "automation",
@@ -642,7 +825,7 @@
         "Technology that starts with your problem.",
         "Work you can look at."
       ],
-      "text": "Every project here started with a bottleneck: orders buried in chat messages, support queues full of repetitive questions, or manual spreadsheets eating up the week. Explore what we built and what changed. See our work",
+      "text": "Every project here started with a daily operational headache: orders buried in chat messages, support queues full of repetitive questions, or manual spreadsheets eating up the week. Explore what we built and what changed. See our work",
       "tags": [
         "technology partner",
         "automation",
@@ -766,7 +949,7 @@
         "Four steps. Clear and simple.",
         "What to expect on a discovery call"
       ],
-      "text": "Tell us what’s slowing you down. We’ll talk it through and explore a practical next step. We ask what is slowing you down, what you have tried, and what a good outcome looks like. We look for the smallest useful first step that solves the bottleneck without disrupting your week. You leave with a clear idea of the likely direction and whether we are a fit. If we are not the right fit, we say so and point you toward a better option. No preparation is required beyond a rough description of the problem.",
+      "text": "Tell us what’s slowing you down. We’ll talk it through and explore a practical next step. We ask what is slowing you down, what you have tried, and what a good outcome looks like. We look for the smallest useful first step that resolves the pain point without disrupting your week. You leave with a clear idea of the likely direction and whether we are a fit. If we are not the right fit, we say so and point you toward a better option. No preparation is required beyond a rough description of the problem.",
       "tags": [
         "how we work",
         "process",
@@ -1689,7 +1872,7 @@
         "Work you can look at.",
         "How we present our work"
       ],
-      "text": "We publish a project only when a client has agreed to be named or described anonymously, alongside reference systems our team has built and tested end to end. Each write-up stays in plain business language: the bottleneck the team faced, the system we put in place, and the measurable difference in daily work.",
+      "text": "We publish a project only when a client has agreed to be named or described anonymously, alongside reference systems our team has built and tested end to end. Each write-up stays in plain business language: the operational pain point the team faced, the system we put in place, and the measurable difference in daily work.",
       "tags": [
         "case studies",
         "client work",
@@ -1729,186 +1912,451 @@
       ]
     },
     {
-      "id": "privacy#clara-our-ai-assistant-6",
+      "id": "privacy#1-entity-status-and-scope-2",
       "url": "/privacy",
-      "title": "Clara, our AI assistant",
+      "title": "1. Entity status and scope",
       "headingPath": [
-        "Privacy",
-        "Clara, our AI assistant"
+        "Privacy Policy & Cookies",
+        "1. Entity status and scope"
       ],
-      "text": "Clara is an AI assistant. When you chat with her, the messages you send are processed by our AI provider, Groq, so she can reply. Groq receives the conversation text needed to generate a reply. Groq’s privacy policy states that it does not retain inputs and outputs by default, and that it may keep them for up to 30 days for reliability and abuse monitoring. We do not store your chat transcript in our lead database. If you use the microphone, our site sends your recording to Groq to turn it into text. Clarteon does not save the recording. You can edit the text before sending it as a chat message. If you use Read aloud, a voice on your device reads Clara’s reply. Cloudflare Turnstile checks that you are a person before your first message. If Clara cannot answer from our published content, we log the question with names, email addresses and other personal details removed, so a person can review it and improve our answers. We keep those notes only as long as needed for that purpose. Please do not share passwords, payment details, government identification or other sensitive information in chat. If you are under 18, please do not use the chat or share personal details.",
+      "text": "This Privacy Policy and Cookie Notice (\"Policy\") explains how Clarteon (\"we\", \"us\", \"our\") collects, uses, stores, discloses, and protects information when you visit this website, submit a project brief, schedule a discovery call, or interact with Clara, our automated AI assistant. Clarteon currently operates as an unincorporated founding technology team based in the Republic of the Philippines prior to formal corporate registration. Contact and data privacy inquiries may be directed to our designated point of contact at info@clarteon.tech. Where applicable, our handling of personal data is structured with reference to the principles of transparency, legitimate purpose, and proportionality under the Data Privacy Act of 2012 of the Republic of the Philippines (Republic Act No. 10173) and its Implementing Rules and Regulations.",
       "tags": [
-        "privacy",
-        "data",
+        "privacy policy",
+        "cookie policy",
+        "data protection",
+        "Philippines",
+        "Data Privacy Act",
         "personal information",
-        "AI provider",
         "retention"
       ],
       "synonyms": [
-        "data policy",
-        "privacy policy",
-        "GDPR",
-        "data protection"
+        "data privacy",
+        "cookies",
+        "RA 10173",
+        "privacy notice",
+        "cookie preferences"
       ]
     },
     {
-      "id": "privacy#discovery-call-bookings-2",
+      "id": "privacy#3-cookie-notice-and-preference-management-6",
       "url": "/privacy",
-      "title": "Discovery-call bookings",
+      "title": "3. Cookie notice and preference management",
       "headingPath": [
-        "Privacy",
-        "Discovery-call bookings"
+        "Privacy Policy & Cookies",
+        "3. Cookie notice and preference management"
       ],
-      "text": "When you book a discovery call, we collect your name, email address, the time you choose, your timezone and any notes you add. We use Neon to store the booking record, Resend to send confirmation emails, and Google Calendar to create the event and its Google Meet link. Google processes the event details and sends the calendar invitation. We keep booking details only as long as needed to arrange and follow up on the call, then delete them unless a client relationship or law requires a longer period. You can ask us to remove your booking details sooner.",
+      "text": "This website implements a layered cookie model restricted to Strictly Essential mechanisms and optional Visitor Preference storage. We do not deploy advertising pixels, cross-site tracking cookies, or third-party behavioral profiling scripts.",
       "tags": [
-        "privacy",
-        "data",
+        "privacy policy",
+        "cookie policy",
+        "data protection",
+        "Philippines",
+        "Data Privacy Act",
         "personal information",
-        "AI provider",
         "retention"
       ],
       "synonyms": [
-        "data policy",
-        "privacy policy",
-        "GDPR",
-        "data protection"
+        "data privacy",
+        "cookies",
+        "RA 10173",
+        "privacy notice",
+        "cookie preferences"
       ]
     },
     {
-      "id": "privacy#how-long-we-keep-project-briefs-3",
+      "id": "privacy#4-third-party-infrastructure-and-data-transfers-10",
       "url": "/privacy",
-      "title": "How long we keep project briefs",
+      "title": "4. Third-party infrastructure and data transfers",
       "headingPath": [
-        "Privacy",
-        "How long we keep project briefs"
+        "Privacy Policy & Cookies",
+        "4. Third-party infrastructure and data transfers"
       ],
-      "text": "We keep project briefs for 12 months from submission, then delete or anonymize them, unless a conversation is active and needs the history. You can ask us to remove your brief sooner.",
+      "text": "To deliver website functionality without operating custom mail, database, calendar, or model-hosting servers, Clarteon relies on specialized third-party subprocessors, each of which may process data on infrastructure located outside the Republic of the Philippines: Vercel: Web application hosting, content delivery, and serverless request execution. Neon: Managed PostgreSQL database hosting for project briefs, booking records, anonymized question logs, and site configuration. Resend: Transactional email delivery for project brief receipts, team alerts, and booking confirmations. Google (Google Calendar & Google Meet): Automated calendar availability checks, event creation, and meeting invitations when a visitor books a call. Cloudflare (Turnstile & Web Analytics): Bot mitigation and cookieless aggregate performance measurement. Groq: Real-time text inference and transient speech-to-text transcription for Clara. Each provider processes only the minimum data required to perform its technical function and acts subject to its own security controls and published privacy terms.",
       "tags": [
-        "privacy",
-        "data",
+        "privacy policy",
+        "cookie policy",
+        "data protection",
+        "Philippines",
+        "Data Privacy Act",
         "personal information",
-        "AI provider",
         "retention"
       ],
       "synonyms": [
-        "data policy",
-        "privacy policy",
-        "GDPR",
-        "data protection"
+        "data privacy",
+        "cookies",
+        "RA 10173",
+        "privacy notice",
+        "cookie preferences"
       ]
     },
     {
-      "id": "privacy#legal-review-7",
+      "id": "privacy#5-data-retention-and-minimization-11",
       "url": "/privacy",
-      "title": "Legal review",
+      "title": "5. Data retention and minimization",
       "headingPath": [
-        "Privacy",
-        "Legal review"
+        "Privacy Policy & Cookies",
+        "5. Data retention and minimization"
       ],
-      "text": "This page is a plain-language draft for review by a qualified lawyer before launch. It is not legal advice.",
+      "text": "Project briefs: Retained in our lead database for up to twelve (12) months from submission, after which records are scheduled for deletion or anonymization unless an ongoing engagement or statutory obligation requires continued retention. Discovery-call bookings: Retained only for as long as reasonably necessary to coordinate, conduct, and follow up on the scheduled meeting, unless superseded by a written client contract or legal retention requirement. Anonymized unanswered chat logs: Retained strictly for documentation maintenance without personal identifiers. We practice data minimization in application logs by excluding full form bodies, personal emails, and chat payloads from routine server diagnostics.",
       "tags": [
-        "privacy",
-        "data",
+        "privacy policy",
+        "cookie policy",
+        "data protection",
+        "Philippines",
+        "Data Privacy Act",
         "personal information",
-        "AI provider",
         "retention"
       ],
       "synonyms": [
-        "data policy",
+        "data privacy",
+        "cookies",
+        "RA 10173",
+        "privacy notice",
+        "cookie preferences"
+      ]
+    },
+    {
+      "id": "privacy#6-children-and-minors-12",
+      "url": "/privacy",
+      "title": "6. Children and minors",
+      "headingPath": [
+        "Privacy Policy & Cookies",
+        "6. Children and minors"
+      ],
+      "text": "This website and its inquiry, booking, and AI chat services are intended strictly for business and adult use. Individuals under eighteen (18) years of age must not submit personal information, schedule calls, or use Clara. If we become aware that personal data of a minor has been submitted inadvertently, we will delete it promptly upon notice.",
+      "tags": [
         "privacy policy",
-        "GDPR",
-        "data protection"
+        "cookie policy",
+        "data protection",
+        "Philippines",
+        "Data Privacy Act",
+        "personal information",
+        "retention"
+      ],
+      "synonyms": [
+        "data privacy",
+        "cookies",
+        "RA 10173",
+        "privacy notice",
+        "cookie preferences"
+      ]
+    },
+    {
+      "id": "privacy#7-your-rights-and-requests-13",
+      "url": "/privacy",
+      "title": "7. Your rights and requests",
+      "headingPath": [
+        "Privacy Policy & Cookies",
+        "7. Your rights and requests"
+      ],
+      "text": "Subject to applicable law and technical feasibility, you may request access to, correction of, or deletion of personal information you have submitted through our project brief or discovery-call forms, or withdraw consent to future non-essential processing. To submit a privacy, access, or deletion request, email info@clarteon.tech from the email address associated with your submission or include sufficient information to locate your record. A member of our team will respond directly.",
+      "tags": [
+        "privacy policy",
+        "cookie policy",
+        "data protection",
+        "Philippines",
+        "Data Privacy Act",
+        "personal information",
+        "retention"
+      ],
+      "synonyms": [
+        "data privacy",
+        "cookies",
+        "RA 10173",
+        "privacy notice",
+        "cookie preferences"
+      ]
+    },
+    {
+      "id": "privacy#8-amendments-to-this-policy-14",
+      "url": "/privacy",
+      "title": "8. Amendments to this policy",
+      "headingPath": [
+        "Privacy Policy & Cookies",
+        "8. Amendments to this policy"
+      ],
+      "text": "We may update this Policy from time to time to reflect technical changes, new service providers, or updates after incorporation and formal counsel review. The current effective date appears at the top of this page.",
+      "tags": [
+        "privacy policy",
+        "cookie policy",
+        "data protection",
+        "Philippines",
+        "Data Privacy Act",
+        "personal information",
+        "retention"
+      ],
+      "synonyms": [
+        "data privacy",
+        "cookies",
+        "RA 10173",
+        "privacy notice",
+        "cookie preferences"
+      ]
+    },
+    {
+      "id": "privacy#9-legal-review-notice-15",
+      "url": "/privacy",
+      "title": "9. Legal review notice",
+      "headingPath": [
+        "Privacy Policy & Cookies",
+        "9. Legal review notice"
+      ],
+      "text": "This document is prepared in good faith as a transparent, operational policy reflecting Clarteon's actual website behavior prior to incorporation. It is subject to final review and formal approval by a qualified lawyer admitted to practice in the Republic of the Philippines and does not constitute legal advice.",
+      "tags": [
+        "privacy policy",
+        "cookie policy",
+        "data protection",
+        "Philippines",
+        "Data Privacy Act",
+        "personal information",
+        "retention"
+      ],
+      "synonyms": [
+        "data privacy",
+        "cookies",
+        "RA 10173",
+        "privacy notice",
+        "cookie preferences"
+      ]
+    },
+    {
+      "id": "privacy#a-project-brief-submissions-3",
+      "url": "/privacy",
+      "title": "a. Project brief submissions",
+      "headingPath": [
+        "Privacy Policy & Cookies",
+        "2. Information we collect and purposes of processing",
+        "a. Project brief submissions"
+      ],
+      "text": "When you submit a project brief form, we collect your full name, email address, optional company name, optional team size, and project description, together with the submission timestamp and verification signal returned by Cloudflare Turnstile. Purpose: We process this information strictly to evaluate your inquiry, respond to your request, protect the submission endpoint from automated abuse, and maintain records of prospective engagements. Database-first persistence: Brief records are persisted in our database before notification emails are transmitted so inquiries are not silently dropped if an email provider experiences a temporary outage.",
+      "tags": [
+        "privacy policy",
+        "cookie policy",
+        "data protection",
+        "Philippines",
+        "Data Privacy Act",
+        "personal information",
+        "retention"
+      ],
+      "synonyms": [
+        "data privacy",
+        "cookies",
+        "RA 10173",
+        "privacy notice",
+        "cookie preferences"
+      ]
+    },
+    {
+      "id": "privacy#a-strictly-essential-cookies-and-security-tokens-7",
+      "url": "/privacy",
+      "title": "a. Strictly essential cookies and security tokens",
+      "headingPath": [
+        "Privacy Policy & Cookies",
+        "3. Cookie notice and preference management",
+        "a. Strictly essential cookies and security tokens"
+      ],
+      "text": "Strictly essential storage is necessary for website security, session continuity, fraud prevention, and honoring your stated consent preference. These mechanisms operate automatically upon use of the relevant feature and cannot be disabled without impairing site functionality: clarteoncookieconsent: Stores your saved cookie consent selection (essential or all) for one hundred eighty (180) days (SameSite=Lax, path /). clarteonchat: Signed HttpOnly session cookie scoped strictly to /api/chat (SameSite=Lax) used to maintain conversation context during an active browser visit and enforce fair-use message quotas. clarteonadmin: Signed HttpOnly session cookie (SameSite=Lax) set exclusively when an authorized team administrator signs into the protected /admin portal. Visitors who do not sign in as administrators never receive this cookie. Cloudflare Turnstile tokens: Ephemeral human-verification challenges executed when initializing chat, submitting project briefs, or booking calls to mitigate automated spam and abuse.",
+      "tags": [
+        "privacy policy",
+        "cookie policy",
+        "data protection",
+        "Philippines",
+        "Data Privacy Act",
+        "personal information",
+        "retention"
+      ],
+      "synonyms": [
+        "data privacy",
+        "cookies",
+        "RA 10173",
+        "privacy notice",
+        "cookie preferences"
+      ]
+    },
+    {
+      "id": "privacy#b-discovery-call-scheduling-4",
+      "url": "/privacy",
+      "title": "b. Discovery-call scheduling",
+      "headingPath": [
+        "Privacy Policy & Cookies",
+        "2. Information we collect and purposes of processing",
+        "b. Discovery-call scheduling"
+      ],
+      "text": "When you book a discovery call, we collect your name, email address, selected date and start time, timezone selection, and optional discussion notes. Purpose: We process this information to check schedule availability, prevent overlapping bookings, issue a Google Calendar invitation and Google Meet conference link, send confirmation receipts, and conduct the scheduled call.",
+      "tags": [
+        "privacy policy",
+        "cookie policy",
+        "data protection",
+        "Philippines",
+        "Data Privacy Act",
+        "personal information",
+        "retention"
+      ],
+      "synonyms": [
+        "data privacy",
+        "cookies",
+        "RA 10173",
+        "privacy notice",
+        "cookie preferences"
+      ]
+    },
+    {
+      "id": "privacy#b-optional-visitor-preference-cookies-8",
+      "url": "/privacy",
+      "title": "b. Optional visitor preference cookies",
+      "headingPath": [
+        "Privacy Policy & Cookies",
+        "3. Cookie notice and preference management",
+        "b. Optional visitor preference cookies"
+      ],
+      "text": "Visitor preference cookies remember non-identifying interface selections only if you choose Allow preference cookies in our cookie banner or cookie preferences panel: clarteontimezone: Remembers the display timezone you manually choose in the discovery-call booking scheduler for one hundred eighty (180) days (SameSite=Lax, path /) so returning visits pre-select your preferred scheduling timezone. If you choose Essential only, clarteontimezone is neither read as a saved preference nor written, and any previously stored clarteontimezone cookie is cleared immediately. You may review or update your selection at any time via the Cookie preferences control in the website footer.",
+      "tags": [
+        "privacy policy",
+        "cookie policy",
+        "data protection",
+        "Philippines",
+        "Data Privacy Act",
+        "personal information",
+        "retention"
+      ],
+      "synonyms": [
+        "data privacy",
+        "cookies",
+        "RA 10173",
+        "privacy notice",
+        "cookie preferences"
+      ]
+    },
+    {
+      "id": "privacy#c-clara-our-ai-assistant-5",
+      "url": "/privacy",
+      "title": "c. Clara, our AI assistant",
+      "headingPath": [
+        "Privacy Policy & Cookies",
+        "2. Information we collect and purposes of processing",
+        "c. Clara, our AI assistant"
+      ],
+      "text": "Clara is an automated artificial intelligence assistant integrated into this website. When you interact with Clara: Conversation messages sent during an active session are transmitted to our inference provider, Groq, solely to generate responses. According to Groq's published privacy documentation, inputs and outputs are not retained by default for model training and may be temporarily buffered for up to thirty (30) days for operational reliability and abuse prevention. Clarteon does not store full chat transcripts in our lead database. When Clara cannot answer an inquiry from published site content, an anonymized summary of the question—stripped of names, email addresses, and identifying details—is logged internally so our team can review content gaps and improve published documentation. Voice input and speech synthesis: If you grant microphone permission to use voice input, your audio recording is transmitted transiently to Groq solely for speech-to-text transcription and is not saved by Clarteon. You may review and edit the resulting text before submitting it.",
+      "tags": [
+        "privacy policy",
+        "cookie policy",
+        "data protection",
+        "Philippines",
+        "Data Privacy Act",
+        "personal information",
+        "retention"
+      ],
+      "synonyms": [
+        "data privacy",
+        "cookies",
+        "RA 10173",
+        "privacy notice",
+        "cookie preferences"
+      ]
+    },
+    {
+      "id": "privacy#c-clara-our-ai-assistant-5-part-2",
+      "url": "/privacy",
+      "title": "c. Clara, our AI assistant",
+      "headingPath": [
+        "Privacy Policy & Cookies",
+        "2. Information we collect and purposes of processing",
+        "c. Clara, our AI assistant"
+      ],
+      "text": "If you trigger the Read aloud feature, your browser's local speech synthesis engine speaks the displayed message directly on your device without uploading audio to Clarteon. Sensitive data prohibition: Do not submit passwords, payment card details, bank credentials, government-issued identification numbers, health records, or confidential third-party proprietary information to Clara.",
+      "tags": [
+        "privacy policy",
+        "cookie policy",
+        "data protection",
+        "Philippines",
+        "Data Privacy Act",
+        "personal information",
+        "retention"
+      ],
+      "synonyms": [
+        "data privacy",
+        "cookies",
+        "RA 10173",
+        "privacy notice",
+        "cookie preferences"
+      ]
+    },
+    {
+      "id": "privacy#c-cookieless-website-analytics-9",
+      "url": "/privacy",
+      "title": "c. Cookieless website analytics",
+      "headingPath": [
+        "Privacy Policy & Cookies",
+        "3. Cookie notice and preference management",
+        "c. Cookieless website analytics"
+      ],
+      "text": "We use Cloudflare Web Analytics to measure aggregate page traffic, referral counts, and Core Web Vitals performance metrics. Cloudflare Web Analytics operates strictly without cookies, does not employ browser fingerprinting, and does not follow individual visitors across external websites. Clarteon reviews only aggregate page-level metrics rather than individual visitor profiles.",
+      "tags": [
+        "privacy policy",
+        "cookie policy",
+        "data protection",
+        "Philippines",
+        "Data Privacy Act",
+        "personal information",
+        "retention"
+      ],
+      "synonyms": [
+        "data privacy",
+        "cookies",
+        "RA 10173",
+        "privacy notice",
+        "cookie preferences"
+      ]
+    },
+    {
+      "id": "privacy#details-1",
+      "url": "/privacy",
+      "title": "Details",
+      "headingPath": [
+        "Privacy Policy & Cookies",
+        "Details"
+      ],
+      "text": "Effective date: November 15, 2026",
+      "tags": [
+        "privacy policy",
+        "cookie policy",
+        "data protection",
+        "Philippines",
+        "Data Privacy Act",
+        "personal information",
+        "retention"
+      ],
+      "synonyms": [
+        "data privacy",
+        "cookies",
+        "RA 10173",
+        "privacy notice",
+        "cookie preferences"
       ]
     },
     {
       "id": "privacy#overview",
       "url": "/privacy",
-      "title": "Privacy",
+      "title": "Privacy Policy & Cookies",
       "headingPath": [
-        "Privacy"
+        "Privacy Policy & Cookies"
       ],
-      "text": "How Clarteon handles information from the project brief form, discovery-call bookings and Clara, our AI assistant. Privacy How Clarteon handles information from the project brief form, discovery-call bookings and Clara, our AI assistant.",
+      "text": "Privacy Policy and Cookie Notice explaining how Clarteon, an unincorporated founding technology team in the Republic of the Philippines, collects, processes, stores, and protects personal data. Legal How Clarteon collects, processes, retains, and safeguards personal information across this website, project briefs, discovery-call bookings, cookies, and Clara.",
       "tags": [
-        "privacy",
-        "data",
+        "privacy policy",
+        "cookie policy",
+        "data protection",
+        "Philippines",
+        "Data Privacy Act",
         "personal information",
-        "AI provider",
         "retention"
       ],
       "synonyms": [
-        "data policy",
-        "privacy policy",
-        "GDPR",
-        "data protection"
-      ]
-    },
-    {
-      "id": "privacy#site-analytics-4",
-      "url": "/privacy",
-      "title": "Site analytics",
-      "headingPath": [
-        "Privacy",
-        "Site analytics"
-      ],
-      "text": "We use Cloudflare Web Analytics to count page visits and measure how fast pages load. It does not set cookies, and Cloudflare states that it does not track individual visitors across other websites. When a page loads, your browser sends Cloudflare information about that visit, such as the page address and how long it took to load. We see aggregate page totals rather than individual visitor profiles.",
-      "tags": [
-        "privacy",
-        "data",
-        "personal information",
-        "AI provider",
-        "retention"
-      ],
-      "synonyms": [
-        "data policy",
-        "privacy policy",
-        "GDPR",
-        "data protection"
-      ]
-    },
-    {
-      "id": "privacy#what-the-project-brief-form-collects-1",
-      "url": "/privacy",
-      "title": "What the project brief form collects",
-      "headingPath": [
-        "Privacy",
-        "What the project brief form collects"
-      ],
-      "text": "When you send a project brief, we collect your name, email address, optional company and team size, and the message you write. We also receive the time of submission and the technical signal from our bot check. We use this information only to reply to you and to keep the form safe. The form saves your brief in our lead database before sending any email. Our providers are Neon (database hosting), Resend (email delivery), Cloudflare Turnstile (bot check) and Vercel (hosting). Each provider processes the data needed for its part of the service.",
-      "tags": [
-        "privacy",
-        "data",
-        "personal information",
-        "AI provider",
-        "retention"
-      ],
-      "synonyms": [
-        "data policy",
-        "privacy policy",
-        "GDPR",
-        "data protection"
-      ]
-    },
-    {
-      "id": "privacy#your-choices-5",
-      "url": "/privacy",
-      "title": "Your choices",
-      "headingPath": [
-        "Privacy",
-        "Your choices"
-      ],
-      "text": "You can ask for your information to be removed. Email info@clarteon.tech and a person will help.",
-      "tags": [
-        "privacy",
-        "data",
-        "personal information",
-        "AI provider",
-        "retention"
-      ],
-      "synonyms": [
-        "data policy",
-        "privacy policy",
-        "GDPR",
-        "data protection"
+        "data privacy",
+        "cookies",
+        "RA 10173",
+        "privacy notice",
+        "cookie preferences"
       ]
     },
     {
@@ -2700,6 +3148,501 @@
       ]
     },
     {
+      "id": "stop-buying-tools-start-with-the-bottleneck#author",
+      "url": "/insights/stop-buying-tools-start-with-the-bottleneck",
+      "title": "Author",
+      "headingPath": [
+        "Stop buying software before you map the bottleneck",
+        "Author"
+      ],
+      "text": "Hsisan Angel Romero",
+      "tags": [
+        "operations",
+        "workflow audit",
+        "business automation",
+        "software strategy",
+        "client discovery"
+      ],
+      "synonyms": [
+        "tool sprawl",
+        "process bottleneck",
+        "automation readiness",
+        "discovery call"
+      ]
+    },
+    {
+      "id": "stop-buying-tools-start-with-the-bottleneck#authorrole",
+      "url": "/insights/stop-buying-tools-start-with-the-bottleneck",
+      "title": "Author Role",
+      "headingPath": [
+        "Stop buying software before you map the bottleneck",
+        "Author Role"
+      ],
+      "text": "Chief Executive Officer (CEO)",
+      "tags": [
+        "operations",
+        "workflow audit",
+        "business automation",
+        "software strategy",
+        "client discovery"
+      ],
+      "synonyms": [
+        "tool sprawl",
+        "process bottleneck",
+        "automation readiness",
+        "discovery call"
+      ]
+    },
+    {
+      "id": "stop-buying-tools-start-with-the-bottleneck#details-1",
+      "url": "/insights/stop-buying-tools-start-with-the-bottleneck",
+      "title": "Details",
+      "headingPath": [
+        "Stop buying software before you map the bottleneck",
+        "Details"
+      ],
+      "text": "Most businesses do not run into trouble because they lack software. A growing team usually already pays for a CRM, group chat apps, shared spreadsheets, an invoicing tool, and folders of exported reports. When delivery slows down or leads slip away, buying one more platform feels like the fastest way out. Weeks later, staff still copy numbers from one browser tab into another because the new platform covered the tidy ten percent of the job and left the messy middle untouched. When we talk with operators during a discovery call, we ask them to walk through the last order, ticket, or client inquiry that went sideways. Almost every delay sits between existing tools. Someone caught an email on a phone, pasted details into a group chat, updated a spreadsheet at the end of a shift, and forgot to tell billing when a detail changed. Putting a fresh interface on top of that sequence adds one more inbox for someone to forget to check. Software only saves hours when it removes a handoff your team actually drops today.",
+      "tags": [
+        "operations",
+        "workflow audit",
+        "business automation",
+        "software strategy",
+        "client discovery"
+      ],
+      "synonyms": [
+        "tool sprawl",
+        "process bottleneck",
+        "automation readiness",
+        "discovery call"
+      ]
+    },
+    {
+      "id": "stop-buying-tools-start-with-the-bottleneck#follow-one-piece-of-work-from-arrival-to-close-2",
+      "url": "/insights/stop-buying-tools-start-with-the-bottleneck",
+      "title": "Follow one piece of work from arrival to close",
+      "headingPath": [
+        "Stop buying software before you map the bottleneck",
+        "Follow one piece of work from arrival to close"
+      ],
+      "text": "Before you commit budget to custom development or automation, three questions clear out guesswork: Where does your team type the same detail more than once in an ordinary week? Which handoff stalls the moment one key person steps out for the afternoon? How do staff notice when something goes off script, such as a missing file or a changed delivery window? Answering those questions takes an hour with the people handling daily work. Out of twenty annoying chores in a department, two usually account for most wasted time and client frustration. One company needs order rows moved straight from web forms into invoicing and fulfillment queues, as shown in our manual order processing workflow architecture. Another team loses warm inquiries simply because nobody answers off-hours questions or offers an open calendar slot right away.",
+      "tags": [
+        "operations",
+        "workflow audit",
+        "business automation",
+        "software strategy",
+        "client discovery"
+      ],
+      "synonyms": [
+        "tool sprawl",
+        "process bottleneck",
+        "automation readiness",
+        "discovery call"
+      ]
+    },
+    {
+      "id": "stop-buying-tools-start-with-the-bottleneck#imagealt",
+      "url": "/insights/stop-buying-tools-start-with-the-bottleneck",
+      "title": "Image Alt",
+      "headingPath": [
+        "Stop buying software before you map the bottleneck",
+        "Image Alt"
+      ],
+      "text": "Color-coded sticky notes and markers laid across a whiteboard to map team handoffs",
+      "tags": [
+        "operations",
+        "workflow audit",
+        "business automation",
+        "software strategy",
+        "client discovery"
+      ],
+      "synonyms": [
+        "tool sprawl",
+        "process bottleneck",
+        "automation readiness",
+        "discovery call"
+      ]
+    },
+    {
+      "id": "stop-buying-tools-start-with-the-bottleneck#overview",
+      "url": "/insights/stop-buying-tools-start-with-the-bottleneck",
+      "title": "Stop buying software before you map the bottleneck",
+      "headingPath": [
+        "Stop buying software before you map the bottleneck"
+      ],
+      "text": "Most teams add another subscription before checking why handoffs stall. Walking through an ordinary workday uncovers what actually deserves software, automation, or removal.",
+      "tags": [
+        "operations",
+        "workflow audit",
+        "business automation",
+        "software strategy",
+        "client discovery"
+      ],
+      "synonyms": [
+        "tool sprawl",
+        "process bottleneck",
+        "automation readiness",
+        "discovery call"
+      ]
+    },
+    {
+      "id": "stop-buying-tools-start-with-the-bottleneck#what-to-ask-any-technical-partner-to-deliver-3",
+      "url": "/insights/stop-buying-tools-start-with-the-bottleneck",
+      "title": "What to ask any technical partner to deliver",
+      "headingPath": [
+        "Stop buying software before you map the bottleneck",
+        "What to ask any technical partner to deliver"
+      ],
+      "text": "When you hire a technology partner, you pay to remove operational friction. Ask to see the exact state of a request before the build begins and how it changes after launch. A serious deliverable list spells out which manual steps go away, how the system behaves when an external API hiccups briefly, and how your own staff monitor issues without calling a developer for every routine adjustment. If you are weighing workflow automation, a tailored web portal, or an integration between tools you already own, browse our operations solutions or book a discovery call to map your slowest handoff together.",
+      "tags": [
+        "operations",
+        "workflow audit",
+        "business automation",
+        "software strategy",
+        "client discovery"
+      ],
+      "synonyms": [
+        "tool sprawl",
+        "process bottleneck",
+        "automation readiness",
+        "discovery call"
+      ]
+    },
+    {
+      "id": "terms#1-acceptance-of-terms-2",
+      "url": "/terms",
+      "title": "1. Acceptance of terms",
+      "headingPath": [
+        "Terms of Service",
+        "1. Acceptance of terms"
+      ],
+      "text": "By accessing or using this website (\"Site\"), submitting a project brief, scheduling a discovery call, or interacting with Clara, you agree to be bound by these Terms of Service (\"Terms\") and our Privacy Policy & Cookies. If you do not agree with these Terms, please discontinue use of the Site immediately. If you access or use this Site on behalf of a company, partnership, or other organization, you represent that you have authority to accept these Terms on that organization's behalf. You further represent that you are at least eighteen (18) years of age.",
+      "tags": [
+        "terms of service",
+        "terms of use",
+        "legal",
+        "Philippines",
+        "acceptable use",
+        "governing law"
+      ],
+      "synonyms": [
+        "terms and conditions",
+        "website terms",
+        "service terms",
+        "legal notice"
+      ]
+    },
+    {
+      "id": "terms#10-governing-law-and-dispute-resolution-11",
+      "url": "/terms",
+      "title": "10. Governing law and dispute resolution",
+      "headingPath": [
+        "Terms of Service",
+        "10. Governing law and dispute resolution"
+      ],
+      "text": "These Terms, and any dispute or claim arising out of or in connection with them or your use of this Site, shall be governed by and construed in accordance with the laws of the Republic of the Philippines, without giving effect to conflict-of-law principles. Any formal dispute arising solely from use of this public website that cannot be resolved amicably in good faith by contacting info@clarteon.tech shall be submitted to the exclusive jurisdiction of the proper courts in the Republic of the Philippines.",
+      "tags": [
+        "terms of service",
+        "terms of use",
+        "legal",
+        "Philippines",
+        "acceptable use",
+        "governing law"
+      ],
+      "synonyms": [
+        "terms and conditions",
+        "website terms",
+        "service terms",
+        "legal notice"
+      ]
+    },
+    {
+      "id": "terms#11-amendments-and-severability-12",
+      "url": "/terms",
+      "title": "11. Amendments and severability",
+      "headingPath": [
+        "Terms of Service",
+        "11. Amendments and severability"
+      ],
+      "text": "We may revise these Terms periodically to reflect legal counsel review, corporate registration updates, or Site feature changes. Updated Terms take effect upon publication on this page with an updated effective date. If any provision of these Terms is held invalid or unenforceable by a competent court under Philippine law, the remaining provisions shall continue in full force and effect.",
+      "tags": [
+        "terms of service",
+        "terms of use",
+        "legal",
+        "Philippines",
+        "acceptable use",
+        "governing law"
+      ],
+      "synonyms": [
+        "terms and conditions",
+        "website terms",
+        "service terms",
+        "legal notice"
+      ]
+    },
+    {
+      "id": "terms#12-contact-and-counsel-review-notice-13",
+      "url": "/terms",
+      "title": "12. Contact and counsel review notice",
+      "headingPath": [
+        "Terms of Service",
+        "12. Contact and counsel review notice"
+      ],
+      "text": "For questions regarding these Terms, legal notices, or pre-contractual inquiries, email info@clarteon.tech. These Terms have been drafted in good faith prior to formal corporate registration and remain subject to review and formal adoption by qualified Philippine legal counsel.",
+      "tags": [
+        "terms of service",
+        "terms of use",
+        "legal",
+        "Philippines",
+        "acceptable use",
+        "governing law"
+      ],
+      "synonyms": [
+        "terms and conditions",
+        "website terms",
+        "service terms",
+        "legal notice"
+      ]
+    },
+    {
+      "id": "terms#2-entity-status-and-pre-incorporation-disclosure-3",
+      "url": "/terms",
+      "title": "2. Entity status and pre-incorporation disclosure",
+      "headingPath": [
+        "Terms of Service",
+        "2. Entity status and pre-incorporation disclosure"
+      ],
+      "text": "Clarteon currently operates as an unincorporated founding technology team in the Republic of the Philippines prior to formal corporate incorporation. Until incorporation is completed and updated legal details are published on this page, any exploratory communication through this Site—including brief submissions, discovery calls, or informational guides—is conducted with the Clarteon founding team through our official domain clarteon.tech and point of contact info@clarteon.tech.",
+      "tags": [
+        "terms of service",
+        "terms of use",
+        "legal",
+        "Philippines",
+        "acceptable use",
+        "governing law"
+      ],
+      "synonyms": [
+        "terms and conditions",
+        "website terms",
+        "service terms",
+        "legal notice"
+      ]
+    },
+    {
+      "id": "terms#3-informational-scope-and-separate-client-agreements-4",
+      "url": "/terms",
+      "title": "3. Informational scope and separate client agreements",
+      "headingPath": [
+        "Terms of Service",
+        "3. Informational scope and separate client agreements"
+      ],
+      "text": "All descriptions of technical capabilities, case studies, software approaches, sample workflows, and educational articles published on this Site are provided solely for general informational purposes. No binding engagement created here: Submitting a project brief, booking a discovery call, or receiving responses from Clara does not create a client relationship, partnership, joint venture, exclusivity obligation, fiduciary duty, or binding offer to perform work. Written contracts govern commercial work: All paid engineering, automation, integration, consulting, design, and software development services are undertaken exclusively pursuant to a separate written agreement, Statement of Work, or proposal executed in writing by authorized representatives of both parties, specifying deliverables, timelines, intellectual property allocation, fees, payment schedules, and warranties.",
+      "tags": [
+        "terms of service",
+        "terms of use",
+        "legal",
+        "Philippines",
+        "acceptable use",
+        "governing law"
+      ],
+      "synonyms": [
+        "terms and conditions",
+        "website terms",
+        "service terms",
+        "legal notice"
+      ]
+    },
+    {
+      "id": "terms#4-discovery-call-scheduling-and-project-briefs-5",
+      "url": "/terms",
+      "title": "4. Discovery-call scheduling and project briefs",
+      "headingPath": [
+        "Terms of Service",
+        "4. Discovery-call scheduling and project briefs"
+      ],
+      "text": "You agree to submit only truthful, accurate, and authorized contact and project details when completing the project brief form or booking a discovery call. Discovery calls are exploratory consultations and are subject to team availability. Clarteon reserves the right to reschedule, decline, or cancel an introductory call or decline an inquiry at its discretion—for instance, in cases involving incomplete details, abusive conduct, conflicts of interest, or requests outside our operational capabilities. Do not attach, describe, or transmit proprietary trade secrets, regulated personal records of third parties, source code under non-disclosure agreements, or confidential financial credentials through the public brief form or booking notes prior to executing an appropriate written confidentiality agreement.",
+      "tags": [
+        "terms of service",
+        "terms of use",
+        "legal",
+        "Philippines",
+        "acceptable use",
+        "governing law"
+      ],
+      "synonyms": [
+        "terms and conditions",
+        "website terms",
+        "service terms",
+        "legal notice"
+      ]
+    },
+    {
+      "id": "terms#5-clara-our-ai-assistant-6",
+      "url": "/terms",
+      "title": "5. Clara, our AI assistant",
+      "headingPath": [
+        "Terms of Service",
+        "5. Clara, our AI assistant"
+      ],
+      "text": "Clara is an automated artificial intelligence assistant operated on top of third-party language models. By interacting with Clara, you acknowledge and agree that: Not human or binding advice: Clara generates automated responses for preliminary informational guidance and inquiry triage. Her statements do not constitute legal, regulatory, financial, security, or architectural advice, nor do they constitute binding representations, price quotations, service-level guarantees, or contractual commitments on behalf of Clarteon. No price quotations: Clara is not authorized to quote prices, negotiate fees, or approve commercial timelines. All commercial terms must be confirmed directly in writing by an authorized member of the Clarteon team. Verification responsibility: Automated outputs may occasionally be incomplete, inaccurate, or outdated. You must independently verify any technical or business information before relying on it for operational decisions.",
+      "tags": [
+        "terms of service",
+        "terms of use",
+        "legal",
+        "Philippines",
+        "acceptable use",
+        "governing law"
+      ],
+      "synonyms": [
+        "terms and conditions",
+        "website terms",
+        "service terms",
+        "legal notice"
+      ]
+    },
+    {
+      "id": "terms#6-acceptable-use-and-prohibited-conduct-7",
+      "url": "/terms",
+      "title": "6. Acceptable use and prohibited conduct",
+      "headingPath": [
+        "Terms of Service",
+        "6. Acceptable use and prohibited conduct"
+      ],
+      "text": "You agree to use this Site solely for lawful evaluation of Clarteon's services and published materials. You must not: Circumvent, disable, reverse-engineer, probe, or interfere with Cloudflare Turnstile checks, rate limits, session cookies, authentication controls, or security headers; Attempt prompt-injection attacks, automated scraping, credential stuffing, denial-of-service traffic, or repetitive automated submissions against /api/chat, /api/lead, /api/booking, or /admin; Transmit malware, defamatory content, unlawful material, or spam through any website form or assistant input; or Misrepresent your identity, impersonate another person or organization, or frame/mirror Clarteon content to imply unauthorized affiliation. We reserve the right to restrict, throttle, or block network access for traffic exhibiting abuse, automated scraping, or security threats without prior notice.",
+      "tags": [
+        "terms of service",
+        "terms of use",
+        "legal",
+        "Philippines",
+        "acceptable use",
+        "governing law"
+      ],
+      "synonyms": [
+        "terms and conditions",
+        "website terms",
+        "service terms",
+        "legal notice"
+      ]
+    },
+    {
+      "id": "terms#7-intellectual-property-8",
+      "url": "/terms",
+      "title": "7. Intellectual property",
+      "headingPath": [
+        "Terms of Service",
+        "7. Intellectual property"
+      ],
+      "text": "Unless explicitly stated otherwise, all original source code, visual designs, editorial copy, technical diagrams, case-study narratives, Insights articles, and branding assets—including the Clarteon name and geometric aperture mark—remain the intellectual property of Clarteon or their respective contributors. You may view, bookmark, share public links to, and quote brief excerpts of our published pages or Insights articles with clear attribution and backlink, provided such use does not misrepresent Clarteon or reproduce substantial pages for competing commercial distribution. Client logos, project outcomes, or external product references mentioned in case studies remain the property of their respective owners.",
+      "tags": [
+        "terms of service",
+        "terms of use",
+        "legal",
+        "Philippines",
+        "acceptable use",
+        "governing law"
+      ],
+      "synonyms": [
+        "terms and conditions",
+        "website terms",
+        "service terms",
+        "legal notice"
+      ]
+    },
+    {
+      "id": "terms#8-third-party-services-and-availability-9",
+      "url": "/terms",
+      "title": "8. Third-party services and availability",
+      "headingPath": [
+        "Terms of Service",
+        "8. Third-party services and availability"
+      ],
+      "text": "This Site integrates third-party cloud infrastructure—including Vercel, Neon, Cloudflare, Resend, Google Calendar/Meet, and Groq—to serve pages, manage bookings, verify human traffic, deliver notifications, and run Clara. We do not warrant uninterrupted, error-free, or latency-free availability of the Site or third-party integrations, and we assume no responsibility for external websites linked from our pages.",
+      "tags": [
+        "terms of service",
+        "terms of use",
+        "legal",
+        "Philippines",
+        "acceptable use",
+        "governing law"
+      ],
+      "synonyms": [
+        "terms and conditions",
+        "website terms",
+        "service terms",
+        "legal notice"
+      ]
+    },
+    {
+      "id": "terms#9-disclaimer-of-warranties-and-limitation-of-liability-10",
+      "url": "/terms",
+      "title": "9. Disclaimer of warranties and limitation of liability",
+      "headingPath": [
+        "Terms of Service",
+        "9. Disclaimer of warranties and limitation of liability"
+      ],
+      "text": "To the fullest extent permitted by applicable laws of the Republic of the Philippines, this Site, its content, scheduling tools, and Clara are provided on an \"as is\" and \"as available\" basis without warranties of any kind, whether express, implied, or statutory, including implied warranties of merchantability, fitness for a particular purpose, non-infringement, or accuracy. To the maximum extent permitted under Philippine law, Clarteon and its individual team members shall not be liable for any indirect, incidental, consequential, special, exemplary, or punitive damages, or for any loss of profits, revenue, business opportunity, goodwill, or data arising out of or related to your access to, inability to access, or reliance upon this Site, its forms, scheduling availability, or outputs from Clara. Nothing in these Terms excludes liability that cannot lawfully be excluded or limited under applicable Philippine law.",
+      "tags": [
+        "terms of service",
+        "terms of use",
+        "legal",
+        "Philippines",
+        "acceptable use",
+        "governing law"
+      ],
+      "synonyms": [
+        "terms and conditions",
+        "website terms",
+        "service terms",
+        "legal notice"
+      ]
+    },
+    {
+      "id": "terms#details-1",
+      "url": "/terms",
+      "title": "Details",
+      "headingPath": [
+        "Terms of Service",
+        "Details"
+      ],
+      "text": "Effective date: November 15, 2026",
+      "tags": [
+        "terms of service",
+        "terms of use",
+        "legal",
+        "Philippines",
+        "acceptable use",
+        "governing law"
+      ],
+      "synonyms": [
+        "terms and conditions",
+        "website terms",
+        "service terms",
+        "legal notice"
+      ]
+    },
+    {
+      "id": "terms#overview",
+      "url": "/terms",
+      "title": "Terms of Service",
+      "headingPath": [
+        "Terms of Service"
+      ],
+      "text": "Terms of Service governing access to and use of the Clarteon website, inquiry forms, discovery-call scheduling, and Clara under the laws of the Republic of the Philippines. Legal Terms governing access to this website, inquiry forms, discovery-call bookings, and Clara. Paid client projects are governed exclusively by separate signed written agreements.",
+      "tags": [
+        "terms of service",
+        "terms of use",
+        "legal",
+        "Philippines",
+        "acceptable use",
+        "governing law"
+      ],
+      "synonyms": [
+        "terms and conditions",
+        "website terms",
+        "service terms",
+        "legal notice"
+      ]
+    },
+    {
       "id": "v-unite-voice-ai-coach#approachbrief",
       "url": "/our-work/v-unite-voice-ai-coach",
       "title": "Approach Brief",
@@ -3071,6 +4014,486 @@
         "clinic analytics",
         "SOP assistant",
         "voice AI"
+      ]
+    },
+    {
+      "id": "what-a-clear-software-scope-includes#author",
+      "url": "/insights/what-a-clear-software-scope-includes",
+      "title": "Author",
+      "headingPath": [
+        "What a clear software scope includes before work starts",
+        "Author"
+      ],
+      "text": "Michelle Eunice H. Opeña",
+      "tags": [
+        "product delivery",
+        "project scope",
+        "custom software",
+        "client deliverables",
+        "planning"
+      ],
+      "synonyms": [
+        "software specification",
+        "project requirements",
+        "delivery checklist",
+        "scope creep"
+      ]
+    },
+    {
+      "id": "what-a-clear-software-scope-includes#authorrole",
+      "url": "/insights/what-a-clear-software-scope-includes",
+      "title": "Author Role",
+      "headingPath": [
+        "What a clear software scope includes before work starts",
+        "Author Role"
+      ],
+      "text": "Product & Delivery Lead",
+      "tags": [
+        "product delivery",
+        "project scope",
+        "custom software",
+        "client deliverables",
+        "planning"
+      ],
+      "synonyms": [
+        "software specification",
+        "project requirements",
+        "delivery checklist",
+        "scope creep"
+      ]
+    },
+    {
+      "id": "what-a-clear-software-scope-includes#details-1",
+      "url": "/insights/what-a-clear-software-scope-includes",
+      "title": "Details",
+      "headingPath": [
+        "What a clear software scope includes before work starts",
+        "Details"
+      ],
+      "text": "Many founders sign a build proposal after scanning a neat list of page names or feature headlines. Short labels such as \"custom admin dashboard\" or \"automated booking flow\" look straightforward at kickoff. Delays start midway through the build when both sides realize they pictured different workflows for cancellations, staff approvals, timezone shifts, or missing client details. Those surprises turn a focused build into rounds of rework. A dependable technology partner settles the unglamorous questions while changes only cost a paragraph of text. Before engineering begins, a written scope should show how real visitors, customers, and staff move through every state of the system, including moments when a connection drops or an input fails checks. Changes cost almost nothing in a written paragraph; they cost weeks once three integrations depend on the old assumption.",
+      "tags": [
+        "product delivery",
+        "project scope",
+        "custom software",
+        "client deliverables",
+        "planning"
+      ],
+      "synonyms": [
+        "software specification",
+        "project requirements",
+        "delivery checklist",
+        "scope creep"
+      ]
+    },
+    {
+      "id": "what-a-clear-software-scope-includes#four-pieces-every-delivery-plan-needs-2",
+      "url": "/insights/what-a-clear-software-scope-includes",
+      "title": "Four pieces every delivery plan needs",
+      "headingPath": [
+        "What a clear software scope includes before work starts",
+        "Four pieces every delivery plan needs"
+      ],
+      "text": "When you review a scope from Clarteon or any other build team, check that it spells out concrete behaviors you can test on a preview link: Input validation and recovery rules: How every form, checkout, and scheduler handles invalid fields, accidental double clicks, slow connections, and third-party downtime. Database-first persistence: Guaranteeing records save locally before emails or calendar invites fire, so a temporary provider blip never drops a lead silently. Operator visibility: Giving staff one clean workspace to inspect incoming records, update statuses, retry failed notices, or edit published copy without touching code. Testable acceptance checks: Closing each milestone with actions you can click through yourself, from mobile screen behavior to real confirmation receipts. We follow this discipline whether shipping a storefront such as Janelle's Satin Bouquet or wiring internal scheduling rules. Short milestones keep working software visible early, while adjustments stay inexpensive.",
+      "tags": [
+        "product delivery",
+        "project scope",
+        "custom software",
+        "client deliverables",
+        "planning"
+      ],
+      "synonyms": [
+        "software specification",
+        "project requirements",
+        "delivery checklist",
+        "scope creep"
+      ]
+    },
+    {
+      "id": "what-a-clear-software-scope-includes#imagealt",
+      "url": "/insights/what-a-clear-software-scope-includes",
+      "title": "Image Alt",
+      "headingPath": [
+        "What a clear software scope includes before work starts",
+        "Image Alt"
+      ],
+      "text": "Written specifications and milestone notes beside an open laptop on a work desk",
+      "tags": [
+        "product delivery",
+        "project scope",
+        "custom software",
+        "client deliverables",
+        "planning"
+      ],
+      "synonyms": [
+        "software specification",
+        "project requirements",
+        "delivery checklist",
+        "scope creep"
+      ]
+    },
+    {
+      "id": "what-a-clear-software-scope-includes#overview",
+      "url": "/insights/what-a-clear-software-scope-includes",
+      "title": "What a clear software scope includes before work starts",
+      "headingPath": [
+        "What a clear software scope includes before work starts"
+      ],
+      "text": "Vague software proposals look fast at kickoff and slow down right before launch. Here are the concrete deliverables, edge cases, and acceptance checks to expect in writing.",
+      "tags": [
+        "product delivery",
+        "project scope",
+        "custom software",
+        "client deliverables",
+        "planning"
+      ],
+      "synonyms": [
+        "software specification",
+        "project requirements",
+        "delivery checklist",
+        "scope creep"
+      ]
+    },
+    {
+      "id": "what-a-clear-software-scope-includes#why-plain-documentation-protects-your-budget-3",
+      "url": "/insights/what-a-clear-software-scope-includes",
+      "title": "Why plain documentation protects your budget",
+      "headingPath": [
+        "What a clear software scope includes before work starts",
+        "Why plain documentation protects your budget"
+      ],
+      "text": "Detailed scope notes protect both the buyer and the engineers building the system. Listing edge cases up front separates must-have first-release functionality from nice ideas worth saving until customers use the product. Teams spend less energy sending clarification emails and more time reviewing live working previews. You can follow our sequence from kickoff to post-launch care on our how we work page, or explore custom software solutions if an outdated spreadsheet or manual workflow is slowing down your team.",
+      "tags": [
+        "product delivery",
+        "project scope",
+        "custom software",
+        "client deliverables",
+        "planning"
+      ],
+      "synonyms": [
+        "software specification",
+        "project requirements",
+        "delivery checklist",
+        "scope creep"
+      ]
+    },
+    {
+      "id": "where-ai-agents-help-and-where-rules-win#author",
+      "url": "/insights/where-ai-agents-help-and-where-rules-win",
+      "title": "Author",
+      "headingPath": [
+        "Where AI agents earn their keep, and where plain rules win",
+        "Author"
+      ],
+      "text": "Jossel John S. Dumaop",
+      "tags": [
+        "ai agents",
+        "chatbots",
+        "automation",
+        "reliability",
+        "triage"
+      ],
+      "synonyms": [
+        "LLM integration",
+        "AI guardrails",
+        "deterministic workflows",
+        "support triage"
+      ]
+    },
+    {
+      "id": "where-ai-agents-help-and-where-rules-win#authorrole",
+      "url": "/insights/where-ai-agents-help-and-where-rules-win",
+      "title": "Author Role",
+      "headingPath": [
+        "Where AI agents earn their keep, and where plain rules win",
+        "Author Role"
+      ],
+      "text": "AI Engineer & Automation Specialist",
+      "tags": [
+        "ai agents",
+        "chatbots",
+        "automation",
+        "reliability",
+        "triage"
+      ],
+      "synonyms": [
+        "LLM integration",
+        "AI guardrails",
+        "deterministic workflows",
+        "support triage"
+      ]
+    },
+    {
+      "id": "where-ai-agents-help-and-where-rules-win#deliverables-you-should-expect-from-an-ai-partner-3",
+      "url": "/insights/where-ai-agents-help-and-where-rules-win",
+      "title": "Deliverables you should expect from an AI partner",
+      "headingPath": [
+        "Where AI agents earn their keep, and where plain rules win",
+        "Deliverables you should expect from an AI partner"
+      ],
+      "text": "Before approving a chatbot or workflow agent for your company, ask how the build team verifies edge cases before go-live. Expect repeatable scenario tests covering prompt injection attempts, missing knowledge logging, provider downtime fallbacks, and clean escalation into your team's email or ticket queue. You can explore our conversations and AI support work or try our live site assistant Clara directly.",
+      "tags": [
+        "ai agents",
+        "chatbots",
+        "automation",
+        "reliability",
+        "triage"
+      ],
+      "synonyms": [
+        "LLM integration",
+        "AI guardrails",
+        "deterministic workflows",
+        "support triage"
+      ]
+    },
+    {
+      "id": "where-ai-agents-help-and-where-rules-win#details-1",
+      "url": "/insights/where-ai-agents-help-and-where-rules-win",
+      "title": "Details",
+      "headingPath": [
+        "Where AI agents earn their keep, and where plain rules win",
+        "Details"
+      ],
+      "text": "Businesses bring two opposite worries to AI conversations. Some teams ask a language model to run an entire multi-step process without supervision, while others steer clear completely after watching a public chatbot invent policies or guess availability. Both reactions come from treating language models as an all-or-nothing substitute for ordinary software engineering. Language models read messy human messages well. They summarize customer complaints, pick requested dates or SKU details out of cluttered email threads, and route questions toward the right documented answer. Standard server code handles arithmetic, database permissions, live calendar checks, and state updates identically every time. Dependable AI systems keep those two responsibilities sharply divided. Let language models interpret messy human intent; keep arithmetic, calendar rules, and database writes inside deterministic server code.",
+      "tags": [
+        "ai agents",
+        "chatbots",
+        "automation",
+        "reliability",
+        "triage"
+      ],
+      "synonyms": [
+        "LLM integration",
+        "AI guardrails",
+        "deterministic workflows",
+        "support triage"
+      ]
+    },
+    {
+      "id": "where-ai-agents-help-and-where-rules-win#give-rules-the-strict-checks-and-let-models-read-intent-2",
+      "url": "/insights/where-ai-agents-help-and-where-rules-win",
+      "title": "Give rules the strict checks and let models read intent",
+      "headingPath": [
+        "Where AI agents earn their keep, and where plain rules win",
+        "Give rules the strict checks and let models read intent"
+      ],
+      "text": "Look at customer triage or spoken practice feedback, similar to the workflows behind our customer support triager architecture and V-Unite voice AI coach. When a visitor writes a broad question in plain English, the model searches curated knowledge entries and explains the relevant service or process. When that same visitor picks a meeting time or leaves contact details, deterministic server tools query live availability, enforce schema validation, check anti-spam tokens, and write verified records to the database. Even inside chat interactions, clear technical guardrails keep replies trustworthy: Ground every factual claim in reviewed knowledge documents, with an honest handoff whenever a detail is missing. Keep pricing, custom quotes, legal commitments, and deadlines strictly in human hands. Route every database write or staff notification through typed tool validation and rate limits.",
+      "tags": [
+        "ai agents",
+        "chatbots",
+        "automation",
+        "reliability",
+        "triage"
+      ],
+      "synonyms": [
+        "LLM integration",
+        "AI guardrails",
+        "deterministic workflows",
+        "support triage"
+      ]
+    },
+    {
+      "id": "where-ai-agents-help-and-where-rules-win#imagealt",
+      "url": "/insights/where-ai-agents-help-and-where-rules-win",
+      "title": "Image Alt",
+      "headingPath": [
+        "Where AI agents earn their keep, and where plain rules win",
+        "Image Alt"
+      ],
+      "text": "Brass mechanical watch gears illustrating deterministic workflow rules clicking in strict sequence",
+      "tags": [
+        "ai agents",
+        "chatbots",
+        "automation",
+        "reliability",
+        "triage"
+      ],
+      "synonyms": [
+        "LLM integration",
+        "AI guardrails",
+        "deterministic workflows",
+        "support triage"
+      ]
+    },
+    {
+      "id": "where-ai-agents-help-and-where-rules-win#overview",
+      "url": "/insights/where-ai-agents-help-and-where-rules-win",
+      "title": "Where AI agents earn their keep, and where plain rules win",
+      "headingPath": [
+        "Where AI agents earn their keep, and where plain rules win"
+      ],
+      "text": "Putting a language model in charge of rigid calculations causes avoidable mistakes. Combining deterministic rules with scoped AI handling gives teams predictable behavior.",
+      "tags": [
+        "ai agents",
+        "chatbots",
+        "automation",
+        "reliability",
+        "triage"
+      ],
+      "synonyms": [
+        "LLM integration",
+        "AI guardrails",
+        "deterministic workflows",
+        "support triage"
+      ]
+    },
+    {
+      "id": "why-slow-checkouts-and-booking-forms-lose-leads#author",
+      "url": "/insights/why-slow-checkouts-and-booking-forms-lose-leads",
+      "title": "Author",
+      "headingPath": [
+        "Why clunky intake forms and slow booking pages quietly lose leads",
+        "Author"
+      ],
+      "text": "Brandon J. Abuya",
+      "tags": [
+        "websites",
+        "booking systems",
+        "conversion",
+        "performance",
+        "mobile ux"
+      ],
+      "synonyms": [
+        "lead capture",
+        "discovery call scheduler",
+        "landing page UX",
+        "web engineering"
+      ]
+    },
+    {
+      "id": "why-slow-checkouts-and-booking-forms-lose-leads#authorrole",
+      "url": "/insights/why-slow-checkouts-and-booking-forms-lose-leads",
+      "title": "Author Role",
+      "headingPath": [
+        "Why clunky intake forms and slow booking pages quietly lose leads",
+        "Author Role"
+      ],
+      "text": "Full-Stack Developer & Software Engineer",
+      "tags": [
+        "websites",
+        "booking systems",
+        "conversion",
+        "performance",
+        "mobile ux"
+      ],
+      "synonyms": [
+        "lead capture",
+        "discovery call scheduler",
+        "landing page UX",
+        "web engineering"
+      ]
+    },
+    {
+      "id": "why-slow-checkouts-and-booking-forms-lose-leads#details-1",
+      "url": "/insights/why-slow-checkouts-and-booking-forms-lose-leads",
+      "title": "Details",
+      "headingPath": [
+        "Why clunky intake forms and slow booking pages quietly lose leads",
+        "Details"
+      ],
+      "text": "A prospect opens your website on a phone between meetings, reads two sections, and decides to get in touch. What happens over the next minute shapes whether that inquiry lands in your pipeline. When layout blocks jump around during load, mobile menus collide, or the only option is an email address with no response expectation, busy buyers close the tab and move to the next search result. Fast, intentional web engineering fixes an acquisition leak long before a sales call takes place. Effective websites skip noisy popups and countdown banners in favor of clear explanations, fast page transitions on mobile connections, and immediate paths for qualified visitors to book a time or submit structured context. Most lost leads never leave angry feedback; they simply close a frustrating mobile form and never come back.",
+      "tags": [
+        "websites",
+        "booking systems",
+        "conversion",
+        "performance",
+        "mobile ux"
+      ],
+      "synonyms": [
+        "lead capture",
+        "discovery call scheduler",
+        "landing page UX",
+        "web engineering"
+      ]
+    },
+    {
+      "id": "why-slow-checkouts-and-booking-forms-lose-leads#imagealt",
+      "url": "/insights/why-slow-checkouts-and-booking-forms-lose-leads",
+      "title": "Image Alt",
+      "headingPath": [
+        "Why clunky intake forms and slow booking pages quietly lose leads",
+        "Image Alt"
+      ],
+      "text": "Person working at a laptop desk beside a phone and notebook during client scheduling",
+      "tags": [
+        "websites",
+        "booking systems",
+        "conversion",
+        "performance",
+        "mobile ux"
+      ],
+      "synonyms": [
+        "lead capture",
+        "discovery call scheduler",
+        "landing page UX",
+        "web engineering"
+      ]
+    },
+    {
+      "id": "why-slow-checkouts-and-booking-forms-lose-leads#make-your-website-work-like-an-attentive-front-desk-3",
+      "url": "/insights/why-slow-checkouts-and-booking-forms-lose-leads",
+      "title": "Make your website work like an attentive front desk",
+      "headingPath": [
+        "Why clunky intake forms and slow booking pages quietly lose leads",
+        "Make your website work like an attentive front desk"
+      ],
+      "text": "When a business closes deals easily on phone calls yet struggles to generate steady leads from site visits, the underlying gap is rarely product quality. Sharpening page hierarchy, mobile ergonomics, database-first form reliability, and direct call scheduling converts existing traffic into concrete conversations. Explore our web and digital platform solutions, look through our sample projects, or book a call to walk through your current visitor journey.",
+      "tags": [
+        "websites",
+        "booking systems",
+        "conversion",
+        "performance",
+        "mobile ux"
+      ],
+      "synonyms": [
+        "lead capture",
+        "discovery call scheduler",
+        "landing page UX",
+        "web engineering"
+      ]
+    },
+    {
+      "id": "why-slow-checkouts-and-booking-forms-lose-leads#overview",
+      "url": "/insights/why-slow-checkouts-and-booking-forms-lose-leads",
+      "title": "Why clunky intake forms and slow booking pages quietly lose leads",
+      "headingPath": [
+        "Why clunky intake forms and slow booking pages quietly lose leads"
+      ],
+      "text": "Many service businesses spend months drawing visitors to a website, only to drop interested buyers at a broken mobile form or a multi-day email scheduling wait.",
+      "tags": [
+        "websites",
+        "booking systems",
+        "conversion",
+        "performance",
+        "mobile ux"
+      ],
+      "synonyms": [
+        "lead capture",
+        "discovery call scheduler",
+        "landing page UX",
+        "web engineering"
+      ]
+    },
+    {
+      "id": "why-slow-checkouts-and-booking-forms-lose-leads#small-interface-failures-that-add-up-2",
+      "url": "/insights/why-slow-checkouts-and-booking-forms-lose-leads",
+      "title": "Small interface failures that add up",
+      "headingPath": [
+        "Why clunky intake forms and slow booking pages quietly lose leads",
+        "Small interface failures that add up"
+      ],
+      "text": "During website reviews, the same friction points appear across service firms and growing shops: Booking widgets that force manual timezone math or trap visitors in multi-day email ping-pong before a calendar link arrives. Long intake forms demanding twelve mandatory fields upfront, alongside unguided boxes that force staff to chase basic details afterward. Mobile layout shifts, broken tap targets, and silent network errors on cellular connections right when someone hits Submit. Case studies buried in stale downloadable PDFs instead of readable, scannable web pages. When we shipped the ordering flow for Janelle's Satin Bouquet and the local-first interface for Sane, keeping primary actions clear on every viewport width stayed front and center. On Clarteon's own website, visitors can inspect past systems and check real open discovery slots in their local timezone without leaving the page.",
+      "tags": [
+        "websites",
+        "booking systems",
+        "conversion",
+        "performance",
+        "mobile ux"
+      ],
+      "synonyms": [
+        "lead capture",
+        "discovery call scheduler",
+        "landing page UX",
+        "web engineering"
       ]
     }
   ]

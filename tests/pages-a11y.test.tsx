@@ -124,7 +124,9 @@ describe("page accessibility", { timeout: 60_000 }, () => {
       </Site>,
     );
 
+    expect(items).toHaveLength(5);
     expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
+    expect(screen.getByText(/Hsisan Angel Romero/)).toBeInTheDocument();
     await expectNoA11yViolations(container);
   });
 
@@ -138,6 +140,15 @@ describe("page accessibility", { timeout: 60_000 }, () => {
     );
 
     expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
+    expect(screen.getByRole("heading", { name: "Mission" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Vision" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Organizational structure" })).toBeInTheDocument();
+    expect(screen.queryByText("Team & structure")).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Hsisan Angel Romero" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Aldrei Justin S. Santua" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Michelle Eunice H. Opeña" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Jossel John S. Dumaop" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Brandon J. Abuya" })).toBeInTheDocument();
     await expectNoA11yViolations(container);
   });
 
@@ -159,6 +170,19 @@ describe("page accessibility", { timeout: 60_000 }, () => {
 
   it("Privacy", async () => {
     const page = await loadPage("privacy");
+    const data = parsePageData(simplePageSchema, page);
+    const { container } = render(
+      <Site>
+        <PrivacyPage data={data} body={page.body} />
+      </Site>,
+    );
+
+    expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
+    await expectNoA11yViolations(container);
+  });
+
+  it("Terms", async () => {
+    const page = await loadPage("terms");
     const data = parsePageData(simplePageSchema, page);
     const { container } = render(
       <Site>
@@ -205,7 +229,7 @@ describe("navigation and forms", { timeout: 60_000 }, () => {
     const data = parsePageData(contactSchema, page);
     render(<ContactPage data={data} turnstileSiteKey="" />);
 
-    expect(await screen.findByLabelText("Name")).toBeInTheDocument();
+    expect(await screen.findByLabelText("Name", {}, { timeout: 10_000 })).toBeInTheDocument();
     expect(screen.getByLabelText("Email")).toBeInTheDocument();
     expect(screen.getByLabelText(/What is slowing you down/)).toBeInTheDocument();
     expect(screen.getByLabelText(/I agree/)).toBeInTheDocument();

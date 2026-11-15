@@ -2,6 +2,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { cx } from "@/lib/cx";
 import { CoordinateGrid } from "./CoordinateGrid";
 import { ElasticHighlight } from "./ElasticHighlight";
+import { HeroCurtainBackdrop } from "./HeroCurtainBackdrop";
 import { Section, type Tone } from "./Section";
 import styles from "./ui.module.css";
 
@@ -11,6 +12,7 @@ interface PageHeroProps {
   intro?: string;
   actions?: ReactNode;
   children?: ReactNode;
+  bottomBand?: ReactNode;
   variant?: "home" | "page";
   tone?: Tone;
   showBackgroundGrid?: boolean;
@@ -23,8 +25,9 @@ export function PageHero({
   intro,
   actions,
   children,
+  bottomBand,
   variant = "page",
-  tone = "paper",
+  tone = variant === "home" ? "ink" : "paper",
   showBackgroundGrid = true,
   visual,
 }: PageHeroProps) {
@@ -50,8 +53,21 @@ export function PageHero({
   return (
     <Section
       tone={tone}
-      className={cx(styles.hero, isHome && styles.heroHome)}
-      background={showBackgroundGrid ? <CoordinateGrid tone={tone} /> : null}
+      className={cx(
+        styles.hero,
+        isHome && styles.heroHome,
+        !isHome && Boolean(bottomBand) && styles.heroWithBottomBand,
+      )}
+      background={
+        showBackgroundGrid ? (
+          isHome ? (
+            <HeroCurtainBackdrop />
+          ) : (
+            <CoordinateGrid tone={tone} />
+          )
+        ) : null
+      }
+      after={bottomBand ? <div className={styles.heroBottomBand}>{bottomBand}</div> : null}
     >
       <div className={cx(styles.heroInner, Boolean(visual) && styles.heroInnerWithVisual)}>
         <div className={styles.heroContent}>
@@ -73,9 +89,9 @@ export function PageHero({
           </h1>
           {intro ? <p className={styles.heroIntro}>{intro}</p> : null}
           {actions ? <div className={styles.heroActions}>{actions}</div> : null}
-          {children}
         </div>
         {visual ? <div className={styles.heroVisual}>{visual}</div> : null}
+        {children ? <div className={styles.heroBottomRow}>{children}</div> : null}
       </div>
     </Section>
   );

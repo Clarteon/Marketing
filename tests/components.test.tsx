@@ -1,11 +1,16 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+import { AnimatedCheckbox } from "@/components/ui/AnimatedCheckbox";
 import { BookingSection } from "@/components/ui/BookingSection";
 import { Button } from "@/components/ui/Button";
 import { CoordinateGrid } from "@/components/ui/CoordinateGrid";
+import { HalftoneClusterField } from "@/components/ui/HalftoneClusterField";
 import { HeroFlowVisualization } from "@/components/ui/HeroFlowVisualization";
 import { Logo } from "@/components/ui/Logo";
 import { PageHero } from "@/components/ui/PageHero";
+import { ServicePhotoCollage } from "@/components/ui/ServicePhotoCollage";
+import { InsightsCatalog } from "@/components/pages/InsightsCatalog";
+import { WorkShowcase } from "@/components/pages/WorkShowcase";
 
 describe("design system", () => {
   it("renders a link button for navigation", () => {
@@ -195,5 +200,198 @@ describe("design system", () => {
     fireEvent.click(reset);
     expect(reset).toBeDisabled();
     expect(screen.getByRole("status")).toHaveTextContent("Select an icon to learn more.");
+  });
+
+  it("renders frameless halftone cluster field and service photo collage", () => {
+    render(
+      <>
+        <HalftoneClusterField tone="ink" variant="hero" />
+        <ServicePhotoCollage
+          primary={{
+            src: "/images/services/workflow-mapping.jpg",
+            alt: "Two teammates mapping workflow rules",
+            caption: "Problem diagnosis & workflow mapping",
+          }}
+          secondary={{
+            src: "/images/services/software-build.jpg",
+            alt: "Software engineer building application",
+            caption: "Custom automation & software build",
+          }}
+        />
+      </>,
+    );
+
+    const field = screen.getByTestId("halftone-cluster-field");
+    expect(field).toHaveAttribute("aria-hidden", "true");
+    expect(field.querySelector("canvas")).toBeInTheDocument();
+    expect(screen.getByAltText("Two teammates mapping workflow rules")).toBeInTheDocument();
+    expect(screen.getByText("Problem diagnosis & workflow mapping")).toBeInTheDocument();
+  });
+
+  it("filters case study entries interactively by problem area", () => {
+    render(
+      <WorkShowcase
+        items={[
+          {
+            type: "case-study",
+            title: "Automated Order Processing Portal",
+            summary: "Direct online ordering instead of spreadsheet re-entry.",
+            status: "published",
+            tags: ["automation"],
+            synonyms: [],
+            order: 1,
+            slug: "order-portal",
+            category: "operations",
+            categoryLabel: "Orders, stock & payments",
+            solution_type: "Custom web portal",
+          },
+          {
+            type: "case-study",
+            title: "Conversational Triage Desk",
+            summary: "Answers common customer requests and escalates cleanly.",
+            status: "published",
+            tags: ["chatbots"],
+            synonyms: [],
+            order: 2,
+            slug: "triage-desk",
+            category: "conversations",
+            categoryLabel: "Customer support & AI coaching",
+            solution_type: "AI workflow assistant",
+          },
+        ]}
+      />,
+    );
+
+    expect(screen.getByText("Automated Order Processing Portal")).toBeInTheDocument();
+    expect(screen.getByText("Conversational Triage Desk")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: /Customer support/i }));
+
+    expect(screen.queryByText("Automated Order Processing Portal")).not.toBeInTheDocument();
+    expect(screen.getByText("Conversational Triage Desk")).toBeInTheDocument();
+  });
+
+  it("opens and closes a case study in the accessible modal reader on Our work", () => {
+    render(
+      <WorkShowcase
+        items={[
+          {
+            filePath: "content/case-studies/order-portal.md",
+            body: "## The problem\n\nManual re-entry took hours each afternoon.",
+            frontMatter: {
+              type: "case-study",
+              title: "Automated Order Processing Portal",
+              summary: "Direct online ordering instead of spreadsheet re-entry.",
+              status: "published",
+              tags: ["automation"],
+              synonyms: [],
+              order: 1,
+              slug: "order-portal",
+              category: "operations",
+              categoryLabel: "Orders, stock & payments",
+              solution_type: "Custom web portal",
+              problemBrief: "Spreadsheet copy-paste.",
+              approachBrief: "Single web portal.",
+              outcomeBrief: "Live stock sync.",
+            },
+          },
+        ]}
+      />,
+    );
+
+    const trigger = screen.getByRole("link", { name: "Read full case study" });
+    fireEvent.click(trigger);
+
+    const dialog = screen.getByRole("dialog");
+    expect(dialog).toBeInTheDocument();
+    expect(
+      screen.getByRole("progressbar", { name: "Case study reading progress" }),
+    ).toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: /Back to Our work/ })).toHaveLength(1);
+    expect(screen.getByText("Manual re-entry took hours each afternoon.")).toBeInTheDocument();
+    expect(window.location.search).toContain("project=order-portal");
+
+    fireEvent.click(screen.getByRole("button", { name: /Back to Our work/ }));
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(window.location.search).toBe("");
+  });
+
+  it("toggles AnimatedCheckbox enter and exit animation phases", () => {
+    render(
+      <AnimatedCheckbox id="test-check" defaultChecked={false}>
+        Enable visitor preferences
+      </AnimatedCheckbox>,
+    );
+
+    const checkbox = screen.getByRole("checkbox", { name: "Enable visitor preferences" });
+    const control = checkbox.closest("[data-phase]");
+    expect(checkbox).not.toBeChecked();
+    expect(control).toHaveAttribute("data-phase", "idle");
+
+    fireEvent.click(checkbox);
+    expect(checkbox).toBeChecked();
+    expect(control).toHaveAttribute("data-phase", "enter");
+
+    fireEvent.click(checkbox);
+    expect(checkbox).not.toBeChecked();
+    expect(control).toHaveAttribute("data-phase", "exit");
+  });
+
+  it("renders discovery call expectations when BookingSection is in form mode", () => {
+    render(
+      <BookingSection mode="form" title="Book a free discovery call" body="Choose an open slot." />,
+    );
+
+    expect(screen.getByRole("list", { name: "What happens on the call" })).toBeInTheDocument();
+  });
+
+  it("opens and closes an Insights article in the accessible modal reader", () => {
+    render(
+      <InsightsCatalog
+        items={[
+          {
+            filePath: "content/insights/stop-buying-tools-start-with-the-bottleneck.md",
+            body: "Start with the bottleneck slowing daily operations down.\n\n> Fix the flow before buying more licenses.",
+            frontMatter: {
+              title: "Stop buying tools before finding the bottleneck",
+              slug: "stop-buying-tools-start-with-the-bottleneck",
+              type: "insight",
+              status: "published",
+              summary: "Why diagnosis beats software accumulation.",
+              tags: ["automation", "operations"],
+              synonyms: [],
+              publishedAt: "2026-10-20",
+              author: "Hsisan Angel Romero",
+              authorRole: "Chief Executive Officer",
+              image: "/images/insights/bottleneck-mapping.webp",
+              imageAlt: "Workflow notes on desk",
+              order: 1,
+            },
+          },
+        ]}
+      />,
+    );
+
+    const cardTrigger = screen.getByRole("button", {
+      name: "Read article: Stop buying tools before finding the bottleneck",
+    });
+    fireEvent.click(cardTrigger);
+
+    const dialog = screen.getByRole("dialog");
+    expect(dialog).toBeInTheDocument();
+    expect(
+      screen.getByRole("progressbar", { name: "Article reading progress" }),
+    ).toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: /Back to Insights/ })).toHaveLength(1);
+    expect(window.location.search).toContain("article=stop-buying-tools-start-with-the-bottleneck");
+
+    fireEvent.click(screen.getByRole("button", { name: /Back to Insights/ }));
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(window.location.search).toBe("");
+
+    fireEvent.click(cardTrigger);
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    fireEvent.keyDown(window, { key: "Escape" });
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 });

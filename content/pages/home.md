@@ -22,7 +22,7 @@ hero:
   eyebrow: "Your business tech partner"
   title: "Technology that starts with your problem."
   highlight: "problem."
-  intro: "Give your team more time to grow the business by removing repetitive work. We find the right solution, then automate the work or build what’s missing."
+  intro: "Clarteon is the technology partner that believes the right solution starts with the right question. We find the repetitive work slowing your business down, then automate it or build what you need, so you can grow."
   actions:
     - label: "Book a free discovery call"
       href: "/contact#book"
@@ -58,7 +58,7 @@ steps:
     body: "We stay after launch to fix what surfaces, answer questions, and help the system settle into daily work."
 proof:
   title: "Work you can look at."
-  body: "Every project here started with a bottleneck: orders buried in chat messages, support queues full of repetitive questions, or manual spreadsheets eating up the week. Explore what we built and what changed."
+  body: "Every project here started with a daily operational headache: orders buried in chat messages, support queues full of repetitive questions, or manual spreadsheets eating up the week. Explore what we built and what changed."
   linkLabel: "See our work"
   href: "/our-work"
 ---
