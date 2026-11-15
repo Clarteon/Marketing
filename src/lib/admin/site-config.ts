@@ -2,7 +2,7 @@ import "server-only";
 
 import { neon } from "@neondatabase/serverless";
 import { getConfig } from "@/lib/config";
-import { logServerEvent } from "@/lib/log";
+import { logPublicFallback, logServerEvent } from "@/lib/log";
 import { adminSiteConfigSchema, type AdminSiteConfigPayload } from "./schema";
 import { DEFAULT_SITE_CONFIG, type SiteConfig } from "./site-config-defaults";
 
@@ -62,9 +62,7 @@ export async function getSiteConfig(): Promise<SiteConfig> {
     if (!rows[0]) return DEFAULT_SITE_CONFIG;
     return mergeWithDefaults(rows[0].payload);
   } catch (error) {
-    logServerEvent("site_config_fallback", {
-      code: error instanceof Error ? error.name : "unknown",
-    });
+    logPublicFallback("site_config_fallback", error);
     return DEFAULT_SITE_CONFIG;
   }
 }

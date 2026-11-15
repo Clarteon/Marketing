@@ -57,6 +57,12 @@ export const frontMatterSchema = z
     approachBrief: z.string().trim().min(1).optional(),
     outcomeBrief: z.string().trim().min(1).optional(),
     highlights: z.array(z.string().trim().min(1)).optional(),
+    preamble: z
+      .object({
+        mission: z.string().trim().min(1),
+        vision: z.string().trim().min(1),
+      })
+      .optional(),
   })
   .passthrough()
   .superRefine((data, ctx) => {

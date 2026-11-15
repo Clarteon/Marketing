@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { PROJECT_CATEGORIES, type AdminProjectRecord } from "@/lib/admin/site-config-defaults";
+import { AnimatedCheckbox } from "@/components/ui/AnimatedCheckbox";
 import { cx } from "@/lib/cx";
 import styles from "@/app/admin/admin.module.css";
 
@@ -510,16 +511,16 @@ export function ProjectsManager({
               </div>
             </div>
 
-            <label className={styles.cmsCheckboxRow} htmlFor="project-featured-home">
-              <input
-                id="project-featured-home"
-                type="checkbox"
-                checked={draft.featuredOnHome}
-                onChange={(event) => updateField("featuredOnHome", event.target.checked)}
-                disabled={!canWrite}
-              />
-              <span>Feature this project in the homepage Built around real bottlenecks ledger</span>
-            </label>
+            <AnimatedCheckbox
+              id="project-featured-home"
+              compact
+              className={styles.cmsCheckboxRow}
+              checked={draft.featuredOnHome}
+              onChange={(event) => updateField("featuredOnHome", event.target.checked)}
+              disabled={!canWrite}
+            >
+              Feature this project in the homepage Built around real bottlenecks ledger
+            </AnimatedCheckbox>
 
             <div className={styles.field}>
               <div className={styles.cmsHighlightsHeader}>

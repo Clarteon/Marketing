@@ -3,7 +3,7 @@ import "server-only";
 import { neon } from "@neondatabase/serverless";
 import { getConfig } from "@/lib/config";
 import { getPage, getPublished, type ContentPage } from "@/lib/content";
-import { logServerEvent } from "@/lib/log";
+import { logPublicFallback, logServerEvent } from "@/lib/log";
 import type { AdminProjectPayload } from "./schema";
 import type { AdminProjectRecord } from "./site-config-defaults";
 
@@ -364,9 +364,7 @@ export async function listPublicProjects(): Promise<ContentPage[]> {
 
     return rows.map((row) => mapRecordToContentPage(mapDbRow(row)));
   } catch (error) {
-    logServerEvent("public_projects_fallback", {
-      code: error instanceof Error ? error.name : "unknown",
-    });
+    logPublicFallback("public_projects_fallback", error);
     return getPublished("case-study");
   }
 }
@@ -397,9 +395,7 @@ export async function getPublicProjectBySlug(slug: string): Promise<ContentPage 
 
     return rows[0] ? mapRecordToContentPage(mapDbRow(rows[0])) : null;
   } catch (error) {
-    logServerEvent("public_project_lookup_fallback", {
-      code: error instanceof Error ? error.name : "unknown",
-    });
+    logPublicFallback("public_project_lookup_fallback", error);
     return getPage(slug, "case-study");
   }
 }

@@ -10,6 +10,7 @@ import {
   type SiteConfigPageSlug,
 } from "@/lib/admin/site-config-defaults";
 import { DEFAULT_TEAM_MEMBERS } from "@/lib/team";
+import { AnimatedCheckbox } from "@/components/ui/AnimatedCheckbox";
 import { cx } from "@/lib/cx";
 import styles from "@/app/admin/admin.module.css";
 
@@ -179,82 +180,82 @@ export function SiteConfigManager({
           </p>
 
           <div className={styles.cmsToggleGrid}>
-            <label className={styles.cmsCheckboxRow} htmlFor="cfg-home-clara">
-              <input
-                id="cfg-home-clara"
-                type="checkbox"
-                checked={config.sections.showHomeClara}
-                onChange={(event) => updateSection("showHomeClara", event.target.checked)}
-                disabled={!canWrite}
-              />
-              <span>Home hero: Interactive Clara assistant preview</span>
-            </label>
+            <AnimatedCheckbox
+              id="cfg-home-clara"
+              compact
+              className={styles.cmsCheckboxRow}
+              checked={config.sections.showHomeClara}
+              onChange={(event) => updateSection("showHomeClara", event.target.checked)}
+              disabled={!canWrite}
+            >
+              Home hero: Interactive Clara assistant preview
+            </AnimatedCheckbox>
 
-            <label className={styles.cmsCheckboxRow} htmlFor="cfg-home-problems">
-              <input
-                id="cfg-home-problems"
-                type="checkbox"
-                checked={config.sections.showHomeProblems}
-                onChange={(event) => updateSection("showHomeProblems", event.target.checked)}
-                disabled={!canWrite}
-              />
-              <span>Home: Bottleneck photo cards grid</span>
-            </label>
+            <AnimatedCheckbox
+              id="cfg-home-problems"
+              compact
+              className={styles.cmsCheckboxRow}
+              checked={config.sections.showHomeProblems}
+              onChange={(event) => updateSection("showHomeProblems", event.target.checked)}
+              disabled={!canWrite}
+            >
+              Home: Bottleneck photo cards grid
+            </AnimatedCheckbox>
 
-            <label className={styles.cmsCheckboxRow} htmlFor="cfg-home-flow">
-              <input
-                id="cfg-home-flow"
-                type="checkbox"
-                checked={config.sections.showHomeFlow}
-                onChange={(event) => updateSection("showHomeFlow", event.target.checked)}
-                disabled={!canWrite}
-              />
-              <span>Home: Problem-to-fix interactive map</span>
-            </label>
+            <AnimatedCheckbox
+              id="cfg-home-flow"
+              compact
+              className={styles.cmsCheckboxRow}
+              checked={config.sections.showHomeFlow}
+              onChange={(event) => updateSection("showHomeFlow", event.target.checked)}
+              disabled={!canWrite}
+            >
+              Home: Problem-to-fix interactive map
+            </AnimatedCheckbox>
 
-            <label className={styles.cmsCheckboxRow} htmlFor="cfg-home-process">
-              <input
-                id="cfg-home-process"
-                type="checkbox"
-                checked={config.sections.showHomeProcess}
-                onChange={(event) => updateSection("showHomeProcess", event.target.checked)}
-                disabled={!canWrite}
-              />
-              <span>Home: Four-step scroll process conduit</span>
-            </label>
+            <AnimatedCheckbox
+              id="cfg-home-process"
+              compact
+              className={styles.cmsCheckboxRow}
+              checked={config.sections.showHomeProcess}
+              onChange={(event) => updateSection("showHomeProcess", event.target.checked)}
+              disabled={!canWrite}
+            >
+              Home: Four-step scroll process conduit
+            </AnimatedCheckbox>
 
-            <label className={styles.cmsCheckboxRow} htmlFor="cfg-home-work">
-              <input
-                id="cfg-home-work"
-                type="checkbox"
-                checked={config.sections.showHomeFeaturedWork}
-                onChange={(event) => updateSection("showHomeFeaturedWork", event.target.checked)}
-                disabled={!canWrite}
-              />
-              <span>Home: Featured case studies ledger</span>
-            </label>
+            <AnimatedCheckbox
+              id="cfg-home-work"
+              compact
+              className={styles.cmsCheckboxRow}
+              checked={config.sections.showHomeFeaturedWork}
+              onChange={(event) => updateSection("showHomeFeaturedWork", event.target.checked)}
+              disabled={!canWrite}
+            >
+              Home: Featured case studies ledger
+            </AnimatedCheckbox>
 
-            <label className={styles.cmsCheckboxRow} htmlFor="cfg-about-org">
-              <input
-                id="cfg-about-org"
-                type="checkbox"
-                checked={config.sections.showAboutOrgChart}
-                onChange={(event) => updateSection("showAboutOrgChart", event.target.checked)}
-                disabled={!canWrite}
-              />
-              <span>About: Organizational structure hierarchy</span>
-            </label>
+            <AnimatedCheckbox
+              id="cfg-about-org"
+              compact
+              className={styles.cmsCheckboxRow}
+              checked={config.sections.showAboutOrgChart}
+              onChange={(event) => updateSection("showAboutOrgChart", event.target.checked)}
+              disabled={!canWrite}
+            >
+              About: Organizational structure hierarchy
+            </AnimatedCheckbox>
 
-            <label className={styles.cmsCheckboxRow} htmlFor="cfg-booking">
-              <input
-                id="cfg-booking"
-                type="checkbox"
-                checked={config.sections.showBookingSection}
-                onChange={(event) => updateSection("showBookingSection", event.target.checked)}
-                disabled={!canWrite}
-              />
-              <span>Bottom discovery-call booking band</span>
-            </label>
+            <AnimatedCheckbox
+              id="cfg-booking"
+              compact
+              className={styles.cmsCheckboxRow}
+              checked={config.sections.showBookingSection}
+              onChange={(event) => updateSection("showBookingSection", event.target.checked)}
+              disabled={!canWrite}
+            >
+              Bottom discovery-call booking band
+            </AnimatedCheckbox>
           </div>
 
           <div className={styles.cmsTripleRow}>
