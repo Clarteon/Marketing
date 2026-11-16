@@ -262,10 +262,10 @@ export function WorkShowcase({ items }: WorkShowcaseProps) {
                         </ul>
                       ) : null}
 
-                      <div className={styles.workLinks}>
+                      <div className={styles.workActions}>
                         <Button
                           href={`/our-work/${item.slug}`}
-                          size="large"
+                          variant="primary"
                           onClick={(event) => handleProjectLinkClick(event, item.slug)}
                         >
                           Read full case study
@@ -284,7 +284,7 @@ export function WorkShowcase({ items }: WorkShowcaseProps) {
                     </div>
 
                     {item.image ? (
-                      <div className={styles.workMediaStack}>
+                      <div className={styles.workPreviewColumn}>
                         <Link
                           href={`/our-work/${item.slug}`}
                           className={styles.workImageLink}
