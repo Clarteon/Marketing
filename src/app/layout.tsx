@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Schibsted_Grotesk } from "next/font/google";
 import type { ReactNode } from "react";
-import { Agentation } from "agentation";
+import { DevAgentation } from "@/components/ui/DevAgentation";
 import { Analytics } from "@/components/ui/Analytics";
 import { ToastProvider } from "@/components/ui/ToastProvider";
 import { getSiteUrl, isIndexingAllowed } from "@/lib/site";
@@ -64,7 +64,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           </a>
           {children}
           <Analytics />
-          {process.env.NODE_ENV === "development" && <Agentation />}
+          <DevAgentation />
         </ToastProvider>
       </body>
     </html>
