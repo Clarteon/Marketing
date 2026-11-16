@@ -1,13 +1,16 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { ContentPage } from "@/lib/content";
 import { formatReadingTime } from "@/lib/reading-time";
-import { DEFAULT_TEAM_MEMBERS } from "@/lib/team";
+import { DEFAULT_TEAM_MEMBERS, type TeamMember } from "@/lib/team";
 import { Button } from "@/components/ui/Button";
 import { Markdown } from "@/components/ui/Markdown";
+import { AuthorBadge } from "./AuthorBadge";
 import styles from "./pages.module.css";
 
 interface EditorialArticleBodyProps {
   page: ContentPage;
+  team?: readonly TeamMember[];
   headingAs?: "h1" | "h2";
   titleId: string;
   onBack?: () => void;
@@ -53,6 +56,7 @@ export function formatTopicTag(tag: string): string {
 
 export function EditorialArticleBody({
   page,
+  team = DEFAULT_TEAM_MEMBERS,
   headingAs = "h1",
   titleId,
   onBack,
@@ -64,7 +68,6 @@ export function EditorialArticleBody({
   const Subheading = headingAs === "h1" ? "h2" : "h3";
   const formattedDate = formatInsightDate(frontMatter.publishedAt);
   const readingTime = formatReadingTime(page.body);
-  const monogram = getAuthorMonogram(frontMatter.author);
   const primaryTopic = frontMatter.tags[0] ? formatTopicTag(frontMatter.tags[0]) : "Insights";
 
   const inModal = Boolean(onBack);
@@ -93,9 +96,11 @@ export function EditorialArticleBody({
 
         <div className={styles.editorialDocBylineBar}>
           <div className={styles.editorialAuthorIdentity}>
-            <span className={styles.editorialAuthorMonogram} aria-hidden="true">
-              {monogram}
-            </span>
+            <AuthorBadge
+              name={frontMatter.author}
+              team={team}
+              className={styles.editorialAuthorMonogram}
+            />
             <div className={styles.editorialAuthorText}>
               {frontMatter.author ? (
                 <span className={styles.editorialAuthorNameText}>{frontMatter.author}</span>
@@ -117,12 +122,24 @@ export function EditorialArticleBody({
       {frontMatter.image ? (
         <figure className={styles.editorialDocFigure}>
           <div className={styles.editorialDocImageFrame}>
-            <img
-              src={frontMatter.image}
-              alt={frontMatter.imageAlt ?? frontMatter.title}
-              className={styles.editorialDocImage}
-              decoding="async"
-            />
+            {frontMatter.image.startsWith("/") ? (
+              <Image
+                src={frontMatter.image}
+                alt={frontMatter.imageAlt ?? frontMatter.title}
+                width={1200}
+                height={750}
+                priority={!inModal}
+                sizes="(max-width: 1100px) 100vw, 736px"
+                className={styles.editorialDocImage}
+              />
+            ) : (
+              <img
+                src={frontMatter.image}
+                alt={frontMatter.imageAlt ?? frontMatter.title}
+                className={styles.editorialDocImage}
+                decoding="async"
+              />
+            )}
           </div>
           {frontMatter.imageAlt ? (
             <figcaption className={styles.editorialDocCaption}>{frontMatter.imageAlt}</figcaption>

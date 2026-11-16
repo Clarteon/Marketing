@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+import { resolveTeamMembers } from "@/lib/team";
 import { AnimatedCheckbox } from "@/components/ui/AnimatedCheckbox";
 import { BookingSection } from "@/components/ui/BookingSection";
 import { Button } from "@/components/ui/Button";
@@ -9,7 +10,10 @@ import { HeroFlowVisualization } from "@/components/ui/HeroFlowVisualization";
 import { Logo } from "@/components/ui/Logo";
 import { PageHero } from "@/components/ui/PageHero";
 import { ServicePhotoCollage } from "@/components/ui/ServicePhotoCollage";
+import { AboutPage } from "@/components/pages/AboutPage";
+import { EditorialArticleBody } from "@/components/pages/EditorialArticleBody";
 import { InsightsCatalog } from "@/components/pages/InsightsCatalog";
+import { SolutionsCatalog } from "@/components/pages/SolutionsCatalog";
 import { WorkShowcase } from "@/components/pages/WorkShowcase";
 
 describe("design system", () => {
@@ -393,5 +397,99 @@ describe("design system", () => {
     expect(screen.getByRole("dialog")).toBeInTheDocument();
     fireEvent.keyDown(window, { key: "Escape" });
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  it("displays uploaded team portraits on Insights cards, article headers, and About org cards", () => {
+    const team = resolveTeamMembers({
+      "hsisan-angel-romero": "/images/services/team-discovery.jpg",
+    });
+
+    const sampleArticle = {
+      filePath: "content/insights/stop-buying-tools-start-with-the-bottleneck.md",
+      body: "Walk through manual operations before picking software.",
+      frontMatter: {
+        title: "Stop buying tools before finding the bottleneck",
+        slug: "stop-buying-tools-start-with-the-bottleneck",
+        type: "insight" as const,
+        status: "published" as const,
+        summary: "Why diagnosis beats software accumulation.",
+        tags: ["operations"],
+        synonyms: [],
+        publishedAt: "2026-11-12",
+        author: "Hsisan Angel Romero",
+        authorRole: "Chief Executive Officer (CEO)",
+        order: 1,
+      },
+    };
+
+    const { container: cardContainer } = render(
+      <InsightsCatalog items={[sampleArticle]} team={team} />,
+    );
+    expect(cardContainer.querySelector('img[src*="team-discovery.jpg"]')).toBeInTheDocument();
+
+    const { container: articleContainer } = render(
+      <EditorialArticleBody
+        page={sampleArticle}
+        team={team}
+        headingAs="h1"
+        titleId="author-photo-check"
+      />,
+    );
+    expect(articleContainer.querySelector('img[src*="team-discovery.jpg"]')).toBeInTheDocument();
+
+    render(
+      <AboutPage
+        data={{
+          hero: { title: "About Clarteon", intro: "Clear delivery.", actions: [] },
+        }}
+        body="Clarteon starts with operational clarity."
+        team={team}
+      />,
+    );
+    expect(screen.getByAltText("Hsisan Angel Romero portrait")).toBeInTheDocument();
+  });
+
+  it("filters problem areas in SolutionsCatalog and restores all themes when requested", () => {
+    const { container } = render(
+      <SolutionsCatalog
+        themes={[
+          {
+            id: "operations",
+            title: "Manual work and operations",
+            intro: "Automate repeatable handoffs.",
+            problems: [
+              {
+                title: "Repeated data entry",
+                body: "Information copied across spreadsheets.",
+                solution: "Workflow automation",
+              },
+            ],
+          },
+          {
+            id: "conversations",
+            title: "Customer conversations",
+            intro: "Consistent answers without extra inboxes.",
+            problems: [
+              {
+                title: "The same questions",
+                body: "Inbox repeats daily questions.",
+                solution: "AI assistant",
+              },
+            ],
+          },
+        ]}
+      />,
+    );
+
+    expect(container.querySelector("#operations")).toBeInTheDocument();
+    expect(container.querySelector("#conversations")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: /Customer conversations/i }));
+    expect(container.querySelector("#operations")).not.toBeInTheDocument();
+    expect(container.querySelector("#conversations")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: /All problem areas/i }));
+    expect(container.querySelector("#operations")).toBeInTheDocument();
+    expect(container.querySelector("#conversations")).toBeInTheDocument();
   });
 });

@@ -1,4 +1,5 @@
 import type { ContentPage } from "@/lib/content";
+import { DEFAULT_TEAM_MEMBERS, type TeamMember } from "@/lib/team";
 import { BookingSection } from "@/components/ui/BookingSection";
 import { Page } from "@/components/ui/Page";
 import { Section } from "@/components/ui/Section";
@@ -9,9 +10,10 @@ import styles from "./pages.module.css";
 
 interface ArticlePageProps {
   page: ContentPage;
+  team?: TeamMember[];
 }
 
-export function ArticlePage({ page }: ArticlePageProps) {
+export function ArticlePage({ page, team = DEFAULT_TEAM_MEMBERS }: ArticlePageProps) {
   const { frontMatter } = page;
   const isCaseStudy = frontMatter.type === "case-study";
 
@@ -22,6 +24,7 @@ export function ArticlePage({ page }: ArticlePageProps) {
         <Section className={styles.editorialArticlePageSection}>
           <EditorialArticleBody
             page={page}
+            team={team}
             headingAs="h1"
             titleId="article-title"
             backHref="/insights"

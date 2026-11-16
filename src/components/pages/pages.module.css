@@ -1437,57 +1437,27 @@
   -webkit-text-fill-color: var(--lime);
 }
 
-.solutionsJumpBar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.6rem;
-  margin-bottom: clamp(2.5rem, 4.5vw, 3.75rem);
-}
-
-.solutionsJumpLink {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  min-height: 44px;
-  padding: 0.5rem 1rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-pill);
+.solutionsFilterShell {
   background: var(--paper);
-  color: var(--ink);
-  font-size: 0.9rem;
-  font-weight: 500;
-  text-decoration: none;
-  cursor: pointer;
-  transition:
-    background-color 180ms ease,
-    border-color 180ms ease,
-    color 180ms ease,
-    transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+  border-bottom: 1px solid var(--border);
 }
 
-.solutionsJumpLink:hover {
-  background: var(--lime);
-  border-color: var(--ink);
-  transform: translateY(-1px);
+.solutionsFilterInner {
+  width: min(100% - 3rem, var(--max-width));
+  margin-inline: auto;
+  padding-block: clamp(1rem, 2vw, 1.35rem);
 }
 
-.solutionsJumpLink:focus-visible {
-  outline: 3px solid var(--ink);
-  outline-offset: 2px;
+@media (max-width: 960px) {
+  .solutionsFilterInner {
+    width: min(100% - 2rem, var(--max-width));
+  }
 }
 
-.solutionsJumpArrow {
-  font-size: 0.85em;
-  color: var(--graphite);
-  transition:
-    transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
-    color 180ms ease;
-}
-
-.solutionsJumpLink:hover .solutionsJumpArrow {
-  color: var(--ink);
-  transform: translateY(2px);
+@media (max-width: 420px) {
+  .solutionsFilterInner {
+    width: min(100% - 1.5rem, var(--max-width));
+  }
 }
 
 .solutionThemeHeader {
@@ -1839,6 +1809,10 @@
   gap: 1.75rem;
 }
 
+.aboutFigureReveal {
+  display: block;
+}
+
 .aboutFigure {
   margin: 0;
   display: grid;
@@ -1846,7 +1820,7 @@
 }
 
 .aboutPhotoFrame {
-  overflow: hidden;
+  overflow: clip;
   border-radius: var(--radius-card);
   background: var(--stone);
 }
@@ -2030,11 +2004,6 @@
     gap: 0.9rem 1rem;
   }
 
-  .solutionsJumpBar {
-    gap: 0.25rem 1.25rem;
-    margin-bottom: 1.75rem;
-  }
-
   .proofRowCta {
     max-width: 100%;
     white-space: normal;
@@ -2065,7 +2034,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .problemPosterImage,
-  .solutionsJumpLink,
   .solutionFeatureCard,
   .solutionMediaImg,
   .discoveryAgendaItem,
@@ -2239,7 +2207,7 @@
   position: relative;
   width: 96px;
   aspect-ratio: 4 / 5;
-  overflow: hidden;
+  overflow: clip;
   border-radius: 12px;
   border: 1px solid rgba(15, 18, 16, 0.12);
 }
@@ -2249,6 +2217,14 @@
   height: 100%;
   object-fit: cover;
   display: block;
+  transition: transform 380ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .orgPortraitFrame:hover .orgPortraitImg,
+  .orgNodeCard:hover .orgPortraitImg {
+    transform: scale(1.06);
+  }
 }
 
 .orgPortraitPlaceholder,
@@ -2467,6 +2443,7 @@
 }
 
 .insightCard {
+  scroll-margin-top: 6.25rem;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -2654,6 +2631,26 @@
   letter-spacing: 0.02em;
 }
 
+.authorBadgeWithPhoto {
+  overflow: clip;
+  background: var(--stone);
+  border: 1px solid rgba(10, 10, 10, 0.14);
+}
+
+.authorBadgePhoto {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .insightCard:hover .authorBadgePhoto {
+    transform: scale(1.06);
+  }
+}
+
 .insightAuthorMetaStack,
 .editorialAuthorText {
   display: grid;
@@ -2715,8 +2712,9 @@
   display: grid;
   place-items: center;
   padding: clamp(0.75rem, 2.5vw, 1.75rem);
-  background: rgba(10, 10, 10, 0.58);
-  backdrop-filter: blur(5px);
+  background: rgba(10, 10, 10, 0.62);
+  backdrop-filter: blur(4px);
+  contain: strict;
   animation: clarteonArticleFadeIn 190ms ease both;
 }
 
@@ -2736,6 +2734,8 @@
   background: var(--paper);
   color: var(--ink);
   box-shadow: 0 32px 80px rgba(10, 10, 10, 0.28);
+  transform: translateZ(0);
+  contain: layout paint;
   animation: clarteonArticleDialogIn 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
@@ -2751,8 +2751,7 @@
   position: relative;
   flex-shrink: 0;
   border-bottom: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.98);
 }
 
 .articleModalProgressTrack {
@@ -2771,7 +2770,7 @@
   background: var(--lime);
   transform-origin: left center;
   transform: scaleX(0);
-  transition: transform 80ms linear;
+  will-change: transform;
 }
 
 .articleModalBarInner {
@@ -2865,6 +2864,8 @@
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   padding: clamp(1.75rem, 4vw, 3rem) clamp(1.25rem, 4vw, 2.75rem);
 }
 
@@ -3371,8 +3372,8 @@
   .workImage,
   .workSecondaryImage,
   .solutionMediaImg,
-  .solutionsJumpLink,
-  .solutionsJumpArrow,
+  .orgPortraitImg,
+  .authorBadgePhoto,
   .notFoundQuickLink,
   .articleModalProgressFill,
   .articleReadingFill,
@@ -3380,5 +3381,11 @@
   .articleModalPanel {
     transition: none;
     animation: none;
+  }
+
+  .orgPortraitFrame:hover .orgPortraitImg,
+  .orgNodeCard:hover .orgPortraitImg,
+  .insightCard:hover .authorBadgePhoto {
+    transform: none;
   }
 }

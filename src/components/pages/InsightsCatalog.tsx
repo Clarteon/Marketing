@@ -1,31 +1,36 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
 import { createPortal } from "react-dom";
 import type { ContentPage } from "@/lib/content";
-import { formatReadingTime } from "@/lib/reading-time";
 import { cx } from "@/lib/cx";
-import {
-  EditorialArticleBody,
-  formatInsightDate,
-  formatTopicTag,
-  getAuthorMonogram,
-} from "./EditorialArticleBody";
+import { formatReadingTime } from "@/lib/reading-time";
+import { DEFAULT_TEAM_MEMBERS, type TeamMember } from "@/lib/team";
+import { AuthorBadge } from "./AuthorBadge";
+import { EditorialArticleBody, formatInsightDate, formatTopicTag } from "./EditorialArticleBody";
+import { useScrollProgressBar } from "./useScrollProgressBar";
 import styles from "./pages.module.css";
 
 interface InsightsCatalogProps {
   items: ContentPage[];
+  team?: readonly TeamMember[];
 }
 
-export function InsightsCatalog({ items }: InsightsCatalogProps) {
+export function InsightsCatalog({ items, team = DEFAULT_TEAM_MEMBERS }: InsightsCatalogProps) {
   const [activeSlug, setActiveSlug] = useState<string | null>(null);
   const [isClosing, setIsClosing] = useState(false);
-  const [modalProgress, setModalProgress] = useState(0);
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const scrollBodyRef = useRef<HTMLDivElement | null>(null);
   const returnFocusRef = useRef<HTMLElement | null>(null);
   const exitTimerRef = useRef<number | null>(null);
+  const {
+    progressBarRef,
+    progressFillRef,
+    handleScroll: handleModalScroll,
+    resetProgress,
+  } = useScrollProgressBar(scrollBodyRef);
 
   const activeArticle = useMemo(
     () =>
@@ -56,11 +61,11 @@ export function InsightsCatalog({ items }: InsightsCatalogProps) {
         returnFocusRef.current = document.activeElement;
       }
       setIsClosing(false);
-      setModalProgress(0);
+      resetProgress();
       setActiveSlug(slug);
       updateUrlParam(slug);
     },
-    [updateUrlParam],
+    [resetProgress, updateUrlParam],
   );
 
   const closeArticle = useCallback(() => {
@@ -115,6 +120,7 @@ export function InsightsCatalog({ items }: InsightsCatalogProps) {
       if (scrollBodyRef.current) {
         scrollBodyRef.current.scrollTop = 0;
       }
+      resetProgress();
       dialogRef.current?.focus();
     });
 
@@ -130,7 +136,7 @@ export function InsightsCatalog({ items }: InsightsCatalogProps) {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [activeArticle, isClosing, closeArticle]);
+  }, [activeArticle, isClosing, closeArticle, resetProgress]);
 
   function handleCardLinkClick(event: MouseEvent<HTMLAnchorElement>, slug: string) {
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) {
@@ -138,17 +144,6 @@ export function InsightsCatalog({ items }: InsightsCatalogProps) {
     }
     event.preventDefault();
     openArticle(slug, event.currentTarget);
-  }
-
-  function handleModalScroll() {
-    const node = scrollBodyRef.current;
-    if (!node) return;
-    const scrollable = node.scrollHeight - node.clientHeight;
-    if (scrollable <= 0) {
-      setModalProgress(1);
-      return;
-    }
-    setModalProgress(Math.min(1, Math.max(0, node.scrollTop / scrollable)));
   }
 
   const featured = items[0];
@@ -160,6 +155,7 @@ export function InsightsCatalog({ items }: InsightsCatalogProps) {
         {featured ? (
           <InsightArticleCard
             item={featured}
+            team={team}
             featured
             onLinkClick={handleCardLinkClick}
             onButtonClick={openArticle}
@@ -172,6 +168,7 @@ export function InsightsCatalog({ items }: InsightsCatalogProps) {
               <InsightArticleCard
                 key={item.frontMatter.slug}
                 item={item}
+                team={team}
                 onLinkClick={handleCardLinkClick}
                 onButtonClick={openArticle}
               />
@@ -202,17 +199,15 @@ export function InsightsCatalog({ items }: InsightsCatalogProps) {
               >
                 <div className={styles.articleModalBar}>
                   <div
+                    ref={progressBarRef}
                     className={styles.articleModalProgressTrack}
                     role="progressbar"
                     aria-label="Article reading progress"
                     aria-valuemin={0}
                     aria-valuemax={100}
-                    aria-valuenow={Math.round(modalProgress * 100)}
+                    aria-valuenow={0}
                   >
-                    <span
-                      className={styles.articleModalProgressFill}
-                      style={{ transform: `scaleX(${modalProgress})` }}
-                    />
+                    <span ref={progressFillRef} className={styles.articleModalProgressFill} />
                   </div>
 
                   <div className={styles.articleModalBarInner}>
@@ -248,6 +243,7 @@ export function InsightsCatalog({ items }: InsightsCatalogProps) {
                   <div className={styles.articleModalBodyWrap}>
                     <EditorialArticleBody
                       page={activeArticle}
+                      team={team}
                       headingAs="h2"
                       titleId="modal-article-title"
                       onBack={closeArticle}
@@ -266,6 +262,7 @@ export function InsightsCatalog({ items }: InsightsCatalogProps) {
 
 interface InsightArticleCardProps {
   item: ContentPage;
+  team: readonly TeamMember[];
   featured?: boolean;
   onLinkClick: (event: MouseEvent<HTMLAnchorElement>, slug: string) => void;
   onButtonClick: (slug: string, trigger?: HTMLElement | null) => void;
@@ -273,6 +270,7 @@ interface InsightArticleCardProps {
 
 function InsightArticleCard({
   item,
+  team,
   featured = false,
   onLinkClick,
   onButtonClick,
@@ -280,12 +278,14 @@ function InsightArticleCard({
   const { frontMatter } = item;
   const formattedDate = formatInsightDate(frontMatter.publishedAt);
   const readingTime = formatReadingTime(item.body);
-  const monogram = getAuthorMonogram(frontMatter.author);
   const previewTags = frontMatter.tags.slice(0, 3);
   const articleHref = `/insights/${frontMatter.slug}`;
 
   return (
-    <article className={cx(styles.insightCard, featured && styles.insightCardFeatured)}>
+    <article
+      id={`insight-${frontMatter.slug}`}
+      className={cx(styles.insightCard, featured && styles.insightCardFeatured)}
+    >
       {frontMatter.image ? (
         <Link
           href={articleHref}
@@ -293,13 +293,25 @@ function InsightArticleCard({
           className={styles.insightCardMediaLink}
           tabIndex={-1}
         >
-          <img
-            src={frontMatter.image}
-            alt={frontMatter.imageAlt ?? frontMatter.title}
-            className={styles.insightCardImage}
-            loading={featured ? "eager" : "lazy"}
-            decoding="async"
-          />
+          {frontMatter.image.startsWith("/") ? (
+            <Image
+              src={frontMatter.image}
+              alt={frontMatter.imageAlt ?? frontMatter.title}
+              width={featured ? 1200 : 900}
+              height={featured ? 750 : 562}
+              priority={featured}
+              sizes={featured ? "(max-width: 900px) 100vw, 48vw" : "(max-width: 900px) 100vw, 44vw"}
+              className={styles.insightCardImage}
+            />
+          ) : (
+            <img
+              src={frontMatter.image}
+              alt={frontMatter.imageAlt ?? frontMatter.title}
+              className={styles.insightCardImage}
+              loading={featured ? "eager" : "lazy"}
+              decoding="async"
+            />
+          )}
         </Link>
       ) : null}
 
@@ -338,9 +350,11 @@ function InsightArticleCard({
         <div className={styles.insightCardFooter}>
           {frontMatter.author ? (
             <div className={styles.insightAuthorCluster}>
-              <span className={styles.insightAuthorMonogram} aria-hidden="true">
-                {monogram}
-              </span>
+              <AuthorBadge
+                name={frontMatter.author}
+                team={team}
+                className={styles.insightAuthorMonogram}
+              />
               <div className={styles.insightAuthorMetaStack}>
                 <span className={styles.insightAuthorName}>{frontMatter.author}</span>
                 {frontMatter.authorRole ? (

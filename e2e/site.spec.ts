@@ -206,3 +206,30 @@ test("about page displays mission, vision, and clean organizational structure he
   await expect(page.getByRole("heading", { name: "Organizational structure" })).toBeVisible();
   await expect(page.getByText("Team & structure")).toHaveCount(0);
 });
+
+test("hero directory cards use in-page anchors and solutions filter resets cleanly", async ({
+  page,
+}) => {
+  await page.goto("/solutions");
+  const solutionsDirectoryLinks = page.locator("aside ol li a");
+  const solCount = await solutionsDirectoryLinks.count();
+  expect(solCount).toBe(4);
+  for (let i = 0; i < solCount; i++) {
+    expect(await solutionsDirectoryLinks.nth(i).getAttribute("href")).toMatch(/^#/);
+  }
+
+  await page.getByRole("button", { name: /Customer conversations/i }).click();
+  await expect(page.locator("#operations")).toHaveCount(0);
+  await expect(page.locator("#conversations")).toBeVisible();
+
+  await solutionsDirectoryLinks.first().click();
+  await expect(page.locator("#operations")).toBeVisible();
+
+  await page.goto("/insights");
+  const insightsDirectoryLinks = page.locator("aside ol li a");
+  const insCount = await insightsDirectoryLinks.count();
+  expect(insCount).toBeGreaterThan(0);
+  for (let i = 0; i < insCount; i++) {
+    expect(await insightsDirectoryLinks.nth(i).getAttribute("href")).toMatch(/^#/);
+  }
+});

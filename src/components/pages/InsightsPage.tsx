@@ -2,6 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ContentPage } from "@/lib/content";
 import type { ListPageData } from "@/lib/page-schemas";
+import { formatReadingTime } from "@/lib/reading-time";
+import { DEFAULT_TEAM_MEMBERS, type TeamMember } from "@/lib/team";
 import { BookingSection } from "@/components/ui/BookingSection";
 import { Button } from "@/components/ui/Button";
 import { HeroDirectory } from "@/components/ui/HeroDirectory";
@@ -15,9 +17,37 @@ import styles from "./pages.module.css";
 interface InsightsPageProps {
   data: ListPageData;
   items: ContentPage[];
+  team?: TeamMember[];
 }
 
-export function InsightsPage({ data, items }: InsightsPageProps) {
+export function InsightsPage({ data, items, team = DEFAULT_TEAM_MEMBERS }: InsightsPageProps) {
+  const directoryItems =
+    items.length > 0
+      ? [
+          ...items.slice(0, 3).map((item) => ({
+            label: item.frontMatter.title,
+            meta: formatReadingTime(item.body),
+            href: `#insight-${item.frontMatter.slug}`,
+          })),
+          {
+            label: "Book a discovery call",
+            meta: "30 minutes on Google Meet",
+            href: "#book",
+          },
+        ]
+      : [
+          {
+            label: "Topic areas",
+            meta: "Operations, AI workflows, and scoping",
+            href: "#insights-title",
+          },
+          {
+            label: "Book a discovery call",
+            meta: "30 minutes on Google Meet",
+            href: "#book",
+          },
+        ];
+
   return (
     <Page>
       <PageHero
@@ -28,26 +58,10 @@ export function InsightsPage({ data, items }: InsightsPageProps) {
             heading="In these notes"
             note={
               items.length > 0
-                ? `${items.length} field guides from the team`
+                ? `${items.length} articles on this page`
                 : "Practical guides on operations and systems"
             }
-            items={[
-              {
-                label: items.length > 0 ? "Browse team articles" : "See topic areas",
-                meta: "Operations, AI agents, workflow scoping",
-                href: "#insights-title",
-              },
-              {
-                label: "Match a problem to a solution",
-                meta: "Automation, custom tools, integrations",
-                href: "/solutions",
-              },
-              {
-                label: "Talk through your situation",
-                meta: "Book a 30-minute discovery call",
-                href: "/contact#book",
-              },
-            ]}
+            items={directoryItems}
           />
         }
       />
@@ -115,7 +129,7 @@ export function InsightsPage({ data, items }: InsightsPageProps) {
               </p>
             </ScrollReveal>
 
-            <InsightsCatalog items={items} />
+            <InsightsCatalog items={items} team={team} />
           </>
         )}
       </Section>
