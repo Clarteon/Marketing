@@ -29,21 +29,29 @@ function getServerSnapshot(): boolean {
   return false;
 }
 
+interface CursorVisualState {
+  hovered: boolean;
+  limeTarget: boolean;
+  darkTone: boolean;
+  textInput: boolean;
+}
+
+const INITIAL_CURSOR_STATE: CursorVisualState = {
+  hovered: false,
+  limeTarget: false,
+  darkTone: false,
+  textInput: false,
+};
+
 export function CustomCursor() {
   const isSupported = useSyncExternalStore(subscribeSupport, getClientSnapshot, getServerSnapshot);
 
-  const [isHovered, setIsHovered] = useState(false);
-  const [isLimeTarget, setIsLimeTarget] = useState(false);
-  const [isDarkTone, setIsDarkTone] = useState(false);
-  const [isTextInput, setIsTextInput] = useState(false);
+  const [cursorState, setCursorState] = useState<CursorVisualState>(INITIAL_CURSOR_STATE);
   const [isVisible, setIsVisible] = useState(false);
 
   const circleRef = useRef<HTMLDivElement>(null);
   const isClickingRef = useRef(false);
-  const isHoveredRef = useRef(false);
-  const isLimeTargetRef = useRef(false);
-  const isDarkToneRef = useRef(false);
-  const isTextInputRef = useRef(false);
+  const stateRef = useRef<CursorVisualState>(INITIAL_CURSOR_STATE);
 
   useEffect(() => {
     if (!isSupported) return;
@@ -57,6 +65,9 @@ export function CustomCursor() {
     let visible = false;
     let rafId: number | null = null;
     let lastTarget: EventTarget | null = null;
+    let lastRenderedX = Number.NaN;
+    let lastRenderedY = Number.NaN;
+    let lastRenderedScale = Number.NaN;
 
     function schedule() {
       if (rafId === null && visible && !document.hidden) {
@@ -94,46 +105,42 @@ export function CustomCursor() {
       const target = e.target as HTMLElement | null;
       if (!target || typeof target.closest !== "function") return;
 
-      const isInput = Boolean(
+      const textInput = Boolean(
         target.closest(
           'input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type="radio"]), textarea, [contenteditable="true"]',
         ),
       );
-      if (isTextInputRef.current !== isInput) {
-        isTextInputRef.current = isInput;
-        setIsTextInput(isInput);
-      }
 
-      const isLime = Boolean(
+      const limeTarget = Boolean(
         target.closest(
           '[class*="primary"], [class*="toneLime"], [class*="tile"], [data-variant="primary"], .bg-lime',
         ),
       );
-      if (isLimeTargetRef.current !== isLime) {
-        isLimeTargetRef.current = isLime;
-        setIsLimeTarget(isLime);
-      }
 
-      const isInteractive = Boolean(
+      const hovered = Boolean(
         target.closest(
           'a, button, [role="button"], input[type="submit"], input[type="button"], label, select, summary, [data-cursor="focus"], [data-cursor="interactive"], [class*="problemCard"], [class*="cardInteractive"], [class*="listItem"], [class*="step"]',
         ),
       );
-      if (isHoveredRef.current !== isInteractive) {
-        isHoveredRef.current = isInteractive;
-        setIsHovered(isInteractive);
-      }
 
       const darkContainer = target.closest('[class*="toneInk"], [data-tone="ink"], .dark-surface');
       const lightContainer = target.closest(
         '[class*="bookingFormPanel"], [class*="tonePaper"], [class*="toneStone"], [data-tone="paper"], [data-tone="stone"]',
       );
-      const isDark = Boolean(
+      const darkTone = Boolean(
         darkContainer && (!lightContainer || !darkContainer.contains(lightContainer)),
       );
-      if (isDarkToneRef.current !== isDark) {
-        isDarkToneRef.current = isDark;
-        setIsDarkTone(isDark);
+
+      const prev = stateRef.current;
+      if (
+        prev.hovered !== hovered ||
+        prev.limeTarget !== limeTarget ||
+        prev.darkTone !== darkTone ||
+        prev.textInput !== textInput
+      ) {
+        const nextState: CursorVisualState = { hovered, limeTarget, darkTone, textInput };
+        stateRef.current = nextState;
+        setCursorState(nextState);
       }
       schedule();
     };
@@ -171,20 +178,26 @@ export function CustomCursor() {
       rafId = null;
       if (!initialized || !visible || document.hidden) return;
 
-      // Determine spring target scale
       let targetScale = 1.0;
       if (isClickingRef.current) {
         targetScale = 0.75;
-      } else if (isHoveredRef.current) {
-        targetScale = isLimeTargetRef.current ? 2.1 : 2.0;
+      } else if (stateRef.current.hovered) {
+        targetScale = stateRef.current.limeTarget ? 2.1 : 2.0;
       }
 
       currentScale += (targetScale - currentScale) * 0.3;
       const isSettled = Math.abs(targetScale - currentScale) < 0.001;
       if (isSettled) currentScale = targetScale;
 
-      if (circleRef.current) {
-        // Follow the latest pointer position without a trailing spring; keep the scale feedback.
+      if (
+        circleRef.current &&
+        (lastRenderedX !== mouseX ||
+          lastRenderedY !== mouseY ||
+          Math.abs(lastRenderedScale - currentScale) >= 0.0005)
+      ) {
+        lastRenderedX = mouseX;
+        lastRenderedY = mouseY;
+        lastRenderedScale = currentScale;
         circleRef.current.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%) scale(${currentScale.toFixed(3)})`;
       }
 
@@ -218,13 +231,13 @@ export function CustomCursor() {
     return null;
   }
 
-  const isHidden = !isVisible || isTextInput;
+  const isHidden = !isVisible || cursorState.textInput;
 
   const circleClasses = [
     styles.circle,
-    isHovered && !isLimeTarget ? styles.hovered : "",
-    isHovered && isLimeTarget ? styles.hoveredLime : "",
-    isDarkTone ? styles.circleDark : "",
+    cursorState.hovered && !cursorState.limeTarget ? styles.hovered : "",
+    cursorState.hovered && cursorState.limeTarget ? styles.hoveredLime : "",
+    cursorState.darkTone ? styles.circleDark : "",
     isHidden ? styles.hidden : "",
   ]
     .filter(Boolean)

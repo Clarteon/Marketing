@@ -74,3 +74,12 @@ export function resolveTeamMembers(
     };
   });
 }
+
+export function getAuthorMember(
+  authorName: string | undefined,
+  team: readonly TeamMember[] = DEFAULT_TEAM_MEMBERS,
+): TeamMember | null {
+  const normalized = authorName?.trim().toLowerCase();
+  if (!normalized) return null;
+  return team.find((member) => member.name.trim().toLowerCase() === normalized) ?? null;
+}

@@ -8,6 +8,7 @@ import type { ContentPage, FrontMatter } from "@/lib/content";
 import { cx } from "@/lib/cx";
 import { Button } from "@/components/ui/Button";
 import { CaseStudyBody } from "./CaseStudyBody";
+import { useScrollProgressBar } from "./useScrollProgressBar";
 import styles from "./pages.module.css";
 
 type WorkEntryItem = ContentPage | FrontMatter;
@@ -47,11 +48,16 @@ export function WorkShowcase({ items }: WorkShowcaseProps) {
   const [activeFilter, setActiveFilter] = useState<FilterId>("all");
   const [activeSlug, setActiveSlug] = useState<string | null>(null);
   const [isClosing, setIsClosing] = useState(false);
-  const [modalProgress, setModalProgress] = useState(0);
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const scrollBodyRef = useRef<HTMLDivElement | null>(null);
   const returnFocusRef = useRef<HTMLElement | null>(null);
   const exitTimerRef = useRef<number | null>(null);
+  const {
+    progressBarRef,
+    progressFillRef,
+    handleScroll: handleModalScroll,
+    resetProgress,
+  } = useScrollProgressBar(scrollBodyRef);
 
   const hasWebProjects = entries.some((entry) => entry.frontMatter.category === "web");
   const filters: readonly { id: FilterId; label: string }[] = hasWebProjects
@@ -92,11 +98,11 @@ export function WorkShowcase({ items }: WorkShowcaseProps) {
         returnFocusRef.current = document.activeElement;
       }
       setIsClosing(false);
-      setModalProgress(0);
+      resetProgress();
       setActiveSlug(slug);
       updateUrlParam(slug);
     },
-    [updateUrlParam],
+    [resetProgress, updateUrlParam],
   );
 
   const closeProject = useCallback(() => {
@@ -151,6 +157,7 @@ export function WorkShowcase({ items }: WorkShowcaseProps) {
       if (scrollBodyRef.current) {
         scrollBodyRef.current.scrollTop = 0;
       }
+      resetProgress();
       dialogRef.current?.focus();
     });
 
@@ -166,7 +173,7 @@ export function WorkShowcase({ items }: WorkShowcaseProps) {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [activeProject, isClosing, closeProject]);
+  }, [activeProject, isClosing, closeProject, resetProgress]);
 
   function handleProjectLinkClick(event: MouseEvent<HTMLAnchorElement>, slug: string) {
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) {
@@ -174,17 +181,6 @@ export function WorkShowcase({ items }: WorkShowcaseProps) {
     }
     event.preventDefault();
     openProject(slug, event.currentTarget);
-  }
-
-  function handleModalScroll() {
-    const node = scrollBodyRef.current;
-    if (!node) return;
-    const scrollable = node.scrollHeight - node.clientHeight;
-    if (scrollable <= 0) {
-      setModalProgress(1);
-      return;
-    }
-    setModalProgress(Math.min(1, Math.max(0, node.scrollTop / scrollable)));
   }
 
   return (
@@ -302,8 +298,7 @@ export function WorkShowcase({ items }: WorkShowcaseProps) {
                                 alt={item.imageAlt ?? item.title}
                                 width={1440}
                                 height={750}
-                                priority={index < 2}
-                                loading="eager"
+                                priority={index === 0}
                                 sizes="(max-width: 960px) 100vw, 52vw"
                                 className={styles.workImage}
                               />
@@ -325,7 +320,6 @@ export function WorkShowcase({ items }: WorkShowcaseProps) {
                                 alt={item.secondaryImageAlt ?? `${item.title} automation workflow`}
                                 width={1440}
                                 height={688}
-                                loading="eager"
                                 sizes="(max-width: 960px) 100vw, 52vw"
                                 className={styles.workSecondaryImage}
                               />
@@ -397,17 +391,15 @@ export function WorkShowcase({ items }: WorkShowcaseProps) {
               >
                 <div className={styles.articleModalBar}>
                   <div
+                    ref={progressBarRef}
                     className={styles.articleModalProgressTrack}
                     role="progressbar"
                     aria-label="Case study reading progress"
                     aria-valuemin={0}
                     aria-valuemax={100}
-                    aria-valuenow={Math.round(modalProgress * 100)}
+                    aria-valuenow={0}
                   >
-                    <span
-                      className={styles.articleModalProgressFill}
-                      style={{ transform: `scaleX(${modalProgress})` }}
-                    />
+                    <span ref={progressFillRef} className={styles.articleModalProgressFill} />
                   </div>
 
                   <div className={styles.articleModalBarInner}>

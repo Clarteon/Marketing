@@ -140,8 +140,8 @@ export function CookieConsent() {
           <div className={styles.cookieBannerHeader}>
             <h2 className={styles.cookieBannerTitle}>Cookie notice</h2>
             <p className={styles.cookieBannerText}>
-              Clarteon uses strictly essential cookies for security and session continuity, and
-              optional visitor preference cookies to remember your booking timezone.{" "}
+              We use strictly essential cookies for security and optional preference cookies for
+              your timezone.{" "}
               <Link href="/privacy" className={styles.cookieInlineLink}>
                 Privacy Policy &amp; Cookies
               </Link>

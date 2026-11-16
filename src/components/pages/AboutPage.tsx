@@ -160,30 +160,32 @@ export function AboutPage({
 
         <div className={styles.aboutEditorialGrid}>
           <div className={styles.aboutSideRail}>
-            <figure className={styles.aboutFigure}>
-              <div className={styles.aboutPhotoFrame}>
-                {isLocalPhoto ? (
-                  <Image
-                    src={aboutClarityPhoto}
-                    alt="Clear daylight geometry across structural architectural glass panels"
-                    width={960}
-                    height={640}
-                    sizes="(max-width: 960px) 100vw, 34vw"
-                    className={styles.editorialPhoto}
-                  />
-                ) : (
-                  <img
-                    src={aboutClarityPhoto}
-                    alt="Clear daylight geometry across structural architectural glass panels"
-                    loading="lazy"
-                    className={styles.editorialPhoto}
-                  />
-                )}
-              </div>
-              <figcaption className={styles.aboutFigureCaption}>
-                Clarteon takes its name from the French word clarté, meaning clarity.
-              </figcaption>
-            </figure>
+            <ScrollReveal variant="settle" className={styles.aboutFigureReveal}>
+              <figure className={styles.aboutFigure}>
+                <div className={styles.aboutPhotoFrame}>
+                  {isLocalPhoto ? (
+                    <Image
+                      src={aboutClarityPhoto}
+                      alt="Clear daylight geometry across structural architectural glass panels"
+                      width={960}
+                      height={640}
+                      sizes="(max-width: 960px) 100vw, 34vw"
+                      className={styles.editorialPhoto}
+                    />
+                  ) : (
+                    <img
+                      src={aboutClarityPhoto}
+                      alt="Clear daylight geometry across structural architectural glass panels"
+                      loading="lazy"
+                      className={styles.editorialPhoto}
+                    />
+                  )}
+                </div>
+                <figcaption className={styles.aboutFigureCaption}>
+                  Clarteon takes its name from the French word clarté, meaning clarity.
+                </figcaption>
+              </figure>
+            </ScrollReveal>
 
             <ul className={styles.editorialLinkList} aria-label="Further reading">
               <li>

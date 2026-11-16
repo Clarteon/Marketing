@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { FeaturedHomeProject } from "@/lib/admin/projects";
 import { DEFAULT_SITE_CONFIG, type SiteConfig } from "@/lib/admin/site-config-defaults";
@@ -201,15 +202,26 @@ export function HomePage({
                   )}
                 >
                   <div className={styles.problemPosterBg} aria-hidden="true">
-                    <img
-                      src={photo.src}
-                      alt=""
-                      width={960}
-                      height={640}
-                      loading="lazy"
-                      decoding="async"
-                      className={styles.problemPosterImage}
-                    />
+                    {photo.src.startsWith("/") ? (
+                      <Image
+                        src={photo.src}
+                        alt=""
+                        width={960}
+                        height={640}
+                        sizes="(max-width: 760px) 100vw, 48vw"
+                        className={styles.problemPosterImage}
+                      />
+                    ) : (
+                      <img
+                        src={photo.src}
+                        alt=""
+                        width={960}
+                        height={640}
+                        loading="lazy"
+                        decoding="async"
+                        className={styles.problemPosterImage}
+                      />
+                    )}
                     <div className={styles.problemPosterOverlay} />
                   </div>
                   <span className={styles.problemPhotoBadge}>{photo.badge}</span>
