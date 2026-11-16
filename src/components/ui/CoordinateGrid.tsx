@@ -145,7 +145,7 @@ export function CoordinateGrid({ tone = "paper", className }: CoordinateGridProp
 
     function resize() {
       if (!canvas || !parent) return;
-      const nextDpr = Math.min(window.devicePixelRatio || 1, isCoarsePointer ? 1 : 2);
+      const nextDpr = Math.min(window.devicePixelRatio || 1, isCoarsePointer ? 1 : 1.5);
       const rect = parent.getBoundingClientRect();
       const nextWidth = Math.max(rect.width, 320);
       const nextHeight = Math.max(rect.height, 240);

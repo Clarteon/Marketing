@@ -1,49 +1,70 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import styles from "./pages.module.css";
 
 export function ArticleReadingBar() {
-  const [progress, setProgress] = useState(0);
+  const barRef = useRef<HTMLDivElement | null>(null);
+  const fillRef = useRef<HTMLSpanElement | null>(null);
 
   useEffect(() => {
+    let rafId: number | null = null;
+    let lastPercent = -1;
+
     const updateProgress = () => {
-      const target = document.getElementById("article-doc-root");
+      rafId = null;
+      const target =
+        document.getElementById("article-doc-root") ??
+        document.getElementById("case-study-doc-root");
+      let value = 0;
+
       if (!target) {
         const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-        if (docHeight <= 0) {
-          setProgress(0);
-          return;
-        }
-        setProgress(Math.min(1, Math.max(0, window.scrollY / docHeight)));
-        return;
+        value = docHeight <= 0 ? 0 : Math.min(1, Math.max(0, window.scrollY / docHeight));
+      } else {
+        const rect = target.getBoundingClientRect();
+        const totalScrollable = Math.max(1, target.offsetHeight - window.innerHeight * 0.65);
+        const passed = Math.max(0, -rect.top + window.innerHeight * 0.15);
+        value = Math.min(1, passed / totalScrollable);
       }
 
-      const rect = target.getBoundingClientRect();
-      const totalScrollable = Math.max(1, target.offsetHeight - window.innerHeight * 0.65);
-      const passed = Math.max(0, -rect.top + window.innerHeight * 0.15);
-      setProgress(Math.min(1, passed / totalScrollable));
+      if (fillRef.current) {
+        fillRef.current.style.transform = `scaleX(${value.toFixed(4)})`;
+      }
+      const percent = Math.round(value * 100);
+      if (lastPercent !== percent && barRef.current) {
+        lastPercent = percent;
+        barRef.current.setAttribute("aria-valuenow", String(percent));
+      }
+    };
+
+    const scheduleUpdate = () => {
+      if (rafId === null) {
+        rafId = window.requestAnimationFrame(updateProgress);
+      }
     };
 
     updateProgress();
-    window.addEventListener("scroll", updateProgress, { passive: true });
-    window.addEventListener("resize", updateProgress, { passive: true });
+    window.addEventListener("scroll", scheduleUpdate, { passive: true });
+    window.addEventListener("resize", scheduleUpdate, { passive: true });
     return () => {
-      window.removeEventListener("scroll", updateProgress);
-      window.removeEventListener("resize", updateProgress);
+      window.removeEventListener("scroll", scheduleUpdate);
+      window.removeEventListener("resize", scheduleUpdate);
+      if (rafId !== null) window.cancelAnimationFrame(rafId);
     };
   }, []);
 
   return (
     <div
+      ref={barRef}
       className={styles.articleReadingTrack}
       role="progressbar"
       aria-label="Article reading progress"
       aria-valuemin={0}
       aria-valuemax={100}
-      aria-valuenow={Math.round(progress * 100)}
+      aria-valuenow={0}
     >
-      <span className={styles.articleReadingFill} style={{ transform: `scaleX(${progress})` }} />
+      <span ref={fillRef} className={styles.articleReadingFill} />
     </div>
   );
 }

@@ -19,6 +19,46 @@ interface ScrollRevealProps extends HTMLAttributes<HTMLElement> {
   className?: string;
 }
 
+type InitJob = () => {
+  node: HTMLElement;
+  visible: boolean;
+  apply: (visible: boolean) => void;
+};
+
+const pendingJobs = new Set<InitJob>();
+let flushFrame: number | null = null;
+let flushInnerFrame: number | null = null;
+
+function cancelPendingJob(job: InitJob) {
+  pendingJobs.delete(job);
+  if (pendingJobs.size > 0) return;
+  if (flushFrame !== null) {
+    window.cancelAnimationFrame(flushFrame);
+    flushFrame = null;
+  }
+  if (flushInnerFrame !== null) {
+    window.cancelAnimationFrame(flushInnerFrame);
+    flushInnerFrame = null;
+  }
+}
+
+function scheduleRevealBatch(job: InitJob) {
+  pendingJobs.add(job);
+  if (flushFrame !== null || flushInnerFrame !== null) return;
+  flushFrame = window.requestAnimationFrame(() => {
+    flushFrame = null;
+    flushInnerFrame = window.requestAnimationFrame(() => {
+      flushInnerFrame = null;
+      const jobs = Array.from(pendingJobs);
+      pendingJobs.clear();
+      const results = jobs.map((run) => run());
+      for (const result of results) {
+        result.apply(result.visible);
+      }
+    });
+  });
+}
+
 export function ScrollReveal({
   children,
   as: Component = "div",
@@ -47,61 +87,68 @@ export function ScrollReveal({
     }
 
     let observer: IntersectionObserver | null = null;
-    let frame = 0;
     let timeoutId: number | null = null;
+    let cancelled = false;
 
-    const initialize = () => {
-      // Sample after Next.js has restored the new route's scroll position.
-      if (
+    const job: InitJob = () => {
+      const visible =
+        cancelled ||
         node.getBoundingClientRect().top < window.innerHeight ||
-        node.contains(document.activeElement)
-      ) {
-        node.dataset.revealed = "true";
-        return;
-      }
-      if (stagger) {
-        Array.from(node.children).forEach((child, index) => {
-          (child as HTMLElement).style.setProperty(
-            "--reveal-delay",
-            `${Math.min(index, 3) * 80}ms`,
-          );
-        });
-      }
+        node.contains(document.activeElement);
 
-      observer = new IntersectionObserver(
-        (entries) => {
-          if (entries[0]?.isIntersecting) {
-            if (delayMs > 0) {
-              timeoutId = window.setTimeout(() => {
-                node.dataset.revealed = "true";
-              }, delayMs);
-            } else {
-              node.dataset.revealed = "true";
-            }
-            observer?.unobserve(node);
+      return {
+        node,
+        visible,
+        apply(isVisible) {
+          if (cancelled) return;
+          if (isVisible) {
+            node.dataset.revealed = "true";
+            return;
           }
+          if (stagger) {
+            Array.from(node.children).forEach((child, index) => {
+              (child as HTMLElement).style.setProperty(
+                "--reveal-delay",
+                `${Math.min(index, 3) * 80}ms`,
+              );
+            });
+          }
+
+          observer = new IntersectionObserver(
+            (entries) => {
+              if (entries[0]?.isIntersecting) {
+                if (delayMs > 0) {
+                  timeoutId = window.setTimeout(() => {
+                    node.dataset.revealed = "true";
+                  }, delayMs);
+                } else {
+                  node.dataset.revealed = "true";
+                }
+                observer?.unobserve(node);
+              }
+            },
+            { threshold, rootMargin },
+          );
+          observer.observe(node);
+          node.dataset.motionReady = "true";
         },
-        { threshold, rootMargin },
-      );
-      observer.observe(node);
-      node.dataset.motionReady = "true";
+      };
     };
 
-    frame = window.requestAnimationFrame(() => {
-      frame = window.requestAnimationFrame(initialize);
-    });
+    scheduleRevealBatch(job);
 
     const finish = () => {
       if (!motionQuery?.matches) return;
       node.dataset.revealed = "true";
-      window.cancelAnimationFrame(frame);
+      cancelPendingJob(job);
       observer?.disconnect();
       if (timeoutId !== null) window.clearTimeout(timeoutId);
     };
     motionQuery?.addEventListener("change", finish);
 
     return () => {
-      window.cancelAnimationFrame(frame);
+      cancelled = true;
+      cancelPendingJob(job);
       observer?.disconnect();
       motionQuery?.removeEventListener("change", finish);
       if (timeoutId !== null) window.clearTimeout(timeoutId);

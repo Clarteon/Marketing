@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { cx } from "@/lib/cx";
 import styles from "./service-photo-collage.module.css";
 
@@ -19,15 +20,26 @@ export function ServicePhotoCollage({ primary, secondary, className }: ServicePh
       <div className={cx(styles.diptych, !secondary && styles.diptychSingle)}>
         <figure className={cx(styles.card, styles.cardPrimary)}>
           <div className={styles.imageViewport}>
-            <img
-              src={primary.src}
-              alt={primary.alt}
-              width={960}
-              height={640}
-              loading="lazy"
-              decoding="async"
-              className={styles.image}
-            />
+            {primary.src.startsWith("/") ? (
+              <Image
+                src={primary.src}
+                alt={primary.alt}
+                width={960}
+                height={640}
+                sizes="(max-width: 960px) 100vw, 44vw"
+                className={styles.image}
+              />
+            ) : (
+              <img
+                src={primary.src}
+                alt={primary.alt}
+                width={960}
+                height={640}
+                loading="lazy"
+                decoding="async"
+                className={styles.image}
+              />
+            )}
           </div>
           {primary.caption ? (
             <figcaption className={styles.caption}>
@@ -40,15 +52,26 @@ export function ServicePhotoCollage({ primary, secondary, className }: ServicePh
         {secondary ? (
           <figure className={cx(styles.card, styles.cardSecondary)}>
             <div className={styles.imageViewport}>
-              <img
-                src={secondary.src}
-                alt={secondary.alt}
-                width={960}
-                height={640}
-                loading="lazy"
-                decoding="async"
-                className={styles.image}
-              />
+              {secondary.src.startsWith("/") ? (
+                <Image
+                  src={secondary.src}
+                  alt={secondary.alt}
+                  width={960}
+                  height={640}
+                  sizes="(max-width: 960px) 100vw, 44vw"
+                  className={styles.image}
+                />
+              ) : (
+                <img
+                  src={secondary.src}
+                  alt={secondary.alt}
+                  width={960}
+                  height={640}
+                  loading="lazy"
+                  decoding="async"
+                  className={styles.image}
+                />
+              )}
             </div>
             {secondary.caption ? (
               <figcaption className={styles.caption}>
