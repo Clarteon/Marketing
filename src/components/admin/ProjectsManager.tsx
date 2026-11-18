@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { PROJECT_CATEGORIES, type AdminProjectRecord } from "@/lib/admin/site-config-defaults";
 import { AnimatedCheckbox } from "@/components/ui/AnimatedCheckbox";
+import { SelectField } from "@/components/ui/SelectField";
 import { cx } from "@/lib/cx";
 import styles from "@/app/admin/admin.module.css";
 
@@ -12,6 +13,20 @@ interface ProjectsManagerProps {
   configured: boolean;
   schemaMissing?: boolean;
 }
+
+const CATEGORY_OPTIONS = PROJECT_CATEGORIES.map((option) => ({
+  value: option.value,
+  label: option.label,
+}));
+
+const STATUS_OPTIONS = [
+  { value: "published", label: "Published" },
+  { value: "draft", label: "Draft" },
+];
+
+const CATEGORY_LABELS = new Map<string, string>(
+  PROJECT_CATEGORIES.map((option) => [option.value, option.label]),
+);
 
 function emptyProject(order: number): AdminProjectRecord {
   return {
@@ -69,6 +84,16 @@ export function ProjectsManager({
   } | null>(null);
 
   const canWrite = configured && !schemaMissing;
+  const savedProject = isNew ? null : (projects.find((item) => item.slug === selectedSlug) ?? null);
+
+  const isDirty = savedProject
+    ? JSON.stringify({ ...draft, tagsText }) !==
+      JSON.stringify({
+        ...savedProject,
+        highlights: savedProject.highlights.length > 0 ? savedProject.highlights : [""],
+        tagsText: savedProject.tags.join(", "),
+      })
+    : true;
 
   function selectProject(project: AdminProjectRecord) {
     setSelectedSlug(project.slug);
@@ -255,89 +280,111 @@ export function ProjectsManager({
         </div>
       ) : null}
 
-      <div className={styles.cmsGrid}>
-        <aside className={styles.cmsSidebar} aria-label="Stored projects">
-          <div className={styles.cmsSidebarHeader}>
+      <section className={cx(styles.panel, styles.detailPanel)} aria-label="Stored projects">
+        <div className={styles.cmsPanelHeader}>
+          <div>
             <h2 className={styles.sectionTitle}>Projects ({projects.length})</h2>
-            <button
-              type="button"
-              className={styles.primaryButton}
-              onClick={startNewProject}
-              disabled={!canWrite}
-            >
-              + New project
-            </button>
-          </div>
-
-          <ul className={styles.cmsProjectList}>
-            {projects.map((project) => {
-              const selected = !isNew && selectedSlug === project.slug;
-              return (
-                <li key={project.slug}>
-                  <button
-                    type="button"
-                    className={cx(styles.cmsProjectItem, selected && styles.cmsProjectItemActive)}
-                    onClick={() => selectProject(project)}
-                  >
-                    <div className={styles.cmsProjectItemTop}>
-                      <span className={styles.cmsOrderBadge}>#{project.order}</span>
-                      <span
-                        className={cx(
-                          styles.badge,
-                          project.status === "published"
-                            ? styles.badgeConfirmed
-                            : styles.badgePending,
-                        )}
-                      >
-                        {project.status}
-                      </span>
-                      {project.featuredOnHome ? (
-                        <span className={styles.cmsHomeTag}>Home</span>
-                      ) : null}
-                    </div>
-                    <strong className={styles.cmsProjectItemTitle}>{project.title}</strong>
-                    <span className={styles.cmsProjectItemMeta}>
-                      {project.client ?? project.category} · /our-work/{project.slug}
-                    </span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        </aside>
-
-        <section className={styles.panel} aria-labelledby="project-editor-heading">
-          <div className={styles.cmsEditorHead}>
-            <div>
-              <h2 id="project-editor-heading" className={styles.sectionTitle}>
-                {isNew ? "Add new project" : `Edit: ${draft.title || selectedSlug}`}
-              </h2>
-              <p className={styles.cmsEditorHint}>
-                Manage deliverables, features, and showcase metadata shown on Home and Our work.
-              </p>
-            </div>
-            {!isNew && draft.status === "published" ? (
-              <a
-                href={`/our-work/${draft.slug}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.sectionLink}
-              >
-                Open public page
-              </a>
-            ) : null}
-          </div>
-
-          {statusMessage ? (
-            <p
-              className={statusMessage.kind === "success" ? styles.success : styles.error}
-              role="status"
-            >
-              {statusMessage.text}
+            <p className={styles.sectionIntro}>
+              Select a case study to edit below, or start a new entry.
             </p>
-          ) : null}
+          </div>
+          <button
+            type="button"
+            className={cx(styles.secondaryButton, styles.cmsHeaderButton)}
+            onClick={startNewProject}
+            disabled={!canWrite}
+          >
+            + New project
+          </button>
+        </div>
 
-          <form className={styles.form} onSubmit={handleSave}>
+        <ul className={styles.cmsProjectList}>
+          {projects.map((project) => {
+            const selected = !isNew && selectedSlug === project.slug;
+            return (
+              <li key={project.slug}>
+                <button
+                  type="button"
+                  className={cx(styles.cmsProjectItem, selected && styles.cmsProjectItemActive)}
+                  onClick={() => selectProject(project)}
+                >
+                  <div className={styles.cmsProjectItemTop}>
+                    <span className={styles.cmsOrderBadge}>#{project.order}</span>
+                    <span
+                      className={cx(
+                        styles.badge,
+                        project.status === "published"
+                          ? styles.badgeConfirmed
+                          : styles.badgePending,
+                      )}
+                    >
+                      {project.status}
+                    </span>
+                    {project.featuredOnHome ? (
+                      <span className={styles.cmsHomeTag}>Home</span>
+                    ) : null}
+                  </div>
+                  <strong className={styles.cmsProjectItemTitle}>{project.title}</strong>
+                  <span className={styles.cmsProjectItemMeta}>
+                    {project.client ?? CATEGORY_LABELS.get(project.category) ?? project.category} ·
+                    /our-work/{project.slug}
+                  </span>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+
+      <div className={styles.cmsStatusRow}>
+        <div className={styles.cmsStatusMeta}>
+          <span
+            className={cx(
+              styles.badge,
+              isNew
+                ? styles.badgeNew
+                : draft.status === "published"
+                  ? styles.badgeConfirmed
+                  : styles.badgePending,
+            )}
+          >
+            {isNew ? "New draft" : draft.status}
+          </span>
+          <span>
+            {draft.categoryLabel || CATEGORY_LABELS.get(draft.category) || draft.category}
+          </span>
+          <span>Order #{draft.order}</span>
+          <span>{draft.featuredOnHome ? "Featured on Home" : "Our work only"}</span>
+        </div>
+
+        {!isNew && draft.status === "published" ? (
+          <a
+            href={`/our-work/${draft.slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.sectionLink}
+          >
+            Open public page
+          </a>
+        ) : null}
+      </div>
+
+      <form className={styles.detailStack} onSubmit={handleSave}>
+        <section
+          className={cx(styles.panel, styles.detailPanel)}
+          aria-labelledby="project-details-heading"
+        >
+          <div>
+            <h2 id="project-details-heading" className={styles.sectionTitle}>
+              {isNew ? "New project details" : `Editing: ${draft.title || selectedSlug}`}
+            </h2>
+            <p className={styles.sectionIntro}>
+              Core title, URL slug, client label, category, and publishing controls shown on Home
+              and Our work.
+            </p>
+          </div>
+
+          <div className={styles.cmsFieldsGrid}>
             <div className={styles.twoColumns}>
               <div className={styles.field}>
                 <label className={styles.label} htmlFor="project-title">
@@ -363,13 +410,18 @@ export function ProjectsManager({
                   id="project-slug"
                   className={styles.input}
                   type="text"
-                  required
+                  required={!isNew}
                   maxLength={100}
                   value={draft.slug}
                   placeholder="custom-portal-build"
                   onChange={(event) => updateField("slug", event.target.value)}
                   readOnly={!canWrite || !isNew}
                 />
+                {isNew ? (
+                  <p className={styles.hint}>
+                    Lowercase letters, numbers, and hyphens only. Leave blank to derive from title.
+                  </p>
+                ) : null}
               </div>
             </div>
 
@@ -382,6 +434,7 @@ export function ProjectsManager({
                 className={cx(styles.textarea, styles.cmsShortArea)}
                 required
                 maxLength={500}
+                rows={3}
                 value={draft.summary}
                 onChange={(event) => updateField("summary", event.target.value)}
                 readOnly={!canWrite}
@@ -391,7 +444,7 @@ export function ProjectsManager({
             <div className={styles.twoColumns}>
               <div className={styles.field}>
                 <label className={styles.label} htmlFor="project-client">
-                  Client / sample label
+                  Client or sample label
                 </label>
                 <input
                   id="project-client"
@@ -421,46 +474,35 @@ export function ProjectsManager({
               </div>
             </div>
 
-            <div className={styles.cmsTripleRow}>
-              <div className={styles.field}>
-                <label className={styles.label} htmlFor="project-category">
-                  Category
-                </label>
-                <select
-                  id="project-category"
-                  className={styles.input}
-                  value={draft.category}
-                  onChange={(event) =>
-                    updateField("category", event.target.value as AdminProjectRecord["category"])
+            <div className={styles.twoColumns}>
+              <SelectField
+                id="project-category"
+                label="Category"
+                options={CATEGORY_OPTIONS}
+                value={draft.category}
+                disabled={!canWrite}
+                onValueChange={(value) => {
+                  if (value) {
+                    updateField("category", value as AdminProjectRecord["category"]);
                   }
-                  disabled={!canWrite}
-                >
-                  {PROJECT_CATEGORIES.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
+                }}
+              />
 
-              <div className={styles.field}>
-                <label className={styles.label} htmlFor="project-status">
-                  Publish status
-                </label>
-                <select
-                  id="project-status"
-                  className={styles.input}
-                  value={draft.status}
-                  onChange={(event) =>
-                    updateField("status", event.target.value as "draft" | "published")
+              <SelectField
+                id="project-status"
+                label="Publish status"
+                options={STATUS_OPTIONS}
+                value={draft.status}
+                disabled={!canWrite}
+                onValueChange={(value) => {
+                  if (value === "published" || value === "draft") {
+                    updateField("status", value);
                   }
-                  disabled={!canWrite}
-                >
-                  <option value="published">Published</option>
-                  <option value="draft">Draft</option>
-                </select>
-              </div>
+                }}
+              />
+            </div>
 
+            <div className={styles.twoColumns}>
               <div className={styles.field}>
                 <label className={styles.label} htmlFor="project-order">
                   Display order
@@ -475,6 +517,24 @@ export function ProjectsManager({
                   onChange={(event) => updateField("order", Number(event.target.value) || 99)}
                   readOnly={!canWrite}
                 />
+                <p className={styles.hint}>Lower numbers appear first in Our work.</p>
+              </div>
+
+              <div className={styles.field}>
+                <label className={styles.label} htmlFor="project-published-at">
+                  Published date
+                </label>
+                <input
+                  id="project-published-at"
+                  className={styles.input}
+                  type="text"
+                  maxLength={10}
+                  value={draft.publishedAt ?? ""}
+                  placeholder="2026-11-15"
+                  onChange={(event) => updateField("publishedAt", event.target.value || null)}
+                  readOnly={!canWrite}
+                />
+                <p className={styles.hint}>Use YYYY-MM-DD format.</p>
               </div>
             </div>
 
@@ -495,17 +555,16 @@ export function ProjectsManager({
               </div>
 
               <div className={styles.field}>
-                <label className={styles.label} htmlFor="project-published-at">
-                  Published date (YYYY-MM-DD)
+                <label className={styles.label} htmlFor="project-tags">
+                  Tags (comma-separated)
                 </label>
                 <input
-                  id="project-published-at"
+                  id="project-tags"
                   className={styles.input}
                   type="text"
-                  maxLength={10}
-                  value={draft.publishedAt ?? ""}
-                  placeholder="2026-11-15"
-                  onChange={(event) => updateField("publishedAt", event.target.value || null)}
+                  maxLength={400}
+                  value={tagsText}
+                  onChange={(event) => setTagsText(event.target.value)}
                   readOnly={!canWrite}
                 />
               </div>
@@ -519,15 +578,32 @@ export function ProjectsManager({
               onChange={(event) => updateField("featuredOnHome", event.target.checked)}
               disabled={!canWrite}
             >
-              Feature this project in the homepage Built around real bottlenecks ledger
+              Feature this project on the Home showcase
             </AnimatedCheckbox>
+          </div>
+        </section>
 
+        <section
+          className={cx(styles.panel, styles.detailPanel)}
+          aria-labelledby="project-breakdown-heading"
+        >
+          <div>
+            <h2 id="project-breakdown-heading" className={styles.sectionTitle}>
+              Features &amp; breakdown
+            </h2>
+            <p className={styles.sectionIntro}>
+              Deliverable highlights and the problem, solution, and result summary shown on case
+              study cards and modals.
+            </p>
+          </div>
+
+          <div className={styles.cmsFieldsGrid}>
             <div className={styles.field}>
               <div className={styles.cmsHighlightsHeader}>
                 <span className={styles.label}>Project features &amp; outcomes</span>
                 <button
                   type="button"
-                  className={styles.cmsSmallButton}
+                  className={styles.secondaryButton}
                   onClick={addHighlightRow}
                   disabled={!canWrite || draft.highlights.length >= 12}
                 >
@@ -545,14 +621,14 @@ export function ProjectsManager({
                       className={styles.input}
                       type="text"
                       maxLength={200}
-                      placeholder="Automated lead or order handoff feature..."
+                      placeholder="Automated lead or order handoff feature"
                       value={item}
                       onChange={(event) => updateHighlight(index, event.target.value)}
                       readOnly={!canWrite}
                     />
                     <button
                       type="button"
-                      className={styles.cmsRemoveButton}
+                      className={styles.cmsRemovePill}
                       onClick={() => removeHighlightRow(index)}
                       disabled={!canWrite}
                       aria-label={`Remove feature ${index + 1}`}
@@ -565,7 +641,8 @@ export function ProjectsManager({
             </div>
 
             <div className={styles.cmsSectionDivider}>
-              <h3 className={styles.cmsSubheading}>Problem, solution &amp; result breakdown</h3>
+              <h3 className={styles.cmsSubheading}>Problem, solution &amp; result</h3>
+
               <div className={styles.field}>
                 <label className={styles.label} htmlFor="project-problem-brief">
                   The problem
@@ -574,6 +651,7 @@ export function ProjectsManager({
                   id="project-problem-brief"
                   className={cx(styles.textarea, styles.cmsShortArea)}
                   maxLength={600}
+                  rows={3}
                   value={draft.problemBrief ?? ""}
                   onChange={(event) => updateField("problemBrief", event.target.value || null)}
                   readOnly={!canWrite}
@@ -588,6 +666,7 @@ export function ProjectsManager({
                   id="project-approach-brief"
                   className={cx(styles.textarea, styles.cmsShortArea)}
                   maxLength={600}
+                  rows={3}
                   value={draft.approachBrief ?? ""}
                   onChange={(event) => updateField("approachBrief", event.target.value || null)}
                   readOnly={!canWrite}
@@ -602,78 +681,112 @@ export function ProjectsManager({
                   id="project-outcome-brief"
                   className={cx(styles.textarea, styles.cmsShortArea)}
                   maxLength={600}
+                  rows={3}
                   value={draft.outcomeBrief ?? ""}
                   onChange={(event) => updateField("outcomeBrief", event.target.value || null)}
                   readOnly={!canWrite}
                 />
               </div>
             </div>
+          </div>
+        </section>
 
-            <div className={styles.cmsSectionDivider}>
-              <h3 className={styles.cmsSubheading}>Media &amp; links</h3>
-              <div className={styles.twoColumns}>
-                <div className={styles.field}>
-                  <label className={styles.label} htmlFor="project-image">
-                    Primary image path or https:// URL
-                  </label>
-                  <input
-                    id="project-image"
-                    className={styles.input}
-                    type="text"
-                    maxLength={500}
-                    placeholder="/images/work/example.webp"
-                    value={draft.image ?? ""}
-                    onChange={(event) => updateField("image", event.target.value || null)}
-                    readOnly={!canWrite}
-                  />
-                </div>
-                <div className={styles.field}>
-                  <label className={styles.label} htmlFor="project-image-alt">
-                    Primary image alt text
-                  </label>
-                  <input
-                    id="project-image-alt"
-                    className={styles.input}
-                    type="text"
-                    maxLength={240}
-                    value={draft.imageAlt ?? ""}
-                    onChange={(event) => updateField("imageAlt", event.target.value || null)}
-                    readOnly={!canWrite}
-                  />
-                </div>
+        <section
+          className={cx(styles.panel, styles.detailPanel)}
+          aria-labelledby="project-media-heading"
+        >
+          <div>
+            <h2 id="project-media-heading" className={styles.sectionTitle}>
+              Media, links &amp; narrative
+            </h2>
+            <p className={styles.sectionIntro}>
+              Primary showcase photography, optional workflow graphic, live demo link, and the
+              Markdown case study article.
+            </p>
+          </div>
+
+          <div className={styles.cmsFieldsGrid}>
+            <div className={styles.twoColumns}>
+              <div className={styles.field}>
+                <label className={styles.label} htmlFor="project-image">
+                  Primary image path or URL
+                </label>
+                <input
+                  id="project-image"
+                  className={styles.input}
+                  type="text"
+                  maxLength={500}
+                  placeholder="/images/work/custom-portal.webp"
+                  value={draft.image ?? ""}
+                  onChange={(event) => updateField("image", event.target.value || null)}
+                  readOnly={!canWrite}
+                />
+                <p className={styles.hint}>Use a /images/... path or an https:// URL.</p>
               </div>
 
-              <div className={styles.twoColumns}>
-                <div className={styles.field}>
-                  <label className={styles.label} htmlFor="project-live-url">
-                    Live demo URL (optional)
-                  </label>
-                  <input
-                    id="project-live-url"
-                    className={styles.input}
-                    type="url"
-                    maxLength={500}
-                    placeholder="https://example.com"
-                    value={draft.liveUrl ?? ""}
-                    onChange={(event) => updateField("liveUrl", event.target.value || null)}
-                    readOnly={!canWrite}
-                  />
-                </div>
-                <div className={styles.field}>
-                  <label className={styles.label} htmlFor="project-tags">
-                    Tags (comma-separated)
-                  </label>
-                  <input
-                    id="project-tags"
-                    className={styles.input}
-                    type="text"
-                    maxLength={400}
-                    value={tagsText}
-                    onChange={(event) => setTagsText(event.target.value)}
-                    readOnly={!canWrite}
-                  />
-                </div>
+              <div className={styles.field}>
+                <label className={styles.label} htmlFor="project-image-alt">
+                  Primary image alt text
+                </label>
+                <input
+                  id="project-image-alt"
+                  className={styles.input}
+                  type="text"
+                  maxLength={240}
+                  value={draft.imageAlt ?? ""}
+                  onChange={(event) => updateField("imageAlt", event.target.value || null)}
+                  readOnly={!canWrite}
+                />
               </div>
+            </div>
+
+            <div className={styles.twoColumns}>
+              <div className={styles.field}>
+                <label className={styles.label} htmlFor="project-secondary-image">
+                  Secondary image path or URL
+                </label>
+                <input
+                  id="project-secondary-image"
+                  className={styles.input}
+                  type="text"
+                  maxLength={500}
+                  placeholder="/images/work/custom-portal-workflow.webp"
+                  value={draft.secondaryImage ?? ""}
+                  onChange={(event) => updateField("secondaryImage", event.target.value || null)}
+                  readOnly={!canWrite}
+                />
+              </div>
+
+              <div className={styles.field}>
+                <label className={styles.label} htmlFor="project-secondary-image-alt">
+                  Secondary image alt text
+                </label>
+                <input
+                  id="project-secondary-image-alt"
+                  className={styles.input}
+                  type="text"
+                  maxLength={240}
+                  value={draft.secondaryImageAlt ?? ""}
+                  onChange={(event) => updateField("secondaryImageAlt", event.target.value || null)}
+                  readOnly={!canWrite}
+                />
+              </div>
+            </div>
+
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="project-live-url">
+                Live demo URL (optional)
+              </label>
+              <input
+                id="project-live-url"
+                className={styles.input}
+                type="url"
+                maxLength={500}
+                placeholder="https://portal.clarteon.tech"
+                value={draft.liveUrl ?? ""}
+                onChange={(event) => updateField("liveUrl", event.target.value || null)}
+                readOnly={!canWrite}
+              />
             </div>
 
             <div className={styles.field}>
@@ -682,54 +795,94 @@ export function ProjectsManager({
               </label>
               <textarea
                 id="project-body"
-                className={styles.textarea}
+                className={cx(styles.textarea, styles.cmsNarrativeArea)}
                 maxLength={16000}
+                rows={10}
                 value={draft.body}
                 onChange={(event) => updateField("body", event.target.value)}
                 readOnly={!canWrite}
               />
             </div>
+          </div>
+        </section>
 
-            <div className={styles.cmsActionRow}>
+        <div className={styles.cmsWorkspace}>
+          {statusMessage ? (
+            <p
+              className={statusMessage.kind === "success" ? styles.success : styles.error}
+              role={statusMessage.kind === "error" ? "alert" : "status"}
+            >
+              {statusMessage.text}
+            </p>
+          ) : null}
+
+          <div className={styles.cmsActionRow}>
+            <div className={styles.actions}>
               <button type="submit" className={styles.primaryButton} disabled={!canWrite || saving}>
                 {saving ? "Saving..." : isNew ? "Create project" : "Save project"}
               </button>
-
-              {!isNew && canWrite ? (
-                confirmDelete ? (
-                  <div className={styles.cmsDeleteConfirm}>
-                    <span>Delete this project?</span>
-                    <button
-                      type="button"
-                      className={styles.dangerButton}
-                      onClick={handleDelete}
-                      disabled={saving}
-                    >
-                      Confirm delete
-                    </button>
-                    <button
-                      type="button"
-                      className={styles.cmsSmallButton}
-                      onClick={() => setConfirmDelete(false)}
-                      disabled={saving}
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    type="button"
-                    className={styles.cmsRemoveButton}
-                    onClick={() => setConfirmDelete(true)}
-                  >
-                    Delete project
-                  </button>
-                )
+              {isNew && projects[0] ? (
+                <button
+                  type="button"
+                  className={styles.secondaryButton}
+                  onClick={() => selectProject(projects[0])}
+                  disabled={saving}
+                >
+                  Cancel
+                </button>
+              ) : null}
+              {!isNew && savedProject ? (
+                <button
+                  type="button"
+                  className={styles.secondaryButton}
+                  onClick={() => selectProject(savedProject)}
+                  disabled={!canWrite || saving || !isDirty}
+                >
+                  Reset changes
+                </button>
               ) : null}
             </div>
-          </form>
-        </section>
-      </div>
+
+            {!isNew && canWrite && !confirmDelete ? (
+              <button
+                type="button"
+                className={styles.dangerButton}
+                onClick={() => setConfirmDelete(true)}
+                disabled={saving}
+              >
+                Delete project
+              </button>
+            ) : null}
+          </div>
+
+          {!isNew && canWrite && confirmDelete ? (
+            <div className={cx(styles.panel, styles.detailPanel)}>
+              <p className={styles.cancelWarning}>
+                Delete &ldquo;{draft.title || selectedSlug}&rdquo;? It will be removed from the
+                database and live showcase routes.
+              </p>
+              <div className={styles.cancelActions}>
+                <button
+                  type="button"
+                  className={styles.secondaryButton}
+                  onClick={() => setConfirmDelete(false)}
+                  disabled={saving}
+                >
+                  Keep project
+                </button>
+                <button
+                  type="button"
+                  className={styles.dangerButton}
+                  onClick={handleDelete}
+                  disabled={saving}
+                >
+                  {saving ? "Deleting..." : "Yes, delete project"}
+                </button>
+              </div>
+            </div>
+          ) : null}
+        </div>
+      </form>
     </div>
   );
 }

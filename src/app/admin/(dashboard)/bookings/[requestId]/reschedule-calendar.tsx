@@ -186,7 +186,7 @@ export function RescheduleCalendar({
       ) : null}
 
       {status === "unavailable" || status === "error" ? (
-        <div className={adminStyles.notice} role="status">
+        <div className={`${adminStyles.notice} ${adminStyles.noticeRow}`} role="status">
           <span>Open times could not be loaded right now. Try again in a moment.</span>
           <button className={adminStyles.secondaryButton} type="button" onClick={() => reload()}>
             Retry
