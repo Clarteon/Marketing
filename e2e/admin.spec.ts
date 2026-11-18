@@ -92,6 +92,22 @@ test.describe("signed in", () => {
     await expect(page.getByRole("heading", { name: "Projects", exact: true })).toBeVisible();
     await expect(page.getByText(/project database storage is not configured/i)).toBeVisible();
     await expect(page.getByRole("heading", { name: /Projects \(5\)/i })).toBeVisible();
+    await expect(page.getByRole("combobox", { name: "Category" })).toHaveText(
+      "Orders, stock & payments",
+    );
+    await expect(page.getByRole("combobox", { name: "Publish status" })).toHaveText("Published");
+
+    const titleBox = await page.getByLabel("Project title").boundingBox();
+    const viewport = page.viewportSize();
+    expect(titleBox).not.toBeNull();
+    if (viewport && viewport.width >= 768 && titleBox) {
+      expect(titleBox.width).toBeGreaterThanOrEqual(340);
+    }
+
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth > window.innerWidth,
+    );
+    expect(overflow).toBe(false);
     expect(await axeViolations(page)).toEqual([]);
   });
 
