@@ -171,11 +171,14 @@ export function SiteConfigManager({
           </p>
         ) : null}
 
-        <section className={styles.panel} aria-labelledby="config-sections-heading">
+        <section
+          className={cx(styles.panel, styles.detailPanel)}
+          aria-labelledby="config-sections-heading"
+        >
           <h2 id="config-sections-heading" className={styles.sectionTitle}>
             Homepage &amp; About section structure
           </h2>
-          <p className={styles.cmsEditorHint}>
+          <p className={styles.sectionIntro}>
             Toggle major page blocks on or off and adjust key section headlines.
           </p>
 
@@ -304,11 +307,14 @@ export function SiteConfigManager({
           </div>
         </section>
 
-        <section className={styles.panel} aria-labelledby="config-heroes-heading">
+        <section
+          className={cx(styles.panel, styles.detailPanel)}
+          aria-labelledby="config-heroes-heading"
+        >
           <h2 id="config-heroes-heading" className={styles.sectionTitle}>
             Page hero copy overrides
           </h2>
-          <p className={styles.cmsEditorHint}>
+          <p className={styles.sectionIntro}>
             Select any page to override its top hero headline or intro copy. Leave blank to keep the
             checked-in Markdown text.
           </p>
@@ -331,7 +337,7 @@ export function SiteConfigManager({
             ))}
           </div>
 
-          <div className={styles.form}>
+          <div className={styles.cmsFieldsGrid}>
             <div className={styles.field}>
               <label className={styles.label} htmlFor="cfg-hero-title">
                 {SITE_CONFIG_PAGE_LABELS[activeHeroSlug]} hero title override
@@ -368,11 +374,14 @@ export function SiteConfigManager({
           </div>
         </section>
 
-        <section className={styles.panel} aria-labelledby="config-team-heading">
+        <section
+          className={cx(styles.panel, styles.detailPanel)}
+          aria-labelledby="config-team-heading"
+        >
           <h2 id="config-team-heading" className={styles.sectionTitle}>
             Team portraits &amp; site photography
           </h2>
-          <p className={styles.cmsEditorHint}>
+          <p className={styles.sectionIntro}>
             Paste a local <code>/images/...</code> path or an <code>https://...</code> URL for any
             team portrait on the About org chart or site card photography.
           </p>
